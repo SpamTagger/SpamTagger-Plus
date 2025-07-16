@@ -1,7 +1,11 @@
-**MailCleaner's current Stable repository is [here](https://github.com/MailCleaner/MailCleaner8).**
+# Welcome to SpamTagger Plus
 
-This repository is currently very close to a clone of that one while we wait for all existing machines to transition to use it. However, in the coming days or weeks, this repository will be deleted and replaced with [the Alpha repository for our next release](https://github.com/MailCleaner/MailCleaner-Next).
+SpamTagger Plus is a fork of the [MailCleaner](https://github.com/MailCleaner) anti spam gateway.
 
-This change is being made with the goal of spublishing Beta images for that next release and to limit the complication of having to migrate two concurrently operating versions at the same time.
+## 🚧 Under Construction 🚧
 
-If you are interested in filing an issue for the current release or contributing code to it, please follow the first link above. However, note that ongoing development of the current release will be limited to bug fixes. If you are interested in providing early help with the next release, with no expectation that it will be functional, please follow the second link. 
+Development of a new release of SpamTagger Plus is ongoing and this repository is no longer compatible with existing MailCleaner systems which are based on Debian Jessie.
+
+There are currently no public downloads available for the release since build infrastructure is not complete and the development VM is in a non-working state and is changing too quickly to reasonably provide regular updates.
+
+Please stay tuned for more information and feel free to discuss development in the relevant GitHub tabs.
