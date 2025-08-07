@@ -4,3 +4,5 @@
 /mc_router
 /mc_transport
 /mailcleaner-binary
+/stage1/*
+!/stage1/*_template

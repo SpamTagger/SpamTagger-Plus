@@ -1,0 +1,54 @@
+
+ifplugin Mail::SpamAssassin::Plugin::DNSEval
+
+
+
+
+
+
+score __RCVD_IN_SORBS 0
+score RCVD_IN_SORBS_BLOCK 0
+score RCVD_IN_SORBS_DUL 0
+score RCVD_IN_SORBS_HTTP 0
+score RCVD_IN_SORBS_MISC 0
+score RCVD_IN_SORBS_SMTP 0
+score RCVD_IN_SORBS_SOCKS 0
+score RCVD_IN_SORBS_WEB 0
+score RCVD_IN_SORBS_ZOMBIE 0
+score RCVD_IN_SORBS_SPAM 0
+
+
+
+
+score RCVD_IN_CSS 0
+
+
+
+
+
+
+score	RCVD_IN_EDUWHITELIST 0
+
+
+
+endif
+
+ifplugin Mail::SpamAssassin::Plugin::URIDNSBL
+
+
+score URIBL_DBL_PHISH 2.5
+score URIBL_DBL_MALWARE 2.5
+score URIBL_DBL_PHISH   2.5
+score URIBL_DBL_MALWARE 2.5
+score URIBL_DBL_BOTNETCC 2.5
+score URIBL_DBL_ABUSE_SPAM 2.5
+score URIBL_DBL_ABUSE_REDIR 2.5
+score URIBL_DBL_ABUSE_PHISH 2.5
+score URIBL_DBL_ABUSE_MALW  2.5
+score URIBL_DBL_ABUSE_BOTCC 2.5
+
+
+
+
+
+endif
