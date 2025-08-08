@@ -254,7 +254,7 @@ class Default_Model_Slave
 
         if (!$this->_mib_loaded) {
             $config = new MailCleaner_Config();
-            $mibfile = $config->getOption('SRCDIR')."/www/guis/admin/public/downloads/MAILCLEANER-MIB.txt";
+            $mibfile = $config->getOption('SRCDIR')."/www/guis/admin/public/downloads/SPAMTAGGER-MIB.txt";
             if (snmp_read_mib($mibfile)) {
                 $this->_mib_loaded = true;
             }
