@@ -56,7 +56,7 @@ if ('adminpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 		    } else {
 			$retaw = 1;
 		    }
-		    touch('/var/mailcleaner/run/configurator/adminpass');
+		    touch('/var/spamtagger/run/configurator/adminpass');
                     ($retaw == 0) ? $retaw = "<span class='text-success'>Admin password changed</span>" : $retaw = "<span class='text-danger'>Failed to change Admin password</span>";
                 echo $retaw;
 	        } else {

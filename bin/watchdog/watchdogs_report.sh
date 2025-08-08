@@ -4,8 +4,8 @@ CLIENTID=`grep 'CLIENTID' /etc/mailcleaner.conf | sed 's/ //g' | cut -d '=' -f2`
 HOSTID=`grep 'HOSTID' /etc/mailcleaner.conf | sed 's/ //g' | cut -d '=' -f2`
 TIME=`date +%s`
 
-DIRBASE='/var/mailcleaner/spool/watchdog/'
-PIDDIR='/var/mailcleaner/run/watchdog/'
+DIRBASE='/var/spamtagger/spool/watchdog/'
+PIDDIR='/var/spamtagger/run/watchdog/'
 REPORTSWRK=$DIRBASE'reports.wrk'
 FILE=$DIRBASE"reports/report-$CLIENTID-$HOSTID-$TIME.tar.gz"
 WWW='/usr/mailcleaner/www/guis/admin/public/downloads/watchdogs.html'

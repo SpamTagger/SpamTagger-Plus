@@ -35,7 +35,7 @@ fi
 
 VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
-  VARDIR=/var/mailcleaner
+  VARDIR=/var/spamtagger
 fi
 
 # Ad-hoc way to parse out socket file name
@@ -103,7 +103,7 @@ do_start() {
   #	0 if daemon has been started
   #	1 if daemon was already running
   #	2 if daemon could not be started
-  export PYENV_ROOT="/var/mailcleaner/.pyenv"
+  export PYENV_ROOT="/var/spamtagger/.pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"
   if command -v pyenv 1>/dev/null 2>&1; then
     eval "$(pyenv init --path)"

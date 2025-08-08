@@ -1,18 +1,18 @@
 #!/bin/bash
 
-BACK=`pwd`
+BACK=$(pwd)
 
 if [ "$SRCDIR" = "" ]; then
-        SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
-        if [ "SRCDIR" = "" ]; then
-                SRCDIR=/var/mailcleaner
-        fi
+  SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+  if [ "SRCDIR" = "" ]; then
+    SRCDIR=/var/spamtagger
+  fi
 fi
 
 if [ "$USEDEBS" = "Y" ]; then
-  echo -n " installing snmp binaries package...";
-  dpkg -i $SRCDIR/install/debs/mc-snmp*.deb &> /dev/null
-  echo "done.";
+  echo -n " installing snmp binaries package..."
+  dpkg -i $SRCDIR/install/debs/mc-snmp*.deb &>/dev/null
+  echo "done."
   exit
 fi
 

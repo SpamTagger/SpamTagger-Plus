@@ -5,8 +5,8 @@ script_name_no_ext=${script_name%.*}
 # Timestamp => fichier unique et temps d'exécution
 timestamp=`date +%s`
 # Fichier PID et pour écrire le résultat
-PID_FILE="/var/mailcleaner/run/watchdog/$script_name_no_ext.pid"
-OUT_FILE="/var/mailcleaner/spool/watchdog/${script_name_no_ext}_$timestamp.out"
+PID_FILE="/var/spamtagger/run/watchdog/$script_name_no_ext.pid"
+OUT_FILE="/var/spamtagger/spool/watchdog/${script_name_no_ext}_$timestamp.out"
 
 # Fonction de gestion de la sortie du script
 # A appeler également en cas de succès
@@ -29,7 +29,7 @@ my_own_exit()
 
 #### MAIN
 #### Lorsque le module a trouvé une erreur, il est censé sortir avec my_own_exit "#ERREUR" (avec #ERREUR : chiffre : retour de la commande)
-NB_PROCESS=`grep "MySQL server has gone away" /var/mailcleaner/log/mailcleaner/summaries.log.0 | wc -l`
+NB_PROCESS=`grep "MySQL server has gone away" /var/spamtagger/log/mailcleaner/summaries.log.0 | wc -l`
 #if [[ $NB_PROCESS -ne 1 ]]; then
 if [[ $NB_PROCESS -ne 0 ]]; then
     echo "Error in summaries" > $OUT_FILE

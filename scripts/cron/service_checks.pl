@@ -3,14 +3,14 @@
 use strict;
 use warnings;
 
-use lib '/usr/mailcleaner/lib';
+use lib '/usr/spamtagger/lib';
 use ManageServices;
 
 my $manager = ManageServices->new( 'autoStart' => 1 ) || die "Failed to create object: $!\n";
 my $log = '/var/log/service_check.log';
-my $lock = '/var/mailcleaner/spool/tmp/service_check.lock';
-my $cron = '/var/mailcleaner/spool/tmp/mailcleaner_cron.lock';
-my $update = '/var/mailcleaner/spool/mailcleaner/updater4mc.status';
+my $lock = '/var/spamtagger/spool/tmp/service_check.lock';
+my $cron = '/var/spamtagger/spool/tmp/spamtagger_cron.lock';
+my $update = '/var/spamtagger/spool/spamtagger/updater4mc.status';
 my $date = getDate();
 my ($LOG, $LOCK);
 

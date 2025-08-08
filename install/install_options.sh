@@ -27,11 +27,11 @@
 #
 VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
 if [ "VARDIR" = "" ]; then
-  VARDIR=/var/mailcleaner
+  VARDIR=/var/spamtagger
 fi
 SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
 if [ "SRCDIR" = "" ]; then
-  SRCDIR=/var/mailcleaner
+  SRCDIR=/var/spamtagger
 fi
 MCVERSION=`cat /usr/mailcleaner/etc/mailcleaner/version.def | cut -c1-4`
 LOGFILE=/tmp/mc_install_options.log

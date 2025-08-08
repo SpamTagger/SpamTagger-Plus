@@ -22,7 +22,7 @@
 #
 #   This script will install pyenv, python 3.7.7 and MailCleaner library
 #
-VARDIR="/var/mailcleaner"
+VARDIR="/var/spamtagger"
 cd $VARDIR
 
 
@@ -31,7 +31,7 @@ then
  rm $VARDIR/log/mailcleaner/install_pyenv.log
 fi
 
-FREE_SPACE=$(df -k /var/mailcleaner | tail -1 |awk '{print $4}')
+FREE_SPACE=$(df -k /var/spamtagger | tail -1 |awk '{print $4}')
 
 if [ $FREE_SPACE -lt 600000 ]
 then 

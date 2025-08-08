@@ -152,12 +152,12 @@ sub get_ms_config
   $config{'__BLOCKUNENCRYPT__'} = $row{'block_unencrypt'};
   if ($row{'allow_passwd_archives'} eq 'yes')   {
         $config{'__ALLOWPWDARCHIVES__'} = 'yes';
-        open FH, '>', '/var/mailcleaner/spool/tmp/mailscanner/whitelist_password_archives';
+        open FH, '>', '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives';
         print FH "FromOrTo:\tdefault\tyes";
         close FH
   } else {
-        $config{'__ALLOWPWDARCHIVES__'} = '/var/mailcleaner/spool/tmp/mailscanner/whitelist_password_archives';
-        open FH, '>', '/var/mailcleaner/spool/tmp/mailscanner/whitelist_password_archives';
+        $config{'__ALLOWPWDARCHIVES__'} = '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives';
+        open FH, '>', '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives';
         if (defined($row{wh_passwd_archives})) {
                 my @wh_dom = split('\n', $row{wh_passwd_archives});
                 foreach my $wh_dom (@wh_dom) {

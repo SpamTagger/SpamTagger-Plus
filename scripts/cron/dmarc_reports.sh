@@ -1,10 +1,10 @@
 #!/bin/bash
 
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
@@ -16,7 +16,7 @@ fi
 echo "select hostname, password from master;" | $SRCDIR/bin/mc_mysql -s mc_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
 MHOST=$(cat /var/tmp/master.conf | cut -d':' -f1)
 MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
-ISMASTER=$(grep 'ISMASTER' /etc/mailcleaner.conf | cut -d ' ' -f3)
+ISMASTER=$(grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 SYSADMIN=$(echo "SELECT summary_from FROM system_conf;" | $SRCDIR/bin/mc_mysql -s mc_config | grep '\@')
 if [ "$SYSADMIN" != "" ]; then
@@ -30,13 +30,13 @@ if [ "$ISMASTER" == "Y" ] || [ "$ISMASTER" == "y" ]; then
   fi
   CURDIR=$(pwd)
   cd /tmp/dmarc_reports
-  echo "*****************************" >>$VARDIR/log/mailcleaner/dmarc_reporting.log
-  /opt/exim4/sbin/opendmarc-reports --dbhost=$MHOST --dbport=3306 --dbname=dmarc_reporting --dbuser=mailcleaner --dbpasswd=$MPASS --smtp-port 587 --verbose --verbose --interval=86400 $SYSADMIN 2>>$VARDIR/log/mailcleaner/dmarc_reporting.log
-  echo "**********" >>$VARDIR/log/mailcleaner/dmarc_reporting.log
-  echo "Expiring database..." >>$VARDIR/log/mailcleaner/dmarc_reporting.log
-  /opt/exim4/sbin/opendmarc-expire --dbhost=$MHOST --dbport=3306 --dbname=dmarc_reporting --dbuser=mailcleaner --dbpasswd=$MPASS --expire=180 --verbose 2 &>>$VARDIR/log/mailcleaner/dmarc_reporting.log
-  echo "Done expiring." >>$VARDIR/log/mailcleaner/dmarc_reporting.log
-  echo "*****************************" >>$VARDIR/log/mailcleaner/dmarc_reporting.log
+  echo "*****************************" >>$VARDIR/log/spamtagger/dmarc_reporting.log
+  /opt/exim4/sbin/opendmarc-reports --dbhost=$MHOST --dbport=3306 --dbname=dmarc_reporting --dbuser=spamtagger --dbpasswd=$MPASS --smtp-port 587 --verbose --verbose --interval=86400 $SYSADMIN 2>>$VARDIR/log/spamtagger/dmarc_reporting.log
+  echo "**********" >>$VARDIR/log/spamtagger/dmarc_reporting.log
+  echo "Expiring database..." >>$VARDIR/log/spamtagger/dmarc_reporting.log
+  /opt/exim4/sbin/opendmarc-expire --dbhost=$MHOST --dbport=3306 --dbname=dmarc_reporting --dbuser=spamtagger --dbpasswd=$MPASS --expire=180 --verbose 2 &>>$VARDIR/log/spamtagger/dmarc_reporting.log
+  echo "Done expiring." >>$VARDIR/log/spamtagger/dmarc_reporting.log
+  echo "*****************************" >>$VARDIR/log/spamtagger/dmarc_reporting.log
   cd $CURDIR
   echo "done."
 fi

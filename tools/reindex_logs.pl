@@ -34,7 +34,7 @@ use File::Path qw( rmtree );
 check_install( 'module' => 'PerlIO::gzip', 'version' => 0.18) || die "Reindexing requires the library PerlIO::gzip. Please install with:\n  apt-get install libperlio-gzip-perl\n\n";
 
 $| = 1;
-our $VAR = "/var/mailcleaner";
+our $VAR = "/var/spamtagger";
 
 # Define services with ownership UID, GID, init commands, and timestamp search patterns per file.
 # A handful of logs are incompatible with simple per-line searches, so they are excluded:
@@ -49,7 +49,7 @@ our $VAR = "/var/mailcleaner";
 		need to insert 'Send daily summaries:' at the start of each file '%Y-%m-%d',
 	'updater4mc.log'
 		starts with '%Y-%m-%d.* Launching Updater4MC'
-		ends with '>> Logfile present here: /var/mailcleaner/log/mailcleaner/updater4mc.log'
+		ends with '>> Logfile present here: /var/spamtagger/log/spamtagger/updater4mc.log'
 =cut
 my $cluid = getpwnam('clamav');
 my $clgid = getgrnam('clamav');

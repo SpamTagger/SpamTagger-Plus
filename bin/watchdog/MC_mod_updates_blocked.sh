@@ -5,8 +5,8 @@ script_name_no_ext=${script_name%.*}
 # Timestamp => fichier unique et temps d'exécution
 timestamp=`date +%s`
 # Fichier PID et pour écrire le résultat
-PID_FILE="/var/mailcleaner/run/watchdog/$script_name_no_ext.pid"
-OUT_FILE="/var/mailcleaner/spool/watchdog/${script_name_no_ext}_$timestamp.out"
+PID_FILE="/var/spamtagger/run/watchdog/$script_name_no_ext.pid"
+OUT_FILE="/var/spamtagger/spool/watchdog/${script_name_no_ext}_$timestamp.out"
 
 # Fonction de gestion de la sortie du script
 # A appeler également en cas de succès
@@ -31,7 +31,7 @@ exit;
 
 #### MAIN
 #### Lorsque le module a trouvé une erreur, il est censé sortir avec my_own_exit "#ERREUR" (avec #ERREUR : chiffre : retour de la commande)
-LOG_FILE="/var/mailcleaner/log/mailcleaner/updater4mc.log"
+LOG_FILE="/var/spamtagger/log/mailcleaner/updater4mc.log"
 LOG_MOD=`stat --format=%Y $LOG_FILE`
 ABANDONED=`grep "Abandoning update because Git tree " $LOG_FILE | tail -n 1`
 # Le jour dernier

@@ -32,7 +32,7 @@ if [ "$SRCDIR" = "" ]; then
 fi
 VARDIR=`grep 'VARDIR' $CONFFILE | cut -d ' ' -f3`
 if [ "$VARDIR" = "" ]; then
-    VARDIR="/var/mailcleaner"
+    VARDIR="/var/spamtagger"
 fi
 ISMASTER=$(grep 'ISMASTER' $CONFFILE | cut -d ' ' -f3)
 
@@ -72,7 +72,7 @@ function downloadDatas {
     fi
 
     # Temporary folder. The updates are made there and then copied to the destination folder if need be.
-    tmp_local_folder="/var/mailcleaner/tmp/fetch_files/${1}"
+    tmp_local_folder="/var/spamtagger/tmp/fetch_files/${1}"
     if [ ! -d ${tmp_local_folder} ]; then
         mkdir -p $tmp_local_folder
     fi
@@ -160,7 +160,7 @@ function downloadDatas {
 
     # Exit if the calling script didnt specify not to exit
     if [ "$6" != "noexit" ]; then
-	rm -f "/var/mailcleaner/spool/tmp/${FILE_NAME}"
+	rm -f "/var/spamtagger/spool/tmp/${FILE_NAME}"
         exit 0
     fi
 

@@ -1,7 +1,7 @@
-socketpath=/var/mailcleaner/run/newsld.sock
+socketpath=/var/spamtagger/run/newsld.sock
 max-children=11
-pidfile=/var/mailcleaner/run/newsld.pid
-syslog=/var/mailcleaner/log/mailscanner/newsld.log
+pidfile=/var/spamtagger/run/newsld.pid
+syslog=/var/spamtagger/log/mailscanner/newsld.log
 username=mailcleaner
 groupname=mailcleaner
 configpath=/usr/mailcleaner/share/newsld/siteconfig/

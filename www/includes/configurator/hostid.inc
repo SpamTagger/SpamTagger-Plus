@@ -42,7 +42,7 @@ if ('hostid.inc' == basename($_SERVER['SCRIPT_FILENAME']))
   	      if (!empty($_POST['hid'])) {
 	        if (preg_match('/^\d+$/', $_POST['hid'])) {
 		  exec("sudo /usr/mailcleaner/bin/change_hostid.sh ".$_POST['hid']." -f", $outputhid, $rethid);
-       		  touch('/var/mailcleaner/run/configurator/hostid');
+       		  touch('/var/spamtagger/run/configurator/hostid');
 ($rethid == 0) ? $rethid = "<span class='text-success'>MailCleaner ID changed</span>" : $rethid = "<span class='text-danger'>Failed to change MailCleaner ID</span>";
                   echo $rethid;
 	        } else {

@@ -25,7 +25,7 @@ CREATE TABLE system_conf (
    falseneg_to         varchar(200) NOT NULL DEFAULT "your_mail\@yourdomain",
    falsepos_to         varchar(200) NOT NULL DEFAULT "your_mail\@yourdomain",
    src_dir             varchar(255) NOT  NULL DEFAULT '/usr/spamtagger',
-   var_dir             varchar(255) NOT NULL DEFAULT '/var/mailcleaner',
+   var_dir             varchar(255) NOT NULL DEFAULT '/var/spamtagger',
    ad_server           varchar(80),
    ad_param            varchar(200),
    http_proxy          varchar(200),

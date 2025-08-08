@@ -13,11 +13,11 @@ require ReadConfig;
 require ConfigTemplate;
 
 our $initDir = '/usr/mailcleaner/etc/init.d';
-our $restartDir = '/var/mailcleaner/run';
+our $restartDir = '/var/spamtagger/run';
 our $logLevels = { 'error' => 0, 'info' => 1, 'debug' => 2 };
 
 our %defaultConfigs = (
-	'VARDIR'	=> '/var/mailcleaner',
+	'VARDIR'	=> '/var/spamtagger',
 	'SRCDIR'	=> '/usr/mailcleaner',
 	'debug'		=> 1,
 	'uid'		=> 0,

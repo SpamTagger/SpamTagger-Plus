@@ -23,7 +23,7 @@
 if ('welcome.inc' == basename($_SERVER['SCRIPT_FILENAME']))
   die ('Try again later.');
 
-shell_exec("mkdir /var/mailcleaner/run/configurator");
+shell_exec("mkdir /var/spamtagger/run/configurator");
 ?>
 <h2 class="text-center">Step: <?php echo $validStep['title'] ?></h2>
 <p>Welcome in this configuration wizard.</p>

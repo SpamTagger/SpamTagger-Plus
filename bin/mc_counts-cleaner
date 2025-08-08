@@ -97,8 +97,8 @@ if [ "$dfilter" == '' ]
     exit 1
 fi
 
-cd /var/mailcleaner/spool/mailcleaner/counts
-if [ "$PWD" == "/var/mailcleaner/spool/mailcleaner/counts" ]; then
+cd /var/spamtagger/spool/mailcleaner/counts
+if [ "$PWD" == "/var/spamtagger/spool/mailcleaner/counts" ]; then
   for i in `ls -d $dfilter 2>/dev/null`
     do
       for j in `ls $i 2>/dev/null |cut -d/ -f2 |grep "^$ufilter.*$"`

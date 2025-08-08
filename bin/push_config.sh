@@ -47,11 +47,11 @@ done
 
 SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
 if [ "SRCDIR" = "" ]; then
-  SRCDIR=/var/mailcleaner
+  SRCDIR=/var/spamtagger
 fi
 VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
 if [ "VARDIR" = "" ]; then
-  VARDIR=/var/mailcleaner
+  VARDIR=/var/spamtagger
 fi
 ISMASTER=`grep 'ISMASTER' /etc/mailcleaner.conf | cut -d ' ' -f3`
 CLIENTID=`grep 'CLIENTID' /etc/mailcleaner.conf | cut -d ' ' -f3`

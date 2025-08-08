@@ -41,7 +41,7 @@ if ('baseurl.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 	    if (isset($_POST['submit_baseurl'])) {
   	      if (!empty($_POST['burl'])) {
 		  exec("echo \"UPDATE httpd_config SET servername='".$_POST['burl']."';\" |/usr/mailcleaner/bin/mc_mysql -m mc_config", $outputburl, $retburl);
-     		  touch('/var/mailcleaner/run/configurator/baseurl');
+     		  touch('/var/spamtagger/run/configurator/baseurl');
           $_SESSION['burl'] = $_POST['burl'];
 		  ($retburl == 0) ? $retburl = "<span class='text-success'>MailCleaner Base URL changed</span>" : $retburl = "<span class='text-danger'>Failed to change MailCleaner Base URL</span>";
 		  echo $retburl;	          
