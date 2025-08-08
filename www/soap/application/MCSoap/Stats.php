@@ -39,7 +39,7 @@ class MCSoap_Stats
             $stats_id = md5(uniqid(mt_rand(), true));
     	}
     	
-        $cmd .= "> ".$mcconfig->getOption('VARDIR')."/run/mailcleaner/stats_search/".$stats_id." &";
+        $cmd .= "> ".$mcconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id." &";
         $res = `$cmd`;
 	`echo '$cmd' > /tmp/test.tmp`;
     	return array('search_id' => $stats_id, 'cmd' => $cmd) ;
@@ -62,7 +62,7 @@ class MCSoap_Stats
 		require_once('MailCleaner/Config.php');
     	$mcconfig = MailCleaner_Config::getInstance();
     	
-		$file = $mcconfig->getOption('VARDIR')."/run/mailcleaner/stats_search/".$stats_id;
+		$file = $mcconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id;
 		if (!file_exists($file)) {
 			return array('error' => 'no such results');
 		}
@@ -133,7 +133,7 @@ class MCSoap_Stats
 	    require_once('MailCleaner/Config.php');
     	$mcconfig = MailCleaner_Config::getInstance();
     	
-		$file = $mcconfig->getOption('VARDIR')."/run/mailcleaner/stats_search/".$stats_id;
+		$file = $mcconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id;
 		if (!file_exists($file)) {
 			return array('error' => 'no such results');
 		}

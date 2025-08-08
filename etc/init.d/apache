@@ -152,9 +152,9 @@ createStubStatus() {
   ## create stub status files
   hosts=$(echo "select hostname from slave" | $SRCDIR/bin/mc_mysql -s mc_config | sed '1d')
   for h in $hosts; do
-    file=$VARDIR/run/mailcleaner.$h.status
+    file=$VARDIR/run/spamtagger.$h.status
     if [ ! -f $file ]; then
-      cp $VARDIR/run/mailcleaner.127.0.0.1.status $file
+      cp $VARDIR/run/spamtagger.127.0.0.1.status $file
     fi
   done
 }

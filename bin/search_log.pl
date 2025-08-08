@@ -18,7 +18,7 @@ my $fakeids = 1;
 my $batchwithlog = 0;
 my $batchid = 0;
 my $config = ReadConfig::new();
-my $tmpdir = $config->getOption('VARDIR').'/run/mailcleaner/log_search/';
+my $tmpdir = $config->getOption('VARDIR').'/run/spamtagger/log_search/';
 
 my $MAXRESULTS = 10000000;
 
