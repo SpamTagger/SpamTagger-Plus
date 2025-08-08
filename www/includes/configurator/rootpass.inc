@@ -49,7 +49,7 @@ if ('rootpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 		  $cmdrp = escapeshellcmd($cmdrp);
 		  $cmdrp = str_replace('!', '\!', $cmdrp);
 	          exec($cmdrp, $outputrp, $retrp);
-		  touch('/var/mailcleaner/run/configurator/rootpass');
+		  touch('/var/spamtagger/run/configurator/rootpass');
 		  ($retrp == 0) ? $retrp = "<span class='text-success'>Root password changed</span>" : $retrp = "<span class='text-danger'>Failed to change Root password</span>";
 		  echo $retrp;
 	        } else {

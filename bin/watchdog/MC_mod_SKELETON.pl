@@ -11,8 +11,8 @@ $script_name_no_ext     =~ s/\.[^.]*$//;
 my $timestamp           = time();
 
 # Fichier PID et pour écrire le résultat 
-my $PID_FILE   = '/var/mailcleaner/run/watchdog/' . $script_name_no_ext . '.pid';
-my $OUT_FILE   = '/var/mailcleaner/spool/watchdog/' .$script_name_no_ext. '_' .$timestamp. '.out';
+my $PID_FILE   = '/var/spamtagger/run/watchdog/' . $script_name_no_ext . '.pid';
+my $OUT_FILE   = '/var/spamtagger/spool/watchdog/' .$script_name_no_ext. '_' .$timestamp. '.out';
 
 open my $file, '>', $OUT_FILE;
 

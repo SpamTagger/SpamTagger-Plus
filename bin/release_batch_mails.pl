@@ -134,7 +134,7 @@ unless (defined $args{from_domain} || defined $args{to_domain} || (defined $args
 my $VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`;
 chomp $VARDIR;
 if ( $VARDIR eq '') {
-  $VARDIR="/var/mailcleaner";
+  $VARDIR="/var/spamtagger";
 }
 
 my $SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`;

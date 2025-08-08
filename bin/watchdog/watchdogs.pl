@@ -10,8 +10,8 @@ my $mode                            = $ARGV[0] || '';
 
 use constant WATCHDOG_BIN           => '/usr/mailcleaner/bin/watchdog/';
 use constant WATCHDOG_CFG           => '/usr/mailcleaner/etc/watchdog/';
-use constant WATCHDOG_TMP           => '/var/mailcleaner/spool/watchdog/';
-use constant WATCHDOG_PID_FOLDER	=> '/var/mailcleaner/run/watchdog/';
+use constant WATCHDOG_TMP           => '/var/spamtagger/spool/watchdog/';
+use constant WATCHDOG_PID_FOLDER	=> '/var/spamtagger/run/watchdog/';
 
 my $time = time();
 my $WATCHDOG_OUTFILE		        = WATCHDOG_TMP . $script_name. '___' .$mode. '_' .$time. '.out';

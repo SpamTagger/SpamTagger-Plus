@@ -24,36 +24,35 @@
 #
 # see bootstrap/patchit/build.sh for embedding in to your own exec.sh:
 
-
 add_log() {
   # in order to work rsyslog should have a rule to filer
   # local1.info facilities
-  # ./bin/dump_exim_config.pl is dumping 
+  # ./bin/dump_exim_config.pl is dumping
   # /etc/rsyslog.d/mailcleaner.conf at midnight
   # we will use local4 not used by mailcleaner
   #logger -p local4.info -t exec "$1"
-  
+
   local logfile=/tmp/update_helper.log
-  if [[ ! -z "$VARDIR" ]] ; then
-   logfile=$VARDIR/log/mailcleaner/update2.log
+  if [[ ! -z "$VARDIR" ]]; then
+    logfile=$VARDIR/log/mailcleaner/update2.log
   fi
   local d=$(date "+%Y-%m-%d %H:%M:%S")
-	local file=""
-	local keep=true
-  if [[ -f "$1" ]] ; then
-		file=$1
-	elif [[ ("$1" == '-rm') && (-f "$2") ]] ; then
-		file=$2
-		keep=false
-	fi
-	
-	if [[ ! -z "$file" ]] ; then
-    sed "s/^/$d /" "$file" >> $logfile
-		if ! $keep ; then
-			rm $file
-		fi
+  local file=""
+  local keep=true
+  if [[ -f "$1" ]]; then
+    file=$1
+  elif [[ ("$1" == '-rm') && (-f "$2") ]]; then
+    file=$2
+    keep=false
+  fi
+
+  if [[ ! -z "$file" ]]; then
+    sed "s/^/$d /" "$file" >>$logfile
+    if ! $keep; then
+      rm $file
+    fi
   else
-    echo "$d $*" >> $logfile
+    echo "$d $*" >>$logfile
   fi
 }
 
@@ -61,7 +60,7 @@ scp_from_team() {
   # not used, see get_download instead
   CVSHOST='cvs.mailcleaner.net'
   scp="scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-  scp+=" mcscp@$CVSHOST:/$1 $2"   
+  scp+=" mcscp@$CVSHOST:/$1 $2"
   add_log "$scp"
   $scp
 }
@@ -79,7 +78,7 @@ get_download() {
   add_log "$wget"
   eval $wget
   # file exists and has a size greater than zero.
-  if [[ -s $tmp ]] ; then
+  if [[ -s $tmp ]]; then
     add_log "$1 downloaded saved to $tmp"
     echo $tmp
   else
@@ -90,7 +89,7 @@ get_download() {
 
 install_local4() {
   # install a local logger on local4.* to a local file
-  cat <<EOF > /etc/rsyslog.d/mc-updater.conf
+  cat <<EOF >/etc/rsyslog.d/mc-updater.conf
 local4.*   -/tmp/updater.local4.log
 &~
 # above disable duplicate
@@ -100,7 +99,7 @@ EOF
 
 myarch() {
   # retreive MC arch
-  if [[ $(arch) =~ _64$ ]] ; then 
+  if [[ $(arch) =~ _64$ ]]; then
     echo 64
   else
     echo 32
@@ -110,8 +109,8 @@ myarch() {
 mini_update_log() {
   # This mini log, is logging how many time the script is called.
   mclocallog=/tmp/testme.log
-  date >> $mclocallog
-  echo seen update >> $mclocallog
+  date >>$mclocallog
+  echo seen update >>$mclocallog
 }
 
 # not DRY: also in toolbox/lib/shell_base.sh
@@ -119,7 +118,7 @@ error() {
   # red bg, white fg, bold
   echo -e "\033[41;37;1m$1\033[0m"
   # when sourced from interactive shell doesn't exit
-  if [[ "$0" =~ ^-?bash$ ]] ; then
+  if [[ "$0" =~ ^-?bash$ ]]; then
     return 1
   else
     exit 1
@@ -131,8 +130,8 @@ end_patch() {
   local exit_code=$1
   local msg="$2"
 
-  if [[ -z "$LOCKFILE" ]] ; then
-    if [[ ! -z "$PATCHNUM" ]] ; then
+  if [[ -z "$LOCKFILE" ]]; then
+    if [[ ! -z "$PATCHNUM" ]]; then
       local LOCKFILE="/tmp/update_$PATCHNUM.lock"
     else
       echo "UNKWNOWN LOCKFILE"
@@ -141,13 +140,13 @@ end_patch() {
 
   [[ ! -z "$msg" ]] && echo "$msg"
 
-  if [[ -e "$LOCKFILE" ]] ; then
+  if [[ -e "$LOCKFILE" ]]; then
     # don't be verbose
     rm $LOCKFILE
   fi
 
   # when sourced from interactive shell doesn't exit
-  if [[ "$0" =~ ^-?bash$ ]] ; then
+  if [[ "$0" =~ ^-?bash$ ]]; then
     # http://www.unix.com/shell-programming-and-scripting/96920-quitting-bash-script-any-alternatives-exit.html
     # auto kill current script
     kill -SIGINT $$
@@ -157,7 +156,6 @@ end_patch() {
   fi
 }
 
-
 install_mc-file() {
   myarch=$(myarch)
   add_log "arch=$(arch) myarch=$myarch"
@@ -166,7 +164,7 @@ install_mc-file() {
 
   mytgz="$SRCDIR/install/tgz/mc-file-${myarch}.tgz"
 
-  [[ -f "$mytgz" ]]  || end_patch 1 "ARCHIVE NOT FOUND: $mytgz"
+  [[ -f "$mytgz" ]] || end_patch 1 "ARCHIVE NOT FOUND: $mytgz"
 
   # will install the tgz
   cd /opt
@@ -175,21 +173,21 @@ install_mc-file() {
   dest=$dest_base
   dest_failed=0
   # loop 2 times if needed to match existing patched file command
-  for testit in 1 2 ; do
-    if [[ -d $dest ]] ; then
+  for testit in 1 2; do
+    if [[ -d $dest ]]; then
       case $testit in
-      1) 
+      1)
         add_log "$dest already exists"
         dest=${dest_base}_$$
-      ;;
+        ;;
       2)
         add_log "2 times $dest also exists, giving up"
         dest_failed=1
-      ;;
+        ;;
       *)
         add_log "you are not supposed to be here: testit=$testit"
         end_patch 1 ABORT
-      ;;
+        ;;
       esac
     else
       add_log "ok destination dir found dest=$dest"
@@ -197,7 +195,7 @@ install_mc-file() {
     fi
   done
 
-  if [[ $dest_failed -eq 1 ]] ; then
+  if [[ $dest_failed -eq 1 ]]; then
     add_log "aborted"
     end_patch 1 ABORT
   fi
@@ -207,12 +205,12 @@ install_mc-file() {
   tar="tar -C $dest -xzf $mytgz"
   add_log "$tar"
   $tar
-  if [[ $dest_base != $dest ]] ; then
+  if [[ $dest_base != $dest ]]; then
     ## compare
-    if diff -r $dest_base $dest ; then
+    if diff -r $dest_base $dest; then
       rm -fr $dest
       add_log "mc-file already installed, skipped"
-    else 
+    else
       mv $dest_base $dest_base.old
       mv $dest $dest_base
       rm -rf $dest_base.old
@@ -222,7 +220,7 @@ install_mc-file() {
 
   mc_file=/opt/file/bin/mc2-file
 
-  if [[ -x $mc_file ]] ; then
+  if [[ -x $mc_file ]]; then
     ## install mc2-file in MailScanner #1492
     $SRCDIR/etc/init.d/mailscanner restart
     add_log "MailScanner restarted"
@@ -230,7 +228,7 @@ install_mc-file() {
     ms_config=$SRCDIR/etc/mailscanner/MailScanner.conf
     ttt=$(grep "$mc_file" $ms_config)
     add_log "greped '$ttt'"
-    if [[ -z "$ttt" ]] ; then
+    if [[ -z "$ttt" ]]; then
       add_log "not found in config file $ms_config"
       add_log "advanced failure, aborted"
       end_patch 1 ABORT
@@ -261,22 +259,22 @@ mc_mysqldump_master() {
 install_sql() {
   # send an SQL patch into master Database
   # nothing on node
-  if [[ ! -f "$1" ]] ; then
+  if [[ ! -f "$1" ]]; then
     add_log "file not found '$1'"
     end_patch 1 "SQL NOT FOUND"
   else
     local outtmp=/tmp/$$.mc_mysql
-    mc_mysql2 -f -vvv mc_config < "$1" > $outtmp 2>&1
+    mc_mysql2 -f -vvv mc_config <"$1" >$outtmp 2>&1
     add_log -rm $outtmp
     add_log "sql file sent ($?) '$1'"
   fi
 }
 
 backup_db() {
-  if [[ -z "$SRCDIR" ]] ; then
+  if [[ -z "$SRCDIR" ]]; then
     end_patch 1 "SRCDIR undefined"
   else
-    if [[ -z "$1" ]] ; then
+    if [[ -z "$1" ]]; then
       end_patch 1 "NO ARGUMENT backup_dir"
     else
       local backup_dir="/var/tmp/$1"
@@ -297,10 +295,10 @@ load_mailcleaner_conf() {
   fi
 
   source <(sed 's/ *= *\(.*\)/="\1"/' $mailcleaner_conf)
-  
+
   # force defaulf value if empty
   if [ "VARDIR" = "" ]; then
-    VARDIR=/var/mailcleaner
+    VARDIR=/var/spamtagger
   fi
 }
 
@@ -309,7 +307,7 @@ generate_my_cnf() {
   if [[ ! -z "$1" ]]; then
     my_cnf="$1"
   fi
-  cat <<EOF > $my_cnf
+  cat <<EOF >$my_cnf
 [client]
 user = mailcleaner
 password = $MYMAILCLEANERPWD
@@ -323,16 +321,16 @@ allow_eps() {
   # See: bug #1661, support #1564 #1654
   ## check eps patch
 
-	add_log "starting: allow_eps"
+  add_log "starting: allow_eps"
 
   local sql="select * from filetype where name = 'eps Postscript'"
   local out=/tmp/$$.allow_eps
-  mc_mysql2 --table -e "$sql" mc_config > $out
+  mc_mysql2 --table -e "$sql" mc_config >$out
 
   if [[ -s "$out" ]]; then
     add_log -rm $out
     add_log "allow_eps: alredy installed, exiting…"
-    return 
+    return
   fi
 
   rm $out
@@ -341,38 +339,38 @@ allow_eps() {
   local tmp=$(mktemp /tmp/patch_eps_filetype_XXX.sql)
   mc_mysqldump_master \
     --no-create-info --skip-add-drop-table --skip-extended-insert --compact \
-    mc_config filetype > $tmp
+    mc_config filetype >$tmp
 
   add_log "table filetype backuped in $tmp"
 
   # udpate position
-#  local maxid=$(mc_mysql2 -BN -e 'select max(id) from filetype' mc_config)
-#  local count=$(mc_mysql2 -BN -e 'select count(id) from filetype' mc_config)
-#  add_log "maxid=$maxid"
-#  if [[ $maxid -gt $count ]] ; then
-#    add_log "max $maxid > count $count : check database"
-#    sql="select * from filetype"
-#    mc_mysql2 --table -e "$sql" mc_config > $out
-#		add_log -rm $out
-#		add_log "abort patch"
-#    end_patch 1 "ERROR EPS DATABASE ID MISMATCH"
-#  fi
+  #  local maxid=$(mc_mysql2 -BN -e 'select max(id) from filetype' mc_config)
+  #  local count=$(mc_mysql2 -BN -e 'select count(id) from filetype' mc_config)
+  #  add_log "maxid=$maxid"
+  #  if [[ $maxid -gt $count ]] ; then
+  #    add_log "max $maxid > count $count : check database"
+  #    sql="select * from filetype"
+  #    mc_mysql2 --table -e "$sql" mc_config > $out
+  #		add_log -rm $out
+  #		add_log "abort patch"
+  #    end_patch 1 "ERROR EPS DATABASE ID MISMATCH"
+  #  fi
 
   # update shift position
 
   local pos=2
   sql="update filetype set id = id + 1 where id >= $pos order by id desc;"
-  mc_mysql2 -vvv -e "$sql" mc_config > $out
-	add_log -rm $out
+  mc_mysql2 -vvv -e "$sql" mc_config >$out
+  add_log -rm $out
 
   # check if $pos is free
   sql="select * from filetype where id = $pos"
-  mc_mysql2 --table -e "$sql" mc_config > $out
+  mc_mysql2 --table -e "$sql" mc_config >$out
 
-  if [[ -s $out ]] ; then
+  if [[ -s $out ]]; then
     add_log "update failed id $pos returned:"
-		add_log -rm $out
-		add_log "abort, exiting…"
+    add_log -rm $out
+    add_log "abort, exiting…"
     end_patch 1 "EPS DATABASE UPDATE FAILED"
   fi
 
@@ -383,24 +381,24 @@ allow_eps() {
   values
   ($pos, 'allow', 'EPS Binary File Postscript', 'eps Postscript', '.eps Postscript')"
 
-  mc_mysql2 -e "$sql" mc_config > $out
-	add_log -rm $out
+  mc_mysql2 -e "$sql" mc_config >$out
+  add_log -rm $out
 
   # reinject ordered dump
 
   local tmpdump=$(mktemp /tmp/dump_XXX.sql)
-  echo "truncate filetype;" > $tmpdump
+  echo "truncate filetype;" >$tmpdump
   mc_mysqldump_master \
     --no-create-info --skip-add-drop-table --skip-extended-insert --compact \
     --order-by-primary \
-    mc_config filetype >> $tmpdump
+    mc_config filetype >>$tmpdump
 
   add_log "reloading dump ordered $tmpdump"
-  mc_mysql2 mc_config < $tmpdump
+  mc_mysql2 mc_config <$tmpdump
 
-  # recap 
+  # recap
   sql="select * from filetype"
-  mc_mysql2 --table -e "$sql" mc_config > $out
+  mc_mysql2 --table -e "$sql" mc_config >$out
 
   $SRCDIR/etc/init.d/mailscanner restart
 
@@ -410,7 +408,7 @@ allow_eps() {
 
   local regexp="^$pos:"
 
-  if [[ $txt =~ $regexp ]] ; then
+  if [[ $txt =~ $regexp ]]; then
     add_log "DONE EPS OK"
   else
     add_log "ordering error in $conf, expecting at pos $pos, got $txt"

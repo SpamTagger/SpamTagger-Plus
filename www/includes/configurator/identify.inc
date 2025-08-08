@@ -50,7 +50,7 @@ if ('identify.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 	        if ($cryptedidentpass == $actualadminpass) {
 	          echo "<span class='text-success'>Identification successful. Click on Next !</span>";
 		  $_SESSION['identok'] = True;
-		  touch('/var/mailcleaner/run/configurator/identify');
+		  touch('/var/spamtagger/run/configurator/identify');
 	        } else {
 	          echo "<span class='text-danger'>Identification failed !</span>";
               $_SESSION['identok'] = False;

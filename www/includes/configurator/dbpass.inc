@@ -105,7 +105,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 		      $sth = $slave->prepare("STOP SLAVE; CHANGE MASTER TO MASTER_PASSWORD=:masterpass; START SLAVE;");
                       $retdbreplic = $sth->execute(array(':masterpass' => $_POST['newpassdb'])) == true ? 0 : 1;
 
-                      touch('/var/mailcleaner/run/configurator/dbpass');
+                      touch('/var/spamtagger/run/configurator/dbpass');
                 } else {
                       $retdb1 = $retdbconf = $retdbreplic = $retdbmaster = $retdbslave = 1;
 		      for($i = 1; $i <= 10; $i++)

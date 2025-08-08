@@ -9,8 +9,8 @@ my $script_name_no_ext  = $script_name;
 $script_name_no_ext     =~ s/\.[^.]*$//;
 my $timestamp           = time();
 
-my $PID_FILE   = '/var/mailcleaner/run/watchdog/' . $script_name_no_ext . '.pid';
-my $OUT_FILE   = '/var/mailcleaner/spool/watchdog/' .$script_name_no_ext. '_' .$timestamp. '.out';
+my $PID_FILE   = '/var/spamtagger/run/watchdog/' . $script_name_no_ext . '.pid';
+my $OUT_FILE   = '/var/spamtagger/spool/watchdog/' .$script_name_no_ext. '_' .$timestamp. '.out';
 
 open my $file, '>', $OUT_FILE;
 
@@ -31,17 +31,17 @@ sub my_own_exit {
     exit($exit_code);
 }
 
-opendir (my $dir, '/var/mailcleaner/spool/tmp/mailcleaner/dkim/');
+opendir (my $dir, '/var/spamtagger/spool/tmp/mailcleaner/dkim/');
 my @short;
 my @invalid;
 while (my $key = readdir($dir)) {
-    if ($key eq 'default.pkey' && -s '/var/mailcleaner/spool/tmp/mailcleaner/dkim/'.$key <= 1) {
+    if ($key eq 'default.pkey' && -s '/var/spamtagger/spool/tmp/mailcleaner/dkim/'.$key <= 1) {
         next;
     }
     if ($key =~ m/^\.+$/) {
         next;
     }
-    my $length = `openssl rsa -in /var/mailcleaner/spool/tmp/mailcleaner/dkim/$key -noout -text 2> /dev/null | grep 'Private-Key:'` || 'invalid';
+    my $length = `openssl rsa -in /var/spamtagger/spool/tmp/mailcleaner/dkim/$key -noout -text 2> /dev/null | grep 'Private-Key:'` || 'invalid';
     chomp($length);
     $length =~ s/Private-Key: \((\d+) bit\)/$1/;
     if ($length =~ m/^\d+$/) {

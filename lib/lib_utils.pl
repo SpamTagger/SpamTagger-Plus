@@ -53,9 +53,9 @@ sub create_lockfile {
 
         # Creating full path for this file
         if ( ! defined($path) ) {
-                $path = '/var/mailcleaner/spool/tmp/';
+                $path = '/var/spamtagger/spool/tmp/';
         } elsif ( $path !~ /^\// ) {
-                $path = '/var/mailcleaner/spool/tmp/' . $path;
+                $path = '/var/spamtagger/spool/tmp/' . $path;
         }
 
         $path .= '/' if ($path  !~ /\/$/);
@@ -100,9 +100,9 @@ sub remove_lockfile {
 
         # Creating full path for this file
         if ( ! defined($path) ) {
-                $path = '/var/mailcleaner/spool/tmp/';
+                $path = '/var/spamtagger/spool/tmp/';
         } elsif ( $path !~ /^\// ) {
-                $path = '/var/mailcleaner/spool/tmp/' . $path;
+                $path = '/var/spamtagger/spool/tmp/' . $path;
         }
 
         $path .= '/' if ($path  !~ /\/$/);

@@ -29,7 +29,7 @@ use DBI();
 
 my %config = readConfig("/etc/mailcleaner.conf");
 
-my $file = '/var/mailcleaner/spool/tmp/mailscanner/whitelist_HTML';
+my $file = '/var/spamtagger/spool/tmp/mailscanner/whitelist_HTML';
 unlink($file);
 
 do_htmls_wl();

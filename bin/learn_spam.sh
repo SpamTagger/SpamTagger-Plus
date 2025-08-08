@@ -26,7 +26,7 @@
 
 SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
 if [ "SRCDIR" = "" ]; then
-  SRCDIR=/var/mailcleaner
+  SRCDIR=/var/spamtagger
 fi
 
 if [ "$1" = "" ]; then

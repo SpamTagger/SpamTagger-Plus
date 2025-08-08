@@ -27,7 +27,7 @@ use strict;
 use DBI;
 use LWP::UserAgent;
 use Getopt::Std;
-require '/usr/mailcleaner/lib/lib_utils.pl';
+require '/usr/spamtagger/lib/lib_utils.pl';
 
 my $cron_occurence=15;  # in minutes..
 my $itsmidnight=0;
@@ -43,10 +43,10 @@ my $has_ipc_run = eval
 	1;
 };
 
-my %config = readConfig("/etc/mailcleaner.conf");
-my $lockfile = 'mailcleaner_cron.lock';
+my %config = readConfig("/etc/spamtagger.conf");
+my $lockfile = 'spamtagger_cron.lock';
 
-# Anti-breakdown for MailCleaner services
+# Anti-breakdown for SpamTagger services
 if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1") {
 	if ($has_ipc_run) {
 		IPC::Run::run([$config{'SRCDIR'}."/scripts/cron/anti-breakdown.pl"], "2>&1", ">/dev/null");
@@ -110,7 +110,7 @@ unless ( -e "$config{'VARDIR'}/run/fail2ban.disabled" ) {
 ###########################
 system("$config{'SRCDIR'}/bin/resync_db.sh", "-C");
 # Sync spam tables
-if (open(my $fh, '>>', "$config{'VARDIR'}/log/mailcleaner/spam_sync.log")) {
+if (open(my $fh, '>>', "$config{'VARDIR'}/log/spamtagger/spam_sync.log")) {
   print $fh `$config{'SRCDIR'}/bin/sync_spams.pl`;
   close($fh);
 }
@@ -122,7 +122,7 @@ if (open(my $fh, '>>', "$config{'VARDIR'}/log/mailcleaner/spam_sync.log")) {
 # but in future we may think of different times for daily/weekly or monthly jobs
 
 my $slave_dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
-                                        "mailcleaner","$config{'MYMAILCLEANERPWD'}", {RaiseError => 0, PrintError => 1} );
+                                        "spamtagger","$config{'MYSPAMTAGGERPWD'}", {RaiseError => 0, PrintError => 1} );
 if (!$slave_dbh) {
   printf ("ERROR: no slave database found on this system ! \n");
   ## try to properly kill all databases
@@ -175,7 +175,7 @@ if (defined $slave_dbh) {
 # Skip minute/hourly tasks if lockfile exists
 #############################################
 my $skip = 0;
-my $rc = create_lockfile($lockfile, undef, time+15*60, 'mailcleaner_cron');
+my $rc = create_lockfile($lockfile, undef, time+15*60, 'spamtagger_cron');
 if ($rc==0) {
   print "Recent Cron already running. Continuing with high-priority tasks only.\n";
   $skip = 1;
@@ -356,7 +356,7 @@ unless ($skip) {
     if (my $pid_syncspam = fork) {
       push(@wait,$pid_syncspam);
     } elsif (defined $pid_syncspam) {
-      if (open(my $fh, '>>', "$config{'VARDIR'}/log/mailcleaner/spam_sync.log")) {
+      if (open(my $fh, '>>', "$config{'VARDIR'}/log/spamtagger/spam_sync.log")) {
         print $fh `$config{'SRCDIR'}/bin/resync_spams.pl`;
         print $fh "done syncing spams.\n";
         close($fh);
@@ -555,7 +555,7 @@ if ($itsmidnight) {
   ##################################
   print "getting the last conf for autoconf...\n";
   if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && defined($config{'ISMASTER'}) && $config{'ISMASTER'} eq "Y") {
-	if ( -e $config{'VARDIR'}."/spool/mailcleaner/mc-autoconf"  && $mcDataServicesAvailable) {
+	if ( -e $config{'VARDIR'}."/spool/spamtagger/mc-autoconf"  && $mcDataServicesAvailable) {
 		if ($has_ipc_run) {
 			IPC::Run::run([$config{'SRCDIR'}."/bin/fetch_autoconf.sh"], "2>&1", ">/dev/null");
 		} else {
@@ -581,15 +581,15 @@ if ($itsmidnight) {
   #######################################
   ## check for MailCleaner binary
   #######################################
-  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && -e $config{'VARDIR'}."/run/mailcleaner.binary") {
+  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && -e $config{'VARDIR'}."/run/spamtagger.binary") {
     if ($has_ipc_run) {
-      IPC::Run::run(["cat", $config{'VARDIR'}."/run/mailcleaner.binary"], "|", ["xargs", $config{'SRCDIR'}."/etc/exim/mc_binary/mailcleaner-binary"], "2>&1", ">/dev/null");
-      IPC::Run::run(["rm", "-rf", $config{'VARDIR'}."/run/mailcleaner.binary"], "2>&1", ">/dev/null");
-      IPC::Run::run(["touch", $config{'VARDIR'}."/run/mailcleaner.rn"], "2>&1", ">/dev/null");
+      IPC::Run::run(["cat", $config{'VARDIR'}."/run/spamtagger.binary"], "|", ["xargs", $config{'SRCDIR'}."/etc/exim/mc_binary/spamtagger-binary"], "2>&1", ">/dev/null");
+      IPC::Run::run(["rm", "-rf", $config{'VARDIR'}."/run/spamtagger.binary"], "2>&1", ">/dev/null");
+      IPC::Run::run(["touch", $config{'VARDIR'}."/run/spamtagger.rn"], "2>&1", ">/dev/null");
     } else {
-      system("cat $config{'VARDIR'}/run/mailcleaner.binary | xargs $config{'SRCDIR'}/etc/exim/mc_binary/mailcleaner-binary 2>&1 >/dev/null");
-      system("rm -rf $config{'VARDIR'}/run/mailcleaner.binary 2>&1 >/dev/null");
-      system("touch $config{'VARDIR'}/run/mailcleaner.rn 2>&1 >/dev/null");
+      system("cat $config{'VARDIR'}/run/spamtagger.binary | xargs $config{'SRCDIR'}/etc/exim/mc_binary/spamtagger-binary 2>&1 >/dev/null");
+      system("rm -rf $config{'VARDIR'}/run/spamtagger.binary 2>&1 >/dev/null");
+      system("touch $config{'VARDIR'}/run/spamtagger.rn 2>&1 >/dev/null");
     }
   }
 
@@ -618,7 +618,7 @@ if ($itstime) {
     print "sending watchdog report to support address, if applicable...\n";
     my $date = `date '+%Y%m%d'`;
     chomp($date);
-    if (open(my $fh, '>>', $config{'VARDIR'}."/log/mailcleaner/watchdogs.log")) {
+    if (open(my $fh, '>>', $config{'VARDIR'}."/log/spamtagger/watchdogs.log")) {
       print $fh "Sending watchdog alerts:\n";
       print $fh `$config{'SRCDIR'}/bin/send_watchdogs.pl`;
       print $fh "done watchdog report.\n";
@@ -636,7 +636,7 @@ if ($itstime) {
     print "sending daily summaries...\n";
     my $date = `date '+%Y%m%d'`;
     chomp($date);
-    if (open(my $fh, '>>', $config{'VARDIR'}."/log/mailcleaner/summaries.log")) {
+    if (open(my $fh, '>>', $config{'VARDIR'}."/log/spamtagger/summaries.log")) {
       print $fh "Sending daily summaries:\n";
       print $fh `$config{'SRCDIR'}/bin/send_summary.pl -a 3 1`;
       print $fh "done daily summaries.\n";
@@ -664,7 +664,7 @@ if ($itsweekday) {
     print "sending weekly summaries...\n";
     my $date = `date '+%Y%m%d'`;
     chomp($date);
-    if (open(my $fh, '>>', $config{'VARDIR'}."/log/mailcleaner/summaries.log")) {
+    if (open(my $fh, '>>', $config{'VARDIR'}."/log/spamtagger/summaries.log")) {
       print $fh "Sending weekly summaries:\n";
       print $fh `$config{'SRCDIR'}/bin/send_summary.pl -a 2 7`;
       print $fh "done weekly summaries.\n";
@@ -692,7 +692,7 @@ if ($itsmonthday) {
     print "sending monthly summaries...\n";
     my $date = `date '+%Y%m%d'`;
     chomp($date);
-    if (open(my $fh, '>>', $config{'VARDIR'}."/log/mailcleaner/summaries.log")) {
+    if (open(my $fh, '>>', $config{'VARDIR'}."/log/spamtagger/summaries.log")) {
       print $fh "Sending monthly summaries:\n";
       print $fh `$config{'SRCDIR'}/bin/send_summary.pl -a 1 31`;
       print $fh "done monthly summaries.\n";
@@ -707,13 +707,13 @@ if ($itsmonthday) {
 # MC restart         #
 ######################
 ######################
-if ( -e $config{'VARDIR'}."/run/mailcleaner.rn") {
+if ( -e $config{'VARDIR'}."/run/spamtagger.rn") {
   if ($has_ipc_run) {
-    IPC::Run::run([$config{'SRCDIR'}."/etc/init.d/mailcleaner", "restart"], "2>&1", ">/dev/null");
-    IPC::Run::run(["rm", $config{'VARDIR'}."/run/mailcleaner.rn"], "2>&1", ">/dev/null");
+    IPC::Run::run([$config{'SRCDIR'}."/etc/init.d/spamtagger", "restart"], "2>&1", ">/dev/null");
+    IPC::Run::run(["rm", $config{'VARDIR'}."/run/spamtagger.rn"], "2>&1", ">/dev/null");
   } else {
-    system($config{'SRCDIR'}."/etc/init.d/mailcleaner restart 2>&1 >/dev/null");
-    system("rm $config{'VARDIR'}/run/mailcleaner.rn 2>&1 >/dev/null");
+    system($config{'SRCDIR'}."/etc/init.d/spamtagger restart 2>&1 >/dev/null");
+    system("rm $config{'VARDIR'}/run/spamtagger.rn 2>&1 >/dev/null");
   }
 }
 

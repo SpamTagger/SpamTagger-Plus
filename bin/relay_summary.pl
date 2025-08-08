@@ -27,7 +27,7 @@ use strict;
 use warnings;
 use Module::Load::Conditional qw| check_install |;
 
-my $VAR = "/var/mailcleaner";
+my $VAR = "/var/spamtagger";
 my $domains_list = "$VAR/spool/tmp/mailcleaner/domains.list";
 
 sub usage {

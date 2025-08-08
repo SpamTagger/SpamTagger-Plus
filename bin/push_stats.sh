@@ -18,9 +18,8 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-usage()
-{
-  cat << EOF
+usage() {
+  cat <<EOF
 usage: $0 options
 
 This script will push statistics
@@ -33,16 +32,15 @@ EOF
 
 randomize=false
 
-while getopts ":r" OPTION
-do
+while getopts ":r" OPTION; do
   case $OPTION in
-    r)
-       randomize=true
-       ;;
-    ?)
-       usage
-       exit
-       ;;
+  r)
+    randomize=true
+    ;;
+  ?)
+    usage
+    exit
+    ;;
   esac
 done
 
@@ -50,23 +48,23 @@ days=1
 shopt -s extglob
 for OPTION in "$@"; do
   case $OPTION in
-    +([0-9]))
-       if [ ! $days ]; then
-         echo Excess argument $OPTION days already $days
-         usage
-       fi
-       days=$OPTION
-       ;;
+  +([0-9]))
+    if [ ! $days ]; then
+      echo Excess argument $OPTION days already $days
+      usage
+    fi
+    days=$OPTION
+    ;;
   esac
 done
 
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
-  SRCDIR=/var/mailcleaner
+  SRCDIR=/usr/spamtagger
 fi
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
-  VARDIR=/var/mailcleaner
+  VARDIR=/var/spamtagger
 fi
 
 DOMAINFILE=$VARDIR/spool/tmp/mailcleaner/domains.list
@@ -79,25 +77,25 @@ FILE_NAME=$(basename -- "$0")
 FILE_NAME="${FILE_NAME%.*}"
 ret=$(createLockFile "$FILE_NAME")
 if [[ "$ret" -eq "1" ]]; then
-        exit 0
+  exit 0
 fi
 
-if $randomize ; then
+if $randomize; then
   sleep_time=$(($RANDOM * $(($MAXSLEEPTIME - $MINSLEEPTIME)) / 32767 + $MINSLEEPTIME))
   sleep $sleep_time
 fi
 
-END=$(($days-1))
-echo "_global:"`$SRCDIR/bin/get_stats.pl '*' -$days +$END | grep '_global' | cut -d':' -f2` > $STATFILE
-for dom in `grep -v '*' $DOMAINFILE | cut -d':' -f1`; do
-  echo -n $dom":" >> $STATFILE
-  echo `$SRCDIR/bin/get_stats.pl $dom -$days +$END ` >> $STATFILE
+END=$(($days - 1))
+echo "_global:"$($SRCDIR/bin/get_stats.pl '*' -$days +$END | grep '_global' | cut -d':' -f2) >$STATFILE
+for dom in $(grep -v '*' $DOMAINFILE | cut -d':' -f1); do
+  echo -n $dom":" >>$STATFILE
+  echo $($SRCDIR/bin/get_stats.pl $dom -$days +$END) >>$STATFILE
 done
 
-CLIENTID=`grep 'CLIENTID' /etc/mailcleaner.conf | cut -d ' ' -f3`
-HOSTID=`grep 'HOSTID' /etc/mailcleaner.conf | cut -d ' ' -f3`
+CLIENTID=$(grep 'CLIENTID' /etc/mailcleaner.conf | cut -d ' ' -f3)
+HOSTID=$(grep 'HOSTID' /etc/mailcleaner.conf | cut -d ' ' -f3)
 
-DATE=`date --date "now -1 day" +%Y%m%d`
+DATE=$(date --date "now -1 day" +%Y%m%d)
 chmod g+w $STATFILE
 scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $STATFILE mcscp@team01.mailcleaner.net:/upload/stats/$CLIENTID-$HOSTID-$DATE.txt >/dev/null 2>&1
 

@@ -32,7 +32,7 @@ if [ "SRCDIR" = "" ]; then
 fi
 VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
-  VARDIR=/var/mailcleaner
+  VARDIR=/var/spamtagger
 fi
 
 MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3)
@@ -255,5 +255,5 @@ if [ -d /var/log/eset/efs/ods ]; then
 fi
 
 # Clean old searches
-find /var/mailcleaner/run/mailcleaner/log_search -type f -mtime +30 -delete >/dev/null 2>&1
-find /var/mailcleaner/run/mailcleaner/stats_search -type f -mtime +30 -delete >/dev/null 2>&1
+find /var/spamtagger/run/spamtagger/log_search -type f -mtime +30 -delete >/dev/null 2>&1
+find /var/spamtagger/run/spamtagger/stats_search -type f -mtime +30 -delete >/dev/null 2>&1

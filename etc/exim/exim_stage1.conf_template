@@ -175,7 +175,7 @@ dmarc_tld_file = SRCDIR/etc/rbls/effective_tlds.txt
 
 __INCLUDE__ stage1/ldap_callout
 
-STATSADD = ${readsocket{/var/mailcleaner/run/statsdaemon.sock}{ADD $acl_c8 1}{2s}{\n}{ \
+STATSADD = ${readsocket{/var/spamtagger/run/statsdaemon.sock}{ADD $acl_c8 1}{2s}{\n}{ \
                ${run,preexpand{/bin/sh -c 'echo "ADD $acl_c8 1" >> /tmp/missed_stats.${tod_logfile}'}{}{command failed}} \
            }}
 perl_startup = do '__SRCDIR__/etc/exim/stage1_scripts.pl'
@@ -846,7 +846,7 @@ __FI__
   ## Block .js and .jse in attachments and in zip/rar
   deny	message = Detected forbidden filetype (Security reasons).
 	log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-	condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-jsinzip}{true}{false}}
+	condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-jsinzip}{true}{false}}
 	condition = ${if match{$mime_filename}{\N(?i)\.(zip|rar)$\N}}
 	decode = default
 	condition = ${if match{${run,preexpand{/usr/bin/unzip -l \
@@ -859,7 +859,7 @@ __FI__
 
   deny	message = Detected forbidden filetype (Security reasons).
 	log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-	condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-jsinzip}{true}{false}}
+	condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-jsinzip}{true}{false}}
 	condition = ${if match{$mime_filename}{\N(?i)\.(rar|zip)$\N}}
 	decode = default
 	condition = ${if match{${run,preexpand{/usr/bin/rar lb \
@@ -872,7 +872,7 @@ __FI__
 
   deny message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-        condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-jsinzip}{true}{false}}
+        condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-jsinzip}{true}{false}}
         condition = ${if match{$mime_filename}{\N(?i)\.(js|jse)$\N}}
         set acl_c8    = smtp:relayed:virus
         set acl_c9    = STATSADD
@@ -882,7 +882,7 @@ __FI__
   ## Block .docm and .dotm in attachments and in zip/rar
   deny  message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-        condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-docm}{true}{false}}
+        condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-docm}{true}{false}}
 	condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/mailcleaner/domains_to_prevent_docm.list}}
         condition = ${if match{$mime_filename}{\N(?i)\.(zip|rar)$\N}}
         decode = default
@@ -896,7 +896,7 @@ __FI__
 
   deny  message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-        condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-docm}{true}{false}}
+        condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-docm}{true}{false}}
 	condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/mailcleaner/domains_to_prevent_docm.list}}
         condition = ${if match{$mime_filename}{\N(?i)\.(rar|zip)$\N}}
         decode = default
@@ -910,7 +910,7 @@ __FI__
 
   deny message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-        condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-docm}{true}{false}}
+        condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-docm}{true}{false}}
 	condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/mailcleaner/domains_to_prevent_docm.list}}
         condition = ${if match{$mime_filename}{\N(?i)\.(docm|dotm)$\N}}
         set acl_c8    = smtp:relayed:virus
@@ -921,7 +921,7 @@ __FI__
   ## Block .wsf in attachments and in zip/rar
   deny  message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-        condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-wsf}{true}{false}}
+        condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-wsf}{true}{false}}
         condition = ${if match{$mime_filename}{\N(?i)\.(zip|rar)$\N}}
         decode = default
         condition = ${if match{${run,preexpand{/usr/bin/unzip -l \
@@ -934,7 +934,7 @@ __FI__
 
   deny  message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-        condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-wsf}{true}{false}}
+        condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-wsf}{true}{false}}
         condition = ${if match{$mime_filename}{\N(?i)\.(rar|zip)$\N}}
         decode = default
         condition = ${if match{${run,preexpand{/usr/bin/rar lb \
@@ -947,7 +947,7 @@ __FI__
 
   deny message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-        condition = ${if exists{/var/mailcleaner/spool/mailcleaner/mc-experimental-wsf}{true}{false}}
+        condition = ${if exists{/var/spamtagger/spool/mailcleaner/mc-experimental-wsf}{true}{false}}
         condition = ${if match{$mime_filename}{\N(?i)\.(wsf)$\N}}
         set acl_c8    = smtp:relayed:virus
         set acl_c9    = STATSADD

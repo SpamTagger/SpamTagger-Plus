@@ -6,7 +6,7 @@ if [ "SRCDIR" = "" ]; then
 fi
 VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
-  VARDIR=/var/mailcleaner
+  VARDIR=/var/spamtagger
 fi
 MYMAILCLEANERPWD=$(grep -e '^MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3)
 HTTPPROXY=$(grep -e '^HTTPPROXY' /etc/mailcleaner.conf | cut -d ' ' -f3)

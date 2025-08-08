@@ -51,7 +51,7 @@ class SystemConfig extends PrefHandler {
      * Path to the Mailcleaner spool directory (given during installation process)
      * @var string
      */
-    var $VARDIR_ = '/var/mailcleaner';
+    var $VARDIR_ = '/var/spamtagger';
     /**
      * Define if this host is a master or not
      * @var  number

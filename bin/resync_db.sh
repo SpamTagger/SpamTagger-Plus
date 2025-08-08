@@ -29,18 +29,18 @@ function check_status() {
   echo "Checking slave status..."
 
   STATUS=$(echo 'show slave status\G' | /usr/mailcleaner/bin/mc_mysql -s)
-  if grep -vq "Slave_SQL_Running: Yes" <<< $(echo $STATUS); then
+  if grep -vq "Slave_SQL_Running: Yes" <<<$(echo $STATUS); then
     echo "Slave_SQL_Running failed"
     RUN=1
-  elif grep -vq "Slave_IO_Running: Yes" <<< $(echo $STATUS); then
+  elif grep -vq "Slave_IO_Running: Yes" <<<$(echo $STATUS); then
     echo "Slave_IO_Running failed"
     RUN=1
   fi
 }
 
-LOGDIR="/var/mailcleaner/log/mailcleaner/resync"
-FAILFILE='/var/mailcleaner/spool/tmp/resync_db'
-LOCKFILE='/var/mailcleaner/spool/tmp/resync_db.lock'
+LOGDIR="/var/spamtagger/log/spamtagger/resync"
+FAILFILE='/var/spamtagger/spool/tmp/resync_db'
+LOCKFILE='/var/spamtagger/spool/tmp/resync_db.lock'
 MHOST=''
 MPASS=''
 
@@ -56,7 +56,7 @@ for var in "$@"; do
     exec 2>"/dev/null"
     # If failed on previous cron run, this file will exist with a count of failures
     if [ -e $FAILFILE ]; then
-      if test `find $FAILFILE -mmin +59`; then
+      if test $(find $FAILFILE -mmin +59); then
         echo "Last try is more than 1 hours ago. Trying to fix"
         rm $FAILFILE
         RUN=1
@@ -84,7 +84,7 @@ usage: $0 [-F] [MHOST MPASS]
 done
 
 if [ -e $LOCKFILE ]; then
-  if test `find $LOCKFILE -mmin +15`; then
+  if test $(find $LOCKFILE -mmin +15); then
     echo "Last try is more than 15 hours ago. Removing $LOCKFILE."
     rm $LOCKFILE
   else
@@ -93,13 +93,13 @@ if [ -e $LOCKFILE ]; then
   fi
 fi
 
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
-  VARDIR=/var/mailcleaner
+  VARDIR=/var/spamtagger
 fi
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
-  SRCDIR=/var/mailcleaner
+  SRCDIR=/var/spamtagger
 fi
 
 echo "starting slave db..."
@@ -108,7 +108,7 @@ sleep 5
 
 check_status
 if [[ $RUN != 1 ]]; then
-  echo "DBs are already in sync. Run with -F to force resync anyways." 
+  echo "DBs are already in sync. Run with -F to force resync anyways."
   exit
 else
   # Clear RUN as it will be used for the post-sync test result as well
@@ -118,54 +118,54 @@ fi
 
 # Resync
 
-MYMAILCLEANERPWD=`grep 'MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3`
-echo "select hostname, password from master;" | $SRCDIR/bin/mc_mysql -s mc_config | grep -v 'password' | tr -t '[:blank:]' ':' > /var/tmp/master.conf
+MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3)
+echo "select hostname, password from master;" | $SRCDIR/bin/mc_mysql -s mc_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
 
 if [ "$MHOST" != "" ]; then
   export MHOST
-else 
-  export MHOST=`cat /var/tmp/master.conf | cut -d':' -f1`
+else
+  export MHOST=$(cat /var/tmp/master.conf | cut -d':' -f1)
 fi
 if [ "$MPASS" != "" ]; then
   export MPASS
 else
-  export MPASS=`cat /var/tmp/master.conf | cut -d':' -f2`
+  export MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
 fi
 
-/opt/mysql5/bin/mysqldump -S$VARDIR/run/mysql_slave/mysqld.sock -umailcleaner -p$MYMAILCLEANERPWD mc_config update_patch > /var/tmp/updates.sql
+/opt/mysql5/bin/mysqldump -S$VARDIR/run/mysql_slave/mysqld.sock -umailcleaner -p$MYMAILCLEANERPWD mc_config update_patch >/var/tmp/updates.sql
 
-/opt/mysql5/bin/mysqldump -h $MHOST -umailcleaner -p$MPASS --master-data mc_config > /var/tmp/master.sql
-$SRCDIR/etc/init.d/mysql_slave stop 
+/opt/mysql5/bin/mysqldump -h $MHOST -umailcleaner -p$MPASS --master-data mc_config >/var/tmp/master.sql
+$SRCDIR/etc/init.d/mysql_slave stop
 sleep 2
-rm $VARDIR/spool/mysql_slave/master.info  >/dev/null 2>&1
-rm $VARDIR/spool/mysql_slave/mysqld-relay*  >/dev/null 2>&1
+rm $VARDIR/spool/mysql_slave/master.info >/dev/null 2>&1
+rm $VARDIR/spool/mysql_slave/mysqld-relay* >/dev/null 2>&1
 rm $VARDIR/spool/mysql_slave/relay-log.info >/dev/null 2>&1
 $SRCDIR/etc/init.d/mysql_slave start nopass
 sleep 5
-echo "STOP SLAVE;" | $SRCDIR/bin/mc_mysql -s 
+echo "STOP SLAVE;" | $SRCDIR/bin/mc_mysql -s
 sleep 2
 rm $VARDIR/spool/mysql_slave/master.info >/dev/null 2>&1
-rm $VARDIR/spool/mysql_slave/mysqld-relay* >/dev/null 2>&1 
+rm $VARDIR/spool/mysql_slave/mysqld-relay* >/dev/null 2>&1
 rm $VARDIR/spool/mysql_slave/relay-log.info >/dev/null 2>&1
 
-$SRCDIR/bin/mc_mysql -s mc_config < /var/tmp/master.sql
+$SRCDIR/bin/mc_mysql -s mc_config </var/tmp/master.sql
 
 sleep 2
-echo "CHANGE MASTER TO master_host='$MHOST', master_user='mailcleaner', master_password='$MPASS'; " | $SRCDIR/bin/mc_mysql -s 
+echo "CHANGE MASTER TO master_host='$MHOST', master_user='mailcleaner', master_password='$MPASS'; " | $SRCDIR/bin/mc_mysql -s
 # Return code should be 0 if there are no errors. Log code to RUN to catch errors that might not be presented with 'check_status'
-$SRCDIR/bin/mc_mysql -s mc_config < /var/tmp/master.sql
+$SRCDIR/bin/mc_mysql -s mc_config </var/tmp/master.sql
 RUN=$?
-echo "START SLAVE;" | $SRCDIR/bin/mc_mysql -s 
+echo "START SLAVE;" | $SRCDIR/bin/mc_mysql -s
 sleep 5
 
 $SRCDIR/etc/init.d/mysql_slave restart
 sleep 5
-$SRCDIR/bin/mc_mysql -s mc_config < /var/tmp/updates.sql
+$SRCDIR/bin/mc_mysql -s mc_config </var/tmp/updates.sql
 
 # Run the check again and record results
 check_status
 if [[ $RUN != 1 ]]; then
-  echo "Resync successful." 
+  echo "Resync successful."
   # If there were previous failures, remove that flag file
   if [[ -e $FAILFILE ]]; then
     echo "Removing failfile"
@@ -174,10 +174,10 @@ if [[ $RUN != 1 ]]; then
 else
   if [[ -e $FAILFILE ]]; then
     FAILS=$(cat $FAILFILE)
-    FAILS=$((FAILS+1))
-    echo $FAILS > $FAILFILE
+    FAILS=$((FAILS + 1))
+    echo $FAILS >$FAILFILE
   else
-    echo 1 > $FAILFILE
+    echo 1 >$FAILFILE
   fi
 fi
 

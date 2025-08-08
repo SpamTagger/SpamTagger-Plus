@@ -57,7 +57,7 @@ if [ "$SRCDIR" = "" ]; then
 fi
 VARDIR=$(grep 'VARDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
-  VARDIR="/var/mailcleaner"
+  VARDIR="/var/spamtagger"
 fi
 
 . $SRCDIR/lib/lib_utils.sh

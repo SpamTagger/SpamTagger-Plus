@@ -144,7 +144,7 @@
   }
 
   if (!empty($validStep['prev'])) {
-    if (!file_exists('/var/mailcleaner/run/configurator/'.$validStep['prev'])) {
+    if (!file_exists('/var/spamtagger/run/configurator/'.$validStep['prev'])) {
       $validStep = $infoPage['welcome'];
       $_GET['step'] = 'welcome';
       echo "<script>alert('Please valid each step the first time !');</script>";

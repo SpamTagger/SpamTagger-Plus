@@ -9,4 +9,4 @@ filter =
 ignoreip = 192.246.63.8
 banaction = iptables-multiport
             {{ send_mail }}
-logpath = /var/mailcleaner/flags/fail2ban/empty_file 
+logpath = /var/spamtagger/flags/fail2ban/empty_file 

@@ -6,13 +6,13 @@ BACK=`pwd`
 if [ "$SRCDIR" = "" ]; then
         SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
         if [ "SRCDIR" = "" ]; then
-                SRCDIR=/var/mailcleaner
+                SRCDIR=/var/spamtagger
         fi
 fi
 if [ "$VARDIR" = "" ]; then
         VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
         if [ "VARDIR" = "" ]; then
-                VARDIR=/var/mailcleaner
+                VARDIR=/var/spamtagger
         fi
 fi
 

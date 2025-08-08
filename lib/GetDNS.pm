@@ -39,7 +39,7 @@ sub dumper {
 	}
 
 	unless (defined($args{'log'})) {
-		$args{'log'} = '/var/mailcleaner/log/mailcleaner/dumper.log';
+		$args{'log'} = '/var/spamtagger/log/mailcleaner/dumper.log';
 	}
 	# Disabling recursion in order to utilize caching
 	my $recursion = $self->{recursion};

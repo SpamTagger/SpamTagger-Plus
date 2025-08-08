@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VARDIR=/var/mailcleaner/
+VARDIR=/var/spamtagger/
 SERVER="mailcleanerdl.alinto.net"
 
 if [ -z "`find $VARDIR/spool/clamspam -type f`" ]; then

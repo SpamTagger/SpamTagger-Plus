@@ -57,7 +57,7 @@ if [ "$SRCDIR" = "" ]; then
 fi
 VARDIR=$(grep 'VARDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
-  VARDIR="/var/mailcleaner"
+  VARDIR="/var/spamtagger"
 fi
 
 . $SRCDIR/lib/lib_utils.sh
@@ -83,7 +83,7 @@ if [ ! -e ${testfile} ]; then
 fi
 
 # Getting to the ClamAV databases
-cd /var/mailcleaner/spool/clamspam
+cd /var/spamtagger/spool/clamspam
 # Foreach file
 for file in $(ls | grep -v "dbs.md5"); do
 
@@ -106,7 +106,7 @@ for file in $(ls | grep -v "dbs.md5"); do
     # If the file is malformed, remove it
     if [ ! -z ${MALFORMEDFILE} ] && [ -e ${MALFORMEDFILE} ]; then
       rm $MALFORMEDFILE
-      echo "["$(date "+%Y/%m/%d %H:%M:%S")"] Malformed Database $MALFORMEDFILE removed" >>/var/mailcleaner/log/mailcleaner/downloadDatas.log
+      echo "["$(date "+%Y/%m/%d %H:%M:%S")"] Malformed Database $MALFORMEDFILE removed" >>/var/spamtagger/log/mailcleaner/downloadDatas.log
       MALFORMEDFILE=''
     else
       echo $CURRENT_MD5SUM >"$VARDIR/spool/tmp/clamspam/$file"

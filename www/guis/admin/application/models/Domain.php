@@ -238,7 +238,7 @@ class Default_Model_Domain
 		$wwelement->getDbTable()->delete("recipient like '%@".$this->getParam('name')."'");
 
 		// Check if this domains has stats (counts) and delete them
-                $counts_path = "/var/mailcleaner/spool/mailcleaner/counts/";
+                $counts_path = "/var/spamtagger/spool/mailcleaner/counts/";
                 $domain_counts = $counts_path . trim($this->getParam('name'));
                 if (file_exists($domain_counts) && is_dir($domain_counts)) {
                         exec('rm -rf '.escapeshellarg($domain_counts));

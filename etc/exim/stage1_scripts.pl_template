@@ -78,7 +78,7 @@ sub SMTP_WL_IP_Dom {
   my $domain = shift;
   my $IP = shift;
 
-  my $file = "/var/mailcleaner/spool/tmp/exim_stage1/rblwhitelists/$domain";
+  my $file = "/var/spamtagger/spool/tmp/exim_stage1/rblwhitelists/$domain";
 
   return 'false' if ( ! -e $file );
   return 'false' if ( ! open FH, '<', $file);
@@ -123,7 +123,7 @@ sub SpamC_WL_IP_Dom {
   my $domain = shift;
   my $IP = shift;
 
-  my $file = "/var/mailcleaner/spool/tmp/exim_stage1/spamcwhitelists/$domain";
+  my $file = "/var/spamtagger/spool/tmp/exim_stage1/spamcwhitelists/$domain";
 
   return 'false' if ( ! -e $file );
   return 'false' if ( ! open FH, '<', $file);
