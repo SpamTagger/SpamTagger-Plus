@@ -40,11 +40,11 @@ fi
 
 SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
-  SRCDIR="/opt/mailcleaner"
+  SRCDIR="/usr/spamtagger"
 fi
 VARDIR=$(grep 'VARDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
-  VARDIR="/opt/mailcleaner"
+  VARDIR="/var/spamtagger"
 fi
 
 HTTPPROXY=$(grep -e '^HTTPPROXY' $CONFFILE | cut -d ' ' -f3)

@@ -22,9 +22,8 @@
 #   Usage:
 #           fetch_blacklist_firewall_rules.sh [-r]
 
-usage()
-{
-  cat << EOF
+usage() {
+  cat <<EOF
 usage: $0 options
 
 This script will fetch the current ruleset
@@ -36,25 +35,24 @@ EOF
 
 randomize=false
 
-while getopts ":r" OPTION
-do
+while getopts ":r" OPTION; do
   case $OPTION in
-    r)
-       randomize=true
-       ;;
-    ?)
-       usage
-       exit
-       ;;
+  r)
+    randomize=true
+    ;;
+  ?)
+    usage
+    exit
+    ;;
   esac
 done
 
 CONFFILE=/etc/mailcleaner.conf
-SRCDIR=`grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3`
-if [ "$SRCDIR" = "" ]; then 
-  SRCDIR="/opt/mailcleaner"
+SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
+if [ "$SRCDIR" = "" ]; then
+  SRCDIR="/usr/spamtagger"
 fi
-VARDIR=`grep 'VARDIR' $CONFFILE | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
   VARDIR="/var/mailcleaner"
 fi
@@ -64,7 +62,7 @@ FILE_NAME=$(basename -- "$0")
 FILE_NAME="${FILE_NAME%.*}"
 ret=$(createLockFile "$FILE_NAME")
 if [[ "$ret" -eq "1" ]]; then
-        exit 0
+  exit 0
 fi
 
 . $SRCDIR/lib/updates/download_files.sh
@@ -74,11 +72,11 @@ fi
 ##
 ret=$(downloadDatas "$SRCDIR/etc/firewall/" "firewall" $randomize "null" "" "noexit")
 if [[ "$ret" -eq "1" ]]; then
-        /usr/mailcleaner/bin/dump_firewall.pl
-	sleep 3
-	if [ -f "/usr/mailcleaner/etc/firewall/blacklist" ]; then
-	        /usr/mailcleaner/etc/firewall/blacklist
-	fi
+  /usr/mailcleaner/bin/dump_firewall.pl
+  sleep 3
+  if [ -f "/usr/mailcleaner/etc/firewall/blacklist" ]; then
+    /usr/mailcleaner/etc/firewall/blacklist
+  fi
 fi
 
 removeLockFile "$FILE_NAME"

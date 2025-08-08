@@ -23,29 +23,28 @@ cd $SNIFFER_PATH
 
 if [ -e UpdateReady.txt ] && [ ! -e UpdateReady.lck ]; then
 
-#       Uncomment the following line if more than one process might 
-#       launch this script. Leave it commented out if this script will
-#       normally be run by the <update-script/> mechanism in SNFServer.
-#	touch UpdateReady.lck
+  #       Uncomment the following line if more than one process might
+  #       launch this script. Leave it commented out if this script will
+  #       normally be run by the <update-script/> mechanism in SNFServer.
+  #	touch UpdateReady.lck
 
-	curl http://www.sortmonster.net/Sniffer/Updates/$LICENSE_ID.snf --output $LICENSE_ID.new --compressed --user sniffer:ki11sp8m --remote-time --fail
+  curl http://www.sortmonster.net/Sniffer/Updates/$LICENSE_ID.snf --output $LICENSE_ID.new --compressed --user sniffer:ki11sp8m --remote-time --fail
 
-        $SNF2CHECK $LICENSE_ID.new $AUTHENTICATION 
- 	RETVAL=$?
-        if [ $RETVAL -eq 0 ]; then 
+  $SNF2CHECK $LICENSE_ID.new $AUTHENTICATION
+  RETVAL=$?
+  if [ $RETVAL -eq 0 ]; then
 
-                if [ -e $LICENSE_ID.old ]; then rm -f $LICENSE_ID.old; fi
-                if [ -e $LICENSE_ID.snf ]; then mv $LICENSE_ID.snf $LICENSE_ID.old; fi
-                mv $LICENSE_ID.new $LICENSE_ID.snf
+    if [ -e $LICENSE_ID.old ]; then rm -f $LICENSE_ID.old; fi
+    if [ -e $LICENSE_ID.snf ]; then mv $LICENSE_ID.snf $LICENSE_ID.old; fi
+    mv $LICENSE_ID.new $LICENSE_ID.snf
 
-		if [ -e UpdateReady.txt ]; then rm -f UpdateReady.txt; fi
-		if [ -e UpdateReady.lck ]; then rm -f UpdateReady.lck; fi
+    if [ -e UpdateReady.txt ]; then rm -f UpdateReady.txt; fi
+    if [ -e UpdateReady.lck ]; then rm -f UpdateReady.lck; fi
 
-	else
+  else
 
-		if [ -e $LICENSE_ID.new ]; then rm -f $LICENSE_ID.new; fi
-		if [ -e UpdateReady.lck ]; then rm -f UpdateReady.lck; fi
+    if [ -e $LICENSE_ID.new ]; then rm -f $LICENSE_ID.new; fi
+    if [ -e UpdateReady.lck ]; then rm -f UpdateReady.lck; fi
 
-	fi
+  fi
 fi
-

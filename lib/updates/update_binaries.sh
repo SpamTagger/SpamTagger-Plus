@@ -22,7 +22,7 @@
 ### first get the http proxy if exists
 SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
 if [ "$SRCDIR" = "" ]; then
-  SRCDIR=/opt/mailcleaner
+  SRCDIR=/usr/spamtagger
 fi
 VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
 if [ "$VARDIR" = "" ]; then

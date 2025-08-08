@@ -23,8 +23,7 @@
 #   Usage:
 #           test_dcc.sh
 
-
-RES=`echo "Received: by stage2 with id 1CRoEF-00079h-3m 
+RES=$(echo "Received: by stage2 with id 1CRoEF-00079h-3m 
         for <noone@nowhere>; Wed, 10 Nov 2004 09:53:23 +0100
 Subject: test
 X-MailCleaner-Information: Please contact postmaster@fastnet.ch for more information
@@ -34,11 +33,10 @@ X-MailCleaner-SpamCheck: polluriel, SpamAssassin (score=1001.654, requis 5,
         RAZOR2_CHECK 0.15)
 X-MailCleaner-SpamScore: oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
-XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X"  | /opt/dcc/bin/dccproc -Q -d -H | cut -d'-' -f-2`
+XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X" | /opt/dcc/bin/dccproc -Q -d -H | cut -d'-' -f-2)
 
 if [ "$RES" = "X-DCC" ]; then
-	echo "DCCOK"
+  echo "DCCOK"
 else
-	echo "DCCERROR"
-fi;
-
+  echo "DCCERROR"
+fi
