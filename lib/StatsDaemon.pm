@@ -83,7 +83,7 @@ sub new {
         socketpath => $conf->getOption('VARDIR') . "/run/statsdaemon.sock",
         pidfile    => $conf->getOption('VARDIR') . "/run/statsdaemon.pid",
         configfile => $conf->getOption('SRCDIR')
-          . "/etc/mailcleaner/statsdaemon.conf",
+          . "/etc/spamtagger/statsdaemon.conf",
         clean_thread_exit => 0,
         backend_type => 'none',
         'history_avoid_keys' => '',

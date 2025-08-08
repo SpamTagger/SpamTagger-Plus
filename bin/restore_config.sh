@@ -19,20 +19,19 @@
 #
 #
 #   This script will backup the configuration database
-#   Usage: 
-#           restore_config.sh 
+#   Usage:
+#           restore_config.sh
 
-
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
 
-MYMAILCLEANERPWD=`grep 'MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3`
+MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 BACKUPFILE=$1
 if [ "$BACKUPFILE" = "" ]; then
@@ -44,16 +43,16 @@ if [ ! -f $BACKUPFILE ]; then
   exit 1
 fi
 
-/opt/mysql5/bin/mysql -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock mc_config < $BACKUPFILE
+/opt/mysql5/bin/mysql -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock mc_config <$BACKUPFILE
 
 for p in dump_apache_config.pl dump_clamav_config.pl dump_exim_config.pl dump_firewall.pl dump_mailscanner_config.pl dump_mysql_config.pl dump_snmpd_config.pl; do
-  RES=`$SRCDIR/bin/$p 2>&1`
+  RES=$($SRCDIR/bin/$p 2>&1)
   if [ "$RES" != "DUMPSUCCESSFUL" ]; then
     echo "ERROR dumping: $p"
   fi
 done
 
-/etc/init.d/mailcleaner stop >/dev/null 2>&1
+/etc/init.d/spamtagger stop >/dev/null 2>&1
 sleep 3
 killall -q -KILL exim httpd snmpd mysqld mysqld_safe MailScanner >/dev/null 2>&1
-/etc/init.d/mailcleaner start >/dev/null 2>&1
+/etc/init.d/spamtagger start >/dev/null 2>&1

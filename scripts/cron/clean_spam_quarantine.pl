@@ -8,7 +8,7 @@ use DBI();
 
 my $days_to_keep = shift;
 
-my %config                = readConfig("/etc/mailcleaner.conf");
+my %config                = readConfig("/etc/spamtagger.conf");
 my $quarantine_owner_name = 'mailcleaner';
 my $quarantine_owner      = getpwnam($quarantine_owner_name);
 my $quarantine_group      = getgrnam($quarantine_owner_name);

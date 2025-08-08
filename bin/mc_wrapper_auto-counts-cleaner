@@ -47,9 +47,9 @@ case $weekday in
 esac
 
 delay=$((($RANDOM % 10) + 1))
-echo "$(date): Sleeping $delay minutes before cleaning of counts files" >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
+echo "$(date): Sleeping $delay minutes before cleaning of counts files" >>/var/spamtagger/log/spamtagger/mc_counts-cleaner.log
 sleep "$delay"m
-echo "$(date): Cleaning started" >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
-(time timeout 5m /usr/spamtagger/bin/mc_counts-cleaner -d "$dfilt*" -u "$ufilt" -o 365 -x) >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log 2>&1 | wc -l >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
-echo "$(date): Cleaning terminated" >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
+echo "$(date): Cleaning started" >>/var/spamtagger/log/spamtagger/mc_counts-cleaner.log
+(time timeout 5m /usr/spamtagger/bin/mc_counts-cleaner -d "$dfilt*" -u "$ufilt" -o 365 -x) >>/var/spamtagger/log/spamtagger/mc_counts-cleaner.log 2>&1 | wc -l >>/var/spamtagger/log/spamtagger/mc_counts-cleaner.log
+echo "$(date): Cleaning terminated" >>/var/spamtagger/log/spamtagger/mc_counts-cleaner.log
 exit 0

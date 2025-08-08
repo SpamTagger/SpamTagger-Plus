@@ -58,7 +58,7 @@ if (isUpdateRunning()) {
   // if we need to run an update or not
   if (isset($_GET['m']) && $_GET['m']=='fu') {
     echo "starting..";
-    $cmd = "/usr/sudo/bin/sudo ".$sysconf_->SRCDIR_."/scripts/cron/mailcleaner_cron.pl > /dev/null & echo \$!";
+    $cmd = "/usr/sudo/bin/sudo ".$sysconf_->SRCDIR_."/scripts/cron/spamtagger_cron.pl > /dev/null & echo \$!";
     $pid = `$cmd`;
     if (!preg_match('/^\s*(\d+)\s*$/', $pid) || $pid == 0) {
       $error = "CANNOTRUNUPDATE";
@@ -98,7 +98,7 @@ function viewPatchLog($nblines) {
  $sysconf = SystemConfig::getInstance();
 
  $log = "";
- $filename = $sysconf->VARDIR_."/log/mailcleaner/update.log";
+ $filename = $sysconf->VARDIR_."/log/spamtagger/update.log";
  $lines = file($filename);
  $length = count($lines);
  for ($i = $length-$nblines; $i<=$length; $i++) {

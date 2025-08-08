@@ -25,15 +25,15 @@
 #   If you have any question regarding the installation, please take a look at:
 #   https://support.mailcleaner.net/boards/3/topics/62-installation-of-mailcleaner-options
 #
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
-MCVERSION=$(cat /usr/spamtagger/etc/mailcleaner/version.def | cut -c1-4)
+MCVERSION=$(cat /usr/spamtagger/etc/spamtagger/version.def | cut -c1-4)
 LOGFILE=/tmp/mc_install_options.log
 DOWNLOADSERVER="mailcleanerdl.alinto.net"
 

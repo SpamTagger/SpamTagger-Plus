@@ -32,7 +32,7 @@ if [[ $GIT_STATUS == "up-to-date" ]]; then
 elif [[ $GIT_STATUS == "behind" ]]; then
   echo "Git tree is behind" >$OUT_FILE
   my_own_exit "1"
-elif [[ $(grep ' is corrupt' /var/spamtagger/log/mailcleaner/updater4mc.log | wc -l) > 1 ]]; then
+elif [[ $(grep ' is corrupt' /var/spamtagger/log/spamtagger/updater4mc.log | wc -l) > 1 ]]; then
   echo "Git encountered a corruption error" >$OUT_FILE
   my_own_exit "2"
 elif [[ -z $GIT_STATUS ]]; then

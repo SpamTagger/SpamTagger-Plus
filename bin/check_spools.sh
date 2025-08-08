@@ -18,7 +18,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This script will display the number of messages waiting on each of the 3 
+#   This script will display the number of messages waiting on each of the 3
 #   main spools which are:
 #   Stage 1 for the incoming spool
 #   Stage 2 for the filtering spool (antispam/antivirus processes)
@@ -27,12 +27,11 @@
 #   Usage:
 #           check_spools.sh
 
-
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
@@ -42,7 +41,7 @@ echo -n "Stage 1:       "
 $EXIMBIN -C $SRCDIR/etc/exim/exim_stage1.conf -bpc
 
 echo -n "Stage 2:       "
-TYPE=`grep -e '^MTA\s*=\s*eximms' $SRCDIR/etc/mailscanner/MailScanner.conf`
+TYPE=$(grep -e '^MTA\s*=\s*eximms' $SRCDIR/etc/mailscanner/MailScanner.conf)
 if [ "$TYPE" = "" ]; then
   $EXIMBIN -C $SRCDIR/etc/exim/exim_stage2.conf -bpc
 else
@@ -51,4 +50,3 @@ fi
 
 echo -n "Stage 4:       "
 $EXIMBIN -C $SRCDIR/etc/exim/exim_stage4.conf -bpc
-

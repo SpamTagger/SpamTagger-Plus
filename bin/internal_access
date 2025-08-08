@@ -1,7 +1,7 @@
 #!/bin/bash
 # Allows for the management of internal access between machines
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR="/usr/spamtagger"
@@ -18,7 +18,7 @@ if [ $(slaveSynchronized) == "false" ]; then
   exit 1
 fi
 
-MCHOSTNAME=$(grep -e "MCHOSTNAME" /etc/mailcleaner.conf | cut -d" " -f3)
+MCHOSTNAME=$(grep -e "MCHOSTNAME" /etc/spamtagger.conf | cut -d" " -f3)
 PRIVATE_KEY_FILE="/root/.ssh/id_rsa_internal"
 PUBLIC_KEY_FILE="${PRIVATE_KEY_FILE}.pub"
 AUTHORIZED_KEYS_FILE="/root/.ssh/authorized_keys"

@@ -25,7 +25,7 @@
 #   Usage:
 #           download_files.sh
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR="/usr/spamtagger"
@@ -36,7 +36,7 @@ if [ "$VARDIR" = "" ]; then
 fi
 ISMASTER=$(grep 'ISMASTER' $CONFFILE | cut -d ' ' -f3)
 
-LOGFILE=$VARDIR/log/mailcleaner/downloadDatas.log
+LOGFILE=$VARDIR/log/spamtagger/downloadDatas.log
 FILTER_FILENAME="files.filter"
 MAXSLEEPTIME=120
 MINSLEEPTIME=0

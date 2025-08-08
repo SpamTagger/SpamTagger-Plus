@@ -35,11 +35,11 @@
 PROGNAME='prepare_mc_release'
 VERSION='0.8'
 
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
@@ -133,7 +133,7 @@ service ntp start
 
 echo "Setting crontab"
 crontab - <<EOF
-0,15,30,45 * * * *  /usr/spamtagger/scripts/cron/mailcleaner_cron.pl &> /dev/null
+0,15,30,45 * * * *  /usr/spamtagger/scripts/cron/spamtagger_cron.pl &> /dev/null
 0-59/5 * * * * /usr/spamtagger/bin/collect_rrd_stats.pl &> /dev/null
 30 0 * * * /usr/spamtagger/bin/mc_wrapper_auto-counts-cleaner
 0-59/10 * * * * /usr/spamtagger/bin/watchdog/watchdogs.pl dix
@@ -147,7 +147,7 @@ echo "Using values: $resellerID $resellerPwd $clientID"
 ${SRCDIR}/bin/register_mailcleaner.sh "$resellerID" "$resellerPwd" "$clientID" -b
 
 echo Stop MailCleaner
-${SRCDIR}/etc/init.d/mailcleaner stop
+${SRCDIR}/etc/init.d/spamtagger stop
 
 echo Dump of ClamAV config and update of ClamAV antivirus files
 ${SRCDIR}/bin/dump_clamav_config.pl
@@ -213,7 +213,7 @@ echo Delete or replace DevMode Tag in specified files
 [ "$devMode" == "false" ] && sed -i "s/#\[DEVMODEDEL\]//g" "$SRCDIR/bin/unregister_mailcleaner.sh"
 
 echo Unregistering MailCleaner
-${SRCDIR}/etc/init.d/mailcleaner start
+${SRCDIR}/etc/init.d/spamtagger start
 ${SRCDIR}/bin/unregister_mailcleaner.sh --no-rsp -b
 
 echo Delete Configurator step files
@@ -229,8 +229,8 @@ echo Delete all useless dirs and files of /root
 find /root -mindepth 1 -maxdepth 1 \( -path /root/.ssh -o -path /root/.profile -o -path /root/.pyzor -o -path /root/starters -o -path /root/Updater4MC \) -prune -o -print | while read dirdata; do cdel -rf "$dirdata"; done
 
 echo Enable installer.pl redirection
-echo "if ! [ -f \"${VARDIR}/spool/mailcleaner/firstcmdlogin\" ]; then ${SRCDIR}/scripts/installer/installer.pl; touch \"${VARDIR}/spool/mailcleaner/firstcmdlogin\"; fi" >~/.bashrc
-rm -f ${VARDIR}/spool/mailcleaner/firstcmdlogin
+echo "if ! [ -f \"${VARDIR}/spool/spamtagger/firstcmdlogin\" ]; then ${SRCDIR}/scripts/installer/installer.pl; touch \"${VARDIR}/spool/spamtagger/firstcmdlogin\"; fi" >~/.bashrc
+rm -f ${VARDIR}/spool/spamtagger/firstcmdlogin
 
 # Others data installation goes here ->
 cp -Rf "${STARTERSPATH}/clamd/"* ${VARDIR}/spool/clamav/
@@ -260,7 +260,7 @@ echo 'RESET SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/my
 echo 'RESET MASTER' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_master/mysqld.sock -uroot -p"$dbPassword"
 echo 'START SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
 
-${SRCDIR}/etc/init.d/mailcleaner stop
+${SRCDIR}/etc/init.d/spamtagger stop
 
 sleep 1s
 echo "Delete messages in queues"

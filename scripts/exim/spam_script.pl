@@ -24,7 +24,7 @@ use Net::SMTP;
 
 #DBI->trace(2,'/tmp/dbitrace.log');
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 my $exim_id   = shift;
 my $to_local  = shift;

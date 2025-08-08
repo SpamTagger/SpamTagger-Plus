@@ -31,7 +31,7 @@ class SystemConfig extends PrefHandler {
    * This file contains the settings of the mailcleaner configuration
    * @var $CONFIGFILE   string
    */
-  public static $CONFIGFILE_ = '/etc/mailcleaner.conf';
+  public static $CONFIGFILE_ = '/etc/spamtagger.conf';
   /**
    * @todo these variables will have to be removed ! all classes should now use DataManager
    */

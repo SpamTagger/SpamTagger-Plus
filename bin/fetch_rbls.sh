@@ -49,7 +49,7 @@ while getopts ":r" OPTION; do
   esac
 done
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR="/usr/spamtagger"

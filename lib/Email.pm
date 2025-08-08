@@ -191,7 +191,7 @@ sub hasInWhiteWarnList {
   }
 
   my $conf = ReadConfig::getInstance();
-  my $basedir = $conf->getOption('VARDIR')."/spool/mailcleaner/prefs";
+  my $basedir = $conf->getOption('VARDIR')."/spool/spamtagger/prefs";
   my $wwfile = $basedir."/_global/".$filename;
 
   ## check global

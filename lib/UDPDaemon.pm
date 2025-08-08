@@ -40,7 +40,7 @@ sub create {
   ## default values
   my $pidfile = $conf->getOption('VARDIR')."/run/$daemonname.pid";
   my $port = 10000;
-  my $logfile = $conf->getOption('VARDIR')."/log/mailcleaner/$daemonname.log";
+  my $logfile = $conf->getOption('VARDIR')."/log/spamtagger/$daemonname.log";
   my $daemontimeout = 86400;
   my $clientTimeout = 5;
   my $sockettimeout = 120;

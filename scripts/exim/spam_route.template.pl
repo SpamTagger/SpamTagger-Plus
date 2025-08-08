@@ -25,7 +25,7 @@ my $PROFILE = 1;
 my (%prof_start, %prof_res) = ();
 profile_start('init');
 
-my %config = readConfig("/etc/mailcleaner.conf"); 
+my %config = readConfig("/etc/spamtagger.conf"); 
 use SpamLogger;
 use Email;
 use Net::SMTP;

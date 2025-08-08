@@ -22,7 +22,7 @@
 #   Usage:
 #           CDN_fetch_bayes.sh
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR="/usr/spamtagger"
@@ -32,7 +32,7 @@ if [ "$VARDIR" = "" ]; then
   VARDIR="/var/spamtagger"
 fi
 
-LOGFILE="$VARDIR/log/mailcleaner/downloadDatas.log"
+LOGFILE="$VARDIR/log/spamtagger/downloadDatas.log"
 SERVER="mailcleanerdl.alinto.net"
 ROOTDIR="/bayes/"
 

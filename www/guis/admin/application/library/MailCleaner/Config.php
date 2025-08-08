@@ -11,7 +11,7 @@
 class MailCleaner_Config
 {
 	private static $instance;
-	private $_configFile = '/etc/mailcleaner.conf';
+	private $_configFile = '/etc/spamtagger.conf';
 	
 	private $_options = array();
 

@@ -51,7 +51,7 @@ while getopts ":r" OPTION; do
   esac
 done
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR="/usr/spamtagger"
@@ -108,7 +108,7 @@ for file in $(ls); do
       # If the file is malformed, remove it
       if [ ! -z "${MALFORMEDFILE}" ]; then
         rm $file
-        echo "["$(date "+%Y/%m/%d %H:%M:%S")"] Malformed Database $file removed" >>/var/spamtagger/log/mailcleaner/downloadDatas.log
+        echo "["$(date "+%Y/%m/%d %H:%M:%S")"] Malformed Database $file removed" >>/var/spamtagger/log/spamtagger/downloadDatas.log
         MALFORMEDFILE=''
       else
         echo $CURRENT_MD5SUM >"$VARDIR/spool/tmp/clamav/$file"

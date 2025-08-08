@@ -3,6 +3,6 @@
 /stockme
 /mc_router
 /mc_transport
-/mailcleaner-binary
+/spamtagger-binary
 /stage1/*
 !/stage1/*_template

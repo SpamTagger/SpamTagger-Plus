@@ -31,12 +31,11 @@
 #   -o,	Filter file older than X days.
 #
 
-
 PROGNAME='mc_counts-cleaner'
 VERSION='1.0'
 
 usage() {
-  cat <<- _EOF_
+  cat <<-_EOF_
   Usage: $PROGNAME [-hx] [-d 'a*'] [-u '[a-cA-C]'] -o '365'
 
   Options:
@@ -55,57 +54,52 @@ dfilter=''
 ufilter=''
 olderthan=''
 
-while getopts ":hxd:u:o:" option
-do
+while getopts ":hxd:u:o:" option; do
   case $option in
-    h)
-	usage
-	exit 0
-	;;
-    x)
-	action='-delete '
-	;;
-    d)
-	dfilter=$OPTARG
-	;;
-    u)
-	ufilter=$OPTARG
-	;;
-    o)
-	olderthan=$OPTARG
-	;;
-    :)
-	echo "L'option $OPTARG requiert un argument"
-	exit 1
-	;;
-    ?)
-	echo "$OPTARG : option invalide"
-	exit 1
-	;;
+  h)
+    usage
+    exit 0
+    ;;
+  x)
+    action='-delete '
+    ;;
+  d)
+    dfilter=$OPTARG
+    ;;
+  u)
+    ufilter=$OPTARG
+    ;;
+  o)
+    olderthan=$OPTARG
+    ;;
+  :)
+    echo "L'option $OPTARG requiert un argument"
+    exit 1
+    ;;
+  ?)
+    echo "$OPTARG : option invalide"
+    exit 1
+    ;;
   esac
 done
 
-if [ "$olderthan" == '' ]
-  then
-    usage
-    exit 1
+if [ "$olderthan" == '' ]; then
+  usage
+  exit 1
 fi
 
-if [ "$dfilter" == '' ]
-  then
-    usage
-    exit 1
+if [ "$dfilter" == '' ]; then
+  usage
+  exit 1
 fi
 
-cd /var/spamtagger/spool/mailcleaner/counts
-if [ "$PWD" == "/var/spamtagger/spool/mailcleaner/counts" ]; then
-  for i in `ls -d $dfilter 2>/dev/null`
-    do
-      for j in `ls $i 2>/dev/null |cut -d/ -f2 |grep "^$ufilter.*$"`
-        do
-          find $i/$j -type f -mtime +$olderthan -print $action
-        done
+cd /var/spamtagger/spool/spamtagger/counts
+if [ "$PWD" == "/var/spamtagger/spool/spamtagger/counts" ]; then
+  for i in $(ls -d $dfilter 2>/dev/null); do
+    for j in $(ls $i 2>/dev/null | cut -d/ -f2 | grep "^$ufilter.*$"); do
+      find $i/$j -type f -mtime +$olderthan -print $action
     done
+  done
 fi
-cd - 1> /dev/null
+cd - 1>/dev/null
 exit 0

@@ -1,16 +1,16 @@
 #!/bin/bash
 
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
-MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3)
-HTTPPROXY=$(grep -e '^HTTPPROXY' /etc/mailcleaner.conf | cut -d ' ' -f3)
+MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
+HTTPPROXY=$(grep -e '^HTTPPROXY' /etc/spamtagger.conf | cut -d ' ' -f3)
 export http_proxy=$HTTPPROXY
 
 . $SRCDIR/lib/lib_utils.sh
@@ -68,8 +68,8 @@ else
   fi
 fi
 
-if [ -e $VARDIR/spool/mailcleaner/clamav-unofficial-sigs ]; then
-  if [[ "$(shasum $VARDIR/spool/mailcleaner/clamav-unofficial-sigs | cut -d' ' -f1)" == "69c58585c04b136a3694b9546b77bcc414b52b12" ]]; then
+if [ -e $VARDIR/spool/spamtagger/clamav-unofficial-sigs ]; then
+  if [[ "$(shasum $VARDIR/spool/spamtagger/clamav-unofficial-sigs | cut -d' ' -f1)" == "69c58585c04b136a3694b9546b77bcc414b52b12" ]]; then
     if [ ! -e $VARDIR/spool/clamav/unofficial-sigs ]; then
       echo "Installing Unofficial Signatures..." >>$VARDIR/log/clamav/freshclam.log
       mkdir $VARDIR/spool/clamav/unofficial-sigs
@@ -80,7 +80,7 @@ if [ -e $VARDIR/spool/mailcleaner/clamav-unofficial-sigs ]; then
       $SRCDIR/scripts/cron/clamav-unofficial-sigs.sh --update >>$VARDIR/log/clamav/freshclam.log
     fi
   else
-    echo "$VARDIR/spool/mailcleaner/clamav-unofficial-sigs exists but does not contain the correct information. Please enter exactly:"
+    echo "$VARDIR/spool/spamtagger/clamav-unofficial-sigs exists but does not contain the correct information. Please enter exactly:"
     echo "I have read the terms of use at: https://sanesecurity.com/usage/linux-scripts/"
   fi
 fi

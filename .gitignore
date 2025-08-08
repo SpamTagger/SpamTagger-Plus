@@ -79,6 +79,6 @@ share/spamassassin/
 etc/autoconf/
 etc/exim/mc_binary/
 updates/
-etc/mailcleaner/version.def
+etc/spamtagger/version.def
 
 # End of https://www.gitignore.io/api/emacs,vim

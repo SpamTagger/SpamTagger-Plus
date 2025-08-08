@@ -66,7 +66,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 		      $sql = "SET PASSWORD FOR ".$users[0]." = PASSWORD(:newpassdb)";
                       $sth = $slave->prepare($sql);
                       $retdb4 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
-		      exec("sudo /usr/mailcleaner/scripts/configuration/set_pass_in_db.sh ".$_POST['newpassdb'], $outputdbconf, $retdbconf);
+		      exec("sudo /usr/spamtagger/scripts/configuration/set_pass_in_db.sh ".$_POST['newpassdb'], $outputdbconf, $retdbconf);
 		      $sql = "SET PASSWORD FOR ".$users[1]." = PASSWORD(:newpassdb)";
                       $sth = $master->prepare($sql);
                       $retdb5 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
@@ -85,7 +85,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                       $sql = "SET PASSWORD FOR ".$users[3]." = PASSWORD(:newpassdb)";
                       $sth = $slave->prepare($sql);
                       $retdb10 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
-		      $actual_hostid = shell_exec("grep HOSTID /etc/mailcleaner.conf |cut -d' ' -f3"); 
+		      $actual_hostid = shell_exec("grep HOSTID /etc/spamtagger.conf |cut -d' ' -f3"); 
                       $sth = $master->prepare("UPDATE mc_config.master SET password=:newpassdb");
                       $retdbmaster = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
                       $sth = $master->prepare("UPDATE mc_config.slave SET password=:newpassdb where id=:hostid");

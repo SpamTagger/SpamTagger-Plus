@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
@@ -22,5 +22,3 @@ rm -rf $VARDIR/spool/exim_stage2/msglog/*
 rm -rf $VARDIR/spool/exim_stage4/db/*
 rm -rf $VARDIR/spool/exim_stage4/input/*
 rm -rf $VARDIR/spool/exim_stage4/msglog/*
-
-

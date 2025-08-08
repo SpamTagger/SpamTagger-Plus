@@ -67,7 +67,7 @@ if (!$conf->getOption('REGISTERED')) {
   exit 1;
 }
 
-my $updates_config_file = $conf->getOption('SRCDIR').'/etc/mailcleaner/updates.cf';
+my $updates_config_file = $conf->getOption('SRCDIR').'/etc/spamtagger/updates.cf';
 if (! -f $updates_config_file ) {
   print STDERR "** ERROR ** No updates configuration found. Aborting.\n";
   exit 1;

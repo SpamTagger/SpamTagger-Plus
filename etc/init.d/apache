@@ -2,11 +2,11 @@
 
 PATH=$PATH:/usr/sbin:/sbin
 
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
@@ -99,7 +99,7 @@ Cmnd_Alias      DATE = /bin/date
 Cmnd_Alias      IFDOWN = /sbin/ifdown
 Cmnd_Alias      IFUP = /sbin/ifup
 Cmnd_Alias      PASSWD = $SRCDIR/bin/setpassword
-Cmnd_Alias      UPDATE = $SRCDIR/scripts/cron/mailcleaner_cron.pl
+Cmnd_Alias      UPDATE = $SRCDIR/scripts/cron/spamtagger_cron.pl
 Cmnd_Alias      SSHSTARTER = /etc/init.d/ssh
 Cmnd_Alias      CHGHOSTID = $SRCDIR/bin/change_hostid.sh
 Cmnd_Alias      DISIF = $SRCDIR/bin/dis_config_interface.sh

@@ -2,18 +2,18 @@
 
 SAVERSION=3.4.0
 RULESVERSION=3.4.0.r1565117
-BACK=`pwd`
+BACK=$(pwd)
 if [ "$SRCDIR" = "" ]; then
-        SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
-        if [ "SRCDIR" = "" ]; then
-                SRCDIR=/var/spamtagger
-        fi
+  SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
+  if [ "SRCDIR" = "" ]; then
+    SRCDIR=/var/spamtagger
+  fi
 fi
 if [ "$VARDIR" = "" ]; then
-        VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
-        if [ "VARDIR" = "" ]; then
-                VARDIR=/var/spamtagger
-        fi
+  VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
+  if [ "VARDIR" = "" ]; then
+    VARDIR=/var/spamtagger
+  fi
 fi
 
 cd $SRCDIR/install/src
@@ -28,10 +28,10 @@ make install 2>&1
 
 ## work around pre-perl 5.8 bytes encoding bug
 if [ -f /usr/local/share/perl/5.8.4/Mail/SpamAssassin/Message.pm ]; then
-  RES=`grep 'use bytes;' /usr/local/share/perl/5.8.4/Mail/SpamAssassin/Message.pm`
+  RES=$(grep 'use bytes;' /usr/local/share/perl/5.8.4/Mail/SpamAssassin/Message.pm)
   if [ "$RES" = "" ]; then
     echo "work around pre-perl 5.8 bytes encoding bug"
-    perl -pi -e 's/use warnings;\n/use warnings;\nuse bytes;\n/' /usr/local/share/perl/5.8.4/Mail/SpamAssassin/Message.pm 
+    perl -pi -e 's/use warnings;\n/use warnings;\nuse bytes;\n/' /usr/local/share/perl/5.8.4/Mail/SpamAssassin/Message.pm
   fi
 fi
 
@@ -52,5 +52,3 @@ rm $SRCDIR/install/src/Mail-SpamAssassin-rules-$RULESVERSION.tar.gz.sha1 2>&1
 
 touch $VARDIR/spool/spamassassin/bayes_seen 2>&1
 chown -R mailcleaner:mailcleaner $VARDIR/spool/spamassassin/bayes_* 2>&1
-
-

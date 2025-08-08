@@ -23,18 +23,18 @@
 #   Usage:
 #           save_config.sh
 
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
 SOCKET=$VARDIR/run/mysql_master/mysqld.sock
-MYMAILCLEANERPWD=`grep '^MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3`
+MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
-DATE=`date '+%d-%m-%Y'`;
-SAVECONFIG=/tmp/mailcleaner_config_$DATE.sql
+DATE=$(date '+%d-%m-%Y')
+SAVECONFIG=/tmp/spamtagger_config_$DATE.sql
 
-/opt/mysql5/bin/mysqldump -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -ntce  mc_config > $SAVECONFIG
+/opt/mysql5/bin/mysqldump -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -ntce mc_config >$SAVECONFIG
 
 perl -pi -e 's/INSERT/REPLACE/g' $SAVECONFIG
 

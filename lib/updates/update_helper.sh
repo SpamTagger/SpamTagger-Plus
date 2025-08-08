@@ -28,13 +28,13 @@ add_log() {
   # in order to work rsyslog should have a rule to filer
   # local1.info facilities
   # ./bin/dump_exim_config.pl is dumping
-  # /etc/rsyslog.d/mailcleaner.conf at midnight
+  # /etc/rsyslog.d/spamtagger.conf at midnight
   # we will use local4 not used by mailcleaner
   #logger -p local4.info -t exec "$1"
 
   local logfile=/tmp/update_helper.log
   if [[ ! -z "$VARDIR" ]]; then
-    logfile=$VARDIR/log/mailcleaner/update2.log
+    logfile=$VARDIR/log/spamtagger/update2.log
   fi
   local d=$(date "+%Y-%m-%d %H:%M:%S")
   local file=""
@@ -243,7 +243,7 @@ install_mc-file() {
 
 mc_mysql2() {
   # helper master database only, accept all mysql command line args
-  local MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3)
+  local MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
   /opt/mysql5/bin/mysql -S $VARDIR/run/mysql_master/mysqld.sock \
     -umailcleaner -p$MYMAILCLEANERPWD \
     "$@"
@@ -251,7 +251,7 @@ mc_mysql2() {
 
 mc_mysqldump_master() {
   # helper master database only, accept all mysql command line args
-  local MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3)
+  local MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
   /opt/mysql5/bin/mysqldump -S $VARDIR/run/mysql_master/mysqld.sock \
     -umailcleaner -p$MYMAILCLEANERPWD \
     "$@"
@@ -289,7 +289,7 @@ backup_db() {
 
 load_mailcleaner_conf() {
   ## WET: pasted from new mc_mysql version
-  local mailcleaner_conf=/etc/mailcleaner.conf
+  local mailcleaner_conf=/etc/spamtagger.conf
   if [[ ! -z "$1" ]]; then
     mailcleaner_conf="$1"
   fi

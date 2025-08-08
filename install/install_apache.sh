@@ -2,7 +2,7 @@
 
 BACK=$(pwd)
 if [ "$SRCDIR" = "" ]; then
-  SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+  SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
   if [ "SRCDIR" = "" ]; then
     SRCDIR=/usr/spamtagger
   fi
@@ -22,7 +22,7 @@ Cmnd_Alias      DATE = /bin/date
 Cmnd_Alias      IFDOWN = /sbin/ifdown
 Cmnd_Alias      IFUP = /sbin/ifup
 Cmnd_Alias      PASSWD = $SRCDIR/bin/setpassword
-Cmnd_Alias      UPDATE = $SRCDIR/scripts/cron/mailcleaner_cron.pl
+Cmnd_Alias      UPDATE = $SRCDIR/scripts/cron/spamtagger_cron.pl
 Cmnd_Alias      STOPSTART = $SRCDIR/scripts/starters/[S|H|R]_*
 
 Defaults        mailto = root
@@ -79,7 +79,7 @@ Cmnd_Alias      DATE = /bin/date
 Cmnd_Alias      IFDOWN = /sbin/ifdown
 Cmnd_Alias      IFUP = /sbin/ifup
 Cmnd_Alias	PASSWD = $SRCDIR/bin/setpassword
-Cmnd_Alias      UPDATE = $SRCDIR/scripts/cron/mailcleaner_cron.pl
+Cmnd_Alias      UPDATE = $SRCDIR/scripts/cron/spamtagger_cron.pl
 
 Defaults        mailto = root
 

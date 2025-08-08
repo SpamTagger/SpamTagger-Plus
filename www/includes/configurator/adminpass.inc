@@ -47,7 +47,7 @@ if ('adminpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                 if ($_POST['newpassaw'] == $_POST['confnewpassaw']) {
                     $saltaw = '$6$rounds=1000$'.dechex(rand(0,15)).dechex(rand(0,15)).'$';
                     $cryptedaw = crypt($_POST['newpassaw'], $saltaw);
-		    $mymcpass = shell_exec("grep 'MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3");
+		    $mymcpass = shell_exec("grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3");
 
 		    require_once('db_functions.php');
 		    if($db = getDb('mc_config', 'mailcleaner', trim($mymcpass))) {

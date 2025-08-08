@@ -80,13 +80,13 @@ print "PID ".$$."\n" if $batchmode;
 print "STARTTIME ".time()."\n" if $batchmode;
 
 my $conf = ReadConfig::getInstance();
-my $basedir = $conf->getOption('VARDIR')."/spool/mailcleaner/counts";
+my $basedir = $conf->getOption('VARDIR')."/spool/spamtagger/counts";
 my @dirs;
 my $dir = '';
 my %whats;
 
 my %domains;
-my $domainsfile = $conf->getOption('VARDIR')."/spool/tmp/mailcleaner/domains.list";
+my $domainsfile = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/domains.list";
 if (open(DOMAINFILE, '<'.$domainsfile)) {
     while (<DOMAINFILE>) {
         if (/^(\S+)\:/) {

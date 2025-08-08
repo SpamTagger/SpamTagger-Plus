@@ -33,7 +33,7 @@
 use strict;
 use DBI();
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 my $last_days = shift;
 if (!$last_days || $last_days !~ /^\d+$/) {

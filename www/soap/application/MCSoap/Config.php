@@ -255,7 +255,7 @@ class MCSoap_Config
    * @return string
    */
 	static public function Config_saveMCConfigOption($options) {
-		$configfile = '/etc/mailcleaner.conf';
+		$configfile = '/etc/spamtagger.conf';
 		
 		$txt = '';
 		$found = array();
@@ -418,7 +418,7 @@ class MCSoap_Config
 	static public function Config_autoconfiguration($data) {
 		require_once('MailCleaner/Config.php');
                 $sysconf = MailCleaner_Config::getInstance();
-                $mc_autoconf = $sysconf->getOption('VARDIR').'/spool/mailcleaner/mc-autoconf';
+                $mc_autoconf = $sysconf->getOption('VARDIR').'/spool/spamtagger/mc-autoconf';
 		$msg='OK';
                 if(isset($data['autoconfenabled']) && $data['autoconfenabled']) {
 			if (!file_exists($mc_autoconf)) {

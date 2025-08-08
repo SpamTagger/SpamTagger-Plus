@@ -41,7 +41,7 @@ if (!defined($what)) {
   $what = "";
 }
 my $to = "";
-my $filepath = $conf->getOption('VARDIR')."/spool/mailcleaner/prefs/";
+my $filepath = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/";
 if ($what =~ /^\@([a-zA-Z0-9\.\_\-]+)$/) {
   $to = $what;
   $filepath .= $1."/_global/";

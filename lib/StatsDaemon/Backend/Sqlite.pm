@@ -54,7 +54,7 @@ sub new {
         'class' => $class,
         'daemon' => $daemon,
         'data' => undef,
-        'basepath' => $conf->getOption('VARDIR') . '/spool/mailcleaner/stats',
+        'basepath' => $conf->getOption('VARDIR') . '/spool/spamtagger/stats',
         'dbfilename' => 'stats.sqlite',
         'history_avoid_keys' => '',
         'history_avoid_keys_a' => [],

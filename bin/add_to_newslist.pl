@@ -31,7 +31,7 @@ if ($0 =~ m/(\S*)\/\S+.pl$/) {
 }
 require DB;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 my $dest = shift;
 my $sender = shift;

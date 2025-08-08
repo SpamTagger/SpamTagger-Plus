@@ -31,17 +31,17 @@ sub my_own_exit {
     exit($exit_code);
 }
 
-opendir (my $dir, '/var/spamtagger/spool/tmp/mailcleaner/dkim/');
+opendir (my $dir, '/var/spamtagger/spool/tmp/spamtagger/dkim/');
 my @short;
 my @invalid;
 while (my $key = readdir($dir)) {
-    if ($key eq 'default.pkey' && -s '/var/spamtagger/spool/tmp/mailcleaner/dkim/'.$key <= 1) {
+    if ($key eq 'default.pkey' && -s '/var/spamtagger/spool/tmp/spamtagger/dkim/'.$key <= 1) {
         next;
     }
     if ($key =~ m/^\.+$/) {
         next;
     }
-    my $length = `openssl rsa -in /var/spamtagger/spool/tmp/mailcleaner/dkim/$key -noout -text 2> /dev/null | grep 'Private-Key:'` || 'invalid';
+    my $length = `openssl rsa -in /var/spamtagger/spool/tmp/spamtagger/dkim/$key -noout -text 2> /dev/null | grep 'Private-Key:'` || 'invalid';
     chomp($length);
     $length =~ s/Private-Key: \((\d+) bit\)/$1/;
     if ($length =~ m/^\d+$/) {

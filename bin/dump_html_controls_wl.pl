@@ -27,7 +27,7 @@
 use strict;
 use DBI();
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 my $file = '/var/spamtagger/spool/tmp/mailscanner/whitelist_HTML';
 unlink($file);

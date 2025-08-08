@@ -131,19 +131,19 @@ unless (defined $args{from_domain} || defined $args{to_domain} || (defined $args
     usage();
 }
 
-my $VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`;
+my $VARDIR=`grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3`;
 chomp $VARDIR;
 if ( $VARDIR eq '') {
   $VARDIR="/var/spamtagger";
 }
 
-my $SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`;
+my $SRCDIR=`grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3`;
 chomp $SRCDIR;
 if ( $SRCDIR eq '' ) {
   $SRCDIR="/usr/spamtagger";
 }
 
-my $MYMAILCLEANERPWD=`grep '^MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3`;
+my $MYMAILCLEANERPWD=`grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3`;
 chomp $MYMAILCLEANERPWD;
 
 my $SOCKET="$VARDIR/run/mysql_slave/mysqld.sock";

@@ -1,11 +1,11 @@
 #!/bin/sh
 
-BACK=`pwd`
+BACK=$(pwd)
 if [ "$SRCDIR" = "" ]; then
-        SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
-        if [ "SRCDIR" = "" ]; then
-                SRCDIR=/var/spamtagger
-        fi
+  SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
+  if [ "SRCDIR" = "" ]; then
+    SRCDIR=/var/spamtagger
+  fi
 fi
 
 apt-get install sudo
@@ -19,7 +19,7 @@ tar -xvzf etrust.tar.gz
 
 export CAIGLBL0000=/usr/etrust
 
-cat >> /etc/ld.so.conf << EOF
+cat >>/etc/ld.so.conf <<EOF
 /usr/etrust/lib
 /usr/etrust/ino/lib
 /usr/etrust/ino/config
@@ -28,8 +28,8 @@ ldconfig
 
 /usr/etrust/ino/scripts/InoInstall
 
-HOST=`cat /etc/hostname`
-cat >> /etc/sudoers << EOF
+HOST=$(cat /etc/hostname)
+cat >>/etc/sudoers <<EOF
 User_Alias      MAILCLEANER = mailcleaner
 Runas_Alias     ROOT = root
 Host_Alias      LOCALHOST = $HOSTNAME

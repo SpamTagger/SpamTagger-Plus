@@ -21,7 +21,7 @@
 use strict;
 use Net::SMTP;
 
-my %config = readConfig("/etc/mailcleaner.conf"); 
+my %config = readConfig("/etc/spamtagger.conf"); 
 
 use strict;
 use Time::HiRes qw(gettimeofday tv_interval);

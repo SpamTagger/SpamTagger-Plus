@@ -17,7 +17,7 @@
     public function fetch($username, $domain) {
       $sysconf_ = SystemConfig::getInstance();
       // for now, username <=> address relation file is in a predefined place
-      $file = $sysconf_->VARDIR_."/spool/mailcleaner/addresses/".$domain->getPref('name');
+      $file = $sysconf_->VARDIR_."/spool/spamtagger/addresses/".$domain->getPref('name');
       // and fields are statically set:  username,address1,address2,...
       $cmd = "grep -Ei '^".$username.",' ".$file." | cut -d',' -f3-";
       $res = `$cmd`;
@@ -43,7 +43,7 @@
     public function searchEmails($l, $d) {
       $addresses = array();
       $sysconf_ = SystemConfig::getInstance();
-      $file = $sysconf_->VARDIR_."/spool/mailcleaner/addresses/".$d->getPref('name');
+      $file = $sysconf_->VARDIR_."/spool/spamtagger/addresses/".$d->getPref('name');
       if (!file_exists($file)) {
         return $addresses;
       }
