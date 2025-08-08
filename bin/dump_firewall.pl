@@ -328,8 +328,8 @@ sub do_start_script
 		$existing->{$set}->{$_} = 1;
 	}
 
-	my @blacklist_files = ('/usr/mailcleaner/etc/firewall/blacklist.txt', '/usr/mailcleaner/etc/firewall/blacklist_custom.txt');
-	my $blacklist_script = '/usr/mailcleaner/etc/firewall/blacklist';
+	my @blacklist_files = ('/usr/spamtagger/etc/firewall/blacklist.txt', '/usr/spamtagger/etc/firewall/blacklist_custom.txt');
+	my $blacklist_script = '/usr/spamtagger/etc/firewall/blacklist';
 	unlink $blacklist_script;
 	open(BLACKLIST, '>>', $blacklist_script);
 	print BLACKLIST "#! /bin/sh\n\n";

@@ -140,7 +140,7 @@ if ( $VARDIR eq '') {
 my $SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`;
 chomp $SRCDIR;
 if ( $SRCDIR eq '' ) {
-  $SRCDIR="/usr/mailcleaner";
+  $SRCDIR="/usr/spamtagger";
 }
 
 my $MYMAILCLEANERPWD=`grep '^MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3`;

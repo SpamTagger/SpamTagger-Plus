@@ -28,7 +28,7 @@
 function check_status() {
   echo "Checking slave status..."
 
-  STATUS=$(echo 'show slave status\G' | /usr/mailcleaner/bin/mc_mysql -s)
+  STATUS=$(echo 'show slave status\G' | /usr/spamtagger/bin/mc_mysql -s)
   if grep -vq "Slave_SQL_Running: Yes" <<<$(echo $STATUS); then
     echo "Slave_SQL_Running failed"
     RUN=1

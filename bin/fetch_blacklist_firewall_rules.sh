@@ -72,10 +72,10 @@ fi
 ##
 ret=$(downloadDatas "$SRCDIR/etc/firewall/" "firewall" $randomize "null" "" "noexit")
 if [[ "$ret" -eq "1" ]]; then
-  /usr/mailcleaner/bin/dump_firewall.pl
+  /usr/spamtagger/bin/dump_firewall.pl
   sleep 3
-  if [ -f "/usr/mailcleaner/etc/firewall/blacklist" ]; then
-    /usr/mailcleaner/etc/firewall/blacklist
+  if [ -f "/usr/spamtagger/etc/firewall/blacklist" ]; then
+    /usr/spamtagger/etc/firewall/blacklist
   fi
 fi
 

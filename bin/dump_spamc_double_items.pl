@@ -3,12 +3,12 @@
 my $i = 0;
 my $j = 0;
 
-unlink '/usr/mailcleaner/share/spamassassin/double_item_uri.cf';
+unlink '/usr/spamtagger/share/spamassassin/double_item_uri.cf';
 
-exit if ( ! -f '/usr/mailcleaner/share/spamassassin/double_item_uri.txt' );
+exit if ( ! -f '/usr/spamtagger/share/spamassassin/double_item_uri.txt' );
 
-open FH_TXT, '<', '/usr/mailcleaner/share/spamassassin/double_item_uri.txt';
-open RULES, '>', '/usr/mailcleaner/share/spamassassin/double_item_uri.cf';
+open FH_TXT, '<', '/usr/spamtagger/share/spamassassin/double_item_uri.txt';
+open RULES, '>', '/usr/spamtagger/share/spamassassin/double_item_uri.cf';
 while (<FH_TXT>) {
         $_ =~ s/^\s*//;
         $_ =~ s/\s*$//;

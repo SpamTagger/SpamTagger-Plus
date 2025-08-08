@@ -60,9 +60,9 @@ sub do {
     `$cmd`;
     $cmd = "echo 127.0.0.1 $name >> ".$this->{hostsfile};
     `$cmd`;
-    `echo "UPDATE httpd_config SET servername = '$name';" | /usr/mailcleaner/bin/mc_mysql -m mc_config`;
+    `echo "UPDATE httpd_config SET servername = '$name';" | /usr/spamtagger/bin/mc_mysql -m mc_config`;
     `sed -i -r 's/(MCHOSTNAME *= *).*/\\1$name/' /etc/mailcleaner.conf`;
-    `/usr/mailcleaner/etc/init.d/apache restart`;
+    `/usr/spamtagger/etc/init.d/apache restart`;
   } else {
     print("Invalid hostname: $name\n");
   }

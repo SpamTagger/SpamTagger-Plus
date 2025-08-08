@@ -3,7 +3,7 @@ package          ManageServices;
 use strict;
 use warnings;
 no warnings 'uninitialized';
-use lib '/usr/mailcleaner/lib/ManageServices';
+use lib '/usr/spamtagger/lib/ManageServices';
 use threads ();
 use threads::shared;
 use Time::HiRes qw( gettimeofday tv_interval );
@@ -12,13 +12,13 @@ use Sys::Syslog;
 require ReadConfig;
 require ConfigTemplate;
 
-our $initDir = '/usr/mailcleaner/etc/init.d';
+our $initDir = '/usr/spamtagger/etc/init.d';
 our $restartDir = '/var/spamtagger/run';
 our $logLevels = { 'error' => 0, 'info' => 1, 'debug' => 2 };
 
 our %defaultConfigs = (
 	'VARDIR'	=> '/var/spamtagger',
-	'SRCDIR'	=> '/usr/mailcleaner',
+	'SRCDIR'	=> '/usr/spamtagger',
 	'debug'		=> 1,
 	'uid'		=> 0,
 	'gid'		=> 0,

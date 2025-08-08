@@ -1,4 +1,4 @@
-loadplugin UriTuning /usr/mailcleaner/lib/SpamC/UriTuning.pm
+loadplugin UriTuning /usr/spamtagger/lib/SpamC/UriTuning.pm
 
 body     MC_URI_CONTAINS_RECIP_DOMAIN   eval:gglapi_domain()
 describe MC_URI_CONTAINS_RECIP_DOMAIN   A link from googleapis.com is containing the domain name of a recipient

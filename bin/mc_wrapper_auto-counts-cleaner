@@ -27,29 +27,29 @@
 #   Notice: Should be called by cron every day and launched with a timeout as
 #   it could cause the load increase.
 
-weekday=`date +%-u`
-dayofmonth=`date +%-d`
-dayofmonth=$(( $dayofmonth-1 )) 
+weekday=$(date +%-u)
+dayofmonth=$(date +%-d)
+dayofmonth=$(($dayofmonth - 1))
 alphamin=('a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p' 'q' 'r' 's' 't' 'u' 'v' 'w' 'x' 'y' 'z' '' '' '' '' '')
 
 dfilt=${alphamin[$dayofmonth]}
 ufilt=''
 
 case $weekday in
-"1") ufilt='[a-dA-D]';;
-"2") ufilt='[e-hE-H]';;
-"3") ufilt='[i-lI-L]';;
-"4") ufilt='[m-pM-P]';;
-"5") ufilt='[q-tQ-T]';;
-"6") ufilt='[u-zU-Z]';;
-"7") ufilt='';;
-"*") exit 1;;
+"1") ufilt='[a-dA-D]' ;;
+"2") ufilt='[e-hE-H]' ;;
+"3") ufilt='[i-lI-L]' ;;
+"4") ufilt='[m-pM-P]' ;;
+"5") ufilt='[q-tQ-T]' ;;
+"6") ufilt='[u-zU-Z]' ;;
+"7") ufilt='' ;;
+"*") exit 1 ;;
 esac
 
-delay=$[ ( $RANDOM % 10 ) + 1 ]
-echo "`date`: Sleeping $delay minutes before cleaning of counts files" >> /var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
+delay=$((($RANDOM % 10) + 1))
+echo "$(date): Sleeping $delay minutes before cleaning of counts files" >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
 sleep "$delay"m
-echo "`date`: Cleaning started" >> /var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
-( time timeout 5m /usr/mailcleaner/bin/mc_counts-cleaner -d "$dfilt*" -u "$ufilt" -o 365 -x ) >> /var/spamtagger/log/mailcleaner/mc_counts-cleaner.log 2>&1 |wc -l >> /var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
-echo "`date`: Cleaning terminated" >> /var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
+echo "$(date): Cleaning started" >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
+(time timeout 5m /usr/spamtagger/bin/mc_counts-cleaner -d "$dfilt*" -u "$ufilt" -o 365 -x) >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log 2>&1 | wc -l >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
+echo "$(date): Cleaning terminated" >>/var/spamtagger/log/mailcleaner/mc_counts-cleaner.log
 exit 0

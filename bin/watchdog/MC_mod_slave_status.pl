@@ -29,7 +29,7 @@ sub my_own_exit {
     exit($exit_code);
 }
 
-my $slave_status = `echo 'show slave status\\G' |/usr/mailcleaner/bin/mc_mysql -s`;
+my $slave_status = `echo 'show slave status\\G' |/usr/spamtagger/bin/mc_mysql -s`;
 
 if ($slave_status eq '') {
 	# Réparer resync_db.sh

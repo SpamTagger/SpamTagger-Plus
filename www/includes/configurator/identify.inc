@@ -44,8 +44,8 @@ if ('identify.inc' == basename($_SERVER['SCRIPT_FILENAME']))
          }
 	    if (isset($_POST['submit_identify'])) {
   	      if (!empty($_POST['identpass'])) {
-              $actualadminpass = trim(exec("echo \"SELECT password FROM administrator WHERE username = 'admin'\" |/usr/mailcleaner/bin/mc_mysql -m mc_config"));
-              $salt = trim(exec("echo \"SELECT password FROM administrator WHERE username = 'admin'\" |/usr/mailcleaner/bin/mc_mysql -m mc_config |cut -d$ -f4"));
+              $actualadminpass = trim(exec("echo \"SELECT password FROM administrator WHERE username = 'admin'\" |/usr/spamtagger/bin/mc_mysql -m mc_config"));
+              $salt = trim(exec("echo \"SELECT password FROM administrator WHERE username = 'admin'\" |/usr/spamtagger/bin/mc_mysql -m mc_config |cut -d$ -f4"));
               $cryptedidentpass = crypt($_POST['identpass'],'$6$rounds=1000$'.$salt.'$');
 	        if ($cryptedidentpass == $actualadminpass) {
 	          echo "<span class='text-success'>Identification successful. Click on Next !</span>";

@@ -32,29 +32,28 @@
 #   -m, Mode Dev: true or false - delete logs or not and some others things
 #
 
-
 PROGNAME='prepare_mc_release'
 VERSION='0.8'
 
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
-  SRCDIR=/usr/mailcleaner
+  SRCDIR=/usr/spamtagger
 fi
 
 function cdel {
-    if [ "$modeDev" != "false" ]; then
-	echo "Dev Mode On: rm $@"
-    else
-	rm $@
-    fi
+  if [ "$modeDev" != "false" ]; then
+    echo "Dev Mode On: rm $@"
+  else
+    rm $@
+  fi
 }
 
 usage() {
-  cat <<- _EOF_
+  cat <<-_EOF_
   Usage: $PROGNAME -i 2017041501 -d '2017-10-04' -t '12:00:00' -r '2017.04 migrated to Jessie' -m true resellerID resellerPwd ClientID dbPassword
 
   Options (Not really here...) :
@@ -71,44 +70,43 @@ _EOF_
 
 modeDev=true
 
-while getopts ":hd:i:t:r:m:" option
-do
-    case $option in
-        h)
-            usage
-            exit 0
-            ;;
-        d)
-            patchDate=$OPTARG
-            ;;
-        i)
-            patchID=$OPTARG
-            ;;
-        t)
-            patchTime=$OPTARG
-            ;;
-        r)
-            reason=$OPTARG
-            ;;
-        m)
-            modeDev=$OPTARG
-            ;;
-        :)
-            echo "L'option $OPTARG requiert un argument"
-            exit 1
-            ;;
-        ?)
-            echo "$OPTARG : option invalide"
-            exit 1
-            ;;
-    esac
+while getopts ":hd:i:t:r:m:" option; do
+  case $option in
+  h)
+    usage
+    exit 0
+    ;;
+  d)
+    patchDate=$OPTARG
+    ;;
+  i)
+    patchID=$OPTARG
+    ;;
+  t)
+    patchTime=$OPTARG
+    ;;
+  r)
+    reason=$OPTARG
+    ;;
+  m)
+    modeDev=$OPTARG
+    ;;
+  :)
+    echo "L'option $OPTARG requiert un argument"
+    exit 1
+    ;;
+  ?)
+    echo "$OPTARG : option invalide"
+    exit 1
+    ;;
+  esac
 done
 
-shift $((OPTIND-1))
+shift $((OPTIND - 1))
 
 if [ -z "$patchDate" ] || [ -z "$patchID" ] || [ -z "$patchTime" ] || [ -z "$reason" ]; then
-    usage
-    exit 1
+  usage
+  exit 1
 fi
 
 resellerID="$1"
@@ -117,8 +115,8 @@ clientID="$3"
 dbPassword="$4"
 
 if [ -z "$resellerID" ] || [ -z "$resellerPwd" ] || [ -z "$clientID" ] || [ -z "$dbPassword" ]; then
-    usage
-    exit 1
+  usage
+  exit 1
 fi
 
 echo "Beginning..."
@@ -135,12 +133,12 @@ service ntp start
 
 echo "Setting crontab"
 crontab - <<EOF
-0,15,30,45 * * * *  /usr/mailcleaner/scripts/cron/mailcleaner_cron.pl &> /dev/null
-0-59/5 * * * * /usr/mailcleaner/bin/collect_rrd_stats.pl &> /dev/null
-30 0 * * * /usr/mailcleaner/bin/mc_wrapper_auto-counts-cleaner
-0-59/10 * * * * /usr/mailcleaner/bin/watchdog/watchdogs.pl dix
-0 6,13,20 * * * /usr/mailcleaner/bin/watchdog/watchdogs.pl oneday
-0-59/15 * * * * /usr/mailcleaner/bin/watchdog/watchdogs_report.sh
+0,15,30,45 * * * *  /usr/spamtagger/scripts/cron/mailcleaner_cron.pl &> /dev/null
+0-59/5 * * * * /usr/spamtagger/bin/collect_rrd_stats.pl &> /dev/null
+30 0 * * * /usr/spamtagger/bin/mc_wrapper_auto-counts-cleaner
+0-59/10 * * * * /usr/spamtagger/bin/watchdog/watchdogs.pl dix
+0 6,13,20 * * * /usr/spamtagger/bin/watchdog/watchdogs.pl oneday
+0-59/15 * * * * /usr/spamtagger/bin/watchdog/watchdogs_report.sh
 30 2 * * * /root/Updater4MC/updater4mc.sh &> /dev/null
 EOF
 
@@ -166,7 +164,7 @@ cdel -rf $STARTERSPATH
 
 . $SRCDIR/lib/updates/download_files.sh
 
-randomize=false;
+randomize=false
 
 echo Waiting for teams sycnhronization
 sleep 2m
@@ -231,7 +229,7 @@ echo Delete all useless dirs and files of /root
 find /root -mindepth 1 -maxdepth 1 \( -path /root/.ssh -o -path /root/.profile -o -path /root/.pyzor -o -path /root/starters -o -path /root/Updater4MC \) -prune -o -print | while read dirdata; do cdel -rf "$dirdata"; done
 
 echo Enable installer.pl redirection
-echo "if ! [ -f \"${VARDIR}/spool/mailcleaner/firstcmdlogin\" ]; then ${SRCDIR}/scripts/installer/installer.pl; touch \"${VARDIR}/spool/mailcleaner/firstcmdlogin\"; fi" > ~/.bashrc
+echo "if ! [ -f \"${VARDIR}/spool/mailcleaner/firstcmdlogin\" ]; then ${SRCDIR}/scripts/installer/installer.pl; touch \"${VARDIR}/spool/mailcleaner/firstcmdlogin\"; fi" >~/.bashrc
 rm -f ${VARDIR}/spool/mailcleaner/firstcmdlogin
 
 # Others data installation goes here ->
@@ -243,32 +241,32 @@ cp -f "${STARTERSPATH}/others/issue" /etc/issue
 cp -f "${STARTERSPATH}/magic.mgc" /opt/file/share/misc/magic.mgc
 
 echo Create file for backup IF 192.168.1.42
-echo -e 'auto eth0:0\nallow-hotplug eth0:0\niface eth0:0 inet static\n\taddress 192.168.1.42\n\tnetmask 255.255.255.0\n' > /etc/network/interfaces.d/configif.conf
+echo -e 'auto eth0:0\nallow-hotplug eth0:0\niface eth0:0 inet static\n\taddress 192.168.1.42\n\tnetmask 255.255.255.0\n' >/etc/network/interfaces.d/configif.conf
 
 echo Set port access for the configurator
-echo "DELETE FROM external_access where service='configurator'" |${SRCDIR}/bin/mc_mysql -m mc_config
-echo "INSERT INTO external_access values(NULL, 'configurator', '4242', 'TCP', '0.0.0.0/0', 'NULL')" |${SRCDIR}/bin/mc_mysql -m mc_config
+echo "DELETE FROM external_access where service='configurator'" | ${SRCDIR}/bin/mc_mysql -m mc_config
+echo "INSERT INTO external_access values(NULL, 'configurator', '4242', 'TCP', '0.0.0.0/0', 'NULL')" | ${SRCDIR}/bin/mc_mysql -m mc_config
 
 echo Set default value in DB
-echo "update domain_pref set allow_newsletters=0,prevent_spoof=1 where id=(select prefs from domain where name='__global__')\G" |${SRCDIR}/bin/mc_mysql -m mc_config
+echo "update domain_pref set allow_newsletters=0,prevent_spoof=1 where id=(select prefs from domain where name='__global__')\G" | ${SRCDIR}/bin/mc_mysql -m mc_config
 
 echo Insert Version in DB
-echo "DELETE FROM update_patch WHERE id='${patchID}';" |${SRCDIR}/bin/mc_mysql -s mc_config
-echo "INSERT INTO update_patch VALUES ('${patchID}', '${patchDate}', '${patchTime}', 'OK', '${reason}');" |${SRCDIR}/bin/mc_mysql -s mc_config
+echo "DELETE FROM update_patch WHERE id='${patchID}';" | ${SRCDIR}/bin/mc_mysql -s mc_config
+echo "INSERT INTO update_patch VALUES ('${patchID}', '${patchDate}', '${patchTime}', 'OK', '${reason}');" | ${SRCDIR}/bin/mc_mysql -s mc_config
 
 echo "Reset MySQL Binary logs"
-echo 'STOP SLAVE' |/opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
-echo 'RESET SLAVE' |/opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
-echo 'RESET MASTER' |/opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_master/mysqld.sock -uroot -p"$dbPassword"
-echo 'START SLAVE' |/opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
+echo 'STOP SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
+echo 'RESET SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
+echo 'RESET MASTER' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_master/mysqld.sock -uroot -p"$dbPassword"
+echo 'START SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
 
 ${SRCDIR}/etc/init.d/mailcleaner stop
 
 sleep 1s
 echo "Delete messages in queues"
-/opt/exim4/bin/exiqgrep -C ${SRCDIR}/etc/exim/exim_stage1.conf -i |xargs /opt/exim4/bin/exim -Mrm
-/opt/exim4/bin/exiqgrep -C ${SRCDIR}/etc/exim/exim_stage2.conf -i |xargs /opt/exim4/bin/exim -Mrm
-/opt/exim4/bin/exiqgrep -C ${SRCDIR}/etc/exim/exim_stage4.conf -i |xargs /opt/exim4/bin/exim -Mrm
+/opt/exim4/bin/exiqgrep -C ${SRCDIR}/etc/exim/exim_stage1.conf -i | xargs /opt/exim4/bin/exim -Mrm
+/opt/exim4/bin/exiqgrep -C ${SRCDIR}/etc/exim/exim_stage2.conf -i | xargs /opt/exim4/bin/exim -Mrm
+/opt/exim4/bin/exiqgrep -C ${SRCDIR}/etc/exim/exim_stage4.conf -i | xargs /opt/exim4/bin/exim -Mrm
 
 echo "Delete Watchdog files"
 cdel -f ${VARDIR}/spool/watchdog/watchdogs*
