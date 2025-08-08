@@ -15,7 +15,7 @@ class MCSoap_Status
   	require_once('MailCleaner/Config.php');
   	
     $config = new MailCleaner_Config();
-    $statusfile = $config->getOption('VARDIR').'/run/mailcleaner.status';
+    $statusfile = $config->getOption('VARDIR').'/run/spamtagger.status';
 
     if (! file_exists($statusfile)) {
       return $ret;
