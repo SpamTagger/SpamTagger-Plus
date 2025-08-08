@@ -2,42 +2,57 @@
 
 #!/bin/bash
 
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
-  SRCDIR=/opt/mailcleaner
+  SRCDIR=/usr/spamtagger
 fi
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
-  VARDIR=/opt/mailcleaner
+  VARDIR=/var/spamtagger
 fi
 
 ## clean exim garbage
 for exim in stage1 stage2 stage4; do
   cd $VARDIR/spool/exim_$exim/input/
-  for dir in `find . -type d`;do  
-    if [ "$dir" != '.' ];then cd $dir;fi
-  
+  for dir in $(find . -type d); do
+    if [ "$dir" != '.' ]; then cd $dir; fi
+
     #echo -n "cleaning: "
     #pwd
 
-    for i in `ls *-D 2> /dev/null`; do j=`echo $i | cut -d'-' -f-3`; if [ ! -f $j-H ];then rm $i >/dev/null 2>&1; fi; done
-    for i in `ls *-H 2> /dev/null`; do j=`echo $i | cut -d'-' -f-3`; if [ ! -f $j-D ];then rm $i >/dev/null 2>&1; fi; done
-    for i in `ls *-J 2> /dev/null`; do j=`echo $i | cut -d'-' -f-3`; if [ ! -f $j-H ];then rm $i >/dev/null 2>&1; fi; done
-    for i in `ls *-K 2> /dev/null`; do j=`echo $i | cut -d'-' -f-3`; if [ ! -f $j-H ];then rm $i >/dev/null 2>&1; fi; done
-    for i in `ls *-T 2> /dev/null`; do j=`echo $i | cut -d'-' -f-3`; if [ ! -f $j-H ];then rm $i >/dev/null 2>&1; fi; done
+    for i in $(ls *-D 2>/dev/null); do
+      j=$(echo $i | cut -d'-' -f-3)
+      if [ ! -f $j-H ]; then rm $i >/dev/null 2>&1; fi
+    done
+    for i in $(ls *-H 2>/dev/null); do
+      j=$(echo $i | cut -d'-' -f-3)
+      if [ ! -f $j-D ]; then rm $i >/dev/null 2>&1; fi
+    done
+    for i in $(ls *-J 2>/dev/null); do
+      j=$(echo $i | cut -d'-' -f-3)
+      if [ ! -f $j-H ]; then rm $i >/dev/null 2>&1; fi
+    done
+    for i in $(ls *-K 2>/dev/null); do
+      j=$(echo $i | cut -d'-' -f-3)
+      if [ ! -f $j-H ]; then rm $i >/dev/null 2>&1; fi
+    done
+    for i in $(ls *-T 2>/dev/null); do
+      j=$(echo $i | cut -d'-' -f-3)
+      if [ ! -f $j-H ]; then rm $i >/dev/null 2>&1; fi
+    done
 
-    if [ "$dir" != '.' ];then cd ..; fi;
+    if [ "$dir" != '.' ]; then cd ..; fi
   done
 done
 
 ## clean spamstore
 cd $VARDIR/spool/exim_stage4/spamstore/
-for f in `ls *.env 2> /dev/null | cut -d'.' -f-1`; do
-   if [ ! -f $f.msg ]; then
-   	 rm $f.env
-   fi
+for f in $(ls *.env 2>/dev/null | cut -d'.' -f-1); do
+  if [ ! -f $f.msg ]; then
+    rm $f.env
+  fi
 done
-rm *.tmp 2> /dev/null
+rm *.tmp 2>/dev/null
 
 ## clean tmp dir
 if [ -d $VARDIR/spool/tmp ]; then

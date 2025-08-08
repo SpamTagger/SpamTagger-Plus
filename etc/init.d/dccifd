@@ -1,28 +1,27 @@
 #!/bin/sh
 
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
   VARDIR=/var/mailcleaner
 fi
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
-  SRCDIR=/opt/mailcleaner
+  SRCDIR=/usr/spamtagger
 fi
 
 COMMAND=/opt/dcc/libexec/dccifd
 HOME=/opt/dcc/var
 
-test_dcc () {
+test_dcc() {
 
- echo "not yet implemented..."
+  echo "not yet implemented..."
 }
 
-
 case "$1" in
-start|restart|reload)
-  
+start | restart | reload)
+
   if [ "$1" = "start" ]; then
-    RES=`pgrep -f $COMMAND`
+    RES=$(pgrep -f $COMMAND)
     if [ "$RES" = "" ]; then
       $0 stop s
       echo -n "  Starting DCC client daemon: "
@@ -43,26 +42,26 @@ start|restart|reload)
     chmod og+r $SRCDIR/etc/dcc/map.txt
     chown dcc:dcc $HOME/map
     echo -n "done. "
-  fi 
+  fi
   if [ -f $HOME/whiteclnt ]; then
-   rm $HOME/whiteclnt
+    rm $HOME/whiteclnt
   fi
   ln -s $SRCDIR/etc/dcc/whiteclnt $HOME/whiteclnt
   chown dcc:dcc $HOME >/dev/null 2>&1
   chown dcc:dcc $HOME/* >/dev/null 2>&1
 
-  $COMMAND -h$HOME -Idcc -p$VARDIR/run/dcc/dcc.sock -R$VARDIR/run/dcc -T$VARDIR/spool/dcc 
+  $COMMAND -h$HOME -Idcc -p$VARDIR/run/dcc/dcc.sock -R$VARDIR/run/dcc -T$VARDIR/spool/dcc
 
-  RES=`pgrep -f $COMMAND`
+  RES=$(pgrep -f $COMMAND)
   if [ "$RES" = "" ]; then
-    echo "Error, no daemon started.";
+    echo "Error, no daemon started."
   else
     echo "started."
   fi
   ;;
 
 stop)
-  RES=`pgrep -f $COMMAND`
+  RES=$(pgrep -f $COMMAND)
   if [ "$2" != "s" ]; then
     echo -n "  Stopping DCC client daemon: "
   fi
@@ -70,18 +69,18 @@ stop)
     kill -15 $RES >/dev/null 2>&1
     sleep 1
     pkill -s SIGKILL -f $COMMAND >/dev/null 2>&1
-  else 
+  else
     if [ "$2" != "s" ]; then
       echo "already stopped."
       exit 0
     fi
   fi
 
-  RES=`pgrep -f $COMMAND`
+  RES=$(pgrep -f $COMMAND)
   if [ "$RES" = "" ]; then
-     if [ "$2" != "s" ]; then
-       echo "stopped."
-     fi
+    if [ "$2" != "s" ]; then
+      echo "stopped."
+    fi
   fi
   ;;
 
@@ -90,11 +89,10 @@ status)
   ;;
 
 *)
-   echo "`basename $0`: start|stop|restart" 1>&2
-   exit 1
-   ;;
+  echo "$(basename $0): start|stop|restart" 1>&2
+  exit 1
+  ;;
 
 esac
 
 exit 0
-

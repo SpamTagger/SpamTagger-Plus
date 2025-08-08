@@ -28,19 +28,19 @@ DAEMON=/usr/bin/$NAME-client
 SCRIPTNAME=/etc/init.d/$NAME
 CONFPATH="/usr/mailcleaner/etc/fail2ban/"
 
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
-  SRCDIR=/opt/mailcleaner
+  SRCDIR=/usr/spamtagger
 fi
 
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/mailcleaner
 fi
 
 # Ad-hoc way to parse out socket file name
-SOCKFILE=`grep -h '^[^#]*socket *=' /etc/$NAME/$NAME.conf /etc/$NAME/$NAME.local 2>/dev/null \
-          | tail -n 1 | sed -e 's/.*socket *= *//g' -e 's/ *$//g'`
+SOCKFILE=$(grep -h '^[^#]*socket *=' /etc/$NAME/$NAME.conf /etc/$NAME/$NAME.local 2>/dev/null |
+  tail -n 1 | sed -e 's/.*socket *= *//g' -e 's/ *$//g')
 [ -z "$SOCKFILE" ] && SOCKFILE='/tmp/fail2ban.sock'
 
 # Exit if the package is not installed
@@ -58,10 +58,10 @@ DAEMON_ARGS="$FAIL2BAN_OPTS"
 
 # Predefine what can be missing from lsb source later on -- necessary to run
 # on sarge. Just present it in a bit more compact way from what was shipped
-log_daemon_msg () {
-	[ -z "$1" ] && return 1
-	echo -n "$1:"
-	[ -z "$2" ] || echo -n " $2"
+log_daemon_msg() {
+  [ -z "$1" ] && return 1
+  echo -n "$1:"
+  [ -z "$2" ] || echo -n " $2"
 }
 
 # Define LSB log_* functions.
@@ -73,214 +73,206 @@ log_daemon_msg () {
 #
 # Shortcut function for abnormal init script interruption
 #
-report_bug()
-{
-	echo $*
-	echo "Please submit a bug report to Debian BTS (reportbug fail2ban)"
-	exit 1
+report_bug() {
+  echo $*
+  echo "Please submit a bug report to Debian BTS (reportbug fail2ban)"
+  exit 1
 }
 
 #
 # Helper function to check if socket is present, which is often left after
 # abnormal exit of fail2ban and needs to be removed
 #
-check_socket()
-{
-	# Return
-	#	0 if socket is present and readable
-	#	1 if socket file is not present
-	#	2 if socket file is present but not readable
-	#	3 if socket file is present but is not a socket
-	[ -e "$SOCKFILE" ] || return 1
-	[ -r "$SOCKFILE" ] || return 2
-	[ -S "$SOCKFILE" ] || return 3
-	return 0
+check_socket() {
+  # Return
+  #	0 if socket is present and readable
+  #	1 if socket file is not present
+  #	2 if socket file is present but not readable
+  #	3 if socket file is present but is not a socket
+  [ -e "$SOCKFILE" ] || return 1
+  [ -r "$SOCKFILE" ] || return 2
+  [ -S "$SOCKFILE" ] || return 3
+  return 0
 }
 
 #
 # Function that starts the daemon/service
 #
-do_start()
-{
-	# Return
-	#	0 if daemon has been started
-	#	1 if daemon was already running
-	#	2 if daemon could not be started
-	export PYENV_ROOT="/var/mailcleaner/.pyenv"
-	export PATH="$PYENV_ROOT/bin:$PATH"
-	if command -v pyenv 1>/dev/null 2>&1; then
-	  eval "$(pyenv init --path)"
-	fi
-	dump_fail2ban_config.py
+do_start() {
+  # Return
+  #	0 if daemon has been started
+  #	1 if daemon was already running
+  #	2 if daemon could not be started
+  export PYENV_ROOT="/var/mailcleaner/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init --path)"
+  fi
+  dump_fail2ban_config.py
 
-	do_status && return 1
-	touch $VARDIR/run/fail2ban.start.rs
+  do_status && return 1
+  touch $VARDIR/run/fail2ban.start.rs
 
-	if [ -e "$SOCKFILE" ]; then
-		log_failure_msg "Socket file $SOCKFILE is present"
-		[ "$1" = "force-start" ] \
-			&& log_success_msg "Starting anyway as requested" \
-			|| return 2
-		DAEMON_ARGS="$DAEMON_ARGS"
-	fi
+  if [ -e "$SOCKFILE" ]; then
+    log_failure_msg "Socket file $SOCKFILE is present"
+    [ "$1" = "force-start" ] &&
+      log_success_msg "Starting anyway as requested" ||
+      return 2
+    DAEMON_ARGS="$DAEMON_ARGS"
+  fi
 
-	# Assure that /var/run/fail2ban exists
-	[ -d /var/run/fail2ban ] || mkdir -p /var/run/fail2ban
+  # Assure that /var/run/fail2ban exists
+  [ -d /var/run/fail2ban ] || mkdir -p /var/run/fail2ban
 
-	if [ "$FAIL2BAN_USER" != "root" ]; then
-		# Make the socket directory, IP lists and fail2ban log
-		# files writable by fail2ban
-		chown "$FAIL2BAN_USER" /var/run/fail2ban
-		# Create the logfile if it doesn't exist
-		touch /var/log/fail2ban.log
-		chown "$FAIL2BAN_USER" /var/log/fail2ban.log
-		find /proc/net/xt_recent -name 'fail2ban-*' -exec chown "$FAIL2BAN_USER" {} \;
-	fi
-	DAEMON_ARGS="$DAEMON_ARGS -c $CONFPATH"
-	/sbin/start-stop-daemon --start --quiet --chuid "$FAIL2BAN_USER" --exec $DAEMON -- \
-		$DAEMON_ARGS start > /dev/null\
-		|| return 2
-	rm $VARDIR/run/fail2ban.stopped >/dev/null 2>&1
-	rm $VARDIR/run/fail2ban.*.rs >/dev/null 2>&1
-	return 0
+  if [ "$FAIL2BAN_USER" != "root" ]; then
+    # Make the socket directory, IP lists and fail2ban log
+    # files writable by fail2ban
+    chown "$FAIL2BAN_USER" /var/run/fail2ban
+    # Create the logfile if it doesn't exist
+    touch /var/log/fail2ban.log
+    chown "$FAIL2BAN_USER" /var/log/fail2ban.log
+    find /proc/net/xt_recent -name 'fail2ban-*' -exec chown "$FAIL2BAN_USER" {} \;
+  fi
+  DAEMON_ARGS="$DAEMON_ARGS -c $CONFPATH"
+  /sbin/start-stop-daemon --start --quiet --chuid "$FAIL2BAN_USER" --exec $DAEMON -- \
+    $DAEMON_ARGS start >/dev/null || return 2
+  rm $VARDIR/run/fail2ban.stopped >/dev/null 2>&1
+  rm $VARDIR/run/fail2ban.*.rs >/dev/null 2>&1
+  return 0
 }
-
 
 #
 # Function that checks the status of fail2ban and returns
 # corresponding code
 #
-do_status()
-{
-	$DAEMON ping > /dev/null 2>&1
-	return $?
+do_status() {
+  $DAEMON ping >/dev/null 2>&1
+  return $?
 }
 
 #
 # Function that stops the daemon/service
 #
-do_stop()
-{
-	# Return
-	#	0 if daemon has been stopped
-	#	1 if daemon was already stopped
-	#	2 if daemon could not be stopped
-	#	other if a failure occurred
-	timeout 1s bash -c "$DAEMON status" >/dev/null 2>&1
-	RET=$?
-	# will quickly return 255 if it is not running
-	if [ $RET -eq 255 ]; then
-		RET=1
-	else
-		touch $VARDIR/run/fail2ban.stop.rs
-		# otherwise try to stop it gently
-		timeout 5s bash -c "$DAEMON stop" >/dev/null 2>&1
-		RET=$?
-		# will return 0 if the stop command exits, but it can take several seconds to actually stop
-		if [ $RET -eq 0 ]; then
-			count=1
-			while do_status && [ $count -lt 60 ]; do
-				sleep 1
-				count=$(($count+1))
-			done
-			[ $count -lt 60 ] || RET=3 # failed to stop
-		# otherwise, if the server is dead, it will never return, so we can hard kill it
-		elif [ $RET -eq 124 ]; then
-			pkill -9 fail2ban-server
-			RET=0
-		fi
-	fi
-	# Clean up socket and flag, mark as stopped
-	if [ -e /var/run/fail2ban/fail2ban.sock ]; then
-		rm /var/run/fail2ban/fail2ban.sock
-	fi
-	if [ -e $VARDIR/run/fail2ban.stop.rs ]; then
-		rm $VARDIR/run/fail2ban.stop.rs
-	else
-		RET=1
-	fi
-	touch $VARDIR/run/fail2ban.stopped
-	return $RET
+do_stop() {
+  # Return
+  #	0 if daemon has been stopped
+  #	1 if daemon was already stopped
+  #	2 if daemon could not be stopped
+  #	other if a failure occurred
+  timeout 1s bash -c "$DAEMON status" >/dev/null 2>&1
+  RET=$?
+  # will quickly return 255 if it is not running
+  if [ $RET -eq 255 ]; then
+    RET=1
+  else
+    touch $VARDIR/run/fail2ban.stop.rs
+    # otherwise try to stop it gently
+    timeout 5s bash -c "$DAEMON stop" >/dev/null 2>&1
+    RET=$?
+    # will return 0 if the stop command exits, but it can take several seconds to actually stop
+    if [ $RET -eq 0 ]; then
+      count=1
+      while do_status && [ $count -lt 60 ]; do
+        sleep 1
+        count=$(($count + 1))
+      done
+      [ $count -lt 60 ] || RET=3 # failed to stop
+    # otherwise, if the server is dead, it will never return, so we can hard kill it
+    elif [ $RET -eq 124 ]; then
+      pkill -9 fail2ban-server
+      RET=0
+    fi
+  fi
+  # Clean up socket and flag, mark as stopped
+  if [ -e /var/run/fail2ban/fail2ban.sock ]; then
+    rm /var/run/fail2ban/fail2ban.sock
+  fi
+  if [ -e $VARDIR/run/fail2ban.stop.rs ]; then
+    rm $VARDIR/run/fail2ban.stop.rs
+  else
+    RET=1
+  fi
+  touch $VARDIR/run/fail2ban.stopped
+  return $RET
 }
 
 #
 # Function to reload configuration
 #
 do_reload() {
-	$DAEMON reload > /dev/null && return 0 || return 1
-	return 0
+  $DAEMON reload >/dev/null && return 0 || return 1
+  return 0
 }
 
 # yoh:
 # shortcut function to don't duplicate case statements and to don't use
 # bashisms (arrays). Fixes #368218
 #
-log_end_msg_wrapper()
-{
-	if [ "$3" != "no" ]; then
-		[ $1 -lt $2 ] && value=0 || value=1
-		log_end_msg $value
-	fi
+log_end_msg_wrapper() {
+  if [ "$3" != "no" ]; then
+    [ $1 -lt $2 ] && value=0 || value=1
+    log_end_msg $value
+  fi
 }
 
 command="$1"
 case "$command" in
-	start|force-start)
-		[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
-		do_start "$command"
-		log_end_msg_wrapper $? 2 "$VERBOSE"
-		;;
+start | force-start)
+  [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+  do_start "$command"
+  log_end_msg_wrapper $? 2 "$VERBOSE"
+  ;;
 
-	stop)
-		[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
-		do_stop
-		log_end_msg_wrapper $? 2 "$VERBOSE"
-		;;
+stop)
+  [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+  do_stop
+  log_end_msg_wrapper $? 2 "$VERBOSE"
+  ;;
 
-	restart|force-reload)
-		touch $VARDIR/run/fail2ban.restart.rs
-		log_daemon_msg "Restarting $DESC" "$NAME"
-		do_stop
-		case "$?" in
-			0|1)
-				do_start
-				log_end_msg_wrapper $? 1 "always"
-				;;
-			*)
-				# Failed to stop
-				log_end_msg 1
-				;;
- 		esac
-		;;
+restart | force-reload)
+  touch $VARDIR/run/fail2ban.restart.rs
+  log_daemon_msg "Restarting $DESC" "$NAME"
+  do_stop
+  case "$?" in
+  0 | 1)
+    do_start
+    log_end_msg_wrapper $? 1 "always"
+    ;;
+  *)
+    # Failed to stop
+    log_end_msg 1
+    ;;
+  esac
+  ;;
 
-	reload|force-reload)
-        log_daemon_msg "Reloading $DESC" "$NAME"
-        do_reload
-        log_end_msg $?
-        ;;
+reload | force-reload)
+  log_daemon_msg "Reloading $DESC" "$NAME"
+  do_reload
+  log_end_msg $?
+  ;;
 
-	status)
-		log_daemon_msg "Status of $DESC"
-		do_status
-		case $? in
-			0)  log_success_msg " $NAME is running" ;;
-			255)
-				check_socket
-				case $? in
-					1)  log_failure_msg " $NAME is not running" && exit 3 ;;
-					0)  log_failure_msg " $NAME is not running but $SOCKFILE exists" && exit 3 ;;
-					2)  log_failure_msg " $SOCKFILE not readable, status of $NAME is unknown" && exit 3 ;;
-					3)  log_failure_msg " $SOCKFILE exists but not a socket, status of $NAME is unknown" && exit 3 ;;
-					*)  report_bug "Unknown return code from $NAME:check_socket." && exit 4 ;;
-				esac
-				;;
-			*)  report_bug "Unknown $NAME status code" && exit 4
-		esac
-		;;
-	*)
-		echo "Usage: $SCRIPTNAME {start|force-start|stop|restart|force-reload|status}" >&2
-		exit 3
-		;;
+status)
+  log_daemon_msg "Status of $DESC"
+  do_status
+  case $? in
+  0) log_success_msg " $NAME is running" ;;
+  255)
+    check_socket
+    case $? in
+    1) log_failure_msg " $NAME is not running" && exit 3 ;;
+    0) log_failure_msg " $NAME is not running but $SOCKFILE exists" && exit 3 ;;
+    2) log_failure_msg " $SOCKFILE not readable, status of $NAME is unknown" && exit 3 ;;
+    3) log_failure_msg " $SOCKFILE exists but not a socket, status of $NAME is unknown" && exit 3 ;;
+    *) report_bug "Unknown return code from $NAME:check_socket." && exit 4 ;;
+    esac
+    ;;
+  *) report_bug "Unknown $NAME status code" && exit 4 ;;
+  esac
+  ;;
+*)
+  echo "Usage: $SCRIPTNAME {start|force-start|stop|restart|force-reload|status}" >&2
+  exit 3
+  ;;
 esac
 
 :

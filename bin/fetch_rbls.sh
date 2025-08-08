@@ -24,9 +24,8 @@
 #   Usage:
 #           fetch_rbls.sh [-r]
 
-usage()
-{
-  cat << EOF
+usage() {
+  cat <<EOF
 usage: $0 options
 
 This script will fetch the rbls files
@@ -38,25 +37,24 @@ EOF
 
 randomize=false
 
-while getopts ":r" OPTION
-do
+while getopts ":r" OPTION; do
   case $OPTION in
-    r)
-       randomize=true
-       ;;
-    ?)
-       usage
-       exit
-       ;;
+  r)
+    randomize=true
+    ;;
+  ?)
+    usage
+    exit
+    ;;
   esac
 done
 
 CONFFILE=/etc/mailcleaner.conf
-SRCDIR=`grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3`
-if [ "$SRCDIR" = "" ]; then 
-  SRCDIR="/opt/mailcleaner"
+SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
+if [ "$SRCDIR" = "" ]; then
+  SRCDIR="/usr/spamtagger"
 fi
-VARDIR=`grep 'VARDIR' $CONFFILE | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
   VARDIR="/var/mailcleaner"
 fi
@@ -66,7 +64,7 @@ FILE_NAME=$(basename -- "$0")
 FILE_NAME="${FILE_NAME%.*}"
 ret=$(createLockFile "$FILE_NAME")
 if [[ "$ret" -eq "1" ]]; then
-        exit 0
+  exit 0
 fi
 
 . $SRCDIR/lib/updates/download_files.sh
@@ -77,7 +75,7 @@ fi
 COMMUNITY_RBLS_LIST="\|two-level-tlds.txt\|SORBS.cf\|URIBL.cf\|SPAMCOP.cf\|UCEPROTECTC.cf\|BBARRACUDACENTRALORG.cf\|UCEPROTECTB.cf\|IPSBACKSCATTERERORG.cf\|SURBL.cf\|whitelisted_domains.txt\|IXDNSBLMANITUNET.cf\|UCEPROTECTA.cf\|domains_hostnames_map.txt\|tlds.txt\|effective_tlds.txt\|DNSWL.cf\|url_shorteners.txt"
 ret=$(downloadDatas "$SRCDIR/etc/rbls/" "rbls" $randomize "null" "$COMMUNITY_RBLS_LIST" "noexit")
 if [[ "$ret" -eq "1" ]]; then
-	log "RBLs checked"
+  log "RBLs checked"
 fi
 
 removeLockFile "$FILE_NAME"

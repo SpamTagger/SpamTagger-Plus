@@ -44,7 +44,7 @@ class DataManager {
    */
   private $base_config = array(
                         'VARDIR' => '/var/mailcleaner',
-                        'SRCDIR' => '/opt/mailcleaner'
+                        'SRCDIR' => '/usr/spamtagger'
                        );
                
   /**

@@ -1,16 +1,16 @@
 #!/bin/bash
 
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
-  SRCDIR=/opt/mailcleaner
+  SRCDIR=/usr/spamtagger
 fi
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
-  VARDIR=/opt/mailcleaner
+  VARDIR=/var/spamtagger
 fi
 
 # remove bayes_seen if > 15M
-SIZE=`ls -l $VARDIR/spool/spamassassin/bayes_seen | cut -d' ' -f5`
+SIZE=$(ls -l $VARDIR/spool/spamassassin/bayes_seen | cut -d' ' -f5)
 if [ $SIZE -gt 15000000 ]; then
   rm $VARDIR/spool/spamassassin/bayes_seen
 fi

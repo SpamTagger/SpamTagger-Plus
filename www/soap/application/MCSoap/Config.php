@@ -152,7 +152,7 @@ class MCSoap_Config
             unlink($localtimefile);
             `ln -s $fullfile $localtimefile`;
 	    putenv("TZ=".$zone);
-           # `/opt/mailcleaner/etc/init.d/apache restart`;
+           # `/usr/spamtagger/etc/init.d/apache restart`;
              return 'OK saved';
 	}
 	

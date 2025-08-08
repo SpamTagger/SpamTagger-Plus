@@ -46,7 +46,7 @@ class SystemConfig extends PrefHandler {
      * Path to the Mailcleaner installation directory
      * @var string
      */
-    var $SRCDIR_ = '/opt/mailcleaner';
+    var $SRCDIR_ = '/usr/spamtagger';
     /**
      * Path to the Mailcleaner spool directory (given during installation process)
      * @var string

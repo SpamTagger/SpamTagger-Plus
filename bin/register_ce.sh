@@ -28,49 +28,49 @@
 CONFFILE=/etc/mailcleaner.conf
 REGISTERDATA=/tmp/mc_registerce.data
 
-HOSTID=`grep 'HOSTID' $CONFFILE | cut -d ' ' -f3`
+HOSTID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
 if [ "$HOSTID" = "" ]; then
   HOSTID=1
 fi
-SRCDIR=`grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3`
-if [ "$SRCDIR" = "" ]; then 
-  SRCDIR="/opt/mailcleaner"
+SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
+if [ "$SRCDIR" = "" ]; then
+  SRCDIR="/usr/spamtagger"
 fi
-VARDIR=`grep 'VARDIR' $CONFFILE | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' $CONFFILE | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
-  VARDIR="/opt/mailcleaner"
+  VARDIR="/var/spamtagger"
 fi
-HTTPPROXY=`grep -e '^HTTPPROXY' $CONFFILE | cut -d ' ' -f3`
+HTTPPROXY=$(grep -e '^HTTPPROXY' $CONFFILE | cut -d ' ' -f3)
 export http_proxy=$HTTPPROXY
 
-REGISTERED=`grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3`
+REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)
 
 # We can't register a CE Edition if you're currently on EE edition
 # You need to unregister MC first
 if [ "$REGISTERED" == "1" ]; then
-	echo "UNREGISTER FIRST"
-	exit -1
+  echo "UNREGISTER FIRST"
+  exit -1
 fi
 
 # Check mandatory params
 if [ -f $REGISTERDATA ]; then
-	FIRST_NAME=`grep 'FIRST_NAME' $REGISTERDATA | cut -d '=' -f2`
-	LAST_NAME=`grep 'LAST_NAME' $REGISTERDATA | cut -d '=' -f2`
-	EMAIL=`grep 'EMAIL' $REGISTERDATA | cut -d '=' -f2`
+  FIRST_NAME=$(grep 'FIRST_NAME' $REGISTERDATA | cut -d '=' -f2)
+  LAST_NAME=$(grep 'LAST_NAME' $REGISTERDATA | cut -d '=' -f2)
+  EMAIL=$(grep 'EMAIL' $REGISTERDATA | cut -d '=' -f2)
 else
-	echo "BADINPUTS"
-	exit 2
+  echo "BADINPUTS"
+  exit 2
 fi
 
 # The request is done with all parameters even if optionnal params are empty.
-COMPANY=`grep 'COMPANY_NAME' $REGISTERDATA | cut -d '=' -f2`
-ADDRESS=`grep 'ADDRESS' $REGISTERDATA | cut -d '=' -f2`
-POSTAL_CODE=`grep 'POSTAL_CODE' $REGISTERDATA | cut -d '=' -f2`
-CITY=`grep 'CITY' $REGISTERDATA | cut -d '=' -f2`
-COUNTRY=`grep 'COUNTRY' $REGISTERDATA | cut -d '=' -f2`
-ACCEPT_NEWSLETTERS=`grep 'ACCEPT_NEWSLETTERS' $REGISTERDATA | cut -d '=' -f2`
-ACCEPT_RELEASES=`grep 'ACCEPT_RELEASES' $REGISTERDATA | cut -d '=' -f2`
-ACCEPT_SEND_STATISTICS=`grep 'ACCEPT_SEND_STATISTICS' $REGISTERDATA | cut -d '=' -f2`
+COMPANY=$(grep 'COMPANY_NAME' $REGISTERDATA | cut -d '=' -f2)
+ADDRESS=$(grep 'ADDRESS' $REGISTERDATA | cut -d '=' -f2)
+POSTAL_CODE=$(grep 'POSTAL_CODE' $REGISTERDATA | cut -d '=' -f2)
+CITY=$(grep 'CITY' $REGISTERDATA | cut -d '=' -f2)
+COUNTRY=$(grep 'COUNTRY' $REGISTERDATA | cut -d '=' -f2)
+ACCEPT_NEWSLETTERS=$(grep 'ACCEPT_NEWSLETTERS' $REGISTERDATA | cut -d '=' -f2)
+ACCEPT_RELEASES=$(grep 'ACCEPT_RELEASES' $REGISTERDATA | cut -d '=' -f2)
+ACCEPT_SEND_STATISTICS=$(grep 'ACCEPT_SEND_STATISTICS' $REGISTERDATA | cut -d '=' -f2)
 
 # Mandatory values
 HTTP_PARAMS="first_name=$FIRST_NAME&last_name=$LAST_NAME&email=$EMAIL&host_id=$HOSTID"
@@ -83,7 +83,7 @@ URL="http://reselleradmin.mailcleaner.net/community/registration.php?"
 URL="$URL$HTTP_PARAMS"
 
 if [ -f "/tmp/mc_registerce.out" ]; then
-	rm /tmp/mc_registerce.out >/dev/null 2>&1
+  rm /tmp/mc_registerce.out >/dev/null 2>&1
 fi
 wget -q "$URL" -O /tmp/mc_registerce.out >/tmp/mc_registerce.debug 2>&1
 
@@ -94,52 +94,52 @@ wget -q "$URL" -O /tmp/mc_registerce.out >/tmp/mc_registerce.debug 2>&1
 # 3 => max_record_per_ip_exceed
 # 4 => internal error
 if [ -f "/tmp/mc_registerce.out" ]; then
-	RETURN_CODE=`cat /tmp/mc_registerce.out`
-	if [ "$RETURN_CODE" = "0" ] || [ "$RETURN_CODE" = "1" ]; then
-		# Registration done, we update the local db
-		# First, we check if the mc_community DB exists if not we create it
-                # And secondly we check if the table registration exists also
-		$SRCDIR/etc/init.d/mysql_master restart nopass
-		sleep 5s
-		echo "CREATE DATABASE IF NOT EXISTS mc_community;" | /opt/mysql5/bin/mysql -S ${VARDIR}/run/mysql_master/mysqld.sock &>> /dev/null
-		echo "USE mysql; INSERT INTO db VALUES('%', 'mc_community', 'mailcleaner', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')" | /opt/mysql5/bin/mysql -S ${VARDIR}/run/mysql_master/mysqld.sock &>> /dev/null
-		$SRCDIR/etc/init.d/mysql_master restart
-		sleep 5s
-                cat $SRCDIR/install/dbs/t_ce_registration.sql | $SRCDIR/bin/mc_mysql -m mc_community
-		sql="SELECT id FROM registration;"
-	        rep=$(echo $sql | $SRCDIR/bin/mc_mysql -m mc_community)
-		if [ "$rep" != "" ]; then # Update current registration
-			sql="UPDATE registration SET first_name='$FIRST_NAME', last_name='$LAST_NAME', company='$COMPANY', email='$EMAIL', address='$ADDRESS', postal_code='$POSTAL_CODE', city='$CITY', country='$COUNTRY', accept_newsletters=$ACCEPT_NEWSLETTERS"
-			sql="$sql, accept_releases=$ACCEPT_RELEASES, accept_send_statistics=$ACCEPT_SEND_STATISTICS, updated_at=NOW()"
-			sql=`echo "$sql"|sed -e "s/=,/=NULL,/g"`
-			sql=`echo "$sql"|sed -e "s/= /=NULL/g"`
-			echo $sql | $SRCDIR/bin/mc_mysql -m mc_community
-		else
-			sql="INSERT INTO registration VALUES(NULL,"
-	                sql="$sql'$FIRST_NAME', '$LAST_NAME', '$COMPANY', '$EMAIL', '$ADDRESS', '$POSTAL_CODE', '$CITY', '$COUNTRY', $ACCEPT_NEWSLETTERS, $ACCEPT_RELEASES, $ACCEPT_SEND_STATISTICS, NOW(), NULL);"
-			sql=`echo "$sql"|sed -e "s/, ,/,NULL,/g"`
-			echo $sql|$SRCDIR/bin/mc_mysql -m mc_community
-		fi
-		# Update General settings : company
-		sql="UPDATE system_conf SET organisation='$COMPANY', company_name='$COMPANY', contact='$FIRST_NAME $LAST_NAME', contact_email='$EMAIL'"
-		echo $sql|$SRCDIR/bin/mc_mysql -m mc_config
-	else
-		echo "INTERNAL ERROR"
-		exit $RETURN_CODE
-	fi
+  RETURN_CODE=$(cat /tmp/mc_registerce.out)
+  if [ "$RETURN_CODE" = "0" ] || [ "$RETURN_CODE" = "1" ]; then
+    # Registration done, we update the local db
+    # First, we check if the mc_community DB exists if not we create it
+    # And secondly we check if the table registration exists also
+    $SRCDIR/etc/init.d/mysql_master restart nopass
+    sleep 5s
+    echo "CREATE DATABASE IF NOT EXISTS mc_community;" | /opt/mysql5/bin/mysql -S ${VARDIR}/run/mysql_master/mysqld.sock &>>/dev/null
+    echo "USE mysql; INSERT INTO db VALUES('%', 'mc_community', 'mailcleaner', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')" | /opt/mysql5/bin/mysql -S ${VARDIR}/run/mysql_master/mysqld.sock &>>/dev/null
+    $SRCDIR/etc/init.d/mysql_master restart
+    sleep 5s
+    cat $SRCDIR/install/dbs/t_ce_registration.sql | $SRCDIR/bin/mc_mysql -m mc_community
+    sql="SELECT id FROM registration;"
+    rep=$(echo $sql | $SRCDIR/bin/mc_mysql -m mc_community)
+    if [ "$rep" != "" ]; then # Update current registration
+      sql="UPDATE registration SET first_name='$FIRST_NAME', last_name='$LAST_NAME', company='$COMPANY', email='$EMAIL', address='$ADDRESS', postal_code='$POSTAL_CODE', city='$CITY', country='$COUNTRY', accept_newsletters=$ACCEPT_NEWSLETTERS"
+      sql="$sql, accept_releases=$ACCEPT_RELEASES, accept_send_statistics=$ACCEPT_SEND_STATISTICS, updated_at=NOW()"
+      sql=$(echo "$sql" | sed -e "s/=,/=NULL,/g")
+      sql=$(echo "$sql" | sed -e "s/= /=NULL/g")
+      echo $sql | $SRCDIR/bin/mc_mysql -m mc_community
+    else
+      sql="INSERT INTO registration VALUES(NULL,"
+      sql="$sql'$FIRST_NAME', '$LAST_NAME', '$COMPANY', '$EMAIL', '$ADDRESS', '$POSTAL_CODE', '$CITY', '$COUNTRY', $ACCEPT_NEWSLETTERS, $ACCEPT_RELEASES, $ACCEPT_SEND_STATISTICS, NOW(), NULL);"
+      sql=$(echo "$sql" | sed -e "s/, ,/,NULL,/g")
+      echo $sql | $SRCDIR/bin/mc_mysql -m mc_community
+    fi
+    # Update General settings : company
+    sql="UPDATE system_conf SET organisation='$COMPANY', company_name='$COMPANY', contact='$FIRST_NAME $LAST_NAME', contact_email='$EMAIL'"
+    echo $sql | $SRCDIR/bin/mc_mysql -m mc_config
+  else
+    echo "INTERNAL ERROR"
+    exit $RETURN_CODE
+  fi
 else
-	echo "REMOTEERROR"
-	exit 2;
+  echo "REMOTEERROR"
+  exit 2
 fi
 if [ -f "/tmp/mc_registerce.out" ]; then
-	rm /tmp/mc_registerce.out >/dev/null 2>&1
+  rm /tmp/mc_registerce.out >/dev/null 2>&1
 fi
 CONFFILE=/etc/mailcleaner.conf
 perl -pi -e 's/(^REGISTERED.*$)//' $CONFFILE
 perl -pi -e 's/^\s*$//' $CONFFILE
-REGISTERED=`grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3`
+REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)
 if [ "$REGISTERED" = "" ]; then
-	echo "REGISTERED = 2" >> $CONFFILE
+  echo "REGISTERED = 2" >>$CONFFILE
 fi
 echo "SUCCESS"
 exit 0
