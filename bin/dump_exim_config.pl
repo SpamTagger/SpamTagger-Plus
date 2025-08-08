@@ -118,10 +118,10 @@ foreach my $stage (@eximids) {
 		my $dir;
 		my $dest_dir;
 		if ($custom) {
-			$dir = "/usr/mailcleaner/etc/exim/custom/stage$stage";
+			$dir = "/usr/spamtagger/etc/exim/custom/stage$stage";
 			$dest_dir = "custom/stage$stage";
 		} else {
-			$dir = "/usr/mailcleaner/etc/exim/stage$stage";
+			$dir = "/usr/spamtagger/etc/exim/stage$stage";
 			$dest_dir = "stage$stage";
 		}
 		if ( -d "$dir") {
@@ -546,8 +546,8 @@ sub get_system_config
 	}
 	$sconfig{'__SMTP_PROXY__'} = $row{'smtp_proxy'};
 	$sconfig{'__SYSLOG_HOST__'} = $row{'syslog_host'};
-	if ( -f '/usr/mailcleaner/etc/mailcleaner/syslog/force_syslog_on_this_host') {
-		if (open(FH, '<', '/usr/mailcleaner/etc/mailcleaner/syslog/force_syslog_on_this_host') ) {
+	if ( -f '/usr/spamtagger/etc/mailcleaner/syslog/force_syslog_on_this_host') {
+		if (open(FH, '<', '/usr/spamtagger/etc/mailcleaner/syslog/force_syslog_on_this_host') ) {
 			my $line = <FH>;
 			chomp $line;
 			$sconfig{'__SYSLOG_HOST__'} = $line;

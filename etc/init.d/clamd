@@ -23,7 +23,7 @@
 use strict;
 use warnings;
 
-use lib '/usr/mailcleaner/lib';
+use lib '/usr/spamtagger/lib';
 use ManageServices;
 
 our $service = 'clamd';

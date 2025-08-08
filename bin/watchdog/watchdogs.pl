@@ -8,8 +8,8 @@ my $script_name                     = basename($0);
 $script_name                        =~ s/\.[^.]*$//;
 my $mode                            = $ARGV[0] || '';
 
-use constant WATCHDOG_BIN           => '/usr/mailcleaner/bin/watchdog/';
-use constant WATCHDOG_CFG           => '/usr/mailcleaner/etc/watchdog/';
+use constant WATCHDOG_BIN           => '/usr/spamtagger/bin/watchdog/';
+use constant WATCHDOG_CFG           => '/usr/spamtagger/etc/watchdog/';
 use constant WATCHDOG_TMP           => '/var/spamtagger/spool/watchdog/';
 use constant WATCHDOG_PID_FOLDER	=> '/var/spamtagger/run/watchdog/';
 

@@ -3,7 +3,7 @@
 # Configure source path and enable library
 our $SRCDIR;
 BEGIN {
-	$SRCDIR = '/usr/mailcleaner';
+	$SRCDIR = '/usr/spamtagger';
 }
 use lib "$SRCDIR/lib";
 require DB;

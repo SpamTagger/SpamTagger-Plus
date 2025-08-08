@@ -26,20 +26,18 @@
 #   Usage:
 #           change_hostid.sh NEWID [-f]
 
-
 function check_parameter {
-        if [ "$1" = "y" ]; then
-                let RETURN=1
-        else
-                echo "y or Ctrl+C"
-                let RETURN=0
-        fi
+  if [ "$1" = "y" ]; then
+    let RETURN=1
+  else
+    echo "y or Ctrl+C"
+    let RETURN=0
+  fi
 }
 
-
 CONFFILE=/etc/mailcleaner.conf
-REGISTERED=`grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3`
-OLDID=`grep 'HOSTID' $CONFFILE | cut -d ' ' -f3`
+REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)
+OLDID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
 
 if [ "$REGISTERED" == "1" ] || [ "$REGISTERED" == "2" ]; then
   echo "Your MailCleaner has to be unregistered first !"
@@ -57,27 +55,27 @@ FORCE=$2
 REMOVED=""
 [ "$FORCE" = "-f" ] && REMOVED="y"
 if [ "$REMOVED" = "" ]; then
-let RETURN=0
-while [ $RETURN -lt 1 ]; do
-        echo "Did you removed this host from the cluster (Mandatory) ? [y] : "
-        read REMOVED
-        check_parameter $REMOVED
-done
+  let RETURN=0
+  while [ $RETURN -lt 1 ]; do
+    echo "Did you removed this host from the cluster (Mandatory) ? [y] : "
+    read REMOVED
+    check_parameter $REMOVED
+  done
 fi
 
 CONFIRM=""
 [ "$FORCE" = "-f" ] && CONFIRM="y"
 if [ "$CONFIRM" = "" ]; then
-let RETURN=0
-while [ $RETURN -lt 1 ]; do
-        echo "Host ID will change to $NEWID"
-	echo "WARNING: Previously quarantined messages on THIS host  will not be deliverable anymore. ok ? [y]:"
-        read CONFIRM
-        check_parameter $CONFIRM
-done
+  let RETURN=0
+  while [ $RETURN -lt 1 ]; do
+    echo "Host ID will change to $NEWID"
+    echo "WARNING: Previously quarantined messages on THIS host  will not be deliverable anymore. ok ? [y]:"
+    read CONFIRM
+    check_parameter $CONFIRM
+  done
 fi
 
 sed -i "s/^HOSTID.*$/HOSTID = $NEWID/g" $CONFFILE
-echo "update slave set id=$NEWID where id=$OLDID;" |/usr/mailcleaner/bin/mc_mysql -m mc_config
+echo "update slave set id=$NEWID where id=$OLDID;" | /usr/spamtagger/bin/mc_mysql -m mc_config
 echo "SUCCESS"
 exit 0

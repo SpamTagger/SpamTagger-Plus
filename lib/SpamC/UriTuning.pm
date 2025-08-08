@@ -27,16 +27,16 @@ sub _domain {
 }
 
 # Forbids the use of given strings in a URL that also contains the domain of a recipient
-# List of strings in /usr/mailcleaner/share/spamassassin/plugins/UriTuning.list
+# List of strings in /usr/spamtagger/share/spamassassin/plugins/UriTuning.list
 sub gglapi_domain {
         my ($self, $permsgstatus, $body, $body_html) = @_;
 	my @elems;
 
 	# This module only runs if we have a file of domains to exclude
-	return 0 if ( ! -f '/usr/mailcleaner/share/spamassassin/plugins/UriTuning.list' );
+	return 0 if ( ! -f '/usr/spamtagger/share/spamassassin/plugins/UriTuning.list' );
 
 	# Get list of strings
-	open LIST, '<', '/usr/mailcleaner/share/spamassassin/plugins/UriTuning.list';
+	open LIST, '<', '/usr/spamtagger/share/spamassassin/plugins/UriTuning.list';
 	@elems = <LIST>;
 	close LIST;
 	chomp(@elems);

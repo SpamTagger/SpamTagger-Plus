@@ -71,7 +71,7 @@ class NewslettersController extends Zend_Controller_Action
     
     private function getFromHeader($id, $recipient)
     {
-        require_once('/usr/mailcleaner/www/classes/user/Spam.php');  
+        require_once('/usr/spamtagger/www/classes/user/Spam.php');  
         
         $spam = new Spam();
         $spam->loadDatas($id, $recipient);

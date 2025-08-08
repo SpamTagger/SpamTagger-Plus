@@ -22,7 +22,7 @@
 #   This is the anti-breakdown script. To be run every 15 minutes
 #
 use strict;
-push(@INC, '/usr/mailcleaner/lib/');
+push(@INC, '/usr/spamtagger/lib/');
 use Net::DNS;
 use Net::Ping;
 use File::Touch;
@@ -227,7 +227,7 @@ sub remove_and_save_MC_RBLs {
 	$master_dbh->disconnect();
 
 	if ($reboot_service) {
-		system('/usr/mailcleaner/etc/init.d/mailscanner', 'restart');
+		system('/usr/spamtagger/etc/init.d/mailscanner', 'restart');
 	}
 }
 
@@ -258,7 +258,7 @@ sub handle_dns_ok {
 		$master_dbh->disconnect();
 
 		# Restarting associated services
-		system('/usr/mailcleaner/etc/init.d/mailscanner', 'restart');
+		system('/usr/spamtagger/etc/init.d/mailscanner', 'restart');
 	
 		# Removing temp files
 		unlink $rbl_sql_file or warn "could not remove $rbl_sql_file\n";

@@ -26,7 +26,7 @@ NAME=fail2ban
 # loads its with configuration
 DAEMON=/usr/bin/$NAME-client
 SCRIPTNAME=/etc/init.d/$NAME
-CONFPATH="/usr/mailcleaner/etc/fail2ban/"
+CONFPATH="/usr/spamtagger/etc/fail2ban/"
 
 SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then

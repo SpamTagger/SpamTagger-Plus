@@ -32,7 +32,7 @@ sub get {
 
  my $this = {
    logfile => '/tmp/mailcleaner_install.log',
-   srcdir => '/usr/mailcleaner',
+   srcdir => '/usr/spamtagger',
    vardir => '/var/spamtagger',
    logfile => '/tmp/mailcleaner_install.log',
    conffile => '/etc/mailcleaner.conf'
