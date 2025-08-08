@@ -24,7 +24,7 @@ if (preg_match('/(\.\.|[\/\{\}$\*\?\[\]])/', $fileparam, $illegal)) {
     exit();
 }
 
-require_once($_SERVER['DOCUMENT_ROOT'].'/../../guis/admin/application/library/MailCleaner/Config.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/../../guis/admin/application/library/SpamTagger/Config.php');
 $mcconfig = MailCleaner_Config::getInstance();
 
 $file = preg_replace('/\-/', '/', $fileparam);
