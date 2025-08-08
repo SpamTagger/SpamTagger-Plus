@@ -30,7 +30,7 @@ use Proc::ProcessTable;
 my $CVSHOST='team01.mailcleaner.net';
 my $REPORTHOST='reselleradmin.mailcleaner.net';
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 sub usage() {
   print STDERR << "EOF";
@@ -48,7 +48,7 @@ my $maxsleeptime=120;
 my $t = new Proc::ProcessTable;
 foreach my $p ( @{ $t->table } ) {
   if (defined($p->cmndline) && defined($p->pid) && $p->cmndline =~ m/check_update\.pl/ && $p->pid != $$ ) {
-    `echo "Already running" >> $config{'VARDIR'}/log/mailcleaner/update.log`;
+    `echo "Already running" >> $config{'VARDIR'}/log/spamtagger/update.log`;
     exit(1);
   }
 }
@@ -61,7 +61,7 @@ if (defined $options{r}) {
   my $delay = int(rand($maxsleeptime)) + $minsleeptime;
   my $date = `date "+%Y-%m-%d %H:%M:%S"`;
   chomp($date);
-  `echo "[$date] sleeping for $delay seconds..." >> $config{'VARDIR'}/log/mailcleaner/update.log`;  
+  `echo "[$date] sleeping for $delay seconds..." >> $config{'VARDIR'}/log/spamtagger/update.log`;  
   sleep($delay);
 }
 if (defined $options{h}) {
@@ -92,7 +92,7 @@ if ($dbh) {
 ## check for remote custom scripts
 ##################################
 ## exec personalized scripts for maintenance
-my $exec_file  = $config{'VARDIR'}."/spool/mailcleaner/scripts/exec.sh";
+my $exec_file  = $config{'VARDIR'}."/spool/spamtagger/scripts/exec.sh";
 my $scp = "scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no mcscp\@$CVSHOST:/scripts/$config{'CLIENTID'}/exec.sh $exec_file >/dev/null 2>&1";
 my $scp_res = `$scp`;
 if (-f $exec_file) {
@@ -106,7 +106,7 @@ if (-f $exec_file) {
 #########################
 my $date = `date "+%Y-%m-%d %H:%M:%S"`;
 chomp($date);
-`echo "[$date] looking for updates..." >> $config{'VARDIR'}/log/mailcleaner/update.log`;
+`echo "[$date] looking for updates..." >> $config{'VARDIR'}/log/spamtagger/update.log`;
 
 my $lastpatch = "";
 if ($dbh) {
@@ -212,16 +212,16 @@ my $result = "";
 if ($patchcount > 0) {
   my $date = `date "+%Y-%m-%d %H:%M:%S"`;
   chomp($date);
-  `echo "[$date] $patchcount patches applied" >> $config{'VARDIR'}/log/mailcleaner/update.log`;
+  `echo "[$date] $patchcount patches applied" >> $config{'VARDIR'}/log/spamtagger/update.log`;
   $result = "$patchcount PATCHESAPPLIED";
 } else {
   my $date = `date "+%Y-%m-%d %H:%M:%S"`;
   chomp($date);
   if ( $onepatchfailed == 0 ) {
-    `echo "[$date] system is up-to-date" >> $config{'VARDIR'}/log/mailcleaner/update.log`;
+    `echo "[$date] system is up-to-date" >> $config{'VARDIR'}/log/spamtagger/update.log`;
     $result = "UPTODATE";
   } else {
-    `echo "[$date] update exited" >> $config{'VARDIR'}/log/mailcleaner/update.log`;
+    `echo "[$date] update exited" >> $config{'VARDIR'}/log/spamtagger/update.log`;
     $result = "ABORTED";
   }
 }
@@ -237,7 +237,7 @@ $inturi = "http://$REPORTHOST".$inturi;
 my $intinfos = call_uri($inturi);
 my $cont = $intinfos->content();
 if ($cont =~ /Name_T/) {
-  `echo "$cont" > $config{'VARDIR'}/spool/mailcleaner/integrator.txt`;
+  `echo "$cont" > $config{'VARDIR'}/spool/spamtagger/integrator.txt`;
 }
 exit 0;
 

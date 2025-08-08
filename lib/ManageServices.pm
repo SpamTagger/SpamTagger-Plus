@@ -440,7 +440,7 @@ sub createModule
 	my $self = shift;
 	my $defs = shift;
 
-	my $file = $defs->{'conffile'} || $self->{'conf'}->getOption('SRCDIR').'/etc/mailcleaner/'.$self->{'service'}.".cf";
+	my $file = $defs->{'conffile'} || $self->{'conf'}->getOption('SRCDIR').'/etc/spamtagger/'.$self->{'service'}.".cf";
 	my $module = {};
 	foreach my $key (keys %defaultConfigs) {
 		$module->{$key} = $defaultConfigs{$key}

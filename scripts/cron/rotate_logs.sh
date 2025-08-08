@@ -26,23 +26,23 @@
 
 DAYSTOKEEP=366
 
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
-MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3)
+MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 #########################
 ## Dumper log rotating ##
 #########################
 # Rotate first so that the remaining services will dump to the new log when done
-if [ -s $VARDIR/log/mailcleaner/dumper.log ]; then
-  savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mailcleaner/dumper.log >/dev/null
+if [ -s $VARDIR/log/spamtagger/dumper.log ]; then
+  savelog -p -c $DAYSTOKEEP -C $VARDIR/log/spamtagger/dumper.log >/dev/null
 fi
 
 #########################
@@ -132,30 +132,30 @@ fi
 # StatsDaemon
 $SRCDIR/etc/init.d/statsdaemon stop
 if [ -x /usr/bin/savelog ]; then
-  savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mailcleaner/StatsDaemon.log >/dev/null
+  savelog -p -c $DAYSTOKEEP -C $VARDIR/log/spamtagger/StatsDaemon.log >/dev/null
 fi
 
 # PrefTDaemon
 $SRCDIR/etc/init.d/preftdaemon stop
 if [ -x /usr/bin/savelog ]; then
-  if [ -s $VARDIR/log/mailcleaner/PrefTDaemon.log ]; then
-    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mailcleaner/PrefTDaemon.log >/dev/null
+  if [ -s $VARDIR/log/spamtagger/PrefTDaemon.log ]; then
+    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/spamtagger/PrefTDaemon.log >/dev/null
   fi
 fi
 
 # SpamHandler
 $SRCDIR/etc/init.d/spamhandler stop
 for i in SpamHandler.log; do
-  if [ -s $VARDIR/log/mailcleaner/$i ]; then
-    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mailcleaner/$i >/dev/null
+  if [ -s $VARDIR/log/spamtagger/$i ]; then
+    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/spamtagger/$i >/dev/null
   fi
 done
 
 # MailCleaner
 if [ -x /usr/bin/savelog ]; then
   for i in update.log update2.log autolearn.log rules.log spam_sync.log mc_counts-cleaner.log downloadDatas.log summaries.log updater4mc.log; do
-    if [ -e $VARDIR/log/mailcleaner/$i ]; then
-      savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mailcleaner/$i >/dev/null
+    if [ -e $VARDIR/log/spamtagger/$i ]; then
+      savelog -p -c $DAYSTOKEEP -C $VARDIR/log/spamtagger/$i >/dev/null
     fi
   done
 fi
@@ -195,8 +195,8 @@ $SRCDIR/etc/init.d/mysql_master restart
 ###################
 ## Resync checks ##
 ###################
-if [ -s $VARDIR/log/mailcleaner/resync/resync.log ]; then
-  savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mailcleaner/resync/resync.log >/dev/null
+if [ -s $VARDIR/log/spamtagger/resync/resync.log ]; then
+  savelog -p -c $DAYSTOKEEP -C $VARDIR/log/spamtagger/resync/resync.log >/dev/null
 fi
 
 #################

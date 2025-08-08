@@ -23,15 +23,15 @@
 #   Usage:
 # 	release_batch_emails.sh <sender>
 
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3)
+MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 SOCKET=$VARDIR/run/mysql_slave/mysqld.sock
 COMMAND=/opt/mysql5/bin/mysql

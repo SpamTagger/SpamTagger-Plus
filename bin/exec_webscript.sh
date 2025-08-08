@@ -1,22 +1,22 @@
 #!/bin/bash
 
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-HTTPPROXY=$(grep 'HTTPPROXY' /etc/mailcleaner.conf | cut -d ' ' -f3)
+HTTPPROXY=$(grep 'HTTPPROXY' /etc/spamtagger.conf | cut -d ' ' -f3)
 export http_proxy=$HTTPPROXY
 
-CLIENTID=$(grep 'CLIENTID' /etc/mailcleaner.conf | sed 's/ //g' | cut -d '=' -f2)
+CLIENTID=$(grep 'CLIENTID' /etc/spamtagger.conf | sed 's/ //g' | cut -d '=' -f2)
 if [ "CLIENTID" = "" ]; then
   CLIENTID=1000
 fi
 
-HOSTID=$(grep 'HOSTID' /etc/mailcleaner.conf | sed 's/ //g' | cut -d '=' -f2)
+HOSTID=$(grep 'HOSTID' /etc/spamtagger.conf | sed 's/ //g' | cut -d '=' -f2)
 if [ "HOSTID" = "" ]; then
   HOSTID=1
 fi

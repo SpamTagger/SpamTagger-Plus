@@ -29,7 +29,7 @@ use strict;
 
 my $DEBUG = 1;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 ## added 10 for migration ease
 $config{'__MASTERID__'} = ($config{'HOSTID'} * 2) - 1 + 10;

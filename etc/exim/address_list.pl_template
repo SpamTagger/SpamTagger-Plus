@@ -16,7 +16,7 @@ my $recipient = shift;
 
 my $conf = ReadConfig::getInstance();
 
-my $afile = $conf->getOption('VARDIR')."/spool/mailcleaner/addresses/".$domain.".addresslist";
+my $afile = $conf->getOption('VARDIR')."/spool/spamtagger/addresses/".$domain.".addresslist";
 
 open AFILE, ">".$afile or die "Cannot open destination file: $afile";
 

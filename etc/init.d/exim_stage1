@@ -2,11 +2,11 @@
 
 PATH=$PATH:/usr/sbin:/sbin
 
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
@@ -66,7 +66,7 @@ prepare() {
   cp $SRCDIR/etc/exim/certs/*.* $VARDIR/spool/tmp/exim/certs/
 
   $SRCDIR/bin/dump_exim_config.pl 1 >/dev/null 2>&1
-  chown -R mailcleaner:mailcleaner $VARDIR/spool/tmp/mailcleaner/*.list >/dev/null 2>&1
+  chown -R mailcleaner:mailcleaner $VARDIR/spool/tmp/spamtagger/*.list >/dev/null 2>&1
 }
 
 case "$1" in

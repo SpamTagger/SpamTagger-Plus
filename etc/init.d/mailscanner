@@ -2,11 +2,11 @@
 
 PATH=$PATH:/usr/sbin:/sbin
 
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
@@ -45,17 +45,17 @@ prepare() {
   $SRCDIR/bin/dump_domains.pl >/dev/null 2>&1
   chown -R mailcleaner:mailcleaner $SRCDIR/etc/mailscanner >/dev/null 2>&1
 
-  if [ ! -d $VARDIR/spool/mailcleaner/counts ]; then
-    mkdir -p $VARDIR/spool/mailcleaner/counts
+  if [ ! -d $VARDIR/spool/spamtagger/counts ]; then
+    mkdir -p $VARDIR/spool/spamtagger/counts
   fi
-  USER=$(stat -c '%U' $VARDIR/spool/mailcleaner/counts)
+  USER=$(stat -c '%U' $VARDIR/spool/spamtagger/counts)
   if [[ "$USER" != 'mailcleaner' ]]; then
-    chown -R mailcleaner:mailcleaner $VARDIR/spool/mailcleaner/counts
+    chown -R mailcleaner:mailcleaner $VARDIR/spool/spamtagger/counts
   fi
 
-  GROUP=$(stat -c '%G' $VARDIR/spool/mailcleaner/counts)
+  GROUP=$(stat -c '%G' $VARDIR/spool/spamtagger/counts)
   if [[ "$GROUP" != 'mailcleaner' ]]; then
-    chown -R mailcleaner:mailcleaner $VARDIR/spool/mailcleaner/counts
+    chown -R mailcleaner:mailcleaner $VARDIR/spool/spamtagger/counts
   fi
 
   SRCDIR_SANE=$(echo $SRCDIR | perl -p -e 's/\//\\\//g')

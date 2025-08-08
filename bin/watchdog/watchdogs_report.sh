@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CLIENTID=$(grep 'CLIENTID' /etc/mailcleaner.conf | sed 's/ //g' | cut -d '=' -f2)
-HOSTID=$(grep 'HOSTID' /etc/mailcleaner.conf | sed 's/ //g' | cut -d '=' -f2)
+CLIENTID=$(grep 'CLIENTID' /etc/spamtagger.conf | sed 's/ //g' | cut -d '=' -f2)
+HOSTID=$(grep 'HOSTID' /etc/spamtagger.conf | sed 's/ //g' | cut -d '=' -f2)
 TIME=$(date +%s)
 
 DIRBASE='/var/spamtagger/spool/watchdog/'

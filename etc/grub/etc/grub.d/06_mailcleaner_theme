@@ -18,9 +18,8 @@ set gfxmode=1024x768
 set gfxpayload=keep
 
 insmod png
-loadfont (\$root)/boot/grub/themes/mailcleaner/arial12.pf2
-loadfont (\$root)/boot/grub/themes/mailcleaner/arial18.pf2
-loadfont (\$root)/boot/grub/themes/mailcleaner/courier16.pf2
-set theme=(\$root)/boot/grub/themes/mailcleaner/theme.txt
+loadfont (\$root)/boot/grub/themes/spamtagger/arial12.pf2
+loadfont (\$root)/boot/grub/themes/spamtagger/arial18.pf2
+loadfont (\$root)/boot/grub/themes/spamtagger/courier16.pf2
+set theme=(\$root)/boot/grub/themes/spamtagger/theme.txt
 EOF
-

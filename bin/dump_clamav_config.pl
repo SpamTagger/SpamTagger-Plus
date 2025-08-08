@@ -32,7 +32,7 @@ my $DEBUG = 1;
 
 my $lasterror;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 dump_file("clamav.conf");
 dump_file("freshclam.conf");
@@ -52,7 +52,7 @@ $cmd = "ln -s $config{'VARDIR'}/spool/clamav/* /opt/clamav/share/clamav/ >/dev/n
 $cmd = "chown clamav:clamav -R $config{'VARDIR'}/spool/clamav $config{'VARDIR'}/log/clamav/ >/dev/null 2>&1";
 `$cmd`;
 
-if (-e "$config{'VARDIR'}/spool/mailcleaner/clamav-unofficial-sigs") {
+if (-e "$config{'VARDIR'}/spool/spamtagger/clamav-unofficial-sigs") {
 	if (-e "$config{'VARDIR'}/spool/clamav/unofficial-sigs") {
 		my @src = glob("$config{'VARDIR'}/spool/clamav/unofficial-sigs/*");
 		foreach my $s (@src) {
@@ -118,7 +118,7 @@ sub dump_file
 		print TARGET $line;
 	}
 
-	if (($file eq "clamd.conf") && ( -e "/var/spamtagger/spool/mailcleaner/mc-experimental-macros")) {
+	if (($file eq "clamd.conf") && ( -e "/var/spamtagger/spool/spamtagger/mc-experimental-macros")) {
             print TARGET "OLE2BlockMacros yes";
         }
 

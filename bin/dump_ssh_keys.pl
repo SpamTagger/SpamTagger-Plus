@@ -29,7 +29,7 @@ use DBI();
 
 my $DEBUG = 1;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 my $known_hosts_file = $config{'VARDIR'}."/.ssh/known_hosts";
 my $authorized_file = $config{'VARDIR'}."/.ssh/authorized_keys";
 

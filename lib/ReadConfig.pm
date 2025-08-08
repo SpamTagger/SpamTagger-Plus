@@ -29,7 +29,7 @@ our @ISA        = qw(Exporter);
 our @EXPORT     = qw(getInstance new getOption);
 our $VERSION    = 1.0;
 
-my $CONFIGFILE = "/etc/mailcleaner.conf";
+my $CONFIGFILE = "/etc/spamtagger.conf";
 my %config_options;
 
 my $oneTrueSelf;

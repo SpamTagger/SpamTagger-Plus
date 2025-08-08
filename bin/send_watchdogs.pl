@@ -39,8 +39,8 @@ if ($conf->getOption('ISMASTER') !~ /^[y|Y]$/) {
 }
 
 my $vardir = $conf->getOption('VARDIR');
-if (-e "$vardir/spool/mailcleaner/disable-watchdog-emails") {
-	print "Email reporting disabled with '$vardir/spool/mailcleaner/disable-watchdog-emails'\n";
+if (-e "$vardir/spool/spamtagger/disable-watchdog-emails") {
+	print "Email reporting disabled with '$vardir/spool/spamtagger/disable-watchdog-emails'\n";
 	exit 0;
 }
 
@@ -54,7 +54,7 @@ my $lang = $sysconf->getPref('default_language') || 'en';
 my $temp_id = 'default';
 
 my $recipient;
-my $custom_recipient = "$vardir/spool/mailcleaner/watchdog-recipient";
+my $custom_recipient = "$vardir/spool/spamtagger/watchdog-recipient";
 if (-e $custom_recipient && open(my $fh, '<', $custom_recipient)) {
 	while (<$fh>) {
 		$recipient .= $_;

@@ -95,7 +95,7 @@ my %sys_conf = get_system_config() or fatal_error("NOSYSTEMCONFIGURATIONFOUND", 
 
 ## dump master informations
 my %m_infos = get_master();
-dump_master_file($conf->getOption('VARDIR')."/spool/mailcleaner/master.conf", \%m_infos);
+dump_master_file($conf->getOption('VARDIR')."/spool/spamtagger/master.conf", \%m_infos);
 
 ## dump the outgoing script
 dump_spam_route();
@@ -158,7 +158,7 @@ dump_certificate($stage1_conf{'tls_certificate_data'}, $stage1_conf{'tls_certifi
 dump_stockme_file();
 
 ## dump smtp proxy file
-my $proxyfile = $conf->getOption('VARDIR')."/spool/mailcleaner/smtp_proxy.conf";
+my $proxyfile = $conf->getOption('VARDIR')."/spool/spamtagger/smtp_proxy.conf";
 if (-f $proxyfile) {
 	unlink($proxyfile);
 }
@@ -308,14 +308,14 @@ sub dump_exim_file
     $template->setCondition('TAGMODEBYPASSWHITELISTS', 1);
   }
   if ($sys_conf{'__WHITELISTBOTHFROM__'}) {
-	if ( ! -e $conf->getOption('VARDIR').'/spool/mailcleaner/mc-wl-on-both-from' ) {
-		open WLFH, '>', $conf->getOption('VARDIR').'/spool/mailcleaner/mc-wl-on-both-from';
+	if ( ! -e $conf->getOption('VARDIR').'/spool/spamtagger/mc-wl-on-both-from' ) {
+		open WLFH, '>', $conf->getOption('VARDIR').'/spool/spamtagger/mc-wl-on-both-from';
 		close WLFH;
 	}
 
   } else {
-	if ( -e $conf->getOption('VARDIR').'/spool/mailcleaner/mc-wl-on-both-from' ) {
-		unlink $conf->getOption('VARDIR').'/spool/mailcleaner/mc-wl-on-both-from';
+	if ( -e $conf->getOption('VARDIR').'/spool/spamtagger/mc-wl-on-both-from' ) {
+		unlink $conf->getOption('VARDIR').'/spool/spamtagger/mc-wl-on-both-from';
 	}
   }
   $template->setCondition('USETLS', $exim_conf{'__USE_INCOMINGTLS__'});
@@ -546,8 +546,8 @@ sub get_system_config
 	}
 	$sconfig{'__SMTP_PROXY__'} = $row{'smtp_proxy'};
 	$sconfig{'__SYSLOG_HOST__'} = $row{'syslog_host'};
-	if ( -f '/usr/spamtagger/etc/mailcleaner/syslog/force_syslog_on_this_host') {
-		if (open(FH, '<', '/usr/spamtagger/etc/mailcleaner/syslog/force_syslog_on_this_host') ) {
+	if ( -f '/usr/spamtagger/etc/spamtagger/syslog/force_syslog_on_this_host') {
+		if (open(FH, '<', '/usr/spamtagger/etc/spamtagger/syslog/force_syslog_on_this_host') ) {
 			my $line = <FH>;
 			chomp $line;
 			$sconfig{'__SYSLOG_HOST__'} = $line;
@@ -711,7 +711,7 @@ sub dump_spam_route {
 sub dump_syslog_config {
    my $file = "/etc/syslog.conf";
    if ( -d "/etc/rsyslog.d" ) {
-     $file = "/etc/rsyslog.d/mailcleaner.conf";
+     $file = "/etc/rsyslog.d/spamtagger.conf";
    }
 
    my $cmd = "";
@@ -905,10 +905,10 @@ sub get_exim_config{
 	$config{'__SMTP_BANNER__'} = $row{'smtp_banner'};
     $config{'__ERRORS_REPLY_TO__'} = $row{'errors_reply_to'};
 
-        if ( -f $conf->getOption('SRCDIR')."/etc/mailcleaner/version.def" && -f $conf->getOption('SRCDIR')."/etc/edition.def") {
+        if ( -f $conf->getOption('SRCDIR')."/etc/spamtagger/version.def" && -f $conf->getOption('SRCDIR')."/etc/edition.def") {
           my ($version, $cmd) = ('', '');
-          unless (-f $conf->getOption('VARDIR').'/spool/mailcleaner/hide_smtp_version') {
-            $cmd = "cat ".$conf->getOption('SRCDIR')."/etc/mailcleaner/version.def";
+          unless (-f $conf->getOption('VARDIR').'/spool/spamtagger/hide_smtp_version') {
+            $cmd = "cat ".$conf->getOption('SRCDIR')."/etc/spamtagger/version.def";
             $version = `$cmd`;
             chomp($version);
             $version = ' '.$version;
@@ -942,8 +942,8 @@ sub get_exim_config{
     my $vardir = $conf->getOption('VARDIR');
     my $fh;
     $config{'__FULL_WHITELIST_HOSTS__'} = '';
-    if (-e $vardir.'/spool/mailcleaner/full_whitelisted_hosts.list') {
-        open($fh, '<', $vardir.'/spool/mailcleaner/full_whitelisted_hosts.list');
+    if (-e $vardir.'/spool/spamtagger/full_whitelisted_hosts.list') {
+        open($fh, '<', $vardir.'/spool/spamtagger/full_whitelisted_hosts.list');
         while (<$fh>) {
 	    $config{'__FULL_WHITELIST_HOSTS__'} .= $_ . ' ';
         }
@@ -955,8 +955,8 @@ sub get_exim_config{
     $config{'__ALLOW_LONG__'} = $row{'allow_long'};
     $config{'__FOLDING__'} = $row{'folding'};
     my $max_length;
-    if ( -e $conf->getOption('VARDIR').'/spool/mailcleaner/exim_max_line_length' ) {
-        if (open(my $fh, '<', $conf->getOption('VARDIR').'/spool/mailcleaner/exim_max_line_length')) {
+    if ( -e $conf->getOption('VARDIR').'/spool/spamtagger/exim_max_line_length' ) {
+        if (open(my $fh, '<', $conf->getOption('VARDIR').'/spool/spamtagger/exim_max_line_length')) {
             $max_length = <$fh>;
             chomp($max_length);
             close($fh);
@@ -1148,7 +1148,7 @@ sub dump_default_dkim
     if ($stage != 1) {
         return;
     }
-    my $keypath = $conf->getOption('VARDIR')."/spool/tmp/mailcleaner/dkim";
+    my $keypath = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/dkim";
     if (! -d $keypath) {
         mkpath($keypath);
     }
@@ -1174,7 +1174,7 @@ sub dump_tls_force_files
 {
 	foreach my $f ( ('domains_require_tls_from', 'domains_require_tls_to')) {
 		my $o = '__'.uc($f).'__';
-		my $file = $conf->getOption('VARDIR')."/spool/tmp/mailcleaner/".$f.".list";
+		my $file = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/".$f.".list";
 		if ( open(FILE, ">$file")) {
 			print FILE $exim_conf{$o};
 			close FILE;

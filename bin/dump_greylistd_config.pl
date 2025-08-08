@@ -47,7 +47,7 @@ dump_greylistd_file(\%greylist_conf) or fatal_error("CANNOTDUMPGREYLISTDFILE", $
 
 dump_domain_to_avoid($greylist_conf{'__AVOID_DOMAINS_'});
 
-my $domainsfile = $conf->getOption('VARDIR')."/spool/tmp/mailcleaner/domains_to_greylist.list";
+my $domainsfile = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/domains_to_greylist.list";
 if ( ! -f $domainsfile) {
   my $res=`touch $domainsfile`;
   chown $uid, $gid, $domainsfile;
@@ -81,7 +81,7 @@ sub dump_domain_to_avoid
      @domains_to_avoid = split /\s*[\,\:\;]\s*/, $domains;
    }
    
-   my $file = $conf->getOption('VARDIR')."/spool/tmp/mailcleaner/domains_to_avoid_greylist.list";
+   my $file = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/domains_to_avoid_greylist.list";
    if ( !open(DOMAINTOAVOID, ">$file") ) {
 		$lasterror = "Cannot open template file: $file";
 		return 0;

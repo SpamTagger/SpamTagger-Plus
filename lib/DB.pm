@@ -58,7 +58,7 @@ sub connect {
   
   my $dbh;
   my $realmaster = 0;
-  my $masterfile = $conf->getOption('VARDIR')."/spool/mailcleaner/master.conf";
+  my $masterfile = $conf->getOption('VARDIR')."/spool/spamtagger/master.conf";
   if ( ($type =~ /realmaster/ && -f $masterfile) || $type =~ /custom/) {
   	my $host;
   	my $port;

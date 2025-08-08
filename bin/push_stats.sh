@@ -58,16 +58,16 @@ for OPTION in "$@"; do
   esac
 done
 
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
-DOMAINFILE=$VARDIR/spool/tmp/mailcleaner/domains.list
+DOMAINFILE=$VARDIR/spool/tmp/spamtagger/domains.list
 STATFILE=/var/tmp/stats_to_push
 MAXSLEEPTIME=300
 MINSLEEPTIME=120
@@ -92,8 +92,8 @@ for dom in $(grep -v '*' $DOMAINFILE | cut -d':' -f1); do
   echo $($SRCDIR/bin/get_stats.pl $dom -$days +$END) >>$STATFILE
 done
 
-CLIENTID=$(grep 'CLIENTID' /etc/mailcleaner.conf | cut -d ' ' -f3)
-HOSTID=$(grep 'HOSTID' /etc/mailcleaner.conf | cut -d ' ' -f3)
+CLIENTID=$(grep 'CLIENTID' /etc/spamtagger.conf | cut -d ' ' -f3)
+HOSTID=$(grep 'HOSTID' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 DATE=$(date --date "now -1 day" +%Y%m%d)
 chmod g+w $STATFILE

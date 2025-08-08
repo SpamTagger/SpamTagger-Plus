@@ -16,15 +16,15 @@ if [ ! -z $2 ]; then
     fi
 fi
 
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=`grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3`
 if [ "$SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=`grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3`
 if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-ISMASTER=`grep 'ISMASTER' /etc/mailcleaner.conf | cut -d ' ' -f3`
+ISMASTER=`grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3`
 
 NAME=mailcleaner
 FW=firewall
@@ -51,7 +51,7 @@ case "$1" in
     echo "Starting $NAME: "
 
     EDITION=`cat $SRCDIR/etc/edition.def`
-    VERSION=`cat $SRCDIR/etc/mailcleaner/version.def`
+    VERSION=`cat $SRCDIR/etc/spamtagger/version.def`
     echo "MailCleaner $EDITION $VERSION (kernel \\\r on \\\m, \\\l)\n" > /etc/issue
 
     ## checking for tmpfs dir
@@ -93,7 +93,7 @@ case "$1" in
         $INITDIR/$APACHE start
     fi
 
-    FIRSTUPDATE_LOG="${VARDIR}/log/mailcleaner/first-start.log"
+    FIRSTUPDATE_LOG="${VARDIR}/log/spamtagger/first-start.log"
     FIRSTUPDATE_FLAG_DIR="${VARDIR}/run/configurator"
     FIRSTUPDATE_FLAG_RAN="${FIRSTUPDATE_FLAG_DIR}/updater4mc-ran"
     FIRSTUPDATE_FLAG_RUNNING="${FIRSTUPDATE_FLAG_DIR}/updater4mc-running"

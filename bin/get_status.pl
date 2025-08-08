@@ -42,7 +42,7 @@ if ($0 =~ m/(\S*)\/\S+.pl$/) {
     unshift (@INC, $path);
 }
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 my $mode_given;
 my $verbose = 0;
@@ -269,7 +269,7 @@ sub usage
 
 sub getNumberOfGreylistDomains
 {
-    my $cmd = "wc -l ".$config{VARDIR}."/spool/mailcleaner/domains_to_greylist.list  | cut -d' ' -f1";
+    my $cmd = "wc -l ".$config{VARDIR}."/spool/spamtagger/domains_to_greylist.list  | cut -d' ' -f1";
     my $res = `$cmd`;
     if ($res =~ m/(\d+)\s+/) {
         return $1;

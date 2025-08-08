@@ -70,8 +70,8 @@ my %dest_hosts = parseDestinations(\@domain_list);
 $time_in{'gathering_domains_config'} = time() - $previous_time;
 $previous_time = time();
 
-my $filepath = $conf->getOption('VARDIR')."/spool/tmp/mailcleaner";
-my $posterspath = $conf->getOption('VARDIR')."/spool/mailcleaner/addresses";
+my $filepath = $conf->getOption('VARDIR')."/spool/tmp/spamtagger";
+my $posterspath = $conf->getOption('VARDIR')."/spool/spamtagger/addresses";
 if ( ! -d $filepath ) {
    if (! mkdir $filepath ) {
      print "NODESTINATIONFOLDERAVAILABLE $filepath\n";

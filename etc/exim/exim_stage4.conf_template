@@ -67,12 +67,12 @@ received_header_text = "Received: \
          with id ${message_id} ${if def:received_for {\n\tfor <$received_for>}} ${if def:sender_address {\n\tfrom <$sender_address>}}"
 
 domainlist local_domains = @
-domainlist relay_to_domains = wildlsearch;VARDIR/spool/tmp/mailcleaner/domains.list
-domainlist forward_by_mx = wildlsearch;VARDIR/spool/tmp/mailcleaner/domains_to_mx.list
-domainlist domains_require_tls_to = VARDIR/spool/tmp/mailcleaner/domains_require_tls_to.list
+domainlist relay_to_domains = wildlsearch;VARDIR/spool/tmp/spamtagger/domains.list
+domainlist forward_by_mx = wildlsearch;VARDIR/spool/tmp/spamtagger/domains_to_mx.list
+domainlist domains_require_tls_to = VARDIR/spool/tmp/spamtagger/domains_require_tls_to.list
 hostlist   relay_from_hosts = 127.0.0.1
 hostlist   trusted_hosts = <; __TRUSTED_HOSTS__
-addresslist full_whitelisted_senders = lsearch;VARDIR/spool/mailcleaner/full_whitelisted_senders.list
+addresslist full_whitelisted_senders = lsearch;VARDIR/spool/spamtagger/full_whitelisted_senders.list
 
 perl_at_start = true
 perl_startup = do '__SRCDIR__/etc/exim/out_scripts.pl'
@@ -110,14 +110,14 @@ forced:
   driver      = manualroute
   transport   = remote_smtp
   condition   = ${if match{$header_X-MailCleaner-Forced:}{message forced}}
-  route_data  = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/mailcleaner/domains.list}}
+  route_data  = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtagger/domains.list}}
 
 full_whitelist:
    driver     = manualroute
    transport  = remote_smtp
    condition  = ${if def:header_X-MailCleaner-FullWhitelist:{$h_X-MailCleaner-FullWhitelist:}{yes} }
    senders    = +full_whitelisted_senders
-   route_data = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/mailcleaner/domains.list}}
+   route_data = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtaggerspamtaggerst}}
 
 filter_newsletter:
   driver = accept
@@ -144,7 +144,7 @@ filter_checktag_mx:
   domains = !@ : +forward_by_mx
   condition = ${if and \
                   { \
-                     {match {$header_subject:}{^\{MC_SPAM\}}} \
+                     {match {$header_suspamtaggerMC_SPAM\}}} \
                      { >{${perl{wantTag}{$local_part}{$domain}}}{0} } \
                   }{yes}{no} \
                 }
@@ -158,10 +158,8 @@ filter_checktag_mx:
 filter_checktag:
   driver = manualroute
   transport = remote_smtp
-  domains = !@ : +relay_to_domains
-  route_data = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/mailcleaner/domains.list}}
-  hosts_randomize = true
-  condition = ${if and \
+  domains = !@ : +relay_to_domainsspamtaggerta = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtagger/domains.list}}
+  hosts_randomize = truespamtaggern = ${if and \
                   { \
                      {match {$header_subject:}{^\{MC_SPAM\}}} \
                      { >{${perl{wantTag}{$local_part}{$domain}}}{0} } \
@@ -177,7 +175,7 @@ __FI__
 filter_checkspam:
   driver = accept
   transport = spam_store
-  condition = ${if  match {$header_subject:}{^\{MC_SPAM\}} {yes}{no} }
+  condition = ${if  match {$header_subject:}{^\{Mspamtaggeryes}{no} }
   headers_add = X-Auto-Response-Suppress: DR, NDR, RN, NRN, OOF, AutoReply
 
 filter_checkbounces:
@@ -187,18 +185,15 @@ filter_checkbounces:
                    { \
                      { eq {$sender_address}{} } \
                      { >{${perl{quarantineBounce}{$local_part}{$domain}}}{0} } \
-                   }{yes}{no} \
-               }
+                   }{yes}{no} \spamtagger     }
   headers_add = X-MailCleaner-Bounce: bounce message
   __INCLUDE__ stage4/remove_headers
 
 __IF__ USEARCHIVER
 archiver_route:
   debug_print = "R: archiver_route for $domain"
-  driver = manualroute
-  domains = ${lookup{$domain}nwildlsearch,ret=key{VARDIR/spool/tmp/mailcleaner/domains.list}}
-  condition = ${if \
-                  and{ \
+  driver = manualroutespamtagger= ${lookup{$domain}nwildlsearch,ret=key{VARDIR/spool/tmp/spamtagger/domains.list}}
+  condition = ${if \spamtagger        and{ \
                       {def:domain_data} \
                       {!eq {$domain_data}{}} \
                       {eq{${local_part}@${domain}}{$original_local_part@$original_domain}} \
@@ -223,22 +218,19 @@ copyto_route:
   check_ancestor
   qualify_preserve_domain
   headers_add = X-MailCleaner-CopyTo: this is a message copy (original recipient: ${original_local_part}@${original_domain})
-  domains = ${lookup{$domain}nwildlsearch,ret=key{VARDIR/spool/tmp/mailcleaner/domains.list}}
+  domains = ${lookup{$domain}nwildlsearch,ret=key{VARDIR/spool/tmp/spamtagger/domains.list}}
   data = ${if \
              exists{COPYTODIR/${domain_data}} \
              {${lookup{$local_part}nwildlsearch{COPYTODIR/${domain_data}}} } \
              {}\
-          }
-  condition = ${if and { \
+          }spamtaggern = ${if and { \
                   { exists{COPYTODIR/${domain_data}} } \
                   { !eq{${local_part}@${domain}}{${lookup{$local_part}nwildlsearch{COPYTODIR/${domain_data}}}} } } \
                 }}
   unseen
   repeat_use = false
   no_verify
-  __INCLUDE__ stage4/remove_headers
-
-filter_forward_mx:
+  __INCLUDE__ stage4/remove_headersspamtaggerrward_mx:
   driver = dnslookup
   transport = remote_smtp
   domains = !@ : +forward_by_mx
@@ -250,7 +242,7 @@ filter_forward:
   driver = manualroute
   transport = remote_smtp
   domains = !@ : +relay_to_domains
-  route_data = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/mailcleaner/domains.list}}
+  route_data = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtagger/domains.list}}
   hosts_randomize = true
   host_find_failed = ignore
   headers_remove = X-MailCleaner-Bounce
@@ -260,9 +252,9 @@ filter_forward:
 dnslookup_gateway:
   driver = manualroute
   domains = ! +local_domains : ! +relay_to_domains
-  condition = ${if exists{VARDIR/spool/mailcleaner/smtp_proxy.conf}{yes}{no}}
+  condition = ${if exists{VARDIR/spool/spamtagger/smtp_proxy.conf}{yes}{no}}
   transport = remote_smtp
-  route_list = wildlsearch;;VARDIR/spool/mailcleaner/smtp_proxy.conf $value
+  route_list = wildlsearch;;VARDIR/spool/spamtagger/smtp_proxy.conf $value
   ignore_target_hosts = 0.0.0.0 : 127.0.0.0/8
   __INCLUDE__ stage4/remove_headers
 

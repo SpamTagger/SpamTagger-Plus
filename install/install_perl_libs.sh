@@ -25,15 +25,15 @@
 #   Usage:
 #           install_perl_libs.sh
 
-BACK=`pwd`
+BACK=$(pwd)
 if [ "$SRCDIR" = "" ]; then
-        SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
-        if [ "SRCDIR" = "" ]; then
-                SRCDIR=/var/spamtagger
-        fi
+  SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
+  if [ "SRCDIR" = "" ]; then
+    SRCDIR=/var/spamtagger
+  fi
 fi
 
-ISSQUEEZE=`grep ' squeeze ' /etc/apt/sources.list`
+ISSQUEEZE=$(grep ' squeeze ' /etc/apt/sources.list)
 VERSIONFILE='VERSIONS.squeeze'
 if [ "$ISSQUEEZE" = "" ]; then
   VERSIONFILE='VERSIONS.lenny'
@@ -48,50 +48,50 @@ export ZLIB_LIB=/usr/zlib/lib
 export BUILD_ZLIB=no
 export PERL5LIB=$PERL5LIB:/usr/rrdtools/lib/perl/
 
-ldconfig 2>&1 > /dev/null
+ldconfig 2>&1 >/dev/null
 
 cd $SRCDIR/install/src/perl
 
-ISLENNY=`grep ' lenny ' /etc/apt/sources.list`
+ISLENNY=$(grep ' lenny ' /etc/apt/sources.list)
 if [ "$ISLENNY" = "" ]; then
   VERSIONFILE='VERSIONS.squeeze'
 fi
 
 ## clean old DBD::MySQL
 for i in 5.8.4 5.8.8 5.10.0 5.10.1; do
-  rm -rf /usr/local/lib/perl/$i/DBD/mysql* 2>&1 > /dev/null
-  rm -rf /usr/local/lib/perl/$i/Bundle/DBD/mysql.pm 2>&1 > /dev/null
-  rm -rf /usr/local/lib/perl/$i/auto/DBD/mysql 2>&1 > /dev/null 
+  rm -rf /usr/local/lib/perl/$i/DBD/mysql* 2>&1 >/dev/null
+  rm -rf /usr/local/lib/perl/$i/Bundle/DBD/mysql.pm 2>&1 >/dev/null
+  rm -rf /usr/local/lib/perl/$i/auto/DBD/mysql 2>&1 >/dev/null
 done
 
-for line in `cat $VERSIONFILE`; do
- module=`echo $line | cut -d'=' -f1`
- version=`echo $line | cut -d'=' -f2`
+for line in $(cat $VERSIONFILE); do
+  module=$(echo $line | cut -d'=' -f1)
+  version=$(echo $line | cut -d'=' -f2)
 
- echo "********"
- echo "will build and install module $module, version $version"
- echo "********" 2>&1
- cd $SRCDIR/install/src/perl
- tar -xvzf $module.tar.gz 2>&1
- cd $module-$version 2>&1
+  echo "********"
+  echo "will build and install module $module, version $version"
+  echo "********" 2>&1
+  cd $SRCDIR/install/src/perl
+  tar -xvzf $module.tar.gz 2>&1
+  cd $module-$version 2>&1
 
- if [ "$module" = "RRDTools-OO" ]; then
-  export PERL5LIB=$PERL5LIB:/usr/rrdtools/lib/perl/
- fi
- if [ "$module" = "Inline" ]; then
-   echo 'y' | perl Makefile.PL 2>&1
- else 
-   echo 'n' | perl Makefile.PL 2>&1
- fi
- make 2>&1
- make install 2>&1
- cd ..
- rm -rf $module-$version 2>&1
- echo "********"
- echo "done"
- echo "********" 2>&1
-# echo "press return to continue.."
-# read
+  if [ "$module" = "RRDTools-OO" ]; then
+    export PERL5LIB=$PERL5LIB:/usr/rrdtools/lib/perl/
+  fi
+  if [ "$module" = "Inline" ]; then
+    echo 'y' | perl Makefile.PL 2>&1
+  else
+    echo 'n' | perl Makefile.PL 2>&1
+  fi
+  make 2>&1
+  make install 2>&1
+  cd ..
+  rm -rf $module-$version 2>&1
+  echo "********"
+  echo "done"
+  echo "********" 2>&1
+  # echo "press return to continue.."
+  # read
 done
 
 ## patch RRD OO modules
@@ -99,9 +99,8 @@ for i in 5.8.4 5.8.8 5.10.0 5.10.1 5.20.2; do
   if [ -d /usr/local/share/perl/$i/RRDTool ]; then
     cd /usr/local/share/perl/$i/RRDTool
     cp $SRCDIR/install/src/perl/OO.pm.patch .
-    patch -N -p0 < OO.pm.patch
+    patch -N -p0 <OO.pm.patch
   fi
 done
 
 exit 0
-

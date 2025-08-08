@@ -63,10 +63,10 @@ sub new {
 		  . $conf->getOption('SRCDIR')
 		  . "/etc/rbls/tlds.txt",
 		localDomainsFile => $conf->getOption('VARDIR')
-		  . "/spool/tmp/mailcleaner/domains.list",
+		  . "/spool/tmp/spamtagger/domains.list",
 		maxurisreports => 10,
 		configfile     => $conf->getOption('SRCDIR')
-		  . "/etc/mailcleaner/spamhandler.conf",
+		  . "/etc/spamtagger/spamhandler.conf",
         pidfile    => $conf->getOption('VARDIR') . "/run/spamhandler.pid",
 
 		%dbs       => (),

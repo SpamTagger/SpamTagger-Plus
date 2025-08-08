@@ -3,7 +3,7 @@
 use strict;
 use DBI;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 my $days_to_keep = shift;
 

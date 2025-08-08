@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
@@ -112,13 +112,13 @@ check_dir $VARDIR/www/stats
 # create mailcleaner dirs
 
 check_dir $VARDIR/spool/tmp
-check_dir $VARDIR/log/mailcleaner
-check_dir $VARDIR/spool/mailcleaner
-check_dir $VARDIR/spool/mailcleaner/prefs
-check_dir $VARDIR/spool/mailcleaner/counts
-check_dir $VARDIR/spool/mailcleaner/stats
-check_dir $VARDIR/spool/mailcleaner/scripts
-check_dir $VARDIR/spool/mailcleaner/addresses
+check_dir $VARDIR/log/spamtagger
+check_dir $VARDIR/spool/spamtagger
+check_dir $VARDIR/spool/spamtagger/prefs
+check_dir $VARDIR/spool/spamtagger/counts
+check_dir $VARDIR/spool/spamtagger/stats
+check_dir $VARDIR/spool/spamtagger/scripts
+check_dir $VARDIR/spool/spamtagger/addresses
 check_dir $VARDIR/spool/rrdtools
 check_dir $VARDIR/spool/bogofilter
 check_dir $VARDIR/spool/bogofilter/database

@@ -35,7 +35,7 @@ function check_parameter {
   fi
 }
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)
 OLDID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
 

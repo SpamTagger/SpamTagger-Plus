@@ -69,7 +69,7 @@ sub new {
         name              => 'PrefTDaemon',
 		socketpath => $conf->getOption('VARDIR') . "/run/prefdaemon.sock",
 		configfile => $conf->getOption('SRCDIR')
-          . "/etc/mailcleaner/prefdaemon.conf",
+          . "/etc/spamtagger/prefdaemon.conf",
         pidfile    => $conf->getOption('VARDIR') . "/run/prefdaemon.pid",
 		profile    => 0,
 		prefork    => 5,

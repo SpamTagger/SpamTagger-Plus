@@ -24,7 +24,7 @@
 #   Usage:
 #		send_anon.sh
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 
 HOSTID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
 if [ "$HOSTID" = "" ]; then

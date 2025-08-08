@@ -31,11 +31,11 @@ our $VERSION    = 1.0;
 sub get {
 
  my $this = {
-   logfile => '/tmp/mailcleaner_install.log',
+   logfile => '/tmp/spamtagger_install.log',
    srcdir => '/usr/spamtagger',
    vardir => '/var/spamtagger',
-   logfile => '/tmp/mailcleaner_install.log',
-   conffile => '/etc/mailcleaner.conf'
+   logfile => '/tmp/spamtagger_install.log',
+   conffile => '/etc/spamtagger.conf'
  };
 
  bless $this, 'module::MCInstaller';
@@ -61,7 +61,7 @@ sub do {
     print "[done]\n";
 
     print " - Shutting down MailCleaner services... ";
-    `/etc/init.d/mailcleaner stop 2>&1 > /dev/null`;
+    `/etc/init.d/spamtagger stop 2>&1 > /dev/null`;
     # make sure everything is gone
     `killall -TERM mysqld_safe mysqld httpd snmpd exim MailScanner 2>&1 > /dev/null`;
     print "[done]\n";
@@ -165,11 +165,11 @@ sub do {
   } else {
     `tar -xzf mailcleaner_install.tar.gz`;
   }
-  if ( ! -d '/root/mailcleaner' ) {
+  if ( ! -d '/root/spamtagger' ) {
     print "HuHo ! Cannot unpack MailCleaner archive. Maybe try to reinstall MailCleaner.\n";
     return;
   }
-  my $cmd = "mv /root/mailcleaner ".$this->{srcdir};
+  my $cmd = "mv /root/spamtagger ".$this->{srcdir};
   `$cmd 2>&1 > /dev/null`;
 
   $cmd = $this->{srcdir}."/install/install.sh";

@@ -30,7 +30,7 @@ use strict;
 use Net::SMTP;
 use DBI();
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 # get master config
 my %master_conf = get_master_config();

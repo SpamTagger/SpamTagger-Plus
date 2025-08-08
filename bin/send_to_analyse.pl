@@ -46,7 +46,7 @@ if ( (!$for) || !($for =~ /^(\S+)\@(\S+)$/)) {
 my $for_local = $1;
 my $for_domain = $2;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 my %system_conf = get_system_config();
 my %domain_conf = get_domain_config($for_domain);
 

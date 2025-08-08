@@ -4,7 +4,7 @@ use strict;
 use DBI();
 use Term::ReadKey;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 my $master_dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=$config{'VARDIR'}/run/mysql_master/mysqld.sock",
                                         "mailcleaner","$config{'MYMAILCLEANERPWD'}", {RaiseError => 0, PrintError => 0} );
@@ -226,7 +226,7 @@ sub set_as_slave {
          }
          print "done.\n";
 
-	`perl -pi -e 's/ISMASTER = Y/ISMASTER = N/' /etc/mailcleaner.conf`;
+	`perl -pi -e 's/ISMASTER = Y/ISMASTER = N/' /etc/spamtagger.conf`;
         `perl -pi -e 's/(.*collect_rrd.*)/#\$1/' /var/spool/cron/crontabs/root`;
         `crontab /var/spool/cron/crontabs/root 2>&1`;
          print "Host is now a slave of $master\n";

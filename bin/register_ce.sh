@@ -25,7 +25,7 @@
 #	Create a file with data at /tmp/mc_register.data
 #	This file contains for each line KEY=DATA
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 REGISTERDATA=/tmp/mc_registerce.data
 
 HOSTID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
@@ -134,7 +134,7 @@ fi
 if [ -f "/tmp/mc_registerce.out" ]; then
   rm /tmp/mc_registerce.out >/dev/null 2>&1
 fi
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 perl -pi -e 's/(^REGISTERED.*$)//' $CONFFILE
 perl -pi -e 's/^\s*$//' $CONFFILE
 REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)

@@ -10,7 +10,7 @@
 
 class Default_Form_Autoconfiguration extends ZendX_JQuery_Form
 {
-	private $MC_AUTOCONF_TAG_FILE="/spool/mailcleaner/mc-autoconf";
+	private $MC_AUTOCONF_TAG_FILE="/spool/spamtagger/mc-autoconf";
 	
 	protected $_autoconfmanager;
 	

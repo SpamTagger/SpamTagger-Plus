@@ -31,7 +31,7 @@ use DBI();
 
 my $DEBUG = 1;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 my $HOSTID=$config{HOSTID};
 
 my $lasterror = "";
@@ -48,10 +48,10 @@ my %apache_conf;
 
 dump_apache_file("/etc/apache/httpd.conf_template", "/etc/apache/httpd.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 
-if (-e "$config{'SRCDIR'}/etc/apache/sites/mailcleaner.conf.disabled") {
-    unlink("$config{'SRCDIR'}/etc/apache/sites/mailcleaner.conf");
+if (-e "$config{'SRCDIR'}/etc/apache/sites/spamtagger.conf.disabled") {
+    unlink("$config{'SRCDIR'}/etc/apache/sites/spamtagger.conf");
 } else {
-    dump_apache_file("/etc/apache/sites/mailcleaner.conf_template", "/etc/apache/sites/mailcleaner.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
+    dump_apache_file("/etc/apache/sites/spamtagger.conf_template", "/etc/apache/sites/spamtagger.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 }
 
 if (-e "$config{'SRCDIR'}/etc/apache/sites/configurator.conf.disabled") {
@@ -132,8 +132,8 @@ sub dump_apache_file
 
 sub dump_soap_wsdl {
 
-        my $template_file = "$config{'SRCDIR'}/www/soap/htdocs/mailcleaner.wsdl_template";
-        my $target_file = "$config{'SRCDIR'}/www/soap/htdocs/mailcleaner.wsdl";
+        my $template_file = "$config{'SRCDIR'}/www/soap/htdocs/spamtagger.wsdl_template";
+        my $target_file = "$config{'SRCDIR'}/www/soap/htdocs/spamtagger.wsdl";
                  
         if ( !open(TEMPLATE, $template_file) ) {
                 $lasterror = "Cannot open template file: $template_file";

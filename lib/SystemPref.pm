@@ -46,8 +46,8 @@ sub create {
   my %prefs;
   
   my $conf = ReadConfig::getInstance();
-  my $preffile = $conf->getOption('VARDIR')."/spool/mailcleaner/prefs/_global/prefs.list";
-  my $prefdir = $conf->getOption('VARDIR')."/spool/mailcleaner/prefs/_global/";
+  my $preffile = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/_global/prefs.list";
+  my $prefdir = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/_global/";
   my $this = {
          name => $name,
          prefdir => $prefdir,

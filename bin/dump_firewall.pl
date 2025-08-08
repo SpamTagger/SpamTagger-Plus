@@ -37,7 +37,7 @@ our $dns = GetDNS->new();
 
 my $DEBUG = 1;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 my $start_script = $config{'SRCDIR'}."/etc/firewall/start";
 my $stop_script = $config{'SRCDIR'}."/etc/firewall/stop";
 my %services = (

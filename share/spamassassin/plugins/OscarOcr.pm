@@ -38,7 +38,7 @@ use String::Approx 'adistr';
 use FileHandle;
 
 BEGIN { 
-  my $CONFIGFILE = "/etc/mailcleaner.conf";
+  my $CONFIGFILE = "/etc/spamtagger.conf";
   my %config = readConfig();
   my $plugindir=$config{'SRCDIR'}."/share/spamassassin/plugins";	
   unshift(@INC, $plugindir) ;

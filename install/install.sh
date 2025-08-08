@@ -1,13 +1,13 @@
 #!/bin/bash
 
 if [ "$LOGFILE" = "" ]; then
-  LOGFILE=/tmp/mailcleaner.log
+  LOGFILE=/tmp/spamtagger.log
 fi
 if [ "$CONFFILE" = "" ]; then
-  CONFFILE=/etc/mailcleaner.conf
+  CONFFILE=/etc/spamtagger.conf
 fi
 if [ "$VARDIR" = "" ]; then
-  VARDIR=$(grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+  VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
   if [ "VARDIR" = "" ]; then
     VARDIR=/var/spamtagger
   fi
@@ -259,7 +259,7 @@ echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP MailCleane
 ### installing mailcleaner cron job
 
 echo -n " - Installing scheduled jobs...                        "
-echo "0,15,30,45 * * * *  $SRCDIR/scripts/cron/mailcleaner_cron.pl > /dev/null" >>/var/spool/cron/crontabs/root
+echo "0,15,30,45 * * * *  $SRCDIR/scripts/cron/spamtagger_cron.pl > /dev/null" >>/var/spool/cron/crontabs/root
 echo "0-59/5 * * * * $SRCDIR/bin/collect_rrd_stats.pl > /dev/null" >>/var/spool/cron/crontabs/root
 crontab /var/spool/cron/crontabs/root 2>&1 >>$LOGFILE
 /etc/init.d/cron restart 2>&1 >>$LOGFILE
@@ -272,10 +272,10 @@ if [ ! -d $SRCDIR/etc/firewall ]; then
   mkdir $SRCDIR/etc/firewall 2>&1 >>$LOGFILE
 fi
 $SRCDIR/bin/dump_firewall.pl 2>&1 >>$LOGFILE
-ln -s $SRCDIR/etc/init.d/mailcleaner /etc/init.d/ 2>&1 >/dev/null
-/etc/init.d/mailcleaner stop 2>&1 >>$LOGFILE
+ln -s $SRCDIR/etc/init.d/spamtagger /etc/init.d/ 2>&1 >/dev/null
+/etc/init.d/spamtagger stop 2>&1 >>$LOGFILE
 update-rc.d mailcleaner defaults 2>&1 >>$LOGFILE
-/etc/init.d/mailcleaner start 2>&1 >>$LOGFILE
+/etc/init.d/spamtagger start 2>&1 >>$LOGFILE
 sleep 5
 $SRCDIR/etc/init.d/apache restart 2>&1 >>$LOGFILE
 $SRCDIR/bin/collect_rrd_stats.pl 2>&1 >>$LOGFILE

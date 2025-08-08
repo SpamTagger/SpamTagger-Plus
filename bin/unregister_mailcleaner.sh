@@ -29,7 +29,7 @@ if [ "$2" = "-b" ]; then
   batch=1
 fi
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 
 REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)
 CLIENTID=$(grep 'CLIENTID' $CONFFILE | cut -d ' ' -f3)
@@ -197,7 +197,7 @@ fi
 if [ "$batch" = 0 ]; then
   echo -n "Removing known hosts..."
 fi
-sed -i '/mailcleaner/d' /root/.ssh/known_hosts >/dev/null 2>&1
+sed -i '/spamtagger/d' /root/.ssh/known_hosts >/dev/null 2>&1
 if [ "$batch" = 0 ]; then
   echo -n "done"
 fi
@@ -265,7 +265,7 @@ fi
 if [ "$batch" = 0 ]; then
   echo -n "writing configuration file..."
 fi
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 sed -i '/CLIENTID/d' $CONFFILE >/dev/null 2>&1
 sed -i '/RESELLERID/d' $CONFFILE >/dev/null 2>&1
 sed -i '/REGISTERED/d' $CONFFILE >/dev/null 2>&1

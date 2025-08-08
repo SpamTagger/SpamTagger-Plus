@@ -92,7 +92,7 @@ sub loadPrefs {
   my $this = shift;
 
   my $conf = ReadConfig::getInstance();
-  my $preffile = $conf->getOption('VARDIR')."/spool/mailcleaner/prefs/".$this->{name}."/prefs.list";
+  my $preffile = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$this->{name}."/prefs.list";
 
   my @dlist = ($this->{name}, '*', '_joker', '_global');
   
@@ -117,7 +117,7 @@ sub loadPrefs {
   ## finaly try to find a valid preferences file
   my $found = 0;
   for my $d ( @dlist ) {
-    $preffile = 	$conf->getOption('VARDIR')."/spool/mailcleaner/prefs/".$d."/prefs.list";
+    $preffile = 	$conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$d."/prefs.list";
     if ( -f $preffile) {
       $found = 1;
       last;
@@ -166,7 +166,7 @@ sub dumpPrefsFromRow {
     print "CANNOTFINDPREFS";
   }
   my $conf = ReadConfig::getInstance();
-  my $prefdir = $conf->getOption('VARDIR')."/spool/mailcleaner/prefs/".$this->{name};
+  my $prefdir = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$this->{name};
   my $preffile = $prefdir."/prefs.list";
 
   my $mcuid = getpwnam('mailcleaner');
@@ -213,7 +213,7 @@ sub dumpPrefsFromRow {
 
     my $template = ConfigTemplate::create(
                                  "etc/exim/ldapcallout_template", 
-                                 $conf->getOption('VARDIR')."/spool/mailcleaner/callout/".$this->getPref('name').".ldapcallout");
+                                 $conf->getOption('VARDIR')."/spool/spamtagger/callout/".$this->getPref('name').".ldapcallout");
   
     my %rep;
     $rep{'__AD_BINDDN__'} = $ad_binddn; 
@@ -253,7 +253,7 @@ sub dumpLocalAddresses {
   my $query = "SELECT e.address
                FROM email e WHERE e.address LIKE '%@".$this->{name}."'";
               
-  my $file = $conf->getOption('VARDIR')."/spool/mailcleaner/addresses/".$this->{name}.".addresslist";
+  my $file = $conf->getOption('VARDIR')."/spool/spamtagger/addresses/".$this->{name}.".addresslist";
   if ( !open(OUTFILE, ">".$file) ) {
       if (-e $file) { ## in case we cannot write to file, try to remove it
           unlink($file);

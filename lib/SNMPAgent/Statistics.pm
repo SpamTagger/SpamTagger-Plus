@@ -169,7 +169,7 @@ sub populateDomains {
     	delete $domains{$_};
     }
     
-	my $file = $conf->getOption('VARDIR')."/spool/tmp/mailcleaner/snmpdomains.list";
+	my $file = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/snmpdomains.list";
 	
 	my $f;  
     if (open($f, $file)) {

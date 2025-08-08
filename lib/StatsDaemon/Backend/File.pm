@@ -46,7 +46,7 @@ sub new {
         'class' => $class,
         'daemon' => $daemon,
         'data' => undef,
-        'basepath' => $conf->getOption('VARDIR') . '/spool/mailcleaner/stats',
+        'basepath' => $conf->getOption('VARDIR') . '/spool/spamtagger/stats',
         'today_filename' => '_today',
         'history_filename' => '_history'
     };

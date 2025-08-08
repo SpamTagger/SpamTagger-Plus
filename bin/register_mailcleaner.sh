@@ -31,7 +31,7 @@ if [ "$4" = "-b" ]; then
   batch=1
 fi
 
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 
 HOSTID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
 if [ "$HOSTID" = "" ]; then
@@ -282,7 +282,7 @@ fi
 if [ "$batch" = 0 ]; then
   echo -n "writing configuration file..."
 fi
-CONFFILE=/etc/mailcleaner.conf
+CONFFILE=/etc/spamtagger.conf
 perl -pi -e 's/(^CLIENTID.*$)//' $CONFFILE
 perl -pi -e 's/(^RESELLERID.*$)//' $CONFFILE
 perl -pi -e 's/(^REGISTERED.*$)//' $CONFFILE

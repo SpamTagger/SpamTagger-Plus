@@ -37,7 +37,7 @@ require GetDNS;
 
 my $DEBUG = 1;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 my $system_mibs_file = '/usr/share/snmp/mibs/MAILCLEANER-MIB.txt';
 if ( ! -d '/usr/share/snmp/mibs') {
  mkpath('/usr/share/snmp/mibs');

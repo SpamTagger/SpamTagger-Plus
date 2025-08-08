@@ -19,25 +19,23 @@
 #
 #
 #   This script will backup the configuration database
-#   Usage: 
-#           backup_config.sh 
+#   Usage:
+#           backup_config.sh
 
-
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-SRCDIR=`grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
 
-MYMAILCLEANERPWD=`grep 'MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3`
+MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 BACKUPFILE=$1
 if [ "$BACKUPFILE" = "" ]; then
   BACKUPFILE="mailcleaner_config_.sql"
 fi
 
-/opt/mysql5/bin/mysqldump -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock --ignore-table=mc_config.update_patch --ignore-table=mc_config.master --ignore-table=mc_config.slave --master-data=2 mc_config > $BACKUPFILE
-
+/opt/mysql5/bin/mysqldump -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock --ignore-table=mc_config.update_patch --ignore-table=mc_config.master --ignore-table=mc_config.slave --master-data=2 mc_config >$BACKUPFILE

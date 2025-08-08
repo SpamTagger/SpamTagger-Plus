@@ -26,8 +26,7 @@
 #   -s: connect to the slave database
 #   -m: connect to the master database
 
-
-VARDIR=`grep 'VARDIR' /etc/mailcleaner.conf | cut -d ' ' -f3`
+VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
@@ -35,28 +34,27 @@ fi
 case $1 in
 
 "-s" | "-slave")
-	SOCKET=$VARDIR/run/mysql_slave/mysqld.sock
-	;;
+  SOCKET=$VARDIR/run/mysql_slave/mysqld.sock
+  ;;
 "-m" | "-master")
-	SOCKET=$VARDIR/run/mysql_master/mysqld.sock
-	;;
+  SOCKET=$VARDIR/run/mysql_master/mysqld.sock
+  ;;
 *)
-	echo "bad usage: use -s or -m flag to connect to slave or master database"
-	exit
-	;;
+  echo "bad usage: use -s or -m flag to connect to slave or master database"
+  exit
+  ;;
 esac
 
-MYMAILCLEANERPWD=`grep '^MYMAILCLEANERPWD' /etc/mailcleaner.conf | cut -d ' ' -f3`
+MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 COMMAND=/opt/mysql5/bin/mysql
 
 case $2 in
 
 "upgrade")
-   COMMAND=/opt/mysql5/bin/mysql_upgrade
-   ;;
-*)
-   ;;
+  COMMAND=/opt/mysql5/bin/mysql_upgrade
+  ;;
+*) ;;
 esac
 
 if [ "$2" = "" ]; then

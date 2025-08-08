@@ -64,14 +64,14 @@ sub create {
         $daemonname = 'defautThreadedDaemon';
     }
     if ( !$conffilepath ) {
-        $conffilepath = 'etc/mailcleaner/' . $daemonname . ".cf";
+        $conffilepath = 'etc/spamtagger/' . $daemonname . ".cf";
     }
     my $configfile = $conf->getOption('SRCDIR') . "/" . $conffilepath;
 
     ## default values
     my $pidfile = $conf->getOption('VARDIR') . "/run/$daemonname.pid";
     my $logfile =
-      $conf->getOption('VARDIR') . "/log/mailcleaner/$daemonname.log";
+      $conf->getOption('VARDIR') . "/log/spamtagger/$daemonname.log";
     my $prefork = 5;
     my $debug   = 0;
     my $leaving = 0;

@@ -47,7 +47,7 @@ my %rbl_field = (
 );
 
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 sub readConfig {       # Reads configuration file given as argument.
 	my $configfile = shift;

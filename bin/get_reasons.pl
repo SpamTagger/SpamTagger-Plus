@@ -28,7 +28,7 @@
 
 use strict;
 
-my %config = readConfig("/etc/mailcleaner.conf");
+my %config = readConfig("/etc/spamtagger.conf");
 
 my $msg_id = shift;
 my $for = shift;

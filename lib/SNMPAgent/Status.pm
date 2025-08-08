@@ -121,7 +121,7 @@ sub getEdition {
 
 sub getVersion {
 	my $version = 'Unknown';
-    my $file = $conf->getOption('SRCDIR')."/etc/mailcleaner/version.def";
+    my $file = $conf->getOption('SRCDIR')."/etc/spamtagger/version.def";
     my $f;
     
     if (open($f, $file)) {
@@ -138,7 +138,7 @@ sub getPatchLevel {
 	
 	my $patch = 'Unknown';
 
-        my $patchfile = $conf->getOption('SRCDIR').'/etc/mailcleaner/patchlevel.def';
+        my $patchfile = $conf->getOption('SRCDIR').'/etc/spamtagger/patchlevel.def';
         if (-f $patchfile) {
            my $pfile;
            if (open($pfile, $patchfile)) {
