@@ -27,7 +27,7 @@ package          dumpers::TrustedSources;
 sub get_specific_config
 {
     require DB;
-    my $db = DB::connect('slave', 'mc_config');
+    my $db = DB::connect('slave', 'st_config');
 
 	my %config = ();
 	my %row = $db->getHashRow("SELECT use_alltrusted, use_authservers, useSPFOnLocal, useSPFOnGlobal, authservers, authstring, domainsToSPF, whiterbls FROM trustedSources");

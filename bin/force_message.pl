@@ -125,7 +125,7 @@ sub get_master_config
 	my $dbh;
 	my %mconfig;
 
-	$dbh = DBI->connect("DBI:mysql:database=mc_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
+	$dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
                         "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
                 or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
@@ -137,9 +137,9 @@ sub get_master_config
         }
         my $ref = $sth->fetchrow_hashref() or return;
 
-        $mconfig{'__MYMASTERHOST__'} = $ref->{'hostname'};
-        $mconfig{'__MYMASTERPORT__'} = $ref->{'port'};
-        $mconfig{'__MYMASTERPWD__'} = $ref->{'password'};
+        $stonfig{'__MYMASTERHOST__'} = $ref->{'hostname'};
+        $stonfig{'__MYMASTERPORT__'} = $ref->{'port'};
+        $stonfig{'__MYMASTERPWD__'} = $ref->{'password'};
 
         $sth->finish();
         return %mconfig;
@@ -149,7 +149,7 @@ sub get_master_config
 sub mark_forced
 {
 	my $dbh;
-	my $mdn = "DBI:mysql:database=mc_spool;host=$master_conf{'__MYMASTERHOST__'};port=$master_conf{'__MYMASTERPORT__'}";
+	my $mdn = "DBI:mysql:database=st_spool;host=$master_conf{'__MYMASTERHOST__'};port=$master_conf{'__MYMASTERPORT__'}";
 
 	$dbh = DBI->connect($mdn,
                         "mailcleaner", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0})

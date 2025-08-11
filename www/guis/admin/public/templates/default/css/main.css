@@ -10,27 +10,28 @@
 
 /** main divs **/
 #container {
-   position:relative;
-   margin:0 auto;
-   height:auto !important;
-   height: 100%;
-   min-height: 100%;
-   width: 100%;
-   min-width: 955px;
+  position: relative;
+  margin: 0 auto;
+  height: auto !important;
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  min-width: 955px;
 }
 
 #pagehead {
-	overflow: auto;
-	height: 100%;
-   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  overflow: auto;
+  height: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 #mainheader {
   width: 100%;
   height: 76px;
   margin: 0px;
-  background-image:none;
-  background-color: #5C6D99; /*__MAINHEADERBG__*/
+  background-image: none;
+  background-color: #5C6D99;
+  /*__MAINHEADERBG__*/
   background-repeat: repeat-x;
   color: white;
   text-align: left;
@@ -40,13 +41,13 @@
   overflow-x: hidden;
 }
 
-#mclogo {
+#stlogo {
   float: left;
 }
 
 /* status panel */
 #statuspanel {
-  background-image:url("../images/status_panel.png");
+  background-image: url("../images/status_panel.png");
   background-repeat: no-repeat;
   float: right;
   height: 52px;
@@ -65,12 +66,12 @@
 }
 
 #statuslist a {
-	color: #FF2F00;
+  color: #FF2F00;
 }
 
 .statusbullet {
-   margin: 0px;
-   margin-right: 8px;
+  margin: 0px;
+  margin-right: 8px;
 }
 
 #statusloadingimg {
@@ -88,8 +89,8 @@
 #pagecontent {
   padding-bottom: 30px;
   overflow: auto;
-	border-top: 1px solid #D4D3D2;
-  top:200px;
+  border-top: 1px solid #D4D3D2;
+  top: 200px;
 }
 
 #pagefoot {
@@ -103,17 +104,18 @@
 
 /* legal panel */
 #legalpanel {
-   border-top: 1px solid #CBC1C8;
-   color: #552056;
-   width: 100%;
-   line-height: 22px;
+  border-top: 1px solid #CBC1C8;
+  color: #552056;
+  width: 100%;
+  line-height: 22px;
 }
+
 #legalpanel p {
   margin: 0px;
   padding: 0px;
   padding-left: 15px;
   padding-right: 15px;
-   line-height: 22px;
+  line-height: 22px;
 }
 
 #copyright {
@@ -126,7 +128,7 @@
 
 #company {
   display: inline;
-  float:right;
+  float: right;
   font-size: 9px;
   color: #AA2056;
   line-height: 23px;
@@ -139,7 +141,7 @@
   border: 1px solid #D4D3D2;
   background: #FFFFFF;
   overflow: hidden;
-  text-shadow:0px 1px #FFF;
+  text-shadow: 0px 1px #FFF;
 }
 
 .contentheadicon {
@@ -149,76 +151,79 @@
   height: 48px;
   line-height: 48px;
   width: 184px;
-  background-image:none;
-	background-color: #F5F5F5;
+  background-image: none;
+  background-color: #F5F5F5;
   border-bottom: 1px solid #D4D3D2;
   border-right: 1px solid #D4D3D2;
   overflow: hidden;
   white-space: nowrap;
 }
+
 .contentheadicon img {
   margin-left: 13px;
   display: inline;
   border: 0px;
   vertical-align: middle;
 }
+
 .contentheadtitle {
   margin: 0px;
   padding: 0px;
   padding-left: 54px;
   height: 48px;
   line-height: 52px;
-  background-image:none;
-	background-color: #F5F5F5;
+  background-image: none;
+  background-color: #F5F5F5;
   border-bottom: 1px solid #D4D3D2;
   overflow: hidden;
   white-space: nowrap;
   font-weight: bold;
   color: #E93A00;
   font-size: 13px;
-  text-shadow:0px 1px #FFF;
+  text-shadow: 0px 1px #FFF;
 }
 
 #generalconfigmenu {
   float: left;
-  list-style:none;
+  list-style: none;
   margin: 0px;
-	padding: 0px 0px 20px 0px;
+  padding: 0px 0px 20px 0px;
   margin-top: 54px;
   width: 184px;
   border-top: 1px solid #D4D3D2;
   line-height: 18px;
   overflow: hidden;
   font-size: 12px;
-	background-color: #FFFFFF;
+  background-color: #FFFFFF;
 }
 
 #generalconfigmenu li {
   height: 28px;
   margin: -1px 0px 0px 0px;
   padding: 8px 0px 0px 0px;
-  border-bottom:none;
+  border-bottom: none;
   line-height: 24px;
   padding-left: 13px;
-  text-shadow:0px 1px #FFF;
+  text-shadow: 0px 1px #FFF;
 }
 
 #generalconfigmenu li a {
   color: #666666;
   text-decoration: none;
 }
+
 #generalconfigmenu li:hover {
   cursor: pointer;
-  background-image:none;
-		background-color: #F5F5F5;
+  background-image: none;
+  background-color: #F5F5F5;
 }
 
 .generalconfigmenuselected {
-    background-image:none;
-		background-color: #F5f5f5 !important;
-		border-bottom: 1px solid #D4D3D2 !important;
-		border-top: 1px solid #D4D3D2 !important;
-    font-weight: bold;
+  background-image: none;
+  background-color: #F5f5f5 !important;
+  border-bottom: 1px solid #D4D3D2 !important;
+  border-top: 1px solid #D4D3D2 !important;
+  font-weight: bold;
 }
 
 .generalconfigmenuselected a {
@@ -231,7 +236,7 @@
   margin: 0px;
   min-height: 450px;
   margin-top: 0px;
-	padding-top: 54px;
+  padding-top: 54px;
   padding-bottom: 20px;
   padding-left: 54px;
   font-size: 12px;
@@ -242,7 +247,8 @@
   border-left: 1px solid #D4D3D2;
 }
 
-#generalconfigcontent h1,h2 {
+#generalconfigcontent h1,
+h2 {
   color: #000000;
   text-decoration: underline;
   font-weight: bold;
@@ -250,12 +256,13 @@
   margin-top: 8px;
   margin-bottom: 8px;
   padding: 0px;
-	background-color: #F5F5F5;
+  background-color: #F5F5F5;
 }
 
 #generalconfigcontent h2 {
   text-decoration: none;
 }
+
 #generalconfigcontent h4 {
   display: inline;
   font-weight: bold;
@@ -295,12 +302,12 @@
   position: absolute;
   display: none;
   top: 0px;
-  padding-left:6px;
+  padding-left: 6px;
   padding-right: 6px;
   padding-top: 3px;
   padding-bottom: 3px;
   background-color: #F5F5F5;
-  border:1px solid #D4D3D2;
+  border: 1px solid #D4D3D2;
   z-index: 10;
 }
 
@@ -340,9 +347,9 @@
   text-decoration: none !important;
   height: 52px !important;
   line-height: 52px;
-	border-bottom: 1px solid #D4D3D2 !important;
+  border-bottom: 1px solid #D4D3D2 !important;
   background-image: none !important;
-	background-color: #F5F5F5 !important;
+  background-color: #F5F5F5 !important;
   font-size: 12px !important;
   font-weight: normal !important;
   color: #000000 !important;
@@ -364,9 +371,11 @@ fieldset {
 #fieldapplytoall {
   border: 0px;
 }
+
 #fieldsubmit {
   border: 0px;
 }
+
 .fieldnote {
   margin-top: 0px;
   padding-left: 3px;
@@ -374,32 +383,34 @@ fieldset {
   padding-top: 0px;
   line-height: 24px;
 }
+
 .fieldnote a {
-	text-decoration: underline !important;
+  text-decoration: underline !important;
 }
 
 #fieldquarparams {
-  border : 0px;
+  border: 0px;
   margin: 0px;
   margin-bottom: 20px;
   padding: 0px;
 }
 
 .configpanel ul {
-  list-style:none;
+  list-style: none;
   margin: 0px;
   margin-bottom: 10px;
   padding: 0px;
   padding-left: 10px;
   line-height: 18px;
   overflow: hidden;
- }
+}
 
 hr {
   border: none 0;
   height: 1px;
   background-color: #D4D3D2;
 }
+
 .sectionsplit {
   border: none 0;
   height: 1px;
@@ -427,8 +438,8 @@ hr {
   text-decoration: none !important;
   height: 52px !important;
   line-height: 52px;
-  border-bottom:1px solid #C6ADC6;
-  background-image:url(../images/contentheader_bg52.png);
+  border-bottom: 1px solid #C6ADC6;
+  background-image: url(../images/contentheader_bg52.png);
   font-size: 12px !important;
   font-weight: normal !important;
   color: #000000 !important;
@@ -440,33 +451,36 @@ hr {
 }
 
 .importanth1 {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .domaincontentpanel h1 {
   height: 48px !important;
   line-height: 48px;
 }
+
 .h1descr {
-	float: left;
-	margin-top: -104px;
+  float: left;
+  margin-top: -104px;
 }
+
 .h1descr img {
-	vertical-align: middle;
+  vertical-align: middle;
   margin-right: 20px !important;
 }
+
 .h1action {
-    margin-top: -104px;
-	float: right;
+  margin-top: -104px;
+  float: right;
 }
 
 #reloadallnetwork {
-   float: right;
-   margin-right: 30px;
+  float: right;
+  margin-right: 30px;
 }
 
 .texth1 {
-	float: left;
+  float: left;
 }
 
 .configpanel select {
@@ -484,92 +498,93 @@ hr {
 }
 
 .ftable td {
-	padding-top: 5px;
-	padding-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .flabel {
-	width: 48%;
-	text-align: right;
+  width: 48%;
+  text-align: right;
 }
 
 .flabeltextarea {
-	vertical-align: top;
+  vertical-align: top;
 }
 
 .flabelstrict {
-	min-width: 271px;
+  min-width: 271px;
 }
 
 .fvalue {
-	width: 52%;
-    white-space:nowrap;
-	text-align: left;
+  width: 52%;
+  white-space: nowrap;
+  text-align: left;
 }
 
-.fvalue textarea {
-}
-.fvalue div {
-}
+.fvalue textarea {}
 
-.fsublined textarea{
-	display: block;
+.fvalue div {}
+
+.fsublined textarea {
+  display: block;
 }
 
 .fsingle {
-	text-align: center;
+  text-align: center;
 }
 
 .fsubmit {
-    line-height: 40px;
+  line-height: 40px;
 }
 
 .fwaiting {
-	text-align: center;
+  text-align: center;
 }
 
 .ferror input {
-	background-color: #FF9999;
+  background-color: #FF9999;
 }
+
 .ferror textarea {
-    background-color: #FF9999;
+  background-color: #FF9999;
 }
 
 .ferrorimg {
-	margin: 0 !important;
-	margin-left: 5px !important;
-	margin-top: 6px !important;
-	margin-right: 5px !important;
-	vertical-align: top !important;
-	border: none !important;
+  margin: 0 !important;
+  margin-left: 5px !important;
+  margin-top: 6px !important;
+  margin-right: 5px !important;
+  vertical-align: top !important;
+  border: none !important;
 }
 
 .ferrortooltip {
-	background-color: #FF9999 !important;
-	border: 1px solid red !important;
+  background-color: #FF9999 !important;
+  border: 1px solid red !important;
 }
 
 .error {
-     color: #FF0000;
+  color: #FF0000;
 }
 
 .divnote {
-	line-height: 14px;
-	vertical-align: bottom;
+  line-height: 14px;
+  vertical-align: bottom;
 }
+
 .divnote img {
-	margin-right: 5px !important;
-	vertical-align: bottom !important;
+  margin-right: 5px !important;
+  vertical-align: bottom !important;
 }
 
 .fmessage {
-	 line-height: 14px;
-     color: #008D00;
-     text-align: center;
+  line-height: 14px;
+  color: #008D00;
+  text-align: center;
 }
 
 #subzonesetwaiting {
-	display:none;
+  display: none;
 }
 
 #flashmessage {
@@ -577,14 +592,14 @@ hr {
   display: none;
   width: 588px !important;
   text-align: center;
-  padding-left:20px;
+  padding-left: 20px;
   padding-right: 20px;
   padding-top: 15px;
   padding-bottom: 15px;
   margin-left: -1px;
   margin-top: -11px;
   background-color: #F3E675;
-  border:1px solid #CDC04B;
+  border: 1px solid #CDC04B;
   z-index: 10;
 }
 
@@ -602,7 +617,7 @@ hr {
 }
 
 #waitloading {
-   margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 #interfaceformcontent {
@@ -610,22 +625,22 @@ hr {
 }
 
 #configpanelcontent {
-    padding: 15px;
-    color: #535353;
+  padding: 15px;
+  color: #535353;
 }
 
 .submitp {
-    text-align: center !important;
-    margin-top: 30px !important;
-    margin-bottom: 20px !important;
+  text-align: center !important;
+  margin-top: 30px !important;
+  margin-bottom: 20px !important;
 }
 
 input#date {
-   width: 80px;
+  width: 80px;
 }
 
 .timefield {
-   width: 20px;
+  width: 20px;
 }
 
 #configpanelinfos {
@@ -633,11 +648,11 @@ input#date {
 }
 
 #reloadtime {
-	margin-left: 10px;
+  margin-left: 10px;
 }
 
 #reloadtime img {
-   margin-top: 5px;
+  margin-top: 5px;
 }
 
 .serialpartfield {
@@ -650,19 +665,19 @@ input#date {
 }
 
 .numberfieldtable td {
-	width: 50% !important;
+  width: 50% !important;
 }
 
 .hidden {
-   display: none;
+  display: none;
 }
 
 .nostrong {
-   font-weight: normal;
+  font-weight: normal;
 }
 
 .bold {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 /* sub config menu */
@@ -673,11 +688,11 @@ input#date {
 
 .globalsubconfigmenu {
   margin-top: 24px;
-	width: 184px;
+  width: 184px;
 }
 
 .subconfigmenu ul {
-  list-style:none;
+  list-style: none;
   margin: 0px;
   margin-top: 30px;
   padding: 0px;
@@ -686,14 +701,14 @@ input#date {
   line-height: 18px;
   overflow: hidden;
   font-size: 12px;
-  border-right:1px solid #D4D3D2;
+  border-right: 1px solid #D4D3D2;
 }
 
 .subconfigmenu li {
   height: 23px;
   margin: -1px 0px 0px 0px;
   padding: 0px;
-  border-bottom:1px solid #D4D3D2;
+  border-bottom: 1px solid #D4D3D2;
   line-height: 24px;
   padding-left: 13px;
 }
@@ -702,15 +717,16 @@ input#date {
   color: #000000;
   text-decoration: none;
 }
+
 .subconfigmenu li:hover {
   cursor: pointer;
-  background-image:none;
+  background-image: none;
   font-weight: bold;
 }
 
 .subconfigmenuselected {
-       background-image:url(../images/selected_bg.png) !important;
-       font-weight: bold;
+  background-image: url(../images/selected_bg.png) !important;
+  font-weight: bold;
 }
 
 .subconfigmenuselected a {
@@ -731,39 +747,39 @@ input#date {
 }
 
 .subbedcontentpanel fieldset {
-	margin: 0px;
-	padding: 0px;
+  margin: 0px;
+  padding: 0px;
 }
 
 .subbedcontentpanel #flashmessage {
-   margin: 0px;
+  margin: 0px;
 }
 
 #adminconfigpanel #flashmessage {
-   margin: 0px;
+  margin: 0px;
 }
 
 #userconfigpanel #flashmessage {
-   margin: 0px;
+  margin: 0px;
 }
 
 #userconfigpanel {
-	width: 630px !important;
+  width: 630px !important;
 }
 
 .subbedcontentpanel .ftable {
-   width: 100%;
-   border: 1px solid #C6ADC6;
-   margin: 0px !important;
-   margin-bottom: 20px !important;
+  width: 100%;
+  border: 1px solid #C6ADC6;
+  margin: 0px !important;
+  margin-bottom: 20px !important;
 }
 
 .subconfigpanel .ftable td {
-	width: 50%;
+  width: 50%;
 }
 
 .fsubmit {
-	text-align: center;
+  text-align: center;
 }
 
 .submenutitle {
@@ -779,7 +795,7 @@ input#date {
 }
 
 .disabledsubmenuitem {
-   font-style: italic;
+  font-style: italic;
 }
 
 
@@ -789,7 +805,7 @@ input#date {
   max-width: 260px;
   border: 1px solid #D4D3D2;
   overflow: auto;
-  list-style:none;
+  list-style: none;
   margin: 0px;
   padding: 0px;
   margin-right: 10px;
@@ -816,11 +832,12 @@ input#date {
   line-height: 12px;
   overflow: hidden;
 }
+
 .configlist input {
   margin-right: 8px;
 }
 
-.sublistelement  {
+.sublistelement {
   float: right;
   width: 342px;
   margin-bottom: 10px;
@@ -829,10 +846,11 @@ input#date {
 }
 
 #contentfilename_form #flashmessage {
-	margin: 0px;
+  margin: 0px;
 }
+
 #contentfiletype_form #flashmessage {
-    margin: 0px;
+  margin: 0px;
 }
 
 .listelementdisabled {
@@ -852,8 +870,8 @@ input#date {
   line-height: 24px !important;
   border: 0px !important;
   border-bottom: 1px solid #D4D3D2 !important;
-  background-image:none !important;
-	background-color: #F5F5F5;
+  background-image: none !important;
+  background-color: #F5F5F5;
   font-weight: bold !important;
   text-align: left !important;
 }
@@ -865,7 +883,7 @@ input#date {
   padding-left: 13px !important;
   padding-right: 13px !important;
   line-height: 16px !important;
-  text-align: left!important;
+  text-align: left !important;
 }
 
 .sublistelement input {
@@ -878,11 +896,13 @@ input#date {
 }
 
 .fieldpanel {
-	text-align: right;
+  text-align: right;
 }
+
 .addelementfield {
   width: 180px;
 }
+
 .addcommentfield {
   width: 160px;
 }
@@ -909,49 +929,49 @@ input#date {
 }
 
 .hover_data {
-	display: none;
+  display: none;
 }
 
 /* tooltip */
 #tooltip {
   position: absolute;
   display: none;
-  padding-left:6px;
+  padding-left: 6px;
   padding-right: 6px;
   padding-top: 3px;
   padding-bottom: 3px;
   background-color: #f5f5f5;
-  border:1px solid #d4d3d2;
+  border: 1px solid #d4d3d2;
   max-width: 300px;
   z-index: 10;
   max-width: 600px;
 }
 
 .tooltiptext {
-    display: none;
+  display: none;
 }
 
 .tooltipped {
-    cursor: default;
+  cursor: default;
 }
 
 #tooltip p {
-   padding: 0px;
-   margin: 0px;
-   line-height: 16px;
+  padding: 0px;
+  margin: 0px;
+  line-height: 16px;
 }
 
 .clickeable {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .pcode {
-	max-width: 564px;
-	overflow: hidden;
+  max-width: 564px;
+  overflow: hidden;
 }
 
 .centered {
-	text-align: center;
+  text-align: center;
 }
 
 .code {
@@ -966,13 +986,13 @@ input#date {
 }
 
 #clearcalloutbutton {
-	margin-left: 15px;
-	font-size: 8px;
+  margin-left: 15px;
+  font-size: 8px;
 }
 
 #clearsmtpauthcachebutton {
-    margin-left: 15px;
-    font-size: 8px;
+  margin-left: 15px;
+  font-size: 8px;
 }
 
 #informational {
@@ -994,31 +1014,31 @@ input#date {
 }
 
 #informational ul {
-	padding: 0px;
-	margin: 5px;
-	list-style-type: none;
+  padding: 0px;
+  margin: 5px;
+  list-style-type: none;
 }
 
 #informational li {
-	padding: 5px;
-	margin: 0px;
+  padding: 5px;
+  margin: 0px;
 }
 
 #informational .infotitle {
-	padding: 3px;
-	background-color: #333333;
-        color: #EEEEEE;
-        text-align: center;
-        text-shadow:0px 1px #666666;
+  padding: 3px;
+  background-color: #333333;
+  color: #EEEEEE;
+  text-align: center;
+  text-shadow: 0px 1px #666666;
 }
 
 #informational .close {
-	padding: 0px;
-	padding-right: 5px;
-	margin: 0px;
-	text-align: right;
+  padding: 0px;
+  padding-right: 5px;
+  margin: 0px;
+  text-align: right;
 }
 
 .mark {
-	color: #FF0000;
+  color: #FF0000;
 }

@@ -382,7 +382,7 @@ sub connectBackend {
 
     return 1 if ( defined( $this->{db} ) && $this->{db}->ping() );
 
-    $this->{db} = DB::connect( 'slave', 'mc_stats', 0 );
+    $this->{db} = DB::connect( 'slave', 'st_stats', 0 );
     if ( !$this->{db}->ping() ) {
         $this->doLog( "WARNING, could not connect to statistics database",
             'statsdaemon', 'error' );

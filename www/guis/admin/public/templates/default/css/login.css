@@ -4,9 +4,10 @@
  * @author Olivier Diserens
  * @copyright 2009, Olivier Diserens
  */
- 
+
 /* local overrides */
-html, body {
+html,
+body {
   background-color: #FCFCFC;
   text-align: center;
   font-size: 12px;
@@ -18,7 +19,7 @@ img {
   padding: 0px;
   margin: 0px;
 }
-	
+
 /* main panel */
 #loginpanel {
   margin-right: auto;
@@ -37,38 +38,40 @@ img {
   text-align: left;
 }
 
-#mclogo {
+#stlogo {
   vertical-align: top;
-  background-color: #5C6D99; /*__MAINHEADERBG__*/
+  background-color: #5C6D99;
+  /*__MAINHEADERBG__*/
 }
 
 /* footer */
 #loginfooter {
-   margin: 0px;
-   margin-top: 5px;
-   padding: 0px;
-   padding-top: 1px;
-   background-repeat: repeat-x;
-   color: #4A4A4A;
-   height: 22px;
+  margin: 0px;
+  margin-top: 5px;
+  padding: 0px;
+  padding-top: 1px;
+  background-repeat: repeat-x;
+  color: #4A4A4A;
+  height: 22px;
 }
 
 .copyright {
-   float: left;
-   margin-left: 7px;
-   color: #4A4A4A;
-   font-size: 11px;
-   display: inline;
-   line-height: 22px;
+  float: left;
+  margin-left: 7px;
+  color: #4A4A4A;
+  font-size: 11px;
+  display: inline;
+  line-height: 22px;
 }
 
 .copyright a {
-   text-decoration: none;
-   color: #4A4A4A;
+  text-decoration: none;
+  color: #4A4A4A;
 }
 
 /* form */
-#username, #password {
+#username,
+#password {
   font-size: 11px;
   border: 1px solid #999999;
   padding: 0px;
@@ -84,39 +87,37 @@ img {
   text-align: left;
 }
 
-#password-label, #username-label {
+#password-label,
+#username-label {
   text-align: right;
   width: 115px;
   max-width: 115px;
-  overflow: hidden;	
+  overflow: hidden;
 }
 
 #submit {
-   float: right;
-   margin-top: 13px;
-   margin-bottom: 5px;
-   width: 65px;
-   font-size: 11px;
-   vertical-align: bottom;
+  float: right;
+  margin-top: 13px;
+  margin-bottom: 5px;
+  width: 65px;
+  font-size: 11px;
+  vertical-align: bottom;
 }
 
 /* interactive texts */
 #badlogin {
-	margin: 0px;
-	margin-top: 0px;
-	margin-left: 130px;
-	width: 300px;
-	height: 24px;
-	line-height: 24px;
-	white-space: normal;
-	text-align: left;
-	font-weight: bolder;
-	padding: 0px;
-	padding-top: 4px;
-	color: #FF0000;
+  margin: 0px;
+  margin-top: 0px;
+  margin-left: 130px;
+  width: 300px;
+  height: 24px;
+  line-height: 24px;
+  white-space: normal;
+  text-align: left;
+  font-weight: bolder;
+  padding: 0px;
+  padding-top: 4px;
+  color: #FF0000;
 }
 
-.errors ul {
-	
-}
-
+.errors ul {}

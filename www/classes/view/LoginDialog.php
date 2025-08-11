@@ -19,7 +19,7 @@ require_once("connector/AuthManager.php");
 /**
  * constant definitions
  */
-define("AUTHLOGFILE", "mc_auth.log");
+define("AUTHLOGFILE", "st_auth.log");
 /**
  * this class take care of setting the correct authentication connectors
  */
@@ -96,7 +96,7 @@ public function __construct() {
         if ($this->domain_->getPref('presharedkey') != "") {
             // decrypt with mcrypt (3DES) using domain preshared key
             $cipher = mcrypt_module_open(MCRYPT_3DES,'',MCRYPT_MODE_ECB,'');
-            $iv = 'mailclea';
+            $iv = 'spamtagger';
             mcrypt_generic_init($cipher, $this->domain_->getPref('presharedkey'), $iv);
             $password = mdecrypt_generic($cipher,$encrypted_password);
         } else {

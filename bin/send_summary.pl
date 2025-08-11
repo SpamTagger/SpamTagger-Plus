@@ -89,8 +89,8 @@ if ($opts =~ /^nodigest$/) {
 my $sysconf = SystemPref::getInstance();
 my $spamnbdays = $sysconf->getPref('days_to_keep_spams');
 
-my $db = DB::connect('master', 'mc_spool', 0);
-my $conf_db = DB::connect('master', 'mc_config', 0);
+my $db = DB::connect('master', 'st_spool', 0);
+my $conf_db = DB::connect('master', 'st_config', 0);
 ## and do the job, either for one or all addresses
 my @addresses = getAllAddresses($address);
 

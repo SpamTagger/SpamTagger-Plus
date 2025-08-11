@@ -34,7 +34,7 @@ if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
 MCVERSION=$(cat /usr/spamtagger/etc/spamtagger/version.def | cut -c1-4)
-LOGFILE=/tmp/mc_install_options.log
+LOGFILE=/tmp/st_install_options.log
 DOWNLOADSERVER="mailcleanerdl.alinto.net"
 
 # Font properties
@@ -72,15 +72,15 @@ function messagesniffer() {
     exit 1
   fi
 
-  if dpkg-query -s mc-messagesniffer | grep "Status: install ok installed"; then
+  if dpkg-query -s st-messagesniffer | grep "Status: install ok installed"; then
     echo "MessageSniffer already installed. Please contact our support: https://support.mailcleaner.net"
   else
     apt-get update &>>$LOGFILE
-    env PATH=$PATH:/usr/sbin:/sbin apt-get install --yes --force-yes mc-messagesniffer &>>$LOGFILE
+    env PATH=$PATH:/usr/sbin:/sbin apt-get install --yes --force-yes st-messagesniffer &>>$LOGFILE
     printf "Installing MessageSniffer ... \n"
-    echo "UPDATE prefilter SET position=position+1 WHERE position > 1;" | ${SRCDIR}/bin/mc_mysql -m mc_config &>>$LOGFILE
-    echo "INSERT INTO prefilter VALUES(NULL, 1, 'MessageSniffer', 1, 2, 0, 1, 'pos_decisive', 10, 2000000, 'X-MessageSniffer', 1, 1, 1);" | ${SRCDIR}/bin/mc_mysql -m mc_config &>>$LOGFILE
-    echo "UPDATE MessageSniffer set licenseid='${license_id}', authentication='${auth_code}';" | ${SRCDIR}/bin/mc_mysql -m mc_config &>>$LOGFILE
+    echo "UPDATE prefilter SET position=position+1 WHERE position > 1;" | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
+    echo "INSERT INTO prefilter VALUES(NULL, 1, 'MessageSniffer', 1, 2, 0, 1, 'pos_decisive', 10, 2000000, 'X-MessageSniffer', 1, 1, 1);" | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
+    echo "UPDATE MessageSniffer set licenseid='${license_id}', authentication='${auth_code}';" | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
     printf "Restarting MailScanner ... \n"
 
     printf "MessageSniffer has been correctly installed \n"
@@ -250,13 +250,13 @@ EOF
   # Enable SpamHaus at PreRBLs level
   ### ZEN
   if [[ "$shpackage" -eq "1" || "$shpackage" -eq "3" ]]; then
-    echo 'UPDATE PreRBLs set lists=concat(lists, " SPAMHAUSZEN");' | ${SRCDIR}/bin/mc_mysql -m mc_config &>>$LOGFILE
-    echo 'UPDATE antispam set sa_rbls=concat(sa_rbls, " SPAMHAUSZEN");' | ${SRCDIR}/bin/mc_mysql -m mc_config &>>$LOGFILE
+    echo 'UPDATE PreRBLs set lists=concat(lists, " SPAMHAUSZEN");' | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
+    echo 'UPDATE antispam set sa_rbls=concat(sa_rbls, " SPAMHAUSZEN");' | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
   fi
   ### Content
   if [[ "$shpackage" -eq "1" || "$shpackage" -eq "3" ]]; then
-    echo 'UPDATE UriRBLs set rbls=concat(lists, " SPAMHAUSDBL SPAMHAUSHBL SPAMHAUSZRD");' | ${SRCDIR}/bin/mc_mysql -m mc_config &>>$LOGFILE
-    echo 'UPDATE antispam set sa_rblsconcat(sa_rbls, " SPAMHAUSDBL SPAMHAUSHBL SPAMHAUSZRD");' | ${SRCDIR}/bin/mc_mysql -m mc_config &>>$LOGFILE
+    echo 'UPDATE UriRBLs set rbls=concat(lists, " SPAMHAUSDBL SPAMHAUSHBL SPAMHAUSZRD");' | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
+    echo 'UPDATE antispam set sa_rblsconcat(sa_rbls, " SPAMHAUSDBL SPAMHAUSHBL SPAMHAUSZRD");' | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
   fi
 
   printf "SpamHaus installed. \n"
@@ -360,7 +360,7 @@ function eset() {
     exit 1
   fi
 
-  echo "UPDATE scanner set active = 1 WHERE name = 'esetsefs';" | /usr/spamtagger/bin/mc_mysql -m mc_config
+  echo "UPDATE scanner set active = 1 WHERE name = 'esetsefs';" | /usr/spamtagger/bin/st_mysql -m st_config
   printf "Restarting services ... \n"
   /usr/spamtagger/etc/init.d/mailscanner restart 2>/dev/null
 

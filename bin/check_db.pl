@@ -35,7 +35,7 @@ require DB;
 my $VERBOSE = 0;
 ## default behaviour
 my $dbtype = 'master';
-my $databases = 'mc_config,mc_spool,mc_stats';
+my $databases = 'st_config,st_spool,st_stats';
 my $updatemode = 0;
 my $checkmode = 0;
 my $repairmode = 0;
@@ -90,8 +90,8 @@ if ($repfix > 0) {
 ## process each database
 foreach my $database (split(',', $databases)) {
   output("Processing database: $database");
-  if ($database eq "mc_stats" && $dbtype eq 'master') {
-    output(" avoiding mc_stats on a master database");
+  if ($database eq "st_stats" && $dbtype eq 'master') {
+    output(" avoiding st_stats on a master database");
     next;
   }
   
@@ -144,14 +144,14 @@ sub getRefTables {
   my %tables;
   
   my $prefix = 'cf';
-  if ($dbname eq 'mc_stats') {
+  if ($dbname eq 'st_stats') {
     $prefix='st';
-  } elsif ($dbname eq 'mc_spool') {
+  } elsif ($dbname eq 'st_spool') {
     $prefix='sp';
   }
   
   my $install_dir = $conf->getOption('SRCDIR')."/install/dbs";
-  if ($dbname eq 'mc_spool') {
+  if ($dbname eq 'st_spool') {
     $install_dir .= "/spam";
   }
   opendir(IDIR, $install_dir) or die "could not open table definition directory $install_dir\n";
@@ -299,7 +299,7 @@ sub addDatabase {
   my $descfile = $conf->getOption('SRCDIR')."/install/dbs/".$dbname.".sql";
   if (-f $descfile) {
     print "Creating schema...\n";
-    my $mysql = $conf->getOption('SRCDIR')."/bin/mc_mysql";
+    my $mysql = $conf->getOption('SRCDIR')."/bin/st_mysql";
     if ($dbtype eq 'slave') {
       $mysql .= " -s $dbname";
     } else {
@@ -375,7 +375,7 @@ sub compareUpdateDatabase {
         if ($dbtype eq 'slave') {
           $type = '-s';
         }
-        my $cmd = $conf->getOption('SRCDIR')."/bin/mc_mysql $type < ".$reftables{$table} ." 2>&1";
+        my $cmd = $conf->getOption('SRCDIR')."/bin/st_mysql $type < ".$reftables{$table} ." 2>&1";
         my $res = `$cmd`;
         if (! $res eq '' ) {
           print "ERROR, cannot create database: $res\nABORTED\n";

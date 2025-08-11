@@ -22,7 +22,7 @@ our $has_ipc_run = eval
 my $DEBUG = 0;
 if ( !$days_to_keep ) {
 	my $config_dbh = DBI->connect(
-"DBI:mysql:database=mc_config;host=localhost;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
+"DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
 		'mailcleaner',
 		$config{'MYMAILCLEANERPWD'},
 		{ 'RaiseError' => $DEBUG, PrintError => $DEBUG }
@@ -55,7 +55,7 @@ my $sth;
 my @dbs = ( 'slave', 'master' );
 foreach my $db (@dbs) {
 	$dbh = DBI->connect(
-"DBI:mysql:database=mc_spool;host=localhost;mysql_socket=$config{'VARDIR'}/run/mysql_$db/mysqld.sock",
+"DBI:mysql:database=st_spool;host=localhost;mysql_socket=$config{'VARDIR'}/run/mysql_$db/mysqld.sock",
 		'mailcleaner',
 		$config{'MYMAILCLEANERPWD'},
 		{ 'RaiseError' => $DEBUG, PrintError => $DEBUG }

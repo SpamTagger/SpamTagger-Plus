@@ -38,4 +38,4 @@ if [ "$BACKUPFILE" = "" ]; then
   BACKUPFILE="mailcleaner_config_.sql"
 fi
 
-/opt/mysql5/bin/mysqldump -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock --ignore-table=mc_config.update_patch --ignore-table=mc_config.master --ignore-table=mc_config.slave --master-data=2 mc_config >$BACKUPFILE
+/opt/mysql5/bin/mysqldump -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock --ignore-table=st_config.update_patch --ignore-table=st_config.master --ignore-table=st_config.slave --master-data=2 st_config >$BACKUPFILE

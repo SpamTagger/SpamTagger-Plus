@@ -1,4 +1,4 @@
-use mc_config;
+use st_config;
 
 DROP TABLE IF EXISTS http_auth;
 

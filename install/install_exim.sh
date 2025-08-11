@@ -11,8 +11,8 @@ fi
 
 if [ "$USEDEBS" = "Y" ]; then
   echo -n " installing exim binaries packages..."
-  aptitude install mc-exim &>/dev/null
-  #dpkg -i $SRCDIR/install/debs/mc-exim*.deb &> /dev/null
+  aptitude install st-exim &>/dev/null
+  #dpkg -i $SRCDIR/install/debs/st-exim*.deb &> /dev/null
   echo "done."
 else
 

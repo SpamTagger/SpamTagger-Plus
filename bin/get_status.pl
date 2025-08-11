@@ -218,7 +218,7 @@ if ($mode_given =~ /s/) {
         print($res."\n");
     }
 } elsif ($mode_given =~ /u/) {
-    $cmd = "echo \"use mc_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S $config{VARDIR}/run/mysql_slave/mysqld.sock -umailcleaner -p$config{MYMAILCLEANERPWD}";
+    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S $config{VARDIR}/run/mysql_slave/mysqld.sock -umailcleaner -p$config{MYMAILCLEANERPWD}";
     $res = `$cmd`;
     my $patch = "";
     if ($res =~ /^(\d+)\s+(\S+)$/) {

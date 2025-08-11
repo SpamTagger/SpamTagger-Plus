@@ -20,7 +20,7 @@
 # #1656
 #
 # small bash helpers
-# example of usage: see mc-updates/bootstrap/mc-file/exec.sh
+# example of usage: see st-updates/bootstrap/st-file/exec.sh
 #
 # see bootstrap/patchit/build.sh for embedding in to your own exec.sh:
 
@@ -89,7 +89,7 @@ get_download() {
 
 install_local4() {
   # install a local logger on local4.* to a local file
-  cat <<EOF >/etc/rsyslog.d/mc-updater.conf
+  cat <<EOF >/etc/rsyslog.d/st-updater.conf
 local4.*   -/tmp/updater.local4.log
 &~
 # above disable duplicate
@@ -108,9 +108,9 @@ myarch() {
 
 mini_update_log() {
   # This mini log, is logging how many time the script is called.
-  mclocallog=/tmp/testme.log
-  date >>$mclocallog
-  echo seen update >>$mclocallog
+  stlocallog=/tmp/testme.log
+  date >>$stlocallog
+  echo seen update >>$stlocallog
 }
 
 # not DRY: also in toolbox/lib/shell_base.sh
@@ -156,13 +156,13 @@ end_patch() {
   fi
 }
 
-install_mc-file() {
+install_st-file() {
   myarch=$(myarch)
   add_log "arch=$(arch) myarch=$myarch"
 
   cd $SRCDIR || end_patch 1 "CANNOT CHDIR TO SRCDIR: $SRCDIR"
 
-  mytgz="$SRCDIR/install/tgz/mc-file-${myarch}.tgz"
+  mytgz="$SRCDIR/install/tgz/st-file-${myarch}.tgz"
 
   [[ -f "$mytgz" ]] || end_patch 1 "ARCHIVE NOT FOUND: $mytgz"
 
@@ -209,24 +209,24 @@ install_mc-file() {
     ## compare
     if diff -r $dest_base $dest; then
       rm -fr $dest
-      add_log "mc-file already installed, skipped"
+      add_log "st-file already installed, skipped"
     else
       mv $dest_base $dest_base.old
       mv $dest $dest_base
       rm -rf $dest_base.old
-      add_log "mc-file previous version upgraded"
+      add_log "st-file previous version upgraded"
     fi
   fi
 
-  mc_file=/opt/file/bin/mc2-file
+  st_file=/opt/file/bin/st2-file
 
-  if [[ -x $mc_file ]]; then
-    ## install mc2-file in MailScanner #1492
+  if [[ -x $st_file ]]; then
+    ## install st2-file in MailScanner #1492
     $SRCDIR/etc/init.d/mailscanner restart
     add_log "MailScanner restarted"
 
     ms_config=$SRCDIR/etc/mailscanner/MailScanner.conf
-    ttt=$(grep "$mc_file" $ms_config)
+    ttt=$(grep "$st_file" $ms_config)
     add_log "greped '$ttt'"
     if [[ -z "$ttt" ]]; then
       add_log "not found in config file $ms_config"
@@ -234,14 +234,14 @@ install_mc-file() {
       end_patch 1 ABORT
     fi
   else
-    add_log "$mc_file not executable, aborted"
+    add_log "$st_file not executable, aborted"
     end_patch 1 ABORT
   fi
 
   add_log "FINISHED succes"
 }
 
-mc_mysql2() {
+st_mysql2() {
   # helper master database only, accept all mysql command line args
   local MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
   /opt/mysql5/bin/mysql -S $VARDIR/run/mysql_master/mysqld.sock \
@@ -249,7 +249,7 @@ mc_mysql2() {
     "$@"
 }
 
-mc_mysqldump_master() {
+st_mysqldump_master() {
   # helper master database only, accept all mysql command line args
   local MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
   /opt/mysql5/bin/mysqldump -S $VARDIR/run/mysql_master/mysqld.sock \
@@ -263,8 +263,8 @@ install_sql() {
     add_log "file not found '$1'"
     end_patch 1 "SQL NOT FOUND"
   else
-    local outtmp=/tmp/$$.mc_mysql
-    mc_mysql2 -f -vvv mc_config <"$1" >$outtmp 2>&1
+    local outtmp=/tmp/$$.st_mysql
+    st_mysql2 -f -vvv st_config <"$1" >$outtmp 2>&1
     add_log -rm $outtmp
     add_log "sql file sent ($?) '$1'"
   fi
@@ -281,14 +281,14 @@ backup_db() {
       mkdir $backup_dir
       cd $backup_dir
       $SRCDIR/bin/backup_config.sh
-      add_log "mc_config backuped $PWD: $(ls -l $PWD)"
+      add_log "st_config backuped $PWD: $(ls -l $PWD)"
       cd $OLDPWD
     fi
   fi
 }
 
 load_mailcleaner_conf() {
-  ## WET: pasted from new mc_mysql version
+  ## WET: pasted from new st_mysql version
   local mailcleaner_conf=/etc/spamtagger.conf
   if [[ ! -z "$1" ]]; then
     mailcleaner_conf="$1"
@@ -325,7 +325,7 @@ allow_eps() {
 
   local sql="select * from filetype where name = 'eps Postscript'"
   local out=/tmp/$$.allow_eps
-  mc_mysql2 --table -e "$sql" mc_config >$out
+  st_mysql2 --table -e "$sql" st_config >$out
 
   if [[ -s "$out" ]]; then
     add_log -rm $out
@@ -337,20 +337,20 @@ allow_eps() {
 
   ## backup table DONE full backup (at top patch level)
   local tmp=$(mktemp /tmp/patch_eps_filetype_XXX.sql)
-  mc_mysqldump_master \
+  st_mysqldump_master \
     --no-create-info --skip-add-drop-table --skip-extended-insert --compact \
-    mc_config filetype >$tmp
+    st_config filetype >$tmp
 
   add_log "table filetype backuped in $tmp"
 
   # udpate position
-  #  local maxid=$(mc_mysql2 -BN -e 'select max(id) from filetype' mc_config)
-  #  local count=$(mc_mysql2 -BN -e 'select count(id) from filetype' mc_config)
+  #  local maxid=$(st_mysql2 -BN -e 'select max(id) from filetype' st_config)
+  #  local count=$(st_mysql2 -BN -e 'select count(id) from filetype' st_config)
   #  add_log "maxid=$maxid"
   #  if [[ $maxid -gt $count ]] ; then
   #    add_log "max $maxid > count $count : check database"
   #    sql="select * from filetype"
-  #    mc_mysql2 --table -e "$sql" mc_config > $out
+  #    st_mysql2 --table -e "$sql" st_config > $out
   #		add_log -rm $out
   #		add_log "abort patch"
   #    end_patch 1 "ERROR EPS DATABASE ID MISMATCH"
@@ -360,12 +360,12 @@ allow_eps() {
 
   local pos=2
   sql="update filetype set id = id + 1 where id >= $pos order by id desc;"
-  mc_mysql2 -vvv -e "$sql" mc_config >$out
+  st_mysql2 -vvv -e "$sql" st_config >$out
   add_log -rm $out
 
   # check if $pos is free
   sql="select * from filetype where id = $pos"
-  mc_mysql2 --table -e "$sql" mc_config >$out
+  st_mysql2 --table -e "$sql" st_config >$out
 
   if [[ -s $out ]]; then
     add_log "update failed id $pos returned:"
@@ -381,24 +381,24 @@ allow_eps() {
   values
   ($pos, 'allow', 'EPS Binary File Postscript', 'eps Postscript', '.eps Postscript')"
 
-  mc_mysql2 -e "$sql" mc_config >$out
+  st_mysql2 -e "$sql" st_config >$out
   add_log -rm $out
 
   # reinject ordered dump
 
   local tmpdump=$(mktemp /tmp/dump_XXX.sql)
   echo "truncate filetype;" >$tmpdump
-  mc_mysqldump_master \
+  st_mysqldump_master \
     --no-create-info --skip-add-drop-table --skip-extended-insert --compact \
     --order-by-primary \
-    mc_config filetype >>$tmpdump
+    st_config filetype >>$tmpdump
 
   add_log "reloading dump ordered $tmpdump"
-  mc_mysql2 mc_config <$tmpdump
+  st_mysql2 st_config <$tmpdump
 
   # recap
   sql="select * from filetype"
-  mc_mysql2 --table -e "$sql" mc_config >$out
+  st_mysql2 --table -e "$sql" st_config >$out
 
   $SRCDIR/etc/init.d/mailscanner restart
 

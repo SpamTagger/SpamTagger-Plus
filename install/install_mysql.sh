@@ -10,7 +10,7 @@ fi
 
 if [ "$USEDEBS" = "Y" ]; then
   echo -n " installing mysql binaries package..."
-  dpkg -i $SRCDIR/install/debs/mc-mysql*.deb &>/dev/null
+  dpkg -i $SRCDIR/install/debs/st-mysql*.deb &>/dev/null
   echo "done."
   exit
 fi

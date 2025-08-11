@@ -13,7 +13,7 @@ while [[ $INODES -gt 70 ]]; do
   fi
   # If we already dropped files older than 120 days, inform the administrator
   if [[ $DAYS -eq 60 ]]; then
-    EMAIL=$(echo "select contact_email from system_conf" | mc_mysql -s mc_config | grep -v 'contact_email')
+    EMAIL=$(echo "select contact_email from system_conf" | st_mysql -s st_config | grep -v 'contact_email')
     # Only if he gave an email address !
     if [[ ! -z $EMAIL ]]; then
       swaks -f ' ' -t $EMAIL --header "Subject: Please open a support ticket at https://support.mailcleaner.net for an inodes issue"

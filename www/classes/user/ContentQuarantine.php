@@ -130,7 +130,7 @@ public function load() {
      $slave = $slaves[0];
      $slave_id = 1;
    } 
-   $db = DM_Custom :: getInstance($this->getFilter('slave'), $slave[0], 'mailcleaner', $slave[1], 'mc_stats');
+   $db = DM_Custom :: getInstance($this->getFilter('slave'), $slave[0], 'mailcleaner', $slave[1], 'st_stats');
    // now we clean up the filter criteria
    // now we clean up the filter criteria
    if (!is_numeric($this->getFilter('days'))) {

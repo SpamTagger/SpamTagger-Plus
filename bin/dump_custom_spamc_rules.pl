@@ -8,12 +8,12 @@ if ($0 =~ m/(\S*)\/\S+.pl$/) {
 }
 
 require DB;
-my $db = DB::connect('slave', 'mc_config');
+my $db = DB::connect('slave', 'st_config');
 
 my $dbh;
 my %domains;
 my %senders;
-my $rules_file = '/usr/spamtagger/share/spamassassin/98_mc_custom.cf';
+my $rules_file = '/usr/spamtagger/share/spamassassin/98_st_custom.cf';
 my $rcpt_id = 0;
 my $sender_id = 0;
 

@@ -8,10 +8,11 @@
   width: 100%;
   height: 75px;
   margin: 0px;
-  background-image:none;
-  background-color: #5C6D99; /*__MAINHEADERBG__*/
+  background-image: none;
+  background-color: #5C6D99;
+  /*__MAINHEADERBG__*/
   background-repeat: repeat-x;
-  color: white; 
+  color: white;
   text-align: left;
   vertical-align: top;
   white-space: nowrap;
@@ -26,29 +27,30 @@
   margin: 0;
   padding: 0;
   line-height: 33px;
-  background-image:none; 
+  background-image: none;
   background-color: #000000;
   background-repeat: repeat-x;
   color: #FFFFFF;
-  text-indent: 0.5em; 
+  text-indent: 0.5em;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
 }
 
-#mclogo {
+#stlogo {
   float: left;
 }
+
 #mcheadpicture {
   float: right;
-	display: none;
+  display: none;
 }
 
 /* navigation menu */
 #buttonmenu {
   text-align: center;
-  list-style: none; 
-  margin: 0; 
+  list-style: none;
+  margin: 0;
   padding: 0;
 }
 
@@ -59,19 +61,20 @@
 #buttonmenu li .menubutton {
   display: inline;
   float: left;
-  background-image:none;
+  background-image: none;
   width: 100px;
   line-height: 33px;
   text-align: center;
   display: inline;
   font-size: 1.05em;
-  padding:3px;
+  padding: 3px;
 }
+
 #buttonmenu li .menuselected {
   display: inline;
   float: left;
   background-image: none !important;
-    background-color: #E93A00 !important;
+  background-color: #E93A00 !important;
   width: 100px;
   line-height: 33px;
   text-align: center;
@@ -82,6 +85,7 @@
   color: white;
   text-decoration: none;
 }
+
 #navigation a:hover {
   #color: #FF1500;
   text-decoration: none;

@@ -129,7 +129,7 @@ sub logInMaster {
   my %message = %$msg_h;
  
   if (!defined($this->{masterDB}) || !$this->{masterDB}->ping()) {
-  	$this->{masterDB} = DB::connect('realmaster', 'mc_spool', 0);
+  	$this->{masterDB} = DB::connect('realmaster', 'st_spool', 0);
     if ( !defined($this->{masterDB}) || !$this->{masterDB}->ping()) { return 0; }
   }
 
@@ -164,7 +164,7 @@ sub logInSlave {
   my $master_stored = shift;
  
   if (!defined($this->{slaveDB}) || !$this->{slaveDB}->ping()) {
-  	$this->{slaveDB} = DB::connect('slave', 'mc_spool', 0);
+  	$this->{slaveDB} = DB::connect('slave', 'st_spool', 0);
     if ( !defined($this->{slaveDB}) || !$this->{slaveDB}->ping()) { return 0; }
   }
 

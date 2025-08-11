@@ -55,7 +55,7 @@ $conf->getOption('SRCDIR');
 my @stats = ('cpu', 'load', 'network', 'memory', 'disks', 'messages', 'spools');
  
 # get hosts to query
-my $slave_db = DB::connect('slave', 'mc_config');
+my $slave_db = DB::connect('slave', 'st_config');
 my @hosts = $slave_db->getListOfHash("SELECT id, hostname FROM slave");
 
 ## main hosts loops

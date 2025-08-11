@@ -58,7 +58,7 @@ if [[ "$ret" -eq "1" ]]; then
 fi
 
 # Check if customer choose to send anonymous statistics
-ACCEPT_SEND_STATISTICS=$(echo "SELECT accept_send_statistics FROM registration LIMIT 1\G" | $SRCDIR/bin/mc_mysql -m mc_community | grep -v "*" | cut -d ':' -f2 | tr -d '[:space:]')
+ACCEPT_SEND_STATISTICS=$(echo "SELECT accept_send_statistics FROM registration LIMIT 1\G" | $SRCDIR/bin/st_mysql -m st_community | grep -v "*" | cut -d ':' -f2 | tr -d '[:space:]')
 if [ "$ACCEPT_SEND_STATISTICS" != "1" ]; then
   exit 0
 fi
@@ -83,7 +83,7 @@ done
 http_params=$(echo $http_params | sed 's/&$//')
 
 URL="$URL$http_params"
-wget -q "$URL" -O /tmp/mc_registerce.out >/tmp/mc_registerce.debug 2>&1
+wget -q "$URL" -O /tmp/st_registerce.out >/tmp/st_registerce.debug 2>&1
 
 removeLockFile "$FILE_NAME"
 

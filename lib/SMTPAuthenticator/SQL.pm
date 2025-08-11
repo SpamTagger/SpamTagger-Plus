@@ -66,7 +66,7 @@ sub create {
       my $conf = ReadConfig::getInstance();
       my $socket = $conf->getOption('VARDIR')."/run/mysql_slave/mysqld.sock";
       
-      $dsn = "DBI:mysql:database=mc_config;host=localhost;mysql_socket=$socket";
+      $dsn = "DBI:mysql:database=st_config;host=localhost;mysql_socket=$socket";
       $dbuser = 'mailcleaner';
       $dbpass = $conf->getOption('MYMAILCLEANERPWD');
       $dbtable = 'mysql_auth';

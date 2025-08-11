@@ -47,19 +47,19 @@ $file_conf = DataManager :: getFileConfig($sysconf_ :: $CONFIGFILE_);
 
 $is_enterprise = $file_conf['REGISTERED'] == '1';
 if ($is_enterprise) {
-        $mclink="https://www.mailcleaner.net";
-	$mclinklabel="www.mailcleaner.net";
+        $stlink="https://www.mailcleaner.net";
+	$stlinklabel="www.mailcleaner.net";
 } else {
-        $mclink="https://www.mailcleaner.org";
-	$mclinklabel="www.mailcleaner.org";
+        $stlink="https://www.mailcleaner.org";
+	$stlinklabel="www.mailcleaner.org";
 }
 
 // prepare replacements
 $replace = array(
     "__BASE_URL__" => $_SERVER['SERVER_NAME'],
     "__BEENLOGGEDOUT__" => $lang_->print_txt_param('BEENLOGGEDOUT', $http_sheme."://".$_SERVER['SERVER_NAME'].$port),
-    "__MCLINK__" => $mclink,
-    "__MCLINKLABEL__" => $mclinklabel,
+    "__MCLINK__" => $stlink,
+    "__MCLINKLABEL__" => $stlinklabel,
 );
 //display page
 $template_->output($replace);

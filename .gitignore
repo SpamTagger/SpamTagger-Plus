@@ -77,7 +77,7 @@ etc/rbls/
 share/newsld/siteconfig/
 share/spamassassin/
 etc/autoconf/
-etc/exim/mc_binary/
+etc/exim/st_binary/
 updates/
 etc/spamtagger/version.def
 

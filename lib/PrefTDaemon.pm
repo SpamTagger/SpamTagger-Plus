@@ -105,7 +105,7 @@ sub connectBackend {
 
 	return 1 if ( defined( $this->{backend} ) && $this->{backend}->ping() );
 
-	$this->{backend} = DB::connect( 'slave', 'mc_config', 0 );
+	$this->{backend} = DB::connect( 'slave', 'st_config', 0 );
 	if ( $this->{backend}->ping() ) {
 		$this->doLog("Connected to configuration database", 'prefdaemon');
 		return 1;

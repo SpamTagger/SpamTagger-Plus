@@ -1,4 +1,4 @@
-USE mc_stats;
+USE st_stats;
 
 DROP TABLE IF EXISTS maillog;
 CREATE TABLE maillog (

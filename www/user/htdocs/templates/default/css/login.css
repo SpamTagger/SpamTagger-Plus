@@ -1,7 +1,8 @@
 /*** https://user.mailcleaner.net/templates/default/css/login.css ***/
 
 /* local overrides */
-html, body {
+html,
+body {
   background-color: #FCFCFC;
   text-align: center;
   font-size: 12px;
@@ -13,7 +14,7 @@ img {
   padding: 0px;
   margin: 0px;
 }
-	
+
 /* main panel */
 #loginpanel {
   margin-right: auto;
@@ -24,8 +25,8 @@ img {
   max-width: 530px;
   border: 1px solid #D4D3D2;
   white-space: nowrap;
-  background-image:none;
-	background-color: #F5F5F5;
+  background-image: none;
+  background-color: #F5F5F5;
   background-position: 0px 75px;
   background-repeat: repeat-x;
   font-size: 12px;
@@ -33,9 +34,10 @@ img {
   text-align: left;
 }
 
-#mclogo {
+#stlogo {
   vertical-align: top;
-  background-color: #5C6D99; /*__MAINHEADERBG__*/
+  background-color: #5C6D99;
+  /*__MAINHEADERBG__*/
 }
 
 /* formular table */
@@ -63,7 +65,7 @@ img {
   padding-left: 10px;
   text-align: left;
 }
-	
+
 #loginpanel .tdfieldtitle {
   text-align: right;
   width: 120px;
@@ -95,100 +97,101 @@ img {
 }
 
 #passwordfield {
-	width: 342px;
+  width: 342px;
 }
 
 #submitbutton {
-   float: right;
-   margin-right: 53px;
-   margin-top: 15px;
-   margin-bottom: 5px;
-   width: 65px;
-   font-size: 11px;
-   vertical-align: bottom;
+  float: right;
+  margin-right: 53px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  width: 65px;
+  font-size: 11px;
+  vertical-align: bottom;
 }
 
 /* footer */
 #loginfooter {
-   margin: 0px;
-   margin-top: 5px;
-   padding: 0px;
-   padding-top: 1px;
-   background-image: none; 
-   background-color: #F5F5F5;
-   background-repeat: repeat-x;
-   color: #552056;
-   height: 22px;
+  margin: 0px;
+  margin-top: 5px;
+  padding: 0px;
+  padding-top: 1px;
+  background-image: none;
+  background-color: #F5F5F5;
+  background-repeat: repeat-x;
+  color: #552056;
+  height: 22px;
 }
 
 .languageselector {
-   float: right;
-   padding: 0px;
-   margin: 0px;
-   margin-right: 7px;
-   display: inline;
-   line-height: 22px;
+  float: right;
+  padding: 0px;
+  margin: 0px;
+  margin-right: 7px;
+  display: inline;
+  line-height: 22px;
 }
+
 .languageselector img {
-   margin: 0px;
-   margin-left: 2px;
-   margin-top: 5px;
-   border: 0px;
-   vertical-align: baseline;
+  margin: 0px;
+  margin-left: 2px;
+  margin-top: 5px;
+  border: 0px;
+  vertical-align: baseline;
 }
 
 .copyright {
-   float: left;
-   margin-left: 7px;
-   color: #4a4a4a;
-   font-size: 11px;
-   display: inline;
-   line-height: 22px;
+  float: left;
+  margin-left: 7px;
+  color: #4a4a4a;
+  font-size: 11px;
+  display: inline;
+  line-height: 22px;
 }
 
 .copyright a {
-   text-decoration: none;
-   color: #4A4A4A;
+  text-decoration: none;
+  color: #4A4A4A;
 }
 
 /* interactive texts */
 #badlogin {
-	margin: 0px;
-	margin-top: 0px;
-	margin-left: 130px;
-	width: 300px;
-	height: 24px;
-	line-height: 24px;
-	white-space: normal;
-	text-align: left;
-	font-weight: bolder;
-	padding: 0px;
-	padding-top: 4px;
-	color: #FF0000;
+  margin: 0px;
+  margin-top: 0px;
+  margin-left: 130px;
+  width: 300px;
+  height: 24px;
+  line-height: 24px;
+  white-space: normal;
+  text-align: left;
+  font-weight: bolder;
+  padding: 0px;
+  padding-top: 4px;
+  color: #FF0000;
 }
 
 #reminder {
-	margin-top: 8px;
-	margin-bottom: 4px;
-	margin-left: 130px;
-	height: 39px;
-	width: 250px;
-	max-width: 250px;
-	white-space: normal;
-	text-align: left;
-	line-height: 15px;
-	padding: 0px;
-	color: #FF0000;
-	overflow: hidden;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  margin-left: 130px;
+  height: 39px;
+  width: 250px;
+  max-width: 250px;
+  white-space: normal;
+  text-align: left;
+  line-height: 15px;
+  padding: 0px;
+  color: #FF0000;
+  overflow: hidden;
 }
 
 #logoutinfo {
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-	line-height: 16px;
-	margin-bottom: 40px;
-	white-space: normal;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 16px;
+  margin-bottom: 40px;
+  white-space: normal;
 }
 
 #sessioninfo {
@@ -199,6 +202,6 @@ img {
 }
 
 .minilink {
-    font-size: 11px;
-    color: #333333;
+  font-size: 11px;
+  color: #333333;
 }

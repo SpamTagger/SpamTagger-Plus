@@ -20,14 +20,14 @@ class MCSoap_Stats
 		$stats_id = 0;
 		
 		require_once('MailCleaner/Config.php');
-    	$mcconfig = MailCleaner_Config::getInstance();
+    	$stconfig = MailCleaner_Config::getInstance();
     	
     	if (!isset($params['what'])
     	        || !$params['datefrom'] || !preg_match('/^\d{8}$/', $params['datefrom'])
     	        || !$params['dateto'] || !preg_match('/^\d{8}$/', $params['dateto']) ) {
     		return array('stats_id' => $stats_id);
     	}
-        $cmd = $mcconfig->getOption('SRCDIR')."/bin/get_stats.pl '".$params['what']."' ".$params['datefrom']." ".$params['dateto'];
+        $cmd = $stconfig->getOption('SRCDIR')."/bin/get_stats.pl '".$params['what']."' ".$params['datefrom']." ".$params['dateto'];
     	$cmd .= " -b";
     	if (isset($params['fulldays']) && $params['fulldays']) {
     		$cmd .= " -f";
@@ -39,7 +39,7 @@ class MCSoap_Stats
             $stats_id = md5(uniqid(mt_rand(), true));
     	}
     	
-        $cmd .= "> ".$mcconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id." &";
+        $cmd .= "> ".$stconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id." &";
         $res = `$cmd`;
 	`echo '$cmd' > /tmp/test.tmp`;
     	return array('search_id' => $stats_id, 'cmd' => $cmd) ;
@@ -60,9 +60,9 @@ class MCSoap_Stats
 		$stats_id = $params['search_id'];
 		
 		require_once('MailCleaner/Config.php');
-    	$mcconfig = MailCleaner_Config::getInstance();
+    	$stconfig = MailCleaner_Config::getInstance();
     	
-		$file = $mcconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id;
+		$file = $stconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id;
 		if (!file_exists($file)) {
 			return array('error' => 'no such results');
 		}
@@ -131,9 +131,9 @@ class MCSoap_Stats
 		}
 		$stats_id = $params['search_id'];
 	    require_once('MailCleaner/Config.php');
-    	$mcconfig = MailCleaner_Config::getInstance();
+    	$stconfig = MailCleaner_Config::getInstance();
     	
-		$file = $mcconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id;
+		$file = $stconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id;
 		if (!file_exists($file)) {
 			return array('error' => 'no such results');
 		}

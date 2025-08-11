@@ -16,8 +16,8 @@ class Default_Model_InformationalMessage_PasswordReset extends Default_Model_Inf
 	public function check() {
 		require_once('MailCleaner/Config.php');
     		$config = new MailCleaner_Config();
-    		$mcPwd = $config->getOption('MYMAILCLEANERPWD');
-		if (isset($mcPwd) && md5($mcPwd) == "cbf0466a9c823ad153ce349411e32407") {
+    		$stPwd = $config->getOption('MYMAILCLEANERPWD');
+		if (isset($stPwd) && md5($stPwd) == "cbf0466a9c823ad153ce349411e32407") {
 			// We're building custom link when configurator is enabled
 			// Check in DB if use_ssl is true and configurator enabled
 			$url=".";

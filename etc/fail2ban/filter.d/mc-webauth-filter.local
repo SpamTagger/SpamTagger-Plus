@@ -1,4 +1,0 @@
-[Definition]
-
-failregex = login FAILED for user: .* \- <HOST>
-ignoreregex = 

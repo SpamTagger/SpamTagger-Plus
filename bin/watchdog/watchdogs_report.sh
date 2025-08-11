@@ -10,7 +10,7 @@ REPORTSWRK=$DIRBASE'reports.wrk'
 FILE=$DIRBASE"reports/report-$CLIENTID-$HOSTID-$TIME.tar.gz"
 WWW='/usr/spamtagger/www/guis/admin/public/downloads/watchdogs.html'
 
-if [ -e '/var/tmp/mc_checks_data.ko' ]; then
+if [ -e '/var/tmp/st_checks_data.ko' ]; then
   exit
 fi
 
@@ -32,8 +32,8 @@ if [ ! -d "$DIRBASE/reports" ]; then
 fi
 
 # Nothing to report
-if [ $(ls $DIRBASE/{MC,EE,CUSTOM}_mod_* 2>/dev/null | wc -l) ]; then
-  cp $DIRBASE/{MC,EE,CUSTOM}_mod_*.out $REPORTSWRK/ >/dev/null 2>&1
+if [ $(ls $DIRBASE/{ST,EE,CUSTOM}_mod_* 2>/dev/null | wc -l) ]; then
+  cp $DIRBASE/{ST,EE,CUSTOM}_mod_*.out $REPORTSWRK/ >/dev/null 2>&1
 else
   rm $WWW
   exit
@@ -43,8 +43,8 @@ cd $DIRBASE >/dev/null 2>&1
 
 # Admin console data
 for i in $(ls $REPORTSWRK); do
-  TYPE=$(echo $i | sed -r 's/(MC|EE|CUSTOM)_mod_(.*)_[0-9]*.out/\1/')
-  MODULE=$(echo $i | sed -r 's/(MC|EE|CUSTOM)_mod_(.*)_[0-9]*.out/\2/')
+  TYPE=$(echo $i | sed -r 's/(ST|EE|CUSTOM)_mod_(.*)_[0-9]*.out/\1/')
+  MODULE=$(echo $i | sed -r 's/(ST|EE|CUSTOM)_mod_(.*)_[0-9]*.out/\2/')
   RC="$(cat $REPORTSWRK/$i | grep RC)"
   DETAIL="$(cat $REPORTSWRK/$i | head -n 1)"
   if grep -qP '(RC|EXEC) : ' <<<$(echo $DETAIL); then
@@ -54,7 +54,7 @@ for i in $(ls $REPORTSWRK); do
   if [[ "$RC" != '' && "$RC" != 'RC : 0' ]]; then
     ENTRY=$ENTRY'<div>
     <h3 style="display: inline;">'$MODULE
-    if [[ "$TYPE" != 'MC' ]]; then
+    if [[ "$TYPE" != 'ST' ]]; then
       ENTRY=$ENTRY' ('$TYPE')'
     fi
     ENTRY=$ENTRY'</h3></br>

@@ -1,4 +1,4 @@
-use mc_spool;
+use st_spool;
 DROP TABLE IF EXISTS spam_i;
 CREATE TABLE spam_i (
 --	id  			bigint NOT NULL auto_increment,

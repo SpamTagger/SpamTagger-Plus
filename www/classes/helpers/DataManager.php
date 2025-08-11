@@ -36,7 +36,7 @@ class DataManager {
                         'MYMAILCLEANERPWD' => '',
                         'PASSWORD' => '',
                         'SOCKET' => '',
-                        'DATABASE' => 'mc_config',
+                        'DATABASE' => 'st_config',
                        );
   /**
    * default base system configuration options

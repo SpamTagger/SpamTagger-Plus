@@ -1,8 +1,8 @@
 /*.conf
 /*.pl
 /stockme
-/mc_router
-/mc_transport
+/st_router
+/st_transport
 /spamtagger-binary
 /stage1/*
 !/stage1/*_template

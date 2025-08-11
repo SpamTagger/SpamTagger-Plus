@@ -43,7 +43,7 @@ my $gid = getgrnam( 'mailcleaner' );
 my $conf = ReadConfig::getInstance();
 my $op = $conf->getOption('SRCDIR');
 
-my $slave_db = DB::connect('slave', 'mc_config');
+my $slave_db = DB::connect('slave', 'st_config');
 
 dumpArchivedDomains();
 dumpCopyto();

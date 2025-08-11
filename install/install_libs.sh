@@ -10,7 +10,7 @@ fi
 
 if [ "$USEDEBS" = "Y" ]; then
   echo -n " installing libraries binaries packages..."
-  dpkg -i $SRCDIR/install/debs/mc-libs*.deb &>/dev/null
+  dpkg -i $SRCDIR/install/debs/st-libs*.deb &>/dev/null
   echo "done."
   exit
 fi

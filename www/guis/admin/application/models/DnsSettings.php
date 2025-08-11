@@ -76,7 +76,7 @@ class Default_Model_DnsSettings
 	
     public function save()
     {
-    	$tmpfile = '/tmp/mc_resolv.tmp';
+    	$tmpfile = '/tmp/st_resolv.tmp';
     	$txt = '';
     	if ($this->_domainsearch != '') {
              $txt = 'search '.$this->_domainsearch."\n";

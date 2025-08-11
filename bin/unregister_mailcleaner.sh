@@ -93,8 +93,8 @@ if [ -f $CLIENTID.tar.gz ]; then
   rm $CLIENTID.tar.gz >/dev/null 2>&1
 fi
 
-if [ -f "/tmp/mc_unregister.error" ]; then
-  rm /tmp/mc_unregister.error >/dev/null 2>&1
+if [ -f "/tmp/st_unregister.error" ]; then
+  rm /tmp/st_unregister.error >/dev/null 2>&1
 fi
 
 #check_parameter $RESELLERID
@@ -111,7 +111,7 @@ if [ "$REGISTERED" = "1" ]; then
 elif [ "$REGISTERED" = "2" ]; then
   # CE Unregistration
   TMP_FILE=/tmp/mcce.tmp
-  echo "select * from registration LIMIT 1 \G" | mc_mysql -m mc_community &>$TMP_FILE
+  echo "select * from registration LIMIT 1 \G" | st_mysql -m st_community &>$TMP_FILE
   FIRST_NAME=$(grep 'first_name' $TMP_FILE | cut -d ':' -f2)
   LAST_NAME=$(grep 'last_name' $TMP_FILE | cut -d ':' -f2)
   EMAIL=$(grep 'email' $TMP_FILE | cut -d ':' -f2)
@@ -131,10 +131,10 @@ elif [ "$REGISTERED" = "2" ]; then
   rm $TMP_FILE
   # Also local unregistration
   sql="DELETE FROM registration;"
-  echo $sql | $SRCDIR/bin/mc_mysql -m mc_community
+  echo $sql | $SRCDIR/bin/st_mysql -m st_community
 fi
 
-wget -q "$URL" -O /tmp/mc_unregister.out >/dev/null 2>&1
+wget -q "$URL" -O /tmp/st_unregister.out >/dev/null 2>&1
 
 if [ "$batch" = 0 ]; then
   echo -n "Removing keys..."
@@ -217,7 +217,7 @@ fi
 if [ "$REGISTERED" = "1" ]; then
   rm -rf $SRCDIR/share/spamassassin/* >/dev/null 2>&1
   rm -rf $SRCDIR/share/newsld/siteconfig/* >/dev/null 2>&1
-  rm -rf $SRCDIR/etc/exim/mc_binary/* >/dev/null 2>&1
+  rm -rf $SRCDIR/etc/exim/st_binary/* >/dev/null 2>&1
   rm -rf $SRCDIR/etc/rbls/* >/dev/null 2>&1
   rm -rf $SRCDIR/bin/watchdog/EE_* >/dev/null 2>&1
   rm -rf $SRCDIR/etc/watchdog/EE_* >/dev/null 2>&1
@@ -291,8 +291,8 @@ sed -ri 's/^(\s+).*__MAINHEADERBG__.*$/\1background-color: #5C6D99; \/\*__MAINHE
 sed -ri 's/^(\s+).*__MAINHEADERBG__.*$/\1background-color: #5C6D99; \/\*__MAINHEADERBG__\*\//g' $SRCDIR/www/user/htdocs/templates/default/css/navigation.css
 sed -ri 's/^(\s+).*__MAINHEADERBG__.*$/\1background-color: #5C6D99; \/\*__MAINHEADERBG__\*\//g' $SRCDIR/www/user/htdocs/templates/default/css/login.css
 
-echo "delete from administrator where username='mailcleaner-support';" | $SRCDIR/bin/mc_mysql -m mc_config &>/dev/null
-echo "delete from external_access where service='ssh' AND port='22' AND protocol='TCP' AND (allowed_ip='193.246.63.0/24' OR allowed_ip='195.176.194.0/24');" | $SRCDIR/bin/mc_mysql -m mc_config &>/dev/null
+echo "delete from administrator where username='mailcleaner-support';" | $SRCDIR/bin/st_mysql -m st_config &>/dev/null
+echo "delete from external_access where service='ssh' AND port='22' AND protocol='TCP' AND (allowed_ip='193.246.63.0/24' OR allowed_ip='195.176.194.0/24');" | $SRCDIR/bin/st_mysql -m st_config &>/dev/null
 
 echo "Community Edition" >$SRCDIR/etc/edition.def
 

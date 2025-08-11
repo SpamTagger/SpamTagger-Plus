@@ -86,9 +86,9 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                       $sth = $slave->prepare($sql);
                       $retdb10 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 		      $actual_hostid = shell_exec("grep HOSTID /etc/spamtagger.conf |cut -d' ' -f3"); 
-                      $sth = $master->prepare("UPDATE mc_config.master SET password=:newpassdb");
+                      $sth = $master->prepare("UPDATE st_config.master SET password=:newpassdb");
                       $retdbmaster = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
-                      $sth = $master->prepare("UPDATE mc_config.slave SET password=:newpassdb where id=:hostid");
+                      $sth = $master->prepare("UPDATE st_config.slave SET password=:newpassdb where id=:hostid");
                       $retdbslave = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;               
 		      $sql = "SET PASSWORD FOR ".$users[4]." = PASSWORD(:newpassdb)";
                       $sth = $master->prepare($sql);
@@ -97,9 +97,9 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                       $sth = $slave->prepare($sql);
 		      $retdb2 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 
-		      $sth = $slave->prepare("UPDATE mc_config.master SET password=:newpassdb");
+		      $sth = $slave->prepare("UPDATE st_config.master SET password=:newpassdb");
                       $retdbslavemaster = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
-                      $sth = $slave->prepare("UPDATE mc_config.slave SET password=:newpassdb where id=:hostid");
+                      $sth = $slave->prepare("UPDATE st_config.slave SET password=:newpassdb where id=:hostid");
                       $retdbslaveslave = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;
 
 		      $sth = $slave->prepare("STOP SLAVE; CHANGE MASTER TO MASTER_PASSWORD=:masterpass; START SLAVE;");

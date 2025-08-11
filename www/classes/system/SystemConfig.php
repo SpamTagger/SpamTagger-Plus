@@ -37,9 +37,9 @@ class SystemConfig extends PrefHandler {
    */
     private $dbhost_ = 'localhost';
     var $dbusername_ = 'mailcleaner';
-    var $dbconfig_ = 'mc_config';
-    var $dbspool_ = 'mc_spool';
-    var $dbstats_ = 'mc_stats';
+    var $dbconfig_ = 'st_config';
+    var $dbspool_ = 'st_spool';
+    var $dbstats_ = 'st_stats';
     var $dbpassword_ = '';
     
     /**

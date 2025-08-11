@@ -30,24 +30,24 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     protected function _initDatabases()
     {
     	require_once('MailCleaner/Config.php');
-    	$mcconfig = MailCleaner_Config::getInstance();
+    	$stconfig = MailCleaner_Config::getInstance();
     	
     	$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
-                              'unix_socket' => $mcconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
+                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
                               'username'    => 'mailcleaner',
-                              'password'    => $mcconfig->getOption('MYMAILCLEANERPWD'),
-                              'dbname'      => 'mc_config'
+                              'password'    => $stconfig->getOption('MYMAILCLEANERPWD'),
+                              'dbname'      => 'st_config'
                              ));
                              
         Zend_Registry::set('writedb', $writeConfigDb);
         
         $spoolDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
-                              'unix_socket' => $mcconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
+                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
                               'username'    => 'mailcleaner',
-                              'password'    => $mcconfig->getOption('MYMAILCLEANERPWD'),
-                              'dbname'      => 'mc_spool'
+                              'password'    => $stconfig->getOption('MYMAILCLEANERPWD'),
+                              'dbname'      => 'st_spool'
                              ));
                              
         Zend_Registry::set('spooldb', $spoolDb);
@@ -148,10 +148,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         Zend_Registry::set('locale', $locale);
         Zend_Registry::set('Zend_Locale', $locale);
         
-        $mclocale = new Default_Model_Localization();
-        $mclocale->load();
-        putenv("TZ=".$mclocale->getFullZone());
-        date_default_timezone_set($mclocale->getFullZone());
+        $stlocale = new Default_Model_Localization();
+        $stlocale->load();
+        putenv("TZ=".$stlocale->getFullZone());
+        date_default_timezone_set($stlocale->getFullZone());
     }
   
 }

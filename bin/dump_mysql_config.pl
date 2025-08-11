@@ -36,7 +36,7 @@ $config{'__MASTERID__'} = ($config{'HOSTID'} * 2) - 1 + 10;
 $config{'__SLAVEID__'} = $config{'HOSTID'} * 2 + 10;
 
 ## Avoid having unsychronized database when starting a new VA
-my $FIRSTUPDATE_FLAG_RAN="$config{'VARDIR'}/run/configurator/updater4mc-ran";
+my $FIRSTUPDATE_FLAG_RAN="$config{'VARDIR'}/run/configurator/updater4st-ran";
 if (-e $FIRSTUPDATE_FLAG_RAN){
 	$config{'__BINARY_LOG_KEEP__'} = 21;
 } else {

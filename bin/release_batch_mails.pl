@@ -181,7 +181,7 @@ if (defined $args{M_score}) {
 $QUERY =~ s/^(.*) AND/$1;/;
 print "\nSearch Query:\n" . $QUERY . "\n\n";
 
-my $results = `echo \"$QUERY\" | $COMMAND -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -N mc_spool`;
+my $results = `echo \"$QUERY\" | $COMMAND -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -N st_spool`;
 unless ($results) {
     die "No quarantined items found using this criteria.\n";
 }
@@ -243,7 +243,7 @@ foreach (@messages) {
     my $UPDATE="UPDATE spam SET forced = '1' WHERE exim_id = '$_->{exim_id}';";
     print "\n$SRCDIR/bin/force_message.pl $_->{exim_id} $_->{to_user}";
     `$SRCDIR/bin/force_message.pl $_->{exim_id} $_->{to_user}`;
-    `echo \"$UPDATE\" | $COMMAND -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -N mc_spool`;
+    `echo \"$UPDATE\" | $COMMAND -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -N st_spool`;
 }
 printf "\nFinished\n";
 

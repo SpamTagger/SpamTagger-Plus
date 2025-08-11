@@ -1,4 +1,4 @@
-use mc_spool;
+use st_spool;
 
 DROP TABLE IF EXISTS soap_auth;
 

@@ -68,7 +68,7 @@ sub get_wlist_matches {
     my $recipient = shift;
     my $column_names = shift;
 
-    my $db = DB::connect('slave', 'mc_config');
+    my $db = DB::connect('slave', 'st_config');
     my $query_cols = join(",", @$column_names);
 
     my @recipients = @{get_possible_recipients($recipient)};

@@ -122,7 +122,7 @@ public function load($id) {
       $slave = $slaves[0];
       $slave_id = 1;
     }
-    $db = DM_Custom :: getInstance($s->getPref('hostname'), $slave[0], 'mailcleaner', $slave[1], 'mc_stats');
+    $db = DM_Custom :: getInstance($s->getPref('hostname'), $slave[0], 'mailcleaner', $slave[1], 'st_stats');
     
     $clean_id = $db->sanitize($id);
     

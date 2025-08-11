@@ -16,7 +16,7 @@ class MCSoap_Config
    * @return string
    */
 	static public function Config_saveInterfaceConfig() {
-		$tmpfile = "/tmp/mc_initerfaces.tmp";
+		$tmpfile = "/tmp/st_initerfaces.tmp";
 		
 		if (!file_exists($tmpfile)) {
 			return 'NOK notempfile';
@@ -96,7 +96,7 @@ class MCSoap_Config
    * @return string
    */
 	static public function Config_saveDnsConfig() {
-		$tmpfile = "/tmp/mc_resolv.tmp";
+		$tmpfile = "/tmp/st_resolv.tmp";
 		$status = 'OK';
 		
 		if (!file_exists($tmpfile)) {
@@ -164,7 +164,7 @@ class MCSoap_Config
    * @return string
    */
 	static public function Config_saveNTPConfig($sync = false) {
-		$tmpconfigfile = '/tmp/mc_ntp.tmp';
+		$tmpconfigfile = '/tmp/st_ntp.tmp';
 		$configfile = '/etc/ntp.conf';
 		$starter = '/etc/init.d/ntp';
         $full = '';
@@ -348,7 +348,7 @@ class MCSoap_Config
                 $sysconf = MailCleaner_Config::getInstance();
 		
 		// Create file with data
-		$DATA_FILE="/tmp/mc_registerce.data";
+		$DATA_FILE="/tmp/st_registerce.data";
 		$rdata = fopen($DATA_FILE, "w") or die("NOK ERROR FILE CREATION");
 		foreach ($data as $k => $v) {
 			$txt=strtoupper($k)."=".$v."\n";
@@ -418,18 +418,18 @@ class MCSoap_Config
 	static public function Config_autoconfiguration($data) {
 		require_once('MailCleaner/Config.php');
                 $sysconf = MailCleaner_Config::getInstance();
-                $mc_autoconf = $sysconf->getOption('VARDIR').'/spool/spamtagger/mc-autoconf';
+                $st_autoconf = $sysconf->getOption('VARDIR').'/spool/spamtagger/st-autoconf';
 		$msg='OK';
                 if(isset($data['autoconfenabled']) && $data['autoconfenabled']) {
-			if (!file_exists($mc_autoconf)) {
-                        	$result = fopen($mc_autoconf, "w");
+			if (!file_exists($st_autoconf)) {
+                        	$result = fopen($st_autoconf, "w");
 				if ($result)
 					$msg='OK Auto-configuration enabled';
 				fclose($result);
 			}
                 } else {
-			if(file_exists($mc_autoconf)) {
-				$result = unlink($mc_autoconf);
+			if(file_exists($st_autoconf)) {
+				$result = unlink($st_autoconf);
 				if($result)
 					$msg='OK Auto-configuration disabled';
 			}
@@ -456,7 +456,7 @@ class MCSoap_Config
 			if (file_exists($sysconf->getOption('SRCDIR').'/etc/autoconf/prepare_sqlconf.sh')) {
 	                	$cmd_prepare  = $sysconf->getOption('SRCDIR').'/etc/autoconf/prepare_sqlconf.sh';
 				$res = `$cmd_prepare`;
-				// When updating the mc_config, need to restart MC
+				// When updating the st_config, need to restart MC
 				$cmd = "touch ".$sysconf->getOption('VARDIR')."/run/exim_stage1.rn";
 				$cmd2 ="touch ".$sysconf->getOption('VARDIR')."/run/mailscanner.rn";
 				`$cmd`;

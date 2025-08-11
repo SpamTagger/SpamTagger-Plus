@@ -93,7 +93,7 @@ function downloadDatas {
   while [ ! $has_tried_cvs ]; do
     if [[ $ISMASTER != "Y" && ! $has_tried_master ]]; then
       user=root
-      server=$(echo "SELECT hostname from master;" | ${SRCDIR}/bin/mc_mysql -s mc_config | grep -v -e "hostname")
+      server=$(echo "SELECT hostname from master;" | ${SRCDIR}/bin/st_mysql -s st_config | grep -v -e "hostname")
       remote_folder=${local_folder}
       has_tried_master=true
     else

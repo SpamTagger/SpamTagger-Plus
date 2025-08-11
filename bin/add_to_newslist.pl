@@ -42,7 +42,7 @@ if (not isValidEmail($sender)){
     err("SENDERNOTVALID");
 }
 
-my $dbh = DB::connect('master', 'mc_config') || err("CANNOTCONNECTDB");
+my $dbh = DB::connect('master', 'st_config') || err("CANNOTCONNECTDB");
 
 # Remove content after plus in address so that rule applies to base address
 $dest =~ s/([^\+]+)\+([^\@]+)\@(.*)/$1\@$3/;

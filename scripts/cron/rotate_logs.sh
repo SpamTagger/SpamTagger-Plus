@@ -52,14 +52,14 @@ fi
 # Apache
 $SRCDIR/etc/init.d/apache stop
 if [ -x /usr/bin/savelog ]; then
-  for i in access.log error.log ssl.log mc_auth.log access_soap.log error_soap.log; do
+  for i in access.log error.log ssl.log st_auth.log access_soap.log error_soap.log; do
     if [ -e $VARDIR/log/apache/$i ]; then
       savelog -p -c $DAYSTOKEEP -C $VARDIR/log/apache/$i >/dev/null
     fi
   done
 fi
-touch $VARDIR/log/apache/mc_auth.log
-chown mailcleaner:mailcleaner $VARDIR/log/apache/mc_auth.log
+touch $VARDIR/log/apache/st_auth.log
+chown mailcleaner:mailcleaner $VARDIR/log/apache/st_auth.log
 
 # Exim Stages 1 and 2
 for stage in 1 2; do
@@ -153,7 +153,7 @@ done
 
 # MailCleaner
 if [ -x /usr/bin/savelog ]; then
-  for i in update.log update2.log autolearn.log rules.log spam_sync.log mc_counts-cleaner.log downloadDatas.log summaries.log updater4mc.log; do
+  for i in update.log update2.log autolearn.log rules.log spam_sync.log st_counts-cleaner.log downloadDatas.log summaries.log updater4mc.log; do
     if [ -e $VARDIR/log/spamtagger/$i ]; then
       savelog -p -c $DAYSTOKEEP -C $VARDIR/log/spamtagger/$i >/dev/null
     fi

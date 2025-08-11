@@ -40,7 +40,7 @@ sub New {
   my $pictdir = $conf->getOption('VARDIR')."/www/mrtg/".$hostname;
   my %stats = ();
  
-  my $slave_db = DB::connect('slave', 'mc_config');
+  my $slave_db = DB::connect('slave', 'st_config');
   my %row = $slave_db->getHashRow("SELECT community FROM snmpd_config WHERE set_id=1");
   $slave_db->disconnect();
   my $community = $row{'community'};

@@ -44,7 +44,7 @@ sub config
 		'cmndline'	=> 'fail2ban-server',
 		'cmd'		=> '/usr/bin/fail2ban-client',
 		'confpath'	=> $class->{'conf'}->getOption('USRDIR').'/etc/fail2ban/',
-		'logfile'	=> $class->{'conf'}->getOption('VARDIR').'/log/fail2ban/mc-fail2ban.log',
+		'logfile'	=> $class->{'conf'}->getOption('VARDIR').'/log/fail2ban/st-fail2ban.log',
 		'user'		=> 'root',
 		'group'		=> 'root',
 		'daemonize'	=> 'yes',

@@ -15,7 +15,7 @@ if [ -z $1 ]; then
 fi
 
 if [ $1 == "add" ]; then
-  echo "INSERT IGNORE INTO wwlists (sender, type) values ('$2', 'htmlcontrols');" | mc_mysql -m mc_config
+  echo "INSERT IGNORE INTO wwlists (sender, type) values ('$2', 'htmlcontrols');" | st_mysql -m st_config
   echo "$2 added"
 
   /usr/spamtagger/bin/dump_html_controls_wl.pl
@@ -23,7 +23,7 @@ if [ $1 == "add" ]; then
 fi
 
 if [ $1 == "del" ]; then
-  echo "DELETE FROM wwlists WHERE sender='$2' AND type='htmlcontrols';" | mc_mysql -m mc_config
+  echo "DELETE FROM wwlists WHERE sender='$2' AND type='htmlcontrols';" | st_mysql -m st_config
   echo "$2 removed"
 
   /usr/spamtagger/bin/dump_html_controls_wl.pl
@@ -31,7 +31,7 @@ if [ $1 == "del" ]; then
 fi
 
 if [ $1 == "show" ]; then
-  echo "SELECT * FROM wwlists WHERE type='htmlcontrols';" | mc_mysql -m mc_config -t
+  echo "SELECT * FROM wwlists WHERE type='htmlcontrols';" | st_mysql -m st_config -t
   exit
 fi
 

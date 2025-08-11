@@ -10,7 +10,7 @@
 
 class Default_Model_AutoconfigurationManager
 {
-        private $MC_AUTOCONF_TAG_FILE="/spool/spamtagger/mc-autoconf";
+        private $MC_AUTOCONF_TAG_FILE="/spool/spamtagger/st-autoconf";
 	protected $_config;
 	protected $_autoconfenabled = false;
 

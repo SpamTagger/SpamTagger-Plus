@@ -58,7 +58,7 @@ print "DUMPSUCCESSFUL";
 #############################
 sub get_greylist_config
 {
-  my $slave_db = DB::connect('slave', 'mc_config');
+  my $slave_db = DB::connect('slave', 'st_config');
 
   my %configs = $slave_db->getHashRow("SELECT retry_min, retry_max, expire, avoid_domains 
                                                                          FROM greylistd_config");

@@ -250,10 +250,10 @@ CF=$(grep -n 'BEGIN CERTIFICATE' $CERTFILE | cut -d':' -f1)
 CT=$(grep -n 'END CERTIFICATE' $CERTFILE | cut -d':' -f1)
 KEY=$(sed -n "${KF},${KT}p;${KT}q" $CERTFILE)
 CERT=$(sed -n "${CF},${CT}p;${CT}q" $CERTFILE)
-QUERY="USE mc_config; UPDATE httpd_config SET tls_certificate_data='${CERT}', tls_certificate_key='${KEY}';"
-echo "$QUERY" | $SRCDIR/bin/mc_mysql -m 2>&1 >>$LOGFILE
+QUERY="USE st_config; UPDATE httpd_config SET tls_certificate_data='${CERT}', tls_certificate_key='${KEY}';"
+echo "$QUERY" | $SRCDIR/bin/st_mysql -m 2>&1 >>$LOGFILE
 
-echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP MailCleaner ($MCVERSION) \$tod_full';" | $SRCDIR/bin/mc_mysql -m mc_config 2>&1 >>$LOGFILE
+echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP MailCleaner ($MCVERSION) \$tod_full';" | $SRCDIR/bin/st_mysql -m st_config 2>&1 >>$LOGFILE
 
 ###############################################
 ### installing mailcleaner cron job

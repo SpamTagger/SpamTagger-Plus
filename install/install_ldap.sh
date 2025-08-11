@@ -10,7 +10,7 @@ fi
 
 if [ "$USEDEBS" = "Y" ]; then
   echo -n " installing ldap binaries package..."
-  dpkg -i $SRCDIR/install/debs/mc-ldap*.deb &>/dev/null
+  dpkg -i $SRCDIR/install/debs/st-ldap*.deb &>/dev/null
   echo "done."
   exit
 fi

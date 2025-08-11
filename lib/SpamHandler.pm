@@ -175,7 +175,7 @@ sub connectDatabases {
 	foreach my $db (@databases) {
 		if ( !defined( $this->{dbs}{$db} ) || !$this->{dbs}{$db}->ping() ) {
 			$this->doLog( "Connecting to database $db", 'spamhandler' );
-			$this->{dbs}{$db} = DB::connect( $db, 'mc_spool', 0 );
+			$this->{dbs}{$db} = DB::connect( $db, 'st_spool', 0 );
 		}
 
 		if ( !defined( $this->{dbs}{$db} ) || !$this->{dbs}{$db}->ping() ) {

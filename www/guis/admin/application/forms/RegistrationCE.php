@@ -30,7 +30,7 @@ class Default_Form_RegistrationCE extends ZendX_JQuery_Form
 
             $sysconf = MailCleaner_Config::getInstance();
 	    require_once ('helpers/DM_Custom.php');
-	    $db = DM_Custom :: getInstance('127.0.0.1', '3306', 'mailcleaner', $sysconf->getOption('MYMAILCLEANERPWD'), 'mc_community');
+	    $db = DM_Custom :: getInstance('127.0.0.1', '3306', 'mailcleaner', $sysconf->getOption('MYMAILCLEANERPWD'), 'st_community');
 
 	    $query = "SELECT * from registration LIMIT 1";
 	    $res = $db->getHash($query);

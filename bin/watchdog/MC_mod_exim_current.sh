@@ -32,8 +32,8 @@ if [[ $(grep authresults /usr/spamtagger/etc/exim/exim_stage1.conf_template | wc
   EXIT=1
 fi
 
-if [[ $(dpkg -l | grep mc-exim | sed -e 's/.*4\.98.*/4.98/') != '4.98' ]]; then
-  echo "mc_exim is not in version 4.98" >>$OUT_FILE
+if [[ $(dpkg -l | grep st-exim | sed -e 's/.*4\.98.*/4.98/') != '4.98' ]]; then
+  echo "st_exim is not in version 4.98" >>$OUT_FILE
   EXIT=1
 fi
 

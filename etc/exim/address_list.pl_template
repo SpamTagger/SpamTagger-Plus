@@ -43,7 +43,7 @@ close AFILE;
 print "OK ".$ret." - address list saved in $afile\n";
 
 if ($conf->getOption('ISMASTER') =~ m/^(Y|y|yes|YES)$/) {
-  my $slave_db = DB::connect('slave', 'mc_config');
+  my $slave_db = DB::connect('slave', 'st_config');
   my @masters = $slave_db->getListOfHash("SELECT hostname from master");
   my @slaves = $slave_db->getListOfHash("SELECT hostname from slave");
   foreach my $s (@slaves) {

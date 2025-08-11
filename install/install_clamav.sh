@@ -16,7 +16,7 @@ fi
 
 if [ "$USEDEBS" = "Y" ]; then
   echo -n " installing clamav binaries packages...";
-  aptitude install mc-clamav &> /dev/null
+  aptitude install st-clamav &> /dev/null
   echo "done.";
 else
 

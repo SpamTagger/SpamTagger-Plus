@@ -101,7 +101,7 @@ sub load {
 
     if (!$this->{db}) {
       require DB;
-      $this->{db} = DB::connect('slave', 'mc_config', 0);
+      $this->{db} = DB::connect('slave', 'st_config', 0);
     }
     my %userdata = $this->{db}->getHashRow($query);
     if (keys %userdata) {
@@ -119,7 +119,7 @@ sub getAddresses {
       ## get registered addresses
       if (!$this->{db}) {
         require DB;
-        $this->{db} = DB::connect('slave', 'mc_config', 0);
+        $this->{db} = DB::connect('slave', 'st_config', 0);
       }
 
       my $query = "SELECT e.address, e.is_main FROM email e WHERE e.user=".$this->{'id'};
@@ -237,7 +237,7 @@ sub loadPrefs {
     }
     if (!$this->{db}) {
         require DB;
-        $this->{db} = DB::connect('slave', 'mc_config', 0);
+        $this->{db} = DB::connect('slave', 'st_config', 0);
     }
 
     if ($this->{db} && $this->{db}->ping()) {

@@ -2,7 +2,7 @@
 
 if [ "$USEDEBS" = "Y" ]; then
   echo -n " installing mailscanner binaries packages..."
-  aptitude install mc-mailscanner &>/dev/null
+  aptitude install st-mailscanner &>/dev/null
   echo "done."
 else
 

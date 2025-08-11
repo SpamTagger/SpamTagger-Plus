@@ -34,7 +34,7 @@ if (open (CONFIG, $configfile)) {
 }
 
 # SMTP settings
-my $db = DB::connect('slave', 'mc_config');
+my $db = DB::connect('slave', 'st_config');
 my %mta_row = $db->getHashRow("SELECT rbls FROM mta_config WHERE stage=1");
 die "Failed to fetch SMTP config\n" unless %mta_row;
 

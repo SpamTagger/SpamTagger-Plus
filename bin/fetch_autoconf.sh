@@ -78,7 +78,7 @@ if [ ! -d "$MC_AUTOCONF_DIR" ]; then
   mkdir $MC_AUTOCONF_DIR
 fi
 
-ret=$(downloadDatas "$MC_AUTOCONF_DIR" "mc_autoconfig" $randomize "null" "" "noexit")
+ret=$(downloadDatas "$MC_AUTOCONF_DIR" "st_autoconfig" $randomize "null" "" "noexit")
 if [[ "$ret" -eq "1" ]]; then
   log "Autoconf downloaded"
 fi

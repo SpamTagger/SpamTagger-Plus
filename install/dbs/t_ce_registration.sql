@@ -1,4 +1,4 @@
-USE mc_community;
+USE st_community;
 DROP TABLE IF EXISTS registration;
 
 CREATE TABLE registration (

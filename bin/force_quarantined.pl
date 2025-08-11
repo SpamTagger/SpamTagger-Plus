@@ -133,7 +133,7 @@ sub mark_forced
 {
 	use DBI;
 	my $id = shift;
-	my $dbh = DBI->connect("DBI:mysql:database=mc_stats;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
+	my $dbh = DBI->connect("DBI:mysql:database=st_stats;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
 		"mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0}) || return;
 
 	my $query = "UPDATE maillog SET content_forced='1' WHERE id='$id'";

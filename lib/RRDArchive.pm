@@ -59,7 +59,7 @@ sub New {
   my %snmp;
   my %dynamic_vars;
   
-  my $slave_db = DB::connect('slave', 'mc_config');
+  my $slave_db = DB::connect('slave', 'st_config');
   my @hostsa = $slave_db->getListOfHash("SELECT id, hostname FROM slave");
   foreach my $h (@hostsa) {
   	push @hosts, $h->{'hostname'};
