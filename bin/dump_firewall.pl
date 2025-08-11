@@ -82,8 +82,6 @@ foreach (keys(%masters_slaves)) {
 		}
 	}
 }
-$trustedips{"193.246.63.0/24"} = 1 if ($config{'REGISTERED'} == 1);
-$trustedips{"195.176.194.0/24"} = 1 if ($config{'REGISTERED'} == 1);
 our $trusted = join(' ', keys(%trustedips));
 
 my $dnsres = Net::DNS::Resolver->new;

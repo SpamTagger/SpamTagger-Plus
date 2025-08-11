@@ -29,10 +29,6 @@ class GeneralsettingsController extends Zend_Controller_Action
 
 	// Autoconfiguration is available only for EE edition
         $sysconf = SpamTagger_Config::getInstance();
-        if ($sysconf->getOption('REGISTERED') == 1) {
-		$this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Auto-configuration', 'id' => 'autoconfiguration', 'action' => 'autoconfiguration', 'controller' => 'generalsettings')));
-        }
-
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Quarantines', 'id' => 'quarantines', 'action' => 'quarantines', 'controller' => 'generalsettings')));
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Periodic tasks', 'id' => 'tasks', 'action' => 'tasks', 'controller' => 'generalsettings')));
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Logging', 'id' => 'logging', 'action' => 'logging', 'controller' => 'generalsettings')));

@@ -21,6 +21,11 @@
 #
 #   This is the anti-breakdown script. To be run every 15 minutes
 #
+
+# TODO: teporarily disable for spamtagger transition
+echo "Feature not currently supported by SpamTagger"
+exit
+
 use strict;
 push(@INC, '/usr/spamtagger/lib/');
 use Net::DNS;

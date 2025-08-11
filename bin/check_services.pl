@@ -22,6 +22,10 @@
 #
 #   Requires : libconfig-simple-perl, libxml-simple-perl, libstring-random-perl
 
+# TODO: teporarily disable for spamtagger transition
+echo "Feature not currently supported by SpamTagger"
+exit
+
 use strict;
 if ($0 =~ m/(\S*)\/\S+.pl$/) {
   my $path = $1."/../lib";

@@ -111,16 +111,7 @@ class IndexController extends Zend_Controller_Action
         $view->status = $res;
         
         $config = new SpamTagger_Config();
-        $registered = $config->getOption('REGISTERED');
-        if ($registered == "1") {
-		$versionstr = "Enterprise Edition (EE Registered)";
-        }
-	else if ($registered == "2") {
-		$versionstr = "Community Edition (CE Registered)";
-	} else {
-		$versionstr = "Community Edition";
-	}
-        $view->mcedition = $versionstr;
+	    }
     }
 
 	public function todaypieAction() {

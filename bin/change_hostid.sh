@@ -36,13 +36,7 @@ function check_parameter {
 }
 
 CONFFILE=/etc/spamtagger.conf
-REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)
 OLDID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
-
-if [ "$REGISTERED" == "1" ] || [ "$REGISTERED" == "2" ]; then
-  echo "Your SpamTagger has to be unregistered first !"
-  exit 1
-fi
 
 NEWID=$1
 if [ "$NEWID" = "" ]; then

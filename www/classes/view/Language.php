@@ -94,21 +94,6 @@ class Language
       fclose($handle);
     }
 
-    // in case of EE version
-    // read available languages for EE
-    require_once ('helpers/DataManager.php');
-    $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_);
-    $ISENTERPRISE = $baseconf['REGISTERED'] == '1';
-    $ee_languages = array();
-    if ($ISENTERPRISE) {
-	if (($handle = fopen($this->sysconf_->SRCDIR_."/www/classes/view/EELanguages.txt", "r")) !== FALSE) {
-		while (($data = fgets($handle)) !== FALSE) {
-		        $ee_languages[] = trim($data);
-	        }
-      		fclose($handle);
-    	}
-    }
-
     // Exception for last langages who doesn't respect standards naming conventions
     // for langs.
     $currLangs = array("en" => "en_US", "de" => "de_DE", "fr" => "fr_FR", "it" => "it_IT", "nl" => "nl_NL", "es" => "es_ES");
@@ -125,19 +110,6 @@ class Language
 			}
 		}
 
-                if ($ISENTERPRISE) {
-                        if (array_key_exists($ll, $currLangs) && in_array($ll, $ee_languages)) {
-                                $this->available_languages_[$ll] = $language_codes[$currLangs[$ll]];
-                                $this->inversed_languages_[$language_codes[$currLangs[$ll]]] = $ll;
-                                break;
-                        } else {
-                                if (preg_match("/^${ll}/", $l_code) == 1 && in_array($ll, $ee_languages)) {
-                                        $this->available_languages_[$ll] = $l_title;
-                                        $this->inversed_languages_[$l_title] = $ll;
-                                        break;
-                                }
-                        }
-                } else {
                         if (array_key_exists($ll, $currLangs)) {
                                 $this->available_languages_[$ll] = $language_codes[$currLangs[$ll]];
                                 $this->inversed_languages_[$language_codes[$currLangs[$ll]]] = $ll;
@@ -150,7 +122,6 @@ class Language
                                 }
                         }
 
-                }
         }
     }
 

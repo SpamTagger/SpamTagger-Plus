@@ -13,6 +13,7 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
 <tr>
     <td class="flabel flabeltextarea flabelchecklist"><?php echo $this->t->_('Using these RBLs')?> : </td>
     <td class="fvalue fvaluechecklist">
+    <!-- TODO: temporarily hide commercial rbls
     <?php foreach ($this->form->_rbl_checks as $check) {
         if (preg_match('/^INACTIVE/',$check->getLabel())) {
 	  echo '<input type="checkbox" onclick="return false;" /><span>' . preg_replace('/^use_rbl_/','',$check->getName()) . "&nbsp;&nbsp;";
@@ -25,6 +26,7 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
 	  echo $this->InputRow($check, array('field_only'=>true,'nobox'=>'true','post_field_text'=>$check->getLabel()."<br />"));
         }
     } ?>
+    -->
     </td>
     <?php echo $this->InputRow($this->form->getElement('avoidgoodspf'),array('label_addclass'=>'flabeltextarea'));?>
     <?php echo $this->InputRow($this->form->getElement('avoidhosts'),array('label_addclass'=>'flabeltextarea'));?>

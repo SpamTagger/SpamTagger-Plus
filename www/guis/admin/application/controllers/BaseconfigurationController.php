@@ -343,55 +343,11 @@ class BaseconfigurationController extends Zend_Controller_Action
         $mgrhostid->load();
 
         $sysconf = SpamTagger_Config::getInstance();
-	$registered = 0;
-        if ($sysconf->getOption('REGISTERED') > 0 ) {
-          $registered = $sysconf->getOption('REGISTERED');
-        }
-        $view->registered = $registered;
 
-    	$form   = new Default_Form_Registration($mgr);
-	$formce = new Default_Form_RegistrationCE($mgrce);
-	$formun = new Default_Form_UnRegistration($unmgr, $registered);
-	$formhostid = new Default_Form_ChangeHostId($mgrhostid, $registered);
+	$formhostid = new Default_Form_ChangeHostId($mgrhostid);
 
 	if ($this->getRequest()->isPost()) {
-    		if ($this->getRequest()->getParam('changehostid') ||  $this->getRequest()->getParam('register_ce') || $this->getRequest()->getParam('register') || $this->getRequest()->getParam('unregister')) {
-			if ($this->getRequest()->getParam('register_ce') && $formce->isValid($this->getRequest()->getPost())) { // We use the CE form
-				$keys = array('first_name', 'last_name', 'email', 'company_name', 'address', 'postal_code', 'city', 'country', 'accept_newsletters', 'accept_releases', 'accept_send_statistics');
-				foreach ($keys as $d) {
-                                        $mgrce->setData($d, $this->getRequest()->getParam($d));
-                                }
-                                $message = $mgrce->save();
-                                if (preg_match('/^OK/', $message)) {
-                                        $message = 'OK System has been registered';
-                                        $view->registered = 2;
-                                } else {
-					if (preg_match('/UNREGISTER/', $message))
-	                                        $message = 'NOK System could not be registered, please UNREGISTER IT first';
-					else
-						$message = 'NOK System could not be registered, please check parameters and connectivity';
-                                }
-			} else if ($this->getRequest()->getParam('register') && $form->isValid($this->getRequest()->getPost())) {
-				foreach (array('clientid', 'resellerid', 'resellerpwd') as $d) {
-                           		$mgr->setData($d, $this->getRequest()->getParam($d));
-                        	}
-                        	$message = $mgr->save();
-                        	if (preg_match('/^OK/', $message)) {
-                           		$message = 'OK System has been registered';
-		                        $view->registered = 1;
-                	        } else {
-                        		$message = 'NOK System could not be registered, please check parameters and connectivity';
-	                        }
-			} else if ($this->getRequest()->getParam('unregister') && $formun->isValid($this->getRequest()->getPost())) {
-				$unmgr->setData('rsp', $this->getRequest()->getParam('rsp'));
-				$message = $unmgr->save();
-				if (preg_match('/^OK/', $message)) {
-                                        $message = 'OK System has been unregistered';
-                                        $view->registered = 0;
-                                } else {
-                                        $message = 'NOK System could not be unregistered, please check parameters and connectivity';
-                                }
-			} else if ($this->getRequest()->getParam('changehostid') && $formhostid->isValid($this->getRequest()->getPost())) {
+    		if ($this->getRequest()->getParam('changehostid') && $formhostid->isValid($this->getRequest()->getPost())) {
 				$mgrhostid->setData('host_id', $this->getRequest()->getParam('host_id'));
                                 $message = $mgrhostid->save();
                                 if (preg_match('/^OK/', $message)) {

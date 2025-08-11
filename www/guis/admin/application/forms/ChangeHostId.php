@@ -12,10 +12,8 @@ class Default_Form_ChangeHostId extends ZendX_JQuery_Form
 {
 	
 	protected $_changeHostIdmgr;
-	public $_registered;	
-	public function __construct($mgr, $registered) {
+	public function __construct($mgr) {
 		$this->_changeHostIdmgr = $mgr;
-		$this->_registered = $registered;
 		parent::__construct();
 	}
 
@@ -30,11 +28,6 @@ class Default_Form_ChangeHostId extends ZendX_JQuery_Form
 		
 		$config = new SpamTagger_Config();
 		$hid = $config->getOption('HOSTID');
-
-		// Disable field if EE registered
-		$attribs = array();
-		if ($config->getOption('REGISTERED') == "1")
-			$attribs = array('disabled' => 'disabled');
 
 		$host_id = new  Zend_Form_Element_Text('host_id', array(
             		'label' => $t->_('Host ID'). " :",

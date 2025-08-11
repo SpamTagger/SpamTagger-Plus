@@ -24,6 +24,10 @@
 #   Usage:
 #		send_anon.sh
 
+# TODO: teporarily disable for spamtagger transition
+echo "Feature not currently supported by SpamTagger"
+exit
+
 CONFFILE=/etc/spamtagger.conf
 
 HOSTID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
