@@ -57,7 +57,7 @@ sub get_from_db
 		$stage = $1;
 		$table = "mta_config WHERE stage = '$1'";
 	}
-	my $db = DB::connect('slave', 'mc_config');
+	my $db = DB::connect('slave', 'st_config');
 
 	my %row = $db->getHashRow("SELECT $column FROM $table");
 	return ( expand_host_string($row{$column}, ('dumper'=>"exemption_test_script/$column")) );

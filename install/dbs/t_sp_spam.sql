@@ -1,4 +1,4 @@
-use mc_spool;
+use st_spool;
 DROP TABLE IF EXISTS spam;
 CREATE TABLE spam (
 	date_in			date NOT NULL,

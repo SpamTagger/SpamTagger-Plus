@@ -45,7 +45,7 @@ sub config
 		'cmd'		=> '/usr/bin/fail2ban-server',
 		'pidfile'	=> '/var/run/fail2ban/fail2ban.pid',
 		'socket'	=> '/var/run/fail2ban/fail2ban.sock',
-		'logfile'	=> $class->{'conf'}->getOption('VARDIR').'/log/fail2ban/mc-fail2ban.log',
+		'logfile'	=> $class->{'conf'}->getOption('VARDIR').'/log/fail2ban/st-fail2ban.log',
 		'user'		=> 'root',
 		'group'		=> 'root',
 		'daemonize'	=> 'yes',

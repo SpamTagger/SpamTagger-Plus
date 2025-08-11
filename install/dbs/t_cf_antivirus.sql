@@ -1,4 +1,4 @@
-USE mc_config;
+USE st_config;
 DROP TABLE IF EXISTS antivirus;
 
 CREATE TABLE antivirus (

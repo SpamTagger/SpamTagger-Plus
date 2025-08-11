@@ -42,12 +42,12 @@ my $system_mibs_file = '/usr/share/snmp/mibs/MAILCLEANER-MIB.txt';
 if ( ! -d '/usr/share/snmp/mibs') {
  mkpath('/usr/share/snmp/mibs');
 }
-my $mc_mib_file = $config{'SRCDIR'}.'/www/guis/admin/public/downloads/MAILCLEANER-MIB.txt';
+my $st_mib_file = $config{'SRCDIR'}.'/www/guis/admin/public/downloads/MAILCLEANER-MIB.txt';
 
 my $lasterror = "";
 
 my $dbh;
-$dbh = DBI->connect("DBI:mysql:database=mc_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
+$dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
 			"mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
 		or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
@@ -64,7 +64,7 @@ $dbh->disconnect();
 if (-f $system_mibs_file) {
 	unlink($system_mibs_file);
 }
-symlink($mc_mib_file,$system_mibs_file);
+symlink($st_mib_file,$system_mibs_file);
 print "DUMPSUCCESSFUL";
 
 #############################

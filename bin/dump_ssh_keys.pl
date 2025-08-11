@@ -50,7 +50,7 @@ chown($uid, $gid, $authorized_file);
 sub do_known_hosts {
 
 	my $dbh;
-	$dbh = DBI->connect("DBI:mysql:database=mc_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_master/mysqld.sock",
+	$dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_master/mysqld.sock",
 			"mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
         	        or return;
 
@@ -68,7 +68,7 @@ sub do_known_hosts {
 
 sub do_authorized_keys {
 	my $dbh;
-        $dbh = DBI->connect("DBI:mysql:database=mc_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
+        $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
                         "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
                         or return;
 

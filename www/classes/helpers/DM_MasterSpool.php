@@ -23,7 +23,7 @@ class DM_MasterSpool extends DataManager {
         
         $socket = $this->getConfig('VARDIR')."/run/mysql_master/mysqld.sock";
         $this->setOption('SOCKET', $socket);
-        $this->setOption('DATABASE', 'mc_spool');
+        $this->setOption('DATABASE', 'st_spool');
     }
 
     public static function getInstance() {

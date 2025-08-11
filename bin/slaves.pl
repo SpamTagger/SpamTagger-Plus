@@ -6,7 +6,7 @@ use Term::ReadKey;
 
 my %config = readConfig("/etc/spamtagger.conf");
 
-my $slave_dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
+my $slave_dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
                                         "mailcleaner","$config{'MYMAILCLEANERPWD'}", {RaiseError => 0, PrintError => 0} );
 if (!$slave_dbh) {
 	printf ("ERROR: no slave database found on this system.\n");

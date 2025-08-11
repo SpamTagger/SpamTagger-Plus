@@ -139,7 +139,7 @@ sub loadPrefs {
   my $this = shift;
 
   require DB;
-  my $db = DB::connect('slave', 'mc_config', 0);
+  my $db = DB::connect('slave', 'st_config', 0);
 
   my $to = $this->{address};
   my $to_domain = $this->{domain};
@@ -248,7 +248,7 @@ sub loadedIsWWListed {
   my $sender = shift;
 
   require DB;
-  my $db = DB::connect('slave', 'mc_config', 0);
+  my $db = DB::connect('slave', 'st_config', 0);
 
   my $to = $this->{address};
   $sender =~ s/[^a-zA-Z0-9.\-_=+@]//g;

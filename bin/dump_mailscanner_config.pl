@@ -36,7 +36,7 @@ require DB;
 require MCDnsLists;
 require GetDNS;
 
-my $db = DB::connect('slave', 'mc_config');
+my $db = DB::connect('slave', 'st_config');
 my $conf = ReadConfig::getInstance();
 
 my $DEBUG = 1;
@@ -349,8 +349,8 @@ sub dump_sa_file
   return 0 unless $template->dump();
   
   $template = ConfigTemplate::create(
-                          'share/spamassassin/92_mc_dnsbl_disabled.cf_template',
-                          'share/spamassassin/92_mc_dnsbl_disabled.cf');
+                          'share/spamassassin/92_st_dnsbl_disabled.cf_template',
+                          'share/spamassassin/92_st_dnsbl_disabled.cf');
   my @givenlist = split ' ', $sa_conf{'__SA_RBLS__'};
   if (!$sa_conf{'__SKIP_RBLS__'}) {
       foreach my $list (@givenlist) {
@@ -368,14 +368,14 @@ sub dump_sa_file
 
 
   $template = ConfigTemplate::create(
-                          'share/spamassassin/70_mc_spf_scores.cf_template',
-                          'share/spamassassin/70_mc_spf_scores.cf');
+                          'share/spamassassin/70_st_spf_scores.cf_template',
+                          'share/spamassassin/70_st_spf_scores.cf');
   $template->setCondition('__USE_SPF__', $sa_conf{'__USE_SPF__'});
   return 0 unless $template->dump();
 
   $template = ConfigTemplate::create(
-                          'share/spamassassin/70_mc_dkim_scores.cf_template',
-                          'share/spamassassin/70_mc_dkim_scores.cf');
+                          'share/spamassassin/70_st_dkim_scores.cf_template',
+                          'share/spamassassin/70_st_dkim_scores.cf');
   $template->setCondition('__USE_DKIM__', $sa_conf{'__USE_DKIM__'});
 
   return $template->dump();

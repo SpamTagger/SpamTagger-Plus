@@ -42,7 +42,7 @@ our $VAR = "/var/spamtagger";
 	'freshclam.log' 
 		starts with  '[%Y-%m-%d.* Starting ClamAV update...',
 		ends with  '[%Y-%m-%d.* Done.',
-	'mc_counts-cleaner.log'
+	'st_counts-cleaner.log'
 		starts with '%a %b %d .* %Z %Y: Sleeping'
 		ends with '%a %b %d .* %Z %Y: Cleaning terminated'
 	'summaries.log'
@@ -53,13 +53,13 @@ our $VAR = "/var/spamtagger";
 =cut
 my $cluid = getpwnam('clamav');
 my $clgid = getgrnam('clamav');
-my $mcuid = getpwnam('mailcleaner');
-my $mcgid = getgrnam('mailcleaner');
+my $stuid = getpwnam('mailcleaner');
+my $stgid = getgrnam('mailcleaner');
 my $myuid = getpwnam('mysql');
 our $services = {
 	'apache' => {
-		'uid' => $mcuid,
-		'gid' => $mcgid,
+		'uid' => $stuid,
+		'gid' => $stgid,
 		'start' => '/usr/spamtagger/etc/init.d/apache start',
 		'stop' => '/usr/spamtagger/etc/init.d/apache stop',
 		'files' => {
@@ -69,7 +69,7 @@ our $services = {
 			'error.log' => [ '%a %d %b' ],
 			'error_configurator.log' => [ '%a %d %b' ],
 			'error_soap.log' => [ '%a %d %b' ],
-			'mc_auth.log' => [ '%d/%b/%Y' ],
+			'st_auth.log' => [ '%d/%b/%Y' ],
 		},
 	},
 	'clamav' => {
@@ -83,8 +83,8 @@ our $services = {
 		},
 	},
 	'exim_stage1' => {
-		'uid' => $mcuid,
-		'gid' => $mcgid,
+		'uid' => $stuid,
+		'gid' => $stgid,
 		'start' => '/usr/spamtagger/etc/init.d/exim_stage1 start',
 		'stop' => '/usr/spamtagger/etc/init.d/exim_stage1 stop',
 		'files' => {
@@ -94,8 +94,8 @@ our $services = {
 		},
 	},
 	'exim_stage2' => {
-		'uid' => $mcuid,
-		'gid' => $mcgid,
+		'uid' => $stuid,
+		'gid' => $stgid,
 		'start' => '/usr/spamtagger/etc/init.d/exim_stage2 start',
 		'stop' => '/usr/spamtagger/etc/init.d/exim_stage2 stop',
 		'files' => {
@@ -104,8 +104,8 @@ our $services = {
 			'rejectlog' => [ /usr/spamtagger},
 	},
 	'exim_stage4' => {
-		'uid' => $mcuid,
-		'gid' => $mcgid,
+		'uid' => $stuid,
+		'gid' => $stgid,
 		'start' => '/usr/spamtagger/etc/init.d/exim_stage4 start',
 		'stop' => '/usr/spamtagger/etc/init.d/exim_stage4 stop',
 		'files' => {
@@ -120,11 +120,11 @@ our $services = {
 		'start' => '/usr/spamtagger/etc/init.d/fail2ban start',
 		'stop' => '/usr/spamtagger/etc/init.d/fail2ban stop',
 		'files' => {
-			'mc-fail2ban.log' => [ '%Y-%m-%d' ],
+			'st-fail2ban.log' => [ '%Y-%m-%d' ],
 		},
 	},/usr/spamtagger=> {
-		'uid' => $mcuid,
-		'gid' => $mcgid,
+		'uid' => $stuid,
+		'gid' => $stgid,
 		'files' => {
 			'downloadDatas.log' => [ '%Y/%m/%d' ],
 			'PrefTDaemon.log' => [ '%Y-%m-%d' ],
@@ -136,8 +136,8 @@ our $services = {
 		},
 	},
 	'mailscanner' => {
-		'uid' => $mcuid,
-		'gid' => $mcgid,
+		'uid' => $stuid,
+		'gid' => $stgid,
 		'start' => '/usr/spamtagger/etc/init.d/mailscanner start',
 		'stop' => '/usr/spamtagger/etc/init.d/mailscanner stop',
 		'files' => {
@@ -149,7 +149,7 @@ our $services = {
 	},
 	'mysql_master' => {
 		'uid' => $myuid,
-		'gid' => $mcuid,
+		'gid' => $stuid,
 		'start' => '/usr/spamtagger/etc/init.d/mysql_master start',
 		'stop' => '/usr/spamtagger/etc/init.d/mysql_master stop',
 		'files' => {
@@ -158,7 +158,7 @@ our $services = {
 	},
 	'mysql_slave' => {
 		'uid' => $myuid,
-		'gid' => $mcuid,
+		'gid' => $stuid,
 		'start' => '/usr/spamtagger/etc/init.d/mysql_slave start',
 		'stop' => '/usr/spamtagger/etc/init.d/mysql_slave stop',
 		'files' => {

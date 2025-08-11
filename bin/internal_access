@@ -44,7 +44,7 @@ function get_last_internal_key {
     exit 1
   fi
   key=$(
-    cat <<EOF | ${SRCDIR}/bin/mc_mysql -s mc_config | grep -e "BEGIN RSA PRIVATE KEY" -e "ssh-rsa"
+    cat <<EOF | ${SRCDIR}/bin/st_mysql -s st_config | grep -e "BEGIN RSA PRIVATE KEY" -e "ssh-rsa"
 SELECT ${kind}
 FROM internal_access
 ORDER BY id DESC
@@ -86,7 +86,7 @@ function install {
 function propagate {
   PRIVATE_KEY=$(cat "${PRIVATE_KEY_FILE}")
   PUBLIC_KEY=$(cat "${PRIVATE_KEY_FILE}.pub")
-  cat <<EOF | ${SRCDIR}/bin/mc_mysql -m mc_config
+  cat <<EOF | ${SRCDIR}/bin/st_mysql -m st_config
 INSERT INTO internal_access
 (private_key, public_key)
 VALUES

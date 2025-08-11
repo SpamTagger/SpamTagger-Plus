@@ -26,10 +26,10 @@ if ('updater.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 <h2 class="text-center">Step: <?php echo $validStep['title'] ?></h2>
 <p>The product should have been updated now:</p>
 <?php
-  if (file_exists("/var/spamtagger/run/configurator/updater4mc-ran")) {
+  if (file_exists("/var/spamtagger/run/configurator/updater4st-ran")) {
      echo "<span class='text-success'>MailCleaner has been updated correctly ! You can now click on the \"next\" arrow.</span>";
      touch('/var/spamtagger/run/configurator/updater');
-  } elseif(file_exists("/var/spamtagger/run/configurator/updater4mc-running")) {
+  } elseif(file_exists("/var/spamtagger/run/configurator/updater4st-running")) {
     echo "<span class='text-danger'>Your MailCleaner is being updated, please be patient...</span>";
   } else {
     echo "<span class='text-danger'>MailCleaner has not been updated yet, please verify network access and connection, then restart MailCleaner.</span>";

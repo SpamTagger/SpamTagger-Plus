@@ -52,7 +52,7 @@ if ($what =~ /^\@([a-zA-Z0-9\.\_\-]+)$/) {
   $filepath .= "_global/";
 }
 
-my $slave_db = DB::connect('slave', 'mc_config');
+my $slave_db = DB::connect('slave', 'st_config');
 
 dumpWWFiles($to, $filepath);
 

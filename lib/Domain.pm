@@ -98,7 +98,7 @@ sub loadPrefs {
   
   ## try to load from db
   require DB;
-  my $db = DB::connect('slave', 'mc_config', 0);
+  my $db = DB::connect('slave', 'st_config', 0);
   
   my %res;
   if ($db && $db->ping()) {
@@ -145,7 +145,7 @@ sub dumpPrefs {
   require DB;
   
   if (!$slave_db) {
-     $slave_db = DB::connect('slave', 'mc_config');
+     $slave_db = DB::connect('slave', 'st_config');
   }
   my $query = "SELECT d.id, p.viruswall, p.spamwall, p.virus_subject, p.content_subject, p.spam_tag,
                        p.language, p.report_template, p.support_email, p.delivery_type, 
@@ -169,7 +169,7 @@ sub dumpPrefsFromRow {
   my $prefdir = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$this->{name};
   my $preffile = $prefdir."/prefs.list";
 
-  my $mcuid = getpwnam('mailcleaner');
+  my $stuid = getpwnam('mailcleaner');
 
   my @prefs_to_dump = ('viruswall', 'report_template', 'virus_subject', 'enable_whitelists', 'language',
           'warnhit_template', 'support_email', 'spamwall', 'enable_warnlists', 'content_subject',
@@ -197,7 +197,7 @@ sub dumpPrefsFromRow {
     }
   }    
   close PREFFILE;
-  chown $mcuid, $mcuid, $preffile;
+  chown $stuid, $stuid, $preffile;
 
   ## dump ldap callout file
   if ($this->getPref('adcheck') eq 'true') {
@@ -242,13 +242,13 @@ sub dumpLocalAddresses {
   my $this = shift;
   my $slave_db = shift;
   
-  my $mcuid = getpwnam('mailcleaner');
+  my $stuid = getpwnam('mailcleaner');
   require DB;
 
   my $conf = ReadConfig::getInstance();
   
   if (!$slave_db) {
-     $slave_db = DB::connect('slave', 'mc_config');
+     $slave_db = DB::connect('slave', 'st_config');
   }
   my $query = "SELECT e.address
                FROM email e WHERE e.address LIKE '%@".$this->{name}."'";
@@ -267,6 +267,6 @@ sub dumpLocalAddresses {
       }
   }
   close OUTFILE; 
-  chown $mcuid, $file;
+  chown $stuid, $file;
 }
 1;

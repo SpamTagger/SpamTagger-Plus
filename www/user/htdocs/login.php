@@ -57,11 +57,11 @@ $file_conf = DataManager :: getFileConfig($sysconf_ :: $CONFIGFILE_);
 
 $is_enterprise = $file_conf['REGISTERED'] == '1';
 if ($is_enterprise) {
-        $mclink="https://www.mailcleaner.net";
-        $mclinklabel="www.mailcleaner.net";
+        $stlink="https://www.mailcleaner.net";
+        $stlinklabel="www.mailcleaner.net";
 } else {
-        $mclink="https://www.mailcleaner.org";
-        $mclinklabel="www.mailcleaner.org";
+        $stlink="https://www.mailcleaner.org";
+        $stlinklabel="www.mailcleaner.org";
 }
 
 $template_->setCondition('DOMAINCHOOSER', $login_->hasDomainChooser());
@@ -76,8 +76,8 @@ $replace = array(
       "__DOMAIN_CHOOSER__" => $login_->printDomainChooser(),
       "__LANGUAGE_CHOOSER__" => $login_->printLanguageChooser($lang_->getLanguage()),
       "__SUBMIT_BUTTON__" => "<input type=\"submit\" name=\"".$lang_->print_txt('SUBMIT')."\" id=\"submitbutton\" value=\"".$lang_->print_txt('SUBMIT')."\" />",
-	    "__MCLINK__" => $mclink,
-	    "__MCLINKLABEL__" => $mclinklabel,
+	    "__MCLINK__" => $stlink,
+	    "__MCLINKLABEL__" => $stlinklabel,
 	    "__USERNAME__" => $username
        );
 

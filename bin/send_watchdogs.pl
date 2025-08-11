@@ -72,7 +72,7 @@ my $template = MailTemplate::create('reports', 'watchdog', $temp_id, \$email, $l
 
 ## get slaves
 my %slaves;
-my $conf_db = DB::connect('master', 'mc_config', 0);
+my $conf_db = DB::connect('master', 'st_config', 0);
 my $sth = $conf_db->prepare("SELECT id, hostname FROM slave");
 $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $conf_db->errstr);
 while (my $ref = $sth->fetchrow_hashref()) {

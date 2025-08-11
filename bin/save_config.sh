@@ -34,14 +34,14 @@ MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f
 DATE=$(date '+%d-%m-%Y')
 SAVECONFIG=/tmp/spamtagger_config_$DATE.sql
 
-/opt/mysql5/bin/mysqldump -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -ntce mc_config >$SAVECONFIG
+/opt/mysql5/bin/mysqldump -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -ntce st_config >$SAVECONFIG
 
 perl -pi -e 's/INSERT/REPLACE/g' $SAVECONFIG
 
 echo "**************************************"
 echo "config saved in: $SAVECONFIG"
 echo "--------------------------------------"
-echo "to reimport datas in mailcleaner config: mc_mysql -m < backupfile"
+echo "to reimport datas in mailcleaner config: st_mysql -m < backupfile"
 echo "**************************************"
 
 exit 0

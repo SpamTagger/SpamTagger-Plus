@@ -134,7 +134,7 @@ function loadwaiting() {
 }
 
 function getInformationalMessage() {
-        mcinformational = $.ajax({
+        stinformational = $.ajax({
                   type: "GET",
                   url: baseurl+'/status/informational',
                   dataType: "html",
@@ -152,7 +152,7 @@ function getInformationalMessage() {
 }
 
 function updateInformationalMessages() {
-	mcinformational = $.ajax({
+	stinformational = $.ajax({
 		  type: "GET",
 		  url: baseurl+'/status/informational',
 		  dataType: "html",

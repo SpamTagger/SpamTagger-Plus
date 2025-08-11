@@ -1,4 +1,4 @@
-USE mc_config;
+USE st_config;
 DROP TABLE IF EXISTS external_access;
 
 CREATE TABLE external_access (

@@ -120,7 +120,7 @@ sub loadPrefs {
 sub dumpPrefs {
   my $this = shift;
   
-  my $slave_db = DB::connect('slave', 'mc_config');
+  my $slave_db = DB::connect('slave', 'st_config');
   my %prefs = $slave_db->getHashRow("SELECT * FROM antispam");
   my %conf = $slave_db->getHashRow("SELECT use_ssl, servername FROM httpd_config");
   my %sysconf = $slave_db->getHashRow("SELECT summary_from, analyse_to FROM system_conf");

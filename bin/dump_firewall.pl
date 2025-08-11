@@ -48,7 +48,7 @@ my %services = (
 	'mail' => ['25', 'TCP'],
 	'soap' => ['5132', 'TCP']
 );
-our %fail2ban_sets = ('mc-exim' => 'mail', 'mc-ssh' => 'ssh', 'mc-webauth' => 'web');
+our %fail2ban_sets = ('st-exim' => 'mail', 'st-ssh' => 'ssh', 'st-webauth' => 'web');
 my $iptables = "/sbin/iptables";
 my $ip6tables = "/sbin/ip6tables";
 my $ipset = "/sbin/ipset";
@@ -61,7 +61,7 @@ unlink($stop_script);
 
 my $dbh;
 $dbh = DBI->connect(
-	"DBI:mysql:database=mc_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
+	"DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
 	"mailcleaner",
 	"$config{MYMAILCLEANERPWD}",
 	{RaiseError => 0, PrintError => 0}

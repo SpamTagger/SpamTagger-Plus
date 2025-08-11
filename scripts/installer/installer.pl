@@ -47,9 +47,9 @@ while (doMenu()) {
 
 #$dlg->clear();
 
-#my $mcinstall = module::MCInstaller::get();
-#if (! $mcinstall->isMCInstalled() ) {
-#  $mcinstall->do();
+#my $stinstall = module::MCInstaller::get();
+#if (! $stinstall->isMCInstalled() ) {
+#  $stinstall->do();
 #}
 
 system("$path/../../install/MC_rotate_host_keys.sh") if (defined($path));
@@ -96,8 +96,8 @@ sub doMenu {
 
 #  if ($res eq 'MailCleaner (re)installation') {
 #     $dlg->clear();
-#     my $mcinstall = module::MCInstaller::get();
-#     $mcinstall->do();
+#     my $stinstall = module::MCInstaller::get();
+#     $stinstall->do();
 #     $currentstep = 5;
 #   }
 

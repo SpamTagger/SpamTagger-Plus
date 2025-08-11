@@ -28,9 +28,9 @@ class MCSoap_Quarantine
       return array('status' => 0, 'error' => 'BADRECIPIENT');
     }
     require_once('MailCleaner/Config.php');
-    $mcconfig = MailCleaner_Config::getInstance();
+    $stconfig = MailCleaner_Config::getInstance();
     
-    $file = $mcconfig->getOption('VARDIR').'/spam/'.$matches[2].'/'.$params['recipient'].'/'.$id;
+    $file = $stconfig->getOption('VARDIR').'/spam/'.$matches[2].'/'.$params['recipient'].'/'.$id;
 
     $ret['file'] = $file;
     $ret['status'] = 1;

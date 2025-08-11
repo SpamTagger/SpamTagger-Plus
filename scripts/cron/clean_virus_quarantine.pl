@@ -9,7 +9,7 @@ my $days_to_keep = shift;
 
 if (! $days_to_keep) {
 	if (! $days_to_keep) {
-        my $config_dbh = DBI->connect("DBI:mysql:database=mc_config;host=localhost;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
+        my $config_dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
                                 'mailcleaner', $config{'MYMAILCLEANERPWD'}, {'RaiseError' => 0, PrintError => 0 });
         if ($config_dbh) {
                 my $config_sth = $config_dbh->prepare("SELECT days_to_keep_virus FROM system_conf");

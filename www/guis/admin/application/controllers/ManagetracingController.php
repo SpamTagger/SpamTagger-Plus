@@ -294,8 +294,8 @@ class ManagetracingController extends Zend_Controller_Action
                     }
                   }
                 }
-                $mcconfig = MailCleaner_Config::getInstance();
-                $tmpdir = $mcconfig->getOption('VARDIR').'/run/spamtagger/log_search/';
+                $stconfig = MailCleaner_Config::getInstance();
+                $tmpdir = $stconfig->getOption('VARDIR').'/run/spamtagger/log_search/';
                 $tmpfile = tempnam($tmpdir, 'download_');
                 if (!$handle = fopen($tmpfile, 'w')) {
                     return;

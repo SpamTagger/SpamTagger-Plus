@@ -44,7 +44,7 @@ sub connect {
   	print "BADCONNECTIONTYPE\n";
     return "";
   }
-  my $dbase = 'mc_config';
+  my $dbase = 'st_config';
   if ($db) {
     $dbase = $db;
   }

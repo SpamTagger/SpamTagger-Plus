@@ -6,7 +6,7 @@ use Term::ReadKey;
 
 my %config = readConfig("/etc/spamtagger.conf");
 
-my $master_dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=$config{'VARDIR'}/run/mysql_master/mysqld.sock",
+my $master_dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_master/mysqld.sock",
                                         "mailcleaner","$config{'MYMAILCLEANERPWD'}", {RaiseError => 0, PrintError => 0} );
 if (!$master_dbh) {
 	printf ("ERROR: no master database found on this system. This script will only run on a Mailcleaner master host.\n");

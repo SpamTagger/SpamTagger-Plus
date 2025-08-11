@@ -97,13 +97,13 @@ $file_conf = DataManager :: getFileConfig($sysconf_ :: $CONFIGFILE_);
 $is_enterprise = $file_conf['REGISTERED'] == '1';
 $content='';
 $user_pref_lang=$lang_->getLanguage();
-$default_filename='mc-info-box-user-en.php';
-$filename='mc-info-box-user-'.$user_pref_lang.'.php';
+$default_filename='st-info-box-user-en.php';
+$filename='st-info-box-user-'.$user_pref_lang.'.php';
 
 if ($is_enterprise) {
         // MailCleaner Staff CONTENT
-        $mcmanager='https://www.mailcleaner.net/infobox/';
-        $url_to_get=$mcmanager.$filename;
+        $stmanager='https://www.mailcleaner.net/infobox/';
+        $url_to_get=$stmanager.$filename;
 
         $curl = curl_init();
 	curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
@@ -116,9 +116,9 @@ if ($is_enterprise) {
         $result = curl_exec($curl);
         if ($result === false) {
                 curl_close($curl);
-                // The mc-info-box-user-<lang> file doesn't exists
+                // The st-info-box-user-<lang> file doesn't exists
                 // We try to get the default file (in en)
-                $url_to_get=$mcmanager.$default_filename;
+                $url_to_get=$stmanager.$default_filename;
                 $curl = curl_init();
 		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
 		curl_setopt($curl, CURLOPT_TIMEOUT, 3); //timeout in seconds

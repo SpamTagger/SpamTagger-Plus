@@ -13,7 +13,7 @@ my $info = 1;
 my $warning = 1;
 my $error = 1;
 
-my $db = DB::connect('master', 'mc_config');
+my $db = DB::connect('master', 'st_config');
 my $conf = ReadConfig::getInstance();
 
 my $importfile = shift;

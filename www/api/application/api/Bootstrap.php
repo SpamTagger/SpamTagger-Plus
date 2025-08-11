@@ -43,14 +43,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	protected function _initDatabases()
 	{
 		require_once('MailCleaner/Config.php');
-		$mcconfig = MailCleaner_Config::getInstance();
+		$stconfig = MailCleaner_Config::getInstance();
 			
 		$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
-                              'unix_socket' => $mcconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
+                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
                               'username'    => 'mailcleaner',
-                              'password'    => $mcconfig->getOption('MYMAILCLEANERPWD'),
-                              'dbname'      => 'mc_config'
+                              'password'    => $stconfig->getOption('MYMAILCLEANERPWD'),
+                              'dbname'      => 'st_config'
                               ));
                                
                               Zend_Registry::set('writedb', $writeConfigDb);

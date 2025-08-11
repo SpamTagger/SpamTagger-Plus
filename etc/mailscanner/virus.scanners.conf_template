@@ -32,7 +32,6 @@ f-secure	/opt/MailScanner/lib/f-secure-wrapper	/opt/f-secure/fsav
 generic		/opt/MailScanner/lib/generic-wrapper	/
 inoculan	/opt/MailScanner/lib/inoculan-wrapper	/usr/local/inoculan
 inoculate	/opt/MailScanner/lib/inoculate-wrapper	/usr/local/av
-kaspersky	/opt/MailScanner/lib/kaspersky-mc-wrapper	/opt/kaspersky
 mcafee		/opt/MailScanner/lib/mcafee-wrapper	/usr/local/uvscan
 mcafee6		/opt/MailScanner/lib/mcafee6-wrapper	/usr/local/uvscan
 # Now updated to handle nod32 2.01 and upwards

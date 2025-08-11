@@ -15,7 +15,7 @@ require_once("connector/AuthManager.php");
 /**
  * constant definitions
  */
-define(AUTHLOGFILE, "mc_auth.log");
+define(AUTHLOGFILE, "st_auth.log");
 
 /**
  * this class take care of setting the administration authentication connector

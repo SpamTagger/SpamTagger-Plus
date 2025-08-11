@@ -118,7 +118,7 @@ sub dump_file
 		print TARGET $line;
 	}
 
-	if (($file eq "clamd.conf") && ( -e "/var/spamtagger/spool/spamtagger/mc-experimental-macros")) {
+	if (($file eq "clamd.conf") && ( -e "/var/spamtagger/spool/spamtagger/st-experimental-macros")) {
             print TARGET "OLE2BlockMacros yes";
         }
 

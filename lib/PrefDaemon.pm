@@ -271,7 +271,7 @@ sub makeChild {
 sub connectDB {
    my $this = shift;
    
-   $this->{slaveDB} = DB::connect('slave', 'mc_config', 0);
+   $this->{slaveDB} = DB::connect('slave', 'st_config', 0);
    if ($this->{slaveDB}->ping()) {
   	   $this->logMessage("Connected to configuration database");
   	   return 1;

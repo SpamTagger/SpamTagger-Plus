@@ -2,7 +2,7 @@
 
 <?php 
 $user = Zend_Registry::get('user'); 
-$mcconfig = MailCleaner_Config::getInstance();
+$stconfig = MailCleaner_Config::getInstance();
 
 if ($user && $user->getUserType() == 'administrator') {
     if (!$this->is_registered) {
@@ -131,10 +131,10 @@ if ($user && $user->getUserType() == 'administrator') {
 $urltoget='https://www.mailcleaner.net/infobox/';
 
 if ($user && $user->getUserType() == 'administrator') {
-    if ($mcconfig->getOption('REGISTERED') == "1") {
-        $urltoget = $urltoget.'mc-info-box.php';
+    if ($stconfig->getOption('REGISTERED') == "1") {
+        $urltoget = $urltoget.'st-info-box.php';
     } else {
-        $urltoget = $urltoget.'mc-ce-info-box.php';
+        $urltoget = $urltoget.'st-ce-info-box.php';
     }
 	
     $curl = curl_init();

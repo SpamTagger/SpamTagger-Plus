@@ -177,7 +177,7 @@ sub process {
         # Policies
         my $whitelisted;
 	# if the flag file to activate whitelist also on msg_from is there
-	if ( -e '/var/spamtagger/spool/spamtagger/mc-wl-on-both-from') {
+	if ( -e '/var/spamtagger/spool/spamtagger/st-wl-on-both-from') {
 		$whitelisted = (
 	   	  $email->hasInWhiteWarnList( 'whitelist', $this->{env_sender} ) ||
 		  $email->hasInWhiteWarnList( 'whitelist', $this->{msg_from} )
@@ -187,7 +187,7 @@ sub process {
 		$whitelisted = $email->hasInWhiteWarnList( 'whitelist', $this->{env_sender} );
 	}
         my $warnlisted;
-	if ( -e '/var/spamtagger/spool/spamtagger/mc-wl-on-both-from') {
+	if ( -e '/var/spamtagger/spool/spamtagger/st-wl-on-both-from') {
 		$warnlisted = (
 		  $email->hasInWhiteWarnList( 'warnlist', $this->{env_sender} ) ||
 		  $email->hasInWhiteWarnList( 'warnlist', $this->{msg_from} )

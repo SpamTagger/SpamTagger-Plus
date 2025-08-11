@@ -58,7 +58,7 @@ class Default_Model_NTPSettings
 	
     public function save($sync = false)
     {
-    	$tmpfile = '/tmp/mc_ntp.tmp';
+    	$tmpfile = '/tmp/st_ntp.tmp';
     	
     	if (file_exists($this->_configfile)) {
     		$txt = '';

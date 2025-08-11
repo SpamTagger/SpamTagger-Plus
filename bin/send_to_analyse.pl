@@ -69,7 +69,7 @@ sub get_system_config {
 
 	my %default = (days_to_keep_spams => 30, sysadmin => 'support@localhost', summary_subject => 'Mailcleaner analysis request', summary_from => 'support@localhost', servername => 'localhost', analyse_to => 'analyse@localhost');
         
-        my $dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
+        my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
                                 "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
                                         or die "cannot connect to database | get_system_config() |";
         
@@ -95,7 +95,7 @@ sub get_domain_config {
   my $d = shift;
   my %default = (language => 'en', support_email => '');
 
-  my $dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
+  my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
                           "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
 			           or die "cannot connect to database | get_domain_config() |";
 

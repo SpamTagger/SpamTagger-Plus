@@ -23,7 +23,7 @@ class DM_SlaveConfig extends DataManager {
         
         $socket = $this->getConfig('VARDIR')."/run/mysql_slave/mysqld.sock";
         $this->setOption('SOCKET', $socket);
-        $this->setOption('DATABASE', 'mc_config');
+        $this->setOption('DATABASE', 'st_config');
     }
 
     public static function getInstance() {

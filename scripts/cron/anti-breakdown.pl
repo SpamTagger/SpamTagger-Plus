@@ -33,9 +33,9 @@ my $max_host_failed = 2;
 my $nb_tests = 3;
 my $is_dns_ok = 0;
 my $is_data_ok = 0;
-my $dns_ko_file		= '/var/tmp/mc_checks_dns.ko';
-my $data_ko_file	= '/var/tmp/mc_checks_data.ko';
-my $rbl_sql_file	= '/var/tmp/mc_checks_rbls.bak';
+my $dns_ko_file		= '/var/tmp/st_checks_dns.ko';
+my $data_ko_file	= '/var/tmp/sstchecks_data.ko';
+my $rbl_sql_file	= '/var/tmp/st_checks_rbls.bak';
 my @rbls_to_disable	= qw/MCIPRWL MCIPRBL SIPURIRBL MCURIBL MCERBL SIPINVALUEMENT SIPDEUXQUATREINVALUEMENT MCTRUSTEDSPF/;
 
 my %rbl_field = (
@@ -75,7 +75,7 @@ sub get_master_config
 {
         my %mconfig;
         my $dbh;
-        $dbh = DBI->connect("DBI:mysql:database=mc_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
+        $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
                         "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
                 or die("CANNOTCONNECTDB", $dbh->errstr);
 
@@ -87,9 +87,9 @@ sub get_master_config
         }
         my $ref = $sth->fetchrow_hashref() or return;
 
-        $mconfig{'__MYMASTERHOST__'} = $ref->{'hostname'};
-        $mconfig{'__MYMASTERPORT__'} = $ref->{'port'};
-        $mconfig{'__MYMASTERPWD__'} = $ref->{'password'};
+        $stonfig{'__MYMASTERHOST__'} = $ref->{'hostname'};
+        $stonfig{'__MYMASTERPORT__'} = $ref->{'port'};
+        $stonfig{'__MYMASTERPWD__'} = $ref->{'password'};
 
         $sth->finish();
         $dbh->disconnect();
@@ -185,7 +185,7 @@ sub remove_and_save_MC_RBLs {
 	my $reboot_service = 0;
 
 	my %master_conf = get_master_config();
-	my $master_dbh = DBI->connect("DBI:mysql:database=mc_config;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
+	my $master_dbh = DBI->connect("DBI:mysql:database=st_config;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
                            "mailcleaner", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0});
 	if ( ! defined($master_dbh) ) {
 		warn "CANNOTCONNECTMASTERDB\n", $master_dbh->errstr;
@@ -233,13 +233,13 @@ sub remove_and_save_MC_RBLs {
 
 # DNS service is ok, if the previous state was KO, we enable back the RBLs which were formely configured
 sub handle_dns_ok {
-	# reimport all saved rbls (/var/tmp/mc_checks_rbls.bak)
+	# reimport all saved rbls (/var/tmp/st_checks_rbls.bak)
 	if ( -e $rbl_sql_file ) {
 		my $sth;
 
 		# Database connexion
         	my %master_conf = get_master_config();
-	        my $master_dbh = DBI->connect("DBI:mysql:database=mc_config;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
+	        my $master_dbh = DBI->connect("DBI:mysql:database=st_config;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
                            "mailcleaner", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0});
 	        if ( ! defined($master_dbh) ) {
                 	warn "CANNOTCONNECTMASTERDB\n", $master_dbh->errstr;
@@ -271,7 +271,7 @@ sub handle_dns_ko {
 	# There is nothing to do if MailCleaner was already away
 	return if ( -e $dns_ko_file );
 
-	# Creating the DNS KO flag file : /var/tmp/mc_checks_dns.ko
+	# Creating the DNS KO flag file : /var/tmp/st_checks_dns.ko
 	touch($dns_ko_file);
 
 	# Removes and saves the RBLs hosted by MailCleaner then restarts associated services
@@ -281,7 +281,7 @@ sub handle_dns_ko {
 # MailCleaner servers used for updating scripts and data are offline
 # We set a flag which will prevent associated services to run
 sub handle_data_ko {
-	# Creating the Data KO flag file : /var/tmp/mc_checks_data.ko
+	# Creating the Data KO flag file : /var/tmp/st_checks_data.ko
 	touch($data_ko_file);
 }
 

@@ -25,11 +25,11 @@ if (preg_match('/(\.\.|[\/\{\}$\*\?\[\]])/', $fileparam, $illegal)) {
 }
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/../../guis/admin/application/library/SpamTagger/Config.php');
-$mcconfig = MailCleaner_Config::getInstance();
+$stconfig = MailCleaner_Config::getInstance();
 
 $file = preg_replace('/\-/', '/', $fileparam);
 
-$file = $mcconfig->getOption('VARDIR')."/log/".$file;
+$file = $stconfig->getOption('VARDIR')."/log/".$file;
 if (!file_exists($file)) {
     header("HTTP/1.0 404 Not Found");
     echo "File not found ($file)";

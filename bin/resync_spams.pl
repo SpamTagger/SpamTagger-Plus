@@ -41,10 +41,10 @@ if ($conf->getOption('ISMASTER') !~ /^[y|Y]$/) {
   exit 0;
 }
 
-my $mconfig = DB::connect('master', 'mc_config', 0);
+my $stonfig = DB::connect('master', 'st_config', 0);
 my $slavesrequest = "SELECT id,hostname,port,password FROM slave";
-my @slavesarray = $mconfig->getListOfHash($slavesrequest);
-$mconfig->disconnect();
+my @slavesarray = $stonfig->getListOfHash($slavesrequest);
+$stonfig->disconnect();
 
 my $synced = 0;
 foreach my $s_h (@slavesarray) {
@@ -54,7 +54,7 @@ foreach my $s_h (@slavesarray) {
   if ($pid) {
   my $sid = $s_h->{'id'};
   output("($sid) Syncing with: ".$s_h->{'hostname'}.":".$s_h->{'port'}."...");
-  my %conn = ('host' => $s_h->{'hostname'}, 'port' => $s_h->{'port'}, 'password' => $s_h->{'password'}, 'database' => 'mc_spool');
+  my %conn = ('host' => $s_h->{'hostname'}, 'port' => $s_h->{'port'}, 'password' => $s_h->{'password'}, 'database' => 'st_spool');
   my $slavedb = DB::connect('custom', \%conn, 0);
 
   ## get slave date
@@ -68,7 +68,7 @@ foreach my $s_h (@slavesarray) {
   }
 
   foreach my $l ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','misc', 'num') {
-    my $dumpcmd = "/opt/mysql5/bin/mysqldump --insert-ignore -t --skip-opt -h".$s_h->{'hostname'}." -P".$s_h->{'port'}." -umailcleaner -p".$s_h->{'password'}." mc_spool spam_$l -w \"in_master='0' and ( date_in < '$date' or ( date_in = '$date' and time_in < '$time') )\"";
+    my $dumpcmd = "/opt/mysql5/bin/mysqldump --insert-ignore -t --skip-opt -h".$s_h->{'hostname'}." -P".$s_h->{'port'}." -umailcleaner -p".$s_h->{'password'}." st_spool spam_$l -w \"in_master='0' and ( date_in < '$date' or ( date_in = '$date' and time_in < '$time') )\"";
     output("($sid) - exporting spam_$l ...");
     my $res = `$dumpcmd > $TMPDIR/spam_$l-$sid.sql`;
     if ( ! $res eq '' ) {
@@ -79,7 +79,7 @@ foreach my $s_h (@slavesarray) {
     #print "  slave $sid - done!\n";
 
     output("($sid) - reimporting spam_$l ...");
-    my $exportcmd = $conf->getOption('SRCDIR')."/bin/mc_mysql -m mc_spool < $TMPDIR/spam_$l-$sid.sql";
+    my $exportcmd = $conf->getOption('SRCDIR')."/bin/st_mysql -m st_spool < $TMPDIR/spam_$l-$sid.sql";
     $res = `$exportcmd`;
     if ( ! $res eq '' ) {
        print "Something went wrong while reimporting spams on table: spam_$l from host ".$s_h->{'hostname'}.":\n";

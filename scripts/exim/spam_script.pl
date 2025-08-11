@@ -143,7 +143,7 @@ $subject = clean($subject);
 
 ## connect to local slave configuration database as we need it a lot of time from now
 $config_dbh = DBI->connect(
-"DBI:mysql:database=mc_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
+"DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
 	"mailcleaner",
 	"$config{'MYMAILCLEANERPWD'}",
 	{ RaiseError => $DEBUG, PrintError => $DEBUG }
@@ -388,7 +388,7 @@ sub log_in_master {
 	my $password = shift;
 
 	my $master_dbh =
-	  DBI->connect( "DBI:mysql:database=mc_spool;host=$host;port=$port",
+	  DBI->connect( "DBI:mysql:database=st_spool;host=$host;port=$port",
 		"mailcleaner", "$password",
 		{ RaiseError => $DEBUG, PrintError => $DEBUG } )
 	  or return 0;
@@ -421,7 +421,7 @@ sub log_in_slave {
 	my $in_master = shift;
 
 	my $slave_dbh = DBI->connect(
-"DBI:mysql:database=mc_spool;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
+"DBI:mysql:database=st_spool;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
 		"mailcleaner",
 		"$config{'MYMAILCLEANERPWD'}",
 		{ RaiseError => $DEBUG, PrintError => $DEBUG }

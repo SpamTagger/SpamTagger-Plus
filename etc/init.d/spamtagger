@@ -95,8 +95,8 @@ case "$1" in
 
     FIRSTUPDATE_LOG="${VARDIR}/log/spamtagger/first-start.log"
     FIRSTUPDATE_FLAG_DIR="${VARDIR}/run/configurator"
-    FIRSTUPDATE_FLAG_RAN="${FIRSTUPDATE_FLAG_DIR}/updater4mc-ran"
-    FIRSTUPDATE_FLAG_RUNNING="${FIRSTUPDATE_FLAG_DIR}/updater4mc-running"
+    FIRSTUPDATE_FLAG_RAN="${FIRSTUPDATE_FLAG_DIR}/updater4st-ran"
+    FIRSTUPDATE_FLAG_RUNNING="${FIRSTUPDATE_FLAG_DIR}/updater4st-running"
 
     if [ ! -f "${FIRSTUPDATE_FLAG_RAN}" ]; then
         if [ ! -f "${FIRSTUPDATE_FLAG_RUNNING}" ]; then

@@ -71,7 +71,7 @@ if (defined $options{h}) {
 ##########################
 ## get http proxy settings:
 ##########################
-my $dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
+my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
                                          "mailcleaner","$config{'MYMAILCLEANERPWD'}", {RaiseError => 1, PrintError => 1} );
 my $http_proxy = "";
 if ($dbh) {

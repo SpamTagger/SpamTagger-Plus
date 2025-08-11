@@ -152,7 +152,7 @@ sub getPatchLevel {
         }
 
         if ($patch eq 'Unknown') {
-          my $dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=".$conf->getOption('VARDIR')."/run/mysql_slave/mysqld.sock",
+          my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=".$conf->getOption('VARDIR')."/run/mysql_slave/mysqld.sock",
                                          "mailcleaner",$conf->getOption('MYMAILCLEANERPWD'), {RaiseError => 0, PrintError => 1} );
 	  my $sth = $dbh->prepare("SELECT id FROM update_patch ORDER BY id DESC LIMIT 1");
 	  if ($sth->execute()) {

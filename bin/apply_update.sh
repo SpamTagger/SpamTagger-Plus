@@ -50,7 +50,7 @@ fi
 
 DESC=$(grep "# DESCRIPTION: " $PATCHFILE | cut -d':' -f2)
 
-EXISTS=$(echo "SELECT id FROM update_patch WHERE id='$PATCHID';" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock mc_config)
+EXISTS=$(echo "SELECT id FROM update_patch WHERE id='$PATCHID';" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config)
 if [ ! "$EXISTS" = "" ]; then
   echo "ERROR: patch $PATCHID already applied"
   exit 1
@@ -65,7 +65,7 @@ RES=$($PATCHFILE)
 echo "res is: $RES"
 if [ "$RES" = "OK" ]; then
   echo "["$(date "+%Y-%m-%d %H:%M:%S")"] [$PATCHID] done with update, status: $RES" >>$LOGFILE
-  echo "INSERT INTO update_patch VALUES('$PATCHID', NOW(), NOW(), '$RES', '$DESC');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock mc_config
+  echo "INSERT INTO update_patch VALUES('$PATCHID', NOW(), NOW(), '$RES', '$DESC');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config
 else
   echo "["$(date "+%Y-%m-%d %H:%M:%S")"] [$PATCHID] aborted, will retry later, reason is: $RES" >>$LOGFILE
 fi

@@ -21,7 +21,7 @@
 #
 #   This script prepare MailCleaner structure and datas for a new releases or tests
 #
-#   Usage: prepare_mc_release -i 2017041501 -d '2017-10-04' -t '12:00:00' -r '2017.04 migrated to Jessie' -m true resellerID resellerPwd ClientID dbPassword
+#   Usage: prepare_st_release -i 2017041501 -d '2017-10-04' -t '12:00:00' -r '2017.04 migrated to Jessie' -m true resellerID resellerPwd ClientID dbPassword
 #
 #   Options:
 #   -h, Help: Usage
@@ -32,7 +32,7 @@
 #   -m, Mode Dev: true or false - delete logs or not and some others things
 #
 
-PROGNAME='prepare_mc_release'
+PROGNAME='prepare_st_release'
 VERSION='0.8'
 
 VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
@@ -135,7 +135,7 @@ echo "Setting crontab"
 crontab - <<EOF
 0,15,30,45 * * * *  /usr/spamtagger/scripts/cron/spamtagger_cron.pl &> /dev/null
 0-59/5 * * * * /usr/spamtagger/bin/collect_rrd_stats.pl &> /dev/null
-30 0 * * * /usr/spamtagger/bin/mc_wrapper_auto-counts-cleaner
+30 0 * * * /usr/spamtagger/bin/st_wrapper_auto-counts-cleaner
 0-59/10 * * * * /usr/spamtagger/bin/watchdog/watchdogs.pl dix
 0 6,13,20 * * * /usr/spamtagger/bin/watchdog/watchdogs.pl oneday
 0-59/15 * * * * /usr/spamtagger/bin/watchdog/watchdogs_report.sh
@@ -199,7 +199,7 @@ sleep 5s
 
 echo Other Data download
 [ ! -d "$STARTERSPATH/others" ] && mkdir "${STARTERSPATH}/others"
-downloadDatas "${STARTERSPATH}/others/" "prepare_mc_release" $randomize "mailcleaner" "\|main.cvd\|bytecode.cvd\|daily.cvd\|mirrors.dat\|others\|magic.mgc" noexit
+downloadDatas "${STARTERSPATH}/others/" "prepare_st_release" $randomize "mailcleaner" "\|main.cvd\|bytecode.cvd\|daily.cvd\|mirrors.dat\|others\|magic.mgc" noexit
 
 echo End of downloads
 echo State of the starters dir:
@@ -217,7 +217,7 @@ ${SRCDIR}/etc/init.d/spamtagger start
 ${SRCDIR}/bin/unregister_mailcleaner.sh --no-rsp -b
 
 echo Delete Configurator step files
-cdel -f "${VARDIR}/run/configurator/"{adminpass,baseurl,dbpass,hostid,identify,rootpass,updater4mc-ran}
+cdel -f "${VARDIR}/run/configurator/"{adminpass,baseurl,dbpass,hostid,identify,rootpass,updater4st-ran}
 [ ! -d "${VARDIR}/run/configurator" ] && mkdir "${VARDIR}/run/configurator"
 chown mailcleaner:mailcleaner "${VARDIR}/run/configurator"
 touch "${VARDIR}/run/configurator/welcome"
@@ -244,15 +244,15 @@ echo Create file for backup IF 192.168.1.42
 echo -e 'auto eth0:0\nallow-hotplug eth0:0\niface eth0:0 inet static\n\taddress 192.168.1.42\n\tnetmask 255.255.255.0\n' >/etc/network/interfaces.d/configif.conf
 
 echo Set port access for the configurator
-echo "DELETE FROM external_access where service='configurator'" | ${SRCDIR}/bin/mc_mysql -m mc_config
-echo "INSERT INTO external_access values(NULL, 'configurator', '4242', 'TCP', '0.0.0.0/0', 'NULL')" | ${SRCDIR}/bin/mc_mysql -m mc_config
+echo "DELETE FROM external_access where service='configurator'" | ${SRCDIR}/bin/st_mysql -m st_config
+echo "INSERT INTO external_access values(NULL, 'configurator', '4242', 'TCP', '0.0.0.0/0', 'NULL')" | ${SRCDIR}/bin/st_mysql -m st_config
 
 echo Set default value in DB
-echo "update domain_pref set allow_newsletters=0,prevent_spoof=1 where id=(select prefs from domain where name='__global__')\G" | ${SRCDIR}/bin/mc_mysql -m mc_config
+echo "update domain_pref set allow_newsletters=0,prevent_spoof=1 where id=(select prefs from domain where name='__global__')\G" | ${SRCDIR}/bin/st_mysql -m st_config
 
 echo Insert Version in DB
-echo "DELETE FROM update_patch WHERE id='${patchID}';" | ${SRCDIR}/bin/mc_mysql -s mc_config
-echo "INSERT INTO update_patch VALUES ('${patchID}', '${patchDate}', '${patchTime}', 'OK', '${reason}');" | ${SRCDIR}/bin/mc_mysql -s mc_config
+echo "DELETE FROM update_patch WHERE id='${patchID}';" | ${SRCDIR}/bin/st_mysql -s st_config
+echo "INSERT INTO update_patch VALUES ('${patchID}', '${patchDate}', '${patchTime}', 'OK', '${reason}');" | ${SRCDIR}/bin/st_mysql -s st_config
 
 echo "Reset MySQL Binary logs"
 echo 'STOP SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"

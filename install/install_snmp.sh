@@ -11,7 +11,7 @@ fi
 
 if [ "$USEDEBS" = "Y" ]; then
   echo -n " installing snmp binaries package..."
-  dpkg -i $SRCDIR/install/debs/mc-snmp*.deb &>/dev/null
+  dpkg -i $SRCDIR/install/debs/st-snmp*.deb &>/dev/null
   echo "done."
   exit
 fi

@@ -114,23 +114,23 @@ if [ -f $CLIENTID.tar.gz ]; then
   rm $CLIENTID.tar.gz >/dev/null 2>&1
 fi
 
-if [ -f "/tmp/mc_register.error" ]; then
-  rm /tmp/mc_register.error >/dev/null 2>&1
+if [ -f "/tmp/st_register.error" ]; then
+  rm /tmp/st_register.error >/dev/null 2>&1
 fi
 
 if [ "$batch" = 0 ]; then
   echo -n "fetching keys..."
 fi
-wget -q http://reselleradmin.mailcleaner.net/hosts/register.php?cid="$CLIENTID"\&hid="$HOSTID"\&rid="$RESELLERID"\&p="$RESELLERPWD" -O /tmp/mc_register.out >/dev/null 2>&1
+wget -q http://reselleradmin.mailcleaner.net/hosts/register.php?cid="$CLIENTID"\&hid="$HOSTID"\&rid="$RESELLERID"\&p="$RESELLERPWD" -O /tmp/st_register.out >/dev/null 2>&1
 
-TYPE=$(file -b /tmp/mc_register.out | cut -d' ' -f1)
+TYPE=$(file -b /tmp/st_register.out | cut -d' ' -f1)
 if [ ! "$TYPE" = "gzip" ]; then
-  mv /tmp/mc_register.out /tmp/mc_register.error
+  mv /tmp/st_register.out /tmp/st_register.error
 else
-  mv /tmp/mc_register.out $CLIENTID-$HOSTID.tar.gz
+  mv /tmp/st_register.out $CLIENTID-$HOSTID.tar.gz
 fi
-if [ -f "/tmp/mc_register.error" ]; then
-  ERROR=$(cat /tmp/mc_register.error)
+if [ -f "/tmp/st_register.error" ]; then
+  ERROR=$(cat /tmp/st_register.error)
   if [ "$ERROR" != "" ]; then
     if [ "$batch" = 0 ]; then
       echo ""
@@ -294,16 +294,16 @@ if [ "$batch" = 0 ]; then
 fi
 
 # Get the default values
-MC_CONFIG_DEF_VAL=/tmp/default_values_ee_mc_config.sql
-scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -C mcscp@team01.mailcleaner.net:/mc_autoconfig/default_values_ee_mc_config.sql $MC_CONFIG_DEF_VAL >/dev/null 2>&1
+MC_CONFIG_DEF_VAL=/tmp/default_values_ee_st_config.sql
+scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -C mcscp@team01.mailcleaner.net:/st_autoconfig/default_values_ee_st_config.sql $MC_CONFIG_DEF_VAL >/dev/null 2>&1
 if [ -f "$MC_CONFIG_DEF_VAL" ]; then
-  cat $MC_CONFIG_DEF_VAL | $SRCDIR/bin/mc_mysql -m mc_config &>/dev/null
+  cat $MC_CONFIG_DEF_VAL | $SRCDIR/bin/st_mysql -m st_config &>/dev/null
   rm $MC_CONFIG_DEF_VAL
 fi
 
-echo 'insert into administrator values("mailcleaner-support", "$6$rounds=1000$0e$JTGDwrO2zZN92iQ0f6kkrMTriuXSoikLNJQtIg1sUXbmMv3gMvVBg2EoImBzG.1pLJL8Al9kL.Fs/3aDFzNVb/", 1, 1, 1, 1, 1, "*", 1, "default", NULL);' | $SRCDIR/bin/mc_mysql -m mc_config &>/dev/null
-echo "delete from external_access where service='ssh' AND port='22' AND protocol='TCP' AND (allowed_ip='193.246.63.0/24' OR allowed_ip='195.176.194.0/24');" | $SRCDIR/bin/mc_mysql -m mc_config &>/dev/null
-echo 'insert into external_access values(NULL, "ssh", "22", "TCP", "193.246.63.0/24", "NULL"); insert into external_access values(NULL, "ssh", "22", "TCP", "195.176.194.0/24", "NULL");' | $SRCDIR/bin/mc_mysql -m mc_config &>/dev/null
+echo 'insert into administrator values("mailcleaner-support", "$6$rounds=1000$0e$JTGDwrO2zZN92iQ0f6kkrMTriuXSoikLNJQtIg1sUXbmMv3gMvVBg2EoImBzG.1pLJL8Al9kL.Fs/3aDFzNVb/", 1, 1, 1, 1, 1, "*", 1, "default", NULL);' | $SRCDIR/bin/st_mysql -m st_config &>/dev/null
+echo "delete from external_access where service='ssh' AND port='22' AND protocol='TCP' AND (allowed_ip='193.246.63.0/24' OR allowed_ip='195.176.194.0/24');" | $SRCDIR/bin/st_mysql -m st_config &>/dev/null
+echo 'insert into external_access values(NULL, "ssh", "22", "TCP", "193.246.63.0/24", "NULL"); insert into external_access values(NULL, "ssh", "22", "TCP", "195.176.194.0/24", "NULL");' | $SRCDIR/bin/st_mysql -m st_config &>/dev/null
 
 rm -f $SRCDIR/www/guis/admin/public/templates/default/images/login_header.png
 ln -s $SRCDIR/www/guis/admin/public/templates/default/images/login_header_ee.png $SRCDIR/www/guis/admin/public/templates/default/images/login_header.png

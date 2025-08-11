@@ -102,18 +102,18 @@ DELETE FROM user WHERE User='';
 DELETE FROM db WHERE User='';
 DROP DATABASE test;
 DELETE FROM user WHERE Password='';
-DROP DATABASE IF EXISTS mc_config;
-DROP DATABASE IF EXISTS mc_spool;
-DROP DATABASE IF EXISTS mc_stats;
-CREATE DATABASE mc_config;
-CREATE DATABASE mc_spool;
-CREATE DATABASE mc_stats;
+DROP DATABASE IF EXISTS st_config;
+DROP DATABASE IF EXISTS st_spool;
+DROP DATABASE IF EXISTS st_stats;
+CREATE DATABASE st_config;
+CREATE DATABASE st_spool;
+CREATE DATABASE st_stats;
 CREATE DATABASE dmarc_reporting;
 DELETE FROM user WHERE User='mailcleaner';
 DELETE FROM db WHERE User='mailcleaner';
-GRANT ALL PRIVILEGES ON mc_config.* TO mailcleaner@"%" IDENTIFIED BY '$MYMAILCLEANERPWD' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON mc_spool.* TO mailcleaner@"%" IDENTIFIED BY '$MYMAILCLEANERPWD' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON mc_stats.* TO mailcleaner@"%" IDENTIFIED BY '$MYMAILCLEANERPWD' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON st_config.* TO mailcleaner@"%" IDENTIFIED BY '$MYMAILCLEANERPWD' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON st_spool.* TO mailcleaner@"%" IDENTIFIED BY '$MYMAILCLEANERPWD' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON st_stats.* TO mailcleaner@"%" IDENTIFIED BY '$MYMAILCLEANERPWD' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON dmarc_reporting.* TO mailcleaner@"%" IDENTIFIED BY '$MYMAILCLEANERPWD' WITH GRANT OPTION;
 GRANT REPLICATION SLAVE , REPLICATION CLIENT ON * . * TO  mailcleaner@"%";
 USE mysql;
@@ -135,9 +135,9 @@ echo "-- creating mailcleaner spool tables"
 
 for SOCKDIR in mysql_slave mysql_master; do
   for file in $(ls dbs/spam/*.sql); do
-    /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock mc_spool <$file
+    /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_spool <$file
   done
-  /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock mc_spool <dbs/t_sp_spam.sql
+  /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_spool <dbs/t_sp_spam.sql
 done
 
 /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_master/mysqld.sock dmarc_reporting <dbs/dmarc_reporting.sql
@@ -154,35 +154,35 @@ if [ "$ISMASTER" = "Y" ]; then
 fi
 
 for SOCKDIR in mysql_master; do
-  echo "INSERT INTO system_conf (organisation, company_name, hostid, clientid, default_domain, contact_email, summary_from, analyse_to, falseneg_to, falsepos_to, src_dir, var_dir) VALUES ('$CLIENTORG', '$MCHOSTNAME', '$HOSTID', '$CLIENTID', '$DEFAULTDOMAIN', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$SRCDIR', '$VARDIR');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock mc_config
-  echo "INSERT INTO slave (id, hostname, password, ssh_pub_key) VALUES ('$HOSTID', '127.0.0.1', '$MYMAILCLEANERPWD', '$HOSTKEY');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock mc_config
-  echo "INSERT INTO master (hostname, password, ssh_pub_key) VALUES ('$MASTERHOST', '$MASTERPASSWD', '$MASTERKEY');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock mc_config
-  echo "INSERT INTO httpd_config (serveradmin, servername) VALUES('root', 'mailcleaner');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock mc_config
+  echo "INSERT INTO system_conf (organisation, company_name, hostid, clientid, default_domain, contact_email, summary_from, analyse_to, falseneg_to, falsepos_to, src_dir, var_dir) VALUES ('$CLIENTORG', '$MCHOSTNAME', '$HOSTID', '$CLIENTID', '$DEFAULTDOMAIN', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$SRCDIR', '$VARDIR');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_config
+  echo "INSERT INTO slave (id, hostname, password, ssh_pub_key) VALUES ('$HOSTID', '127.0.0.1', '$MYMAILCLEANERPWD', '$HOSTKEY');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_config
+  echo "INSERT INTO master (hostname, password, ssh_pub_key) VALUES ('$MASTERHOST', '$MASTERPASSWD', '$MASTERKEY');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_config
+  echo "INSERT INTO httpd_config (serveradmin, servername) VALUES('root', 'mailcleaner');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_config
 done
 
 sleep 10
 $SRCDIR/etc/init.d/mysql_slave restart nopass
 sleep 15
 ## MySQL redundency
-echo "STOP SLAVE; CHANGE MASTER TO master_host='$MASTERHOST', master_user='mailcleaner', master_password='$MASTERPASSWD'; START SLAVE;" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock mc_config
+echo "STOP SLAVE; CHANGE MASTER TO master_host='$MASTERHOST', master_user='mailcleaner', master_password='$MASTERPASSWD'; START SLAVE;" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config
 sleep 5
 $SRCDIR/etc/init.d/mysql_slave restart
 sleep 15
 
 ## creating stats tables
-/opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock mc_config <dbs/t_st_maillog.sql
+/opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config <dbs/t_st_maillog.sql
 
 ## creating local update table
-/opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock mc_config <dbs/t_cf_update_patch.sql
+/opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config <dbs/t_cf_update_patch.sql
 
 ## creating temp soap authentication table
-/opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock mc_spool <dbs/t_sp_soap_auth.sql
+/opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_spool <dbs/t_sp_soap_auth.sql
 
 ## creating web admin user
-echo "INSERT INTO administrator (username, password, can_manage_users, can_manage_domains, can_configure, can_view_stats, can_manage_host, domains) VALUES('admin', ENCRYPT('$WEBADMINPWD'), 1, 1, 1, 1, 1, '*');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_master/mysqld.sock mc_config
+echo "INSERT INTO administrator (username, password, can_manage_users, can_manage_domains, can_configure, can_view_stats, can_manage_host, domains) VALUES('admin', ENCRYPT('$WEBADMINPWD'), 1, 1, 1, 1, 1, '*');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_master/mysqld.sock st_config
 
 ## inserting last version update
-echo "INSERT INTO update_patch VALUES('$ACTUALUPDATE', NOW(), NOW(), 'OK', 'CD release');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock mc_config
+echo "INSERT INTO update_patch VALUES('$ACTUALUPDATE', NOW(), NOW(), 'OK', 'CD release');" | /opt/mysql5/bin/mysql -umailcleaner -p$MYMAILCLEANERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config
 
 #$SRCDIR/etc/init.d/mysql_master stop
 echo "-- DONE -- mailcleaner dbs are ready !"

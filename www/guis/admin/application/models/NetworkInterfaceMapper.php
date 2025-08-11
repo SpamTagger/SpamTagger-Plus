@@ -120,7 +120,7 @@ class Default_Model_NetworkInterfaceMapper
     		return 'NOK could not save due to restricted feature';
     	}
     	
-    	$tmpfile = '/tmp/mc_initerfaces.tmp';
+    	$tmpfile = '/tmp/st_initerfaces.tmp';
 
         $has_ipv6 = 0;
         foreach ($this->fetchAll() as $interface) {

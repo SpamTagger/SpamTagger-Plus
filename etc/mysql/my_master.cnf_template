@@ -25,11 +25,11 @@ innodb_log_buffer_size = 8M
 innodb_flush_log_at_trx_commit = 1
 innodb_lock_wait_timeout = 10
 
-binlog-do-db=mc_config
-binlog-ignore-db=mc_stats
-binlog-ignore-db=mc_spool
+binlog-do-db=st_config
+binlog-ignore-db=st_stats
+binlog-ignore-db=st_spool
 server-id=__MASTERID__
-log-bin=mc___MASTERID__-bin
+log-bin=st___MASTERID__-bin
 
 [isamchk]
 key_buffer = 128M

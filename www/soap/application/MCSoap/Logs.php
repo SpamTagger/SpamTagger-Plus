@@ -25,14 +25,14 @@ class MCSoap_Logs
 		$trace_id = 0;
 
 		require_once('MailCleaner/Config.php');
-		$mcconfig = MailCleaner_Config::getInstance();
+		$stconfig = MailCleaner_Config::getInstance();
 
 		if (!isset($params['regexp'])
 		|| !$params['datefrom'] || !preg_match('/^\d{8}$/', $params['datefrom'])
 		|| !$params['dateto'] || !preg_match('/^\d{8}$/', $params['dateto']) ) {
 			return array('trace_id' => $trace_id);
 		}
-		$cmd = $mcconfig->getOption('SRCDIR')."/bin/search_log.pl ".$params['datefrom']." ".$params['dateto']." ".$params['regexp'];
+		$cmd = $stconfig->getOption('SRCDIR')."/bin/search_log.pl ".$params['datefrom']." ".$params['dateto']." ".$params['regexp'];
         if (isset($params['filter']) && $params['filter'] != '' && $params['filter'] != "''") {
             $params['filter'] = preg_replace("/^'(.*)'$/", "$1", $params['filter']);
             $params['filter'] = preg_replace("/'/", "\\'", $params['filter']);
@@ -53,7 +53,7 @@ class MCSoap_Logs
 		}
                 $cmd .= " -B ".$trace_id;
 
-		$cmd .= "> ".$mcconfig->getOption('VARDIR')."/run/spamtagger/log_search/".$trace_id." &";
+		$cmd .= "> ".$stconfig->getOption('VARDIR')."/run/spamtagger/log_search/".$trace_id." &";
 		$res = `$cmd`;
 		return array('trace_id' => $trace_id, 'cmd' => $cmd) ;
 	}
@@ -72,9 +72,9 @@ class MCSoap_Logs
 		$trace_id = $params['trace_id'];
 
 		require_once('MailCleaner/Config.php');
-		$mcconfig = MailCleaner_Config::getInstance();
+		$stconfig = MailCleaner_Config::getInstance();
 
-		$file = $mcconfig->getOption('VARDIR')."/run/spamtagger/log_search/".$trace_id;
+		$file = $stconfig->getOption('VARDIR')."/run/spamtagger/log_search/".$trace_id;
 		if (!file_exists($file)) {
 			return array('error' => 'no such results');
 		}
@@ -151,9 +151,9 @@ class MCSoap_Logs
 		}
 		$trace_id = $params['trace_id'];
 		require_once('MailCleaner/Config.php');
-		$mcconfig = MailCleaner_Config::getInstance();
+		$stconfig = MailCleaner_Config::getInstance();
 
-		$file = $mcconfig->getOption('VARDIR')."/run/spamtagger/log_search/".$trace_id;
+		$file = $stconfig->getOption('VARDIR')."/run/spamtagger/log_search/".$trace_id;
 		if (!file_exists($file)) {
 			return array('error' => 'no such results');
 		}
@@ -301,9 +301,9 @@ class MCSoap_Logs
 		$estimate_id = $days - 1;
 
 		require_once('MailCleaner/Config.php');
-		$mcconfig = MailCleaner_Config::getInstance();
+		$stconfig = MailCleaner_Config::getInstance();
 
-		$params['basefile'] = $mcconfig->getOption('VARDIR')."/log/".$params['basefile'];
+		$params['basefile'] = $stconfig->getOption('VARDIR')."/log/".$params['basefile'];
 
 		$filename = $params['basefile'].MCSoap_Logs::extFromId($estimate_id);
 		$filedate = MCSoap_Logs::getDateFromFile($filename);
@@ -395,10 +395,10 @@ class MCSoap_Logs
 		ini_set('display_errors', 'on');
 
 		require_once('MailCleaner/Config.php');
-		$mcconfig = MailCleaner_Config::getInstance();
+		$stconfig = MailCleaner_Config::getInstance();
 
 		$params['file'] = preg_replace('/-/', '/', $params['file']);
-		$file = $mcconfig->getOption('VARDIR')."/log/".$params['file'];
+		$file = $stconfig->getOption('VARDIR')."/log/".$params['file'];
 		if (!file_exists($file)) {
 			$res['error'] = 'No such file ('.$file.')';
 			return $res;
@@ -589,8 +589,8 @@ class MCSoap_Logs
         static public function Logs_ExtractLog($params) {
            $res = array('full_log' => '');
            require_once('MailCleaner/Config.php');
-           $mcconfig = MailCleaner_Config::getInstance();
-           $logfile = $mcconfig->getOption('VARDIR').'/run/spamtagger/log_search/';
+           $stconfig = MailCleaner_Config::getInstance();
+           $logfile = $stconfig->getOption('VARDIR').'/run/spamtagger/log_search/';
 
            if (isset($params['traceid']) && preg_match('/^[a-zA-Z0-9]+$/', $params['traceid'])) {
                $logfile .= $params['traceid'].'.full';

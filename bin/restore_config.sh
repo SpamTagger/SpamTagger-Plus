@@ -43,7 +43,7 @@ if [ ! -f $BACKUPFILE ]; then
   exit 1
 fi
 
-/opt/mysql5/bin/mysql -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock mc_config <$BACKUPFILE
+/opt/mysql5/bin/mysql -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock st_config <$BACKUPFILE
 
 for p in dump_apache_config.pl dump_clamav_config.pl dump_exim_config.pl dump_firewall.pl dump_mailscanner_config.pl dump_mysql_config.pl dump_snmpd_config.pl; do
   RES=$($SRCDIR/bin/$p 2>&1)

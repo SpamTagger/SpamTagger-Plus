@@ -44,7 +44,7 @@ require GetDNS;
 require DB;
 
 my $DEBUG = 1;
-my $db = DB::connect('slave', 'mc_config');
+my $db = DB::connect('slave', 'st_config');
 our $conf = ReadConfig::getInstance();
 my $include_debug = 0;
 
@@ -308,14 +308,14 @@ sub dump_exim_file
     $template->setCondition('TAGMODEBYPASSWHITELISTS', 1);
   }
   if ($sys_conf{'__WHITELISTBOTHFROM__'}) {
-	if ( ! -e $conf->getOption('VARDIR').'/spool/spamtagger/mc-wl-on-both-from' ) {
-		open WLFH, '>', $conf->getOption('VARDIR').'/spool/spamtagger/mc-wl-on-both-from';
+	if ( ! -e $conf->getOption('VARDIR').'/spool/spamtagger/st-wl-on-both-from' ) {
+		open WLFH, '>', $conf->getOption('VARDIR').'/spool/spamtagger/st-wl-on-both-from';
 		close WLFH;
 	}
 
   } else {
-	if ( -e $conf->getOption('VARDIR').'/spool/spamtagger/mc-wl-on-both-from' ) {
-		unlink $conf->getOption('VARDIR').'/spool/spamtagger/mc-wl-on-both-from';
+	if ( -e $conf->getOption('VARDIR').'/spool/spamtagger/st-wl-on-both-from' ) {
+		unlink $conf->getOption('VARDIR').'/spool/spamtagger/st-wl-on-both-from';
 	}
   }
   $template->setCondition('USETLS', $exim_conf{'__USE_INCOMINGTLS__'});

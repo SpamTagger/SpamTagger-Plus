@@ -54,8 +54,8 @@ if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1") {
 		system($config{'SRCDIR'}."/scripts/cron/anti-breakdown.pl 2>&1 >/dev/null");
 	}
 }
-my $mcDataServicesAvailable = 1;
-$mcDataServicesAvailable = 0 if ( -e '/var/tmp/mc_checks_data.ko' );
+my $stDataServicesAvailable = 1;
+$stDataServicesAvailable = 0 if ( -e '/var/tmp/st_checks_data.ko' );
 
 sub usage() {
   print STDERR << "EOF";
@@ -121,7 +121,7 @@ if (open(my $fh, '>>', "$config{'VARDIR'}/log/spamtagger/spam_sync.log")) {
 # we may have done only one query for the time instead of repeating it
 # but in future we may think of different times for daily/weekly or monthly jobs
 
-my $slave_dbh = DBI->connect("DBI:mysql:database=mc_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
+my $slave_dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
                                         "spamtagger","$config{'MYSPAMTAGGERPWD'}", {RaiseError => 0, PrintError => 1} );
 if (!$slave_dbh) {
   printf ("ERROR: no slave database found on this system ! \n");
@@ -193,7 +193,7 @@ unless ($skip) {
   ######################
   if (my $pid_av = fork) {
     push(@wait,$pid_av);
-  } elsif (defined $pid_av && $mcDataServicesAvailable) {
+  } elsif (defined $pid_av && $stDataServicesAvailable) {
     print "updating anti-viruses...\n";
     system($config{'SRCDIR'}."/scripts/cron/update_antivirus.sh");
     print "done updating anti-viruses.\n";
@@ -278,7 +278,7 @@ unless ($skip) {
   ###########################
   ## check for services availability
   ###########################
-  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && $mcDataServicesAvailable ) {
+  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && $stDataServicesAvailable ) {
     if ( my $pid_checkservices = fork) {
       push(@wait,$pid_checkservices);
     } elsif (defined $pid_checkservices) {
@@ -294,7 +294,7 @@ unless ($skip) {
   ###########################
   ## check for system updates
   ###########################
-  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && $mcDataServicesAvailable) {
+  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && $stDataServicesAvailable) {
   ## just purging any dead cvs
   ##`killall -KILL cvs >/dev/null 2>&1`;
 
@@ -310,7 +310,7 @@ unless ($skip) {
   #######################################
   ## check for  updates
   #######################################
-  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && $mcDataServicesAvailable) {
+  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && $stDataServicesAvailable) {
     if (my $pid_rules = fork) {
       push(@wait,$pid_rules);
     } elsif (defined $pid_rules) {
@@ -343,7 +343,7 @@ unless ($skip) {
     if (defined($config{'REGISTERED'}) && $config{'REGISTERED'}) {
       if (my $pid_learn = fork) {
         push(@wait,$pid_learn);
-      } elsif (defined $pid_learn && $mcDataServicesAvailable) {
+      } elsif (defined $pid_learn && $stDataServicesAvailable) {
         system($config{'SRCDIR'}."/bin/CDN_fetch_bayes.sh");
         exit;
       }
@@ -514,7 +514,7 @@ if ($itsmidnight) {
     exit;
   }
 
-  if ( defined($config{'REGISTERED'}) && $config{'REGISTERED'} && $mcDataServicesAvailable == "1" ){
+  if ( defined($config{'REGISTERED'}) && $config{'REGISTERED'} && $stDataServicesAvailable == "1" ){
     if (my $pid_pushstats = fork) {
       push(@wait,$pid_pushstats);
     } elsif (defined $pid_pushstats) {
@@ -555,7 +555,7 @@ if ($itsmidnight) {
   ##################################
   print "getting the last conf for autoconf...\n";
   if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && defined($config{'ISMASTER'}) && $config{'ISMASTER'} eq "Y") {
-	if ( -e $config{'VARDIR'}."/spool/spamtagger/mc-autoconf"  && $mcDataServicesAvailable) {
+	if ( -e $config{'VARDIR'}."/spool/spamtagger/st-autoconf"  && $stDataServicesAvailable) {
 		if ($has_ipc_run) {
 			IPC::Run::run([$config{'SRCDIR'}."/bin/fetch_autoconf.sh"], "2>&1", ">/dev/null");
 		} else {
@@ -572,7 +572,7 @@ if ($itsmidnight) {
   #######################################
   ## check for RBLs, ClamAV, binary updates
   #######################################
-  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && $mcDataServicesAvailable) {
+  if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && $stDataServicesAvailable) {
      system($config{'SRCDIR'}."/bin/fetch_rbls.sh", $randomize_option);
      system($config{'SRCDIR'}."/bin/fetch_clamav.sh", $randomize_option);
      system($config{'SRCDIR'}."/bin/fetch_binary.sh", $randomize_option);
@@ -583,11 +583,11 @@ if ($itsmidnight) {
   #######################################
   if (defined($config{'REGISTERED'}) && $config{'REGISTERED'} == "1" && -e $config{'VARDIR'}."/run/spamtagger.binary") {
     if ($has_ipc_run) {
-      IPC::Run::run(["cat", $config{'VARDIR'}."/run/spamtagger.binary"], "|", ["xargs", $config{'SRCDIR'}."/etc/exim/mc_binary/spamtagger-binary"], "2>&1", ">/dev/null");
+      IPC::Run::run(["cat", $config{'VARDIR'}."/run/spamtagger.binary"], "|", ["xargs", $config{'SRCDIR'}."/etc/exim/st_binary/spamtagger-binary"], "2>&1", ">/dev/null");
       IPC::Run::run(["rm", "-rf", $config{'VARDIR'}."/run/spamtagger.binary"], "2>&1", ">/dev/null");
       IPC::Run::run(["touch", $config{'VARDIR'}."/run/spamtagger.rn"], "2>&1", ">/dev/null");
     } else {
-      system("cat $config{'VARDIR'}/run/spamtagger.binary | xargs $config{'SRCDIR'}/etc/exim/mc_binary/spamtagger-binary 2>&1 >/dev/null");
+      system("cat $config{'VARDIR'}/run/spamtagger.binary | xargs $config{'SRCDIR'}/etc/exim/st_binary/spamtagger-binary 2>&1 >/dev/null");
       system("rm -rf $config{'VARDIR'}/run/spamtagger.binary 2>&1 >/dev/null");
       system("touch $config{'VARDIR'}/run/spamtagger.rn 2>&1 >/dev/null");
     }

@@ -26,7 +26,7 @@
    protected $spec_settings_ = array(
                               'usessl' => false,
                               'database_type' => 'mysql',
-                              'database' => 'mc_config',
+                              'database' => 'st_config',
                               'table' => 'mysql_auth',
                               'user' => 'mailcleaner',
                               'pass' => '',
