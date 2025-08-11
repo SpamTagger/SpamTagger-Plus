@@ -1,18 +1,18 @@
 Este es un mensaje del Servicio de Protección de Virus para Correo
-Electrónico MailCleaner
-----------------------------------------------------------------------
+Electrónico SpamTagger
+---------------------------------------------------------------------
 El archivo anexado original "$filename"
 se considera que ha sido infectado por un virus y el mismo
 ha sido reemplazado por este mensaje de aviso.
 
 Si desea recibir una copia del archivo anexado original *infectado*,
 le invitamos a visitar el siguiente enlace:
-<a href="https://www.mailcleaner.net/support/dangerous-content-release.html">Dangerous content release</a>
+<a href="https://spamtagger.org/support/dangerous-content-release.html">Dangerous content release</a>
 
 El $date el analizador de virus dijo:
 $report
 
 Nota para el departamento de soporte: $hostname:$datenumber/$id
 
--- 
-MailCleaner
+----------
+SpamTagger

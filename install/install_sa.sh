@@ -51,4 +51,4 @@ rm $SRCDIR/install/src/Mail-SpamAssassin-rules-$RULESVERSION.tar.gz.sha1 2>&1
 /usr/local/bin/sa-compile 2>&1
 
 touch $VARDIR/spool/spamassassin/bayes_seen 2>&1
-chown -R mailcleaner:mailcleaner $VARDIR/spool/spamassassin/bayes_* 2>&1
+chown -R spamtagger:spamtagger $VARDIR/spool/spamassassin/bayes_* 2>&1

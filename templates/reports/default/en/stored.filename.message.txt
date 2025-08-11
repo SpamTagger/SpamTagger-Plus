@@ -1,5 +1,5 @@
-This is a message from Mailcleaner
-----------------------------------
+This is a message from SpamTagger
+---------------------------------
 The original e-mail attachment "$filename"
 is on the list of unacceptable attachments for this site and has been
 replaced by this warning message.
@@ -12,5 +12,5 @@ the contents of this message to hand when you call.
 At $date the virus scanner said:
 $report
 Note to Administrator: $hostname in $datenumber/$id
--- 
-Mailcleaner
+---------- 
+SpamTagger

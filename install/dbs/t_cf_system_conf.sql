@@ -19,7 +19,7 @@ CREATE TABLE system_conf (
    cron_time	       time NOT NULL DEFAULT "000000",
    cron_weekday	       int(2) NOT NULL DEFAULT 1,
    cron_monthday       int(2) NOT NULL DEFAULT 1, 
-   summary_subject     varchar(250) NOT NULL DEFAULT "Mailcleaner quarantine summary",
+   summary_subject     varchar(250) NOT NULL DEFAULT "SpamTagger quarantine summary",
    summary_from	       varchar(200) NOT NULL DEFAULT "your_mail\@yourdomain",
    analyse_to	       varchar(200) NOT NULL DEFAULT "your_mail\@yourdomain",
    falseneg_to         varchar(200) NOT NULL DEFAULT "your_mail\@yourdomain",

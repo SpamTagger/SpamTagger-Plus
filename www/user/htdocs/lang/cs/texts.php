@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "zpravodaj";
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "skrýt zprávy uvolněné uživatelem";
 $txt['FORCESPAM'] = "uvolnění zprávy";
 //old
 $txt['ASKREASON'] = "zobrazení filtrovacích pravidel";
-$txt['CONFSENDANALYSE'] = "Žádost o úpravu filtru bude odeslána do Centra analýzy služby MailCleaner. Obsahuje kopii zprávy, která byla nesprávně zablokována.";
+$txt['CONFSENDANALYSE'] = "Žádost o úpravu filtru bude odeslána do Centra analýzy služby SpamTagger. Obsahuje kopii zprávy, která byla nesprávně zablokována.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Opravdu chcete tuto zprávu analyzovat a použít úpravy filtru?</span>";
 $txt['ASKANALYSE'] = "požadavek na úpravu filtru";
 $txt['PAGE'] = "strana";
@@ -157,7 +157,7 @@ $txt['SCORE'] = "skóre";
 $txt['TOTAL'] = "celkem";
 //old
 $txt['SENDANALYSETITLE'] = "požadavek na úpravu filtru";
-$txt['SENTTOANALYSE'] = "Žádost o úpravu filtru byla odeslána do Centra pro analýzu MailCleaneru. Tato žádost bude prozkoumána a opravy filtrů mohou být aplikovány během následujícího pracovního dne.";
+$txt['SENTTOANALYSE'] = "Žádost o úpravu filtru byla odeslána do Centra pro analýzu SpamTaggeru. Tato žádost bude prozkoumána a opravy filtrů mohou být aplikovány během následujícího pracovního dne.";
 /*
  * quick actions
  */
@@ -278,11 +278,11 @@ $txt['REMADDRESSALT'] = "odebrat adresu";
 //old
 $txt['ADDADDRESSALT'] = "přidat adresu";
 $txt['BADADDRESSFORMAT'] = "Zadaná adresa je neplatná. Prosím zkuste to znovu.";
-$txt['NOTFILTEREDDOMAIN'] = "Tato doména není filtrována službou MailCleaneru. Adresu nelze přidat.";
-$txt['ALIASALREADYREGISTERD'] = "Tato adresa se již používá u účtu MailCleaneru. Nelze jí přidat.";
+$txt['NOTFILTEREDDOMAIN'] = "Tato doména není filtrována službou SpamTaggeru. Adresu nelze přidat.";
+$txt['ALIASALREADYREGISTERD'] = "Tato adresa se již používá u účtu SpamTaggeru. Nelze jí přidat.";
 $txt['ALIASALREADYPENDING'] = "Již na nastaven požadavek na potvrzení pro tuto adresu.";
 $txt['ALIASPENDING'] = "Na tuto adresu bylo odesláno potvrzení. <br/> Z bezpečnostních důvodů bude adresa přidána pouze tehdy, pokud žádost potvrdíte do 24 hodin.";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner] požadavek na doplnění adresy";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger] požadavek na doplnění adresy";
 $txt['ALIASERRORSENDIG'] = "Žádost nemohla být odeslána z důvodu vnitřní chyby. Prosím zkuste to znovu později.";
 $txt['ALIASNOTPENDING'] = "Momentálně není žádná žádost pro tuto adresu.";
 $txt['ALIASADDED'] = "Adresa byla úspěšně přidána.";
@@ -324,9 +324,9 @@ $txt['FROMDATETODATE'] = "od __PARAM1__.__PARAM2__.__PARAM3__ pro __PARAM4__.__P
 /*
  * some error messages
  */
-$txt['BADARGS'] = "Interní chyba sytému MailCleaner (_PARAM_MESSAGE_ERREUR__). Obraťte se prosím na správce systému s podrobnostmi o problému.";
+$txt['BADARGS'] = "Interní chyba sytému SpamTagger (_PARAM_MESSAGE_ERREUR__). Obraťte se prosím na správce systému s podrobnostmi o problému.";
 $txt['INCORRECTMSGID'] = "Požadovanou akci nelze dokončit, protože identifikátor zprávy je nesprávný.";
-$txt['NOSUCHADDR'] = "Tato adresa není chráněna programem MailCleaner.";
+$txt['NOSUCHADDR'] = "Tato adresa není chráněna programem SpamTagger.";
 $txt['ERRORSENDING'] = "Při odesílání zprávy došlo k chybě. Prosím zkuste to znovu. Pokud problém přetrvává, obraťte se na správce systému.";
 $txt['MSGFORCED'] = "Zpráva byla uvolněna a doručena do vaší poštovní schránky. Měla by být k dispozici během několika minut.";
 $txt['MSGFILENOTFOUND'] = "Požadovaná akce nemohla být dokončena, protože zpráva již není v karanténě.";

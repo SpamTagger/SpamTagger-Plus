@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify

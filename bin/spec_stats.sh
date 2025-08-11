@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,7 @@ if (!$until_now || $until_now !~ /^o|g|d$/) {
 
 my $dbh;
 $dbh = DBI->connect("DBI:mysql:database=st_stats;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                        "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+                        "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                 or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
 if ($until_now =~ /^d$/) {

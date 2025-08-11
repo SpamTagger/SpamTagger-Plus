@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   Last page with advices of MailCleaner "Configurator" wizard
+#   Last page with advices of SpamTagger "Configurator" wizard
 #
 -->
 <?php
@@ -29,27 +29,27 @@ if ('ending.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 	</h2>
 	<p>After leaving this configurator, you should :
 	<ol>
-	<li>Check your MailCleaner network configuration</li>
-	<li>Disable Configuration interface once you are sure you can access your MailCleaner at <strong> Configuration > Base system > Network settings</strong> and uncheck <strong>Enable configurator interface (192.168.1.42)</strong></li>
+	<li>Check your SpamTagger network configuration</li>
+	<li>Disable Configuration interface once you are sure you can access your SpamTagger at <strong> Configuration > Base system > Network settings</strong> and uncheck <strong>Enable configurator interface (192.168.1.42)</strong></li>
 	<li>Read the documentation</li>
 	<li>Consult the KnowledgeBase</li>
-	<li>[Optionnal] Setup some MailCleaner slaves to setup a Cluster</li>
-	<li>[Optionnal] Open a ticket on Commercial Support page or ask help of community on MailCleaner Community Forum</li>
+	<li>[Optionnal] Setup some SpamTagger slaves to setup a Cluster</li>
+	<li>[Optionnal] Open a ticket on Commercial Support page or ask help of community on SpamTagger Community Forum</li>
 	<li>Drink a beer and watch spam to be catch in Tracing !</li>
 	</ol>
 	</p>
-	<p><span style="color:red">/!\</span> Your MailCleaner services will be restarted next 15 minutes.</p>
+	<p><span style="color:red">/!\</span> Your SpamTagger services will be restarted next 15 minutes.</p>
         <form class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF']."?step=".$_GET['step']; ?>" method="post">
 	  <div class="form-group">
 	    <div class="col-md-12">
-	      <button type="submit" name="submit_<?php echo $_GET['step'] ?>" value="Submit" class="btn btn-default"><span style="color:red">8. [Mandatory]</span> Close and allow access to MailCleaner Web Interface ! (Please wait reload after clicking)</button>
+	      <button type="submit" name="submit_<?php echo $_GET['step'] ?>" value="Submit" class="btn btn-default"><span style="color:red">8. [Mandatory]</span> Close and allow access to SpamTagger Web Interface ! (Please wait reload after clicking)</button>
 	    </div>
 	  </div>
           <div class="form-group">
             <div class="col-md-offset-5 col-md-4">
             <?php
 	    if (isset($_POST['submit_ending'])) {
-	      $myfile = fopen("/var/spamtagger/run/spamtagger.rn", "w") or die("A problem occurred preventing the restart of MailCleaner services.");	
+	      $myfile = fopen("/var/spamtagger/run/spamtagger.rn", "w") or die("A problem occurred preventing the restart of SpamTagger services.");	
 	      echo "<script type='text/javascript'>";
           if (!empty($_SESSION['burl'])) {
               echo "window.location.href = 'https://".$_SESSION['burl']."/admin/'";

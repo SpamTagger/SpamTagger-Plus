@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Web interface localized texts
  */
@@ -92,7 +92,7 @@ return array(
   'important' => 'Important !',
   'Back' => 'Back...',
   'applying network now will' => 'Applying network settings now will probably break your current connection to this interface.
-  Make sure the new settings are correct before pressing the Reload button or you may definitively loose connectivity to your MailCleaner system. 
+  Make sure the new settings are correct before pressing the Reload button or you may definitively loose connectivity to your SpamTagger system. 
   Once the settings are applied, this interface may not be responsive and you may not have any answer. You should however be able to connect back with the new settings you provided.',
 
   'networkingrestarted' => 'Networking successfully restarted',

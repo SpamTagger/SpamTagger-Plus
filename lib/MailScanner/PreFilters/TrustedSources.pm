@@ -9,7 +9,7 @@ no  strict 'subs'; # Allow bare words for parameter %'s
 use IO;
 use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
 use Net::IP;
-use MCDnsLists;
+use STDnsLists;
 
 my $MODULE = "TrustedSources";
 my %conf;
@@ -132,7 +132,7 @@ sub initialise {
   
   $TrustedSources::conf{whiterbls} .= ' '.$TrustedSources::conf{spflists};
   
-  $TrustedSources::dnslists = new MCDnsLists(\&MailScanner::Log::WarnLog, $TrustedSources::conf{debug});
+  $TrustedSources::dnslists = new STDnsLists(\&MailScanner::Log::WarnLog, $TrustedSources::conf{debug});
   $TrustedSources::dnslists->loadRBLs( $TrustedSources::conf{rblsDefsPath}, $TrustedSources::conf{whiterbls}, 'IPRWL SPFLIST', 
                                 '', '', 
                                 '', $MODULE);

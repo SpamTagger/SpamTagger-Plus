@@ -3,10 +3,10 @@
 
 <html xml:lang="fr" xmlns="http://www.w3.org/1999/xhtml">
  <head>
-  <title>MailCleaner &ndash; __LANG_QUARANTINEMENU__</title>
+  <title>SpamTagger Plus &ndash; __LANG_QUARANTINEMENU__</title>
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <meta name="Author" content="Olivier Diserens" />
-  <meta name="Copyright" content="Mailcleaner Public License http://www.mailcleaner.net/open/licence_en.html" />
+  <meta name="License" content="https://www.gnu.org/licenses/gpl-3.0.en.html" />
   <link rel="shortcut icon" type="image/x-icon" href="__TEMPLATE_PATH__/images/favicon.ico"/>
   <link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="css/navigation.css" media="screen" />
@@ -105,7 +105,7 @@
 __INCLUDE__(header.tmpl)
 __IF__ MSGTODISPLAY
 <div class="globalbloc" style="min-height: 0px; margin-top: 20px; width: 80%;">
-        <h1 style="font-weight: bold; color: #552056; font-size: 13px;display:none;">InfoBox by MailCleaner Team </h1>
+        <h1 style="font-weight: bold; color: #552056; font-size: 13px;display:none;">InfoBox by SpamTagger Team </h1>
         <div class="maclasseamoi" style="min-height: 20px; max-height: 240px; padding: 6px 12px; overflow-y: scroll; text-align: justify">
                 __INFOBOX_USER__
         </div>
@@ -139,7 +139,7 @@ __DEFAULT__ DESC_IMG = <img src="images/orderby_desc.png" alt="" />
    
 __IF__ filtered
    <tr id="quarantinebanner">
-     <td colspan="6"><img src="images/searchheader.png" alt="MailCleaner" /><p>__SEARCH_SUMMARY__ &mdash; <strong>__LANG_CRITERIAS__</strong> :
+     <td colspan="6"><img src="images/searchheader.png" alt="SpamTagger Plus" /><p>__SEARCH_SUMMARY__ &mdash; <strong>__LANG_CRITERIAS__</strong> :
        __CRITERIA_SUMMARY__</p><a class="resetsearch" href="__LINK_THISPAGE__">__LANG_RESETSEARCH__</a></td>
    </tr>
 __ELSE__ filtered
@@ -149,7 +149,7 @@ __IF__ group_quarantines
 __ELSE__ group_quarantines
      <td colspan="5">
 __FI__ group_quarantines
-      <img src="images/logopmc.png" alt="MailCleaner" /><p>__QUARANTINE_SUMMARY__</p></td>
+      <img src="images/logopmc.png" alt="SpamTagger Plus" /><p>__QUARANTINE_SUMMARY__</p></td>
    </tr>
 __FI__ filtered
 

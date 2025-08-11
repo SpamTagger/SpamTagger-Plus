@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  *
  * Slave host
  */
@@ -253,7 +253,7 @@ class Default_Model_Slave
         }
 
         if (!$this->_mib_loaded) {
-            $config = new MailCleaner_Config();
+            $config = new SpamTagger_Config();
             $mibfile = $config->getOption('SRCDIR')."/www/guis/admin/public/downloads/SPAMTAGGER-MIB.txt";
             if (snmp_read_mib($mibfile)) {
                 $this->_mib_loaded = true;
@@ -271,7 +271,7 @@ class Default_Model_Slave
         foreach ($what['stats'] as $text => $stat) {
             $full_value = 0;
             foreach (preg_split('/\+/', $stat) as $lstats) {
-                $oid = 'MAILCLEANER-MIB::'.$lstats;
+                $oid = 'SPAMTAGGER-MIB::'.$lstats;
                 foreach ($domainIndexes as $domainIndex) {
                     if ($domainIndex && $domainIndex != '') {
                         $oid .= '.'.$domainIndex;
@@ -302,11 +302,11 @@ class Default_Model_Slave
     }
 
     public function getHostVersion() {
-        return $this->getSNMPValue('MAILCLEANER-MIB::productVersion');
+        return $this->getSNMPValue('SPAMTAGGER-MIB::productVersion');
     }
 
     public function getHostPatchLevel() {
-        return $this->getSNMPValue('MAILCLEANER-MIB::patchLevel');
+        return $this->getSNMPValue('SPAMTAGGER-MIB::patchLevel');
     }
 
     public function getTodayGlobalPie() {

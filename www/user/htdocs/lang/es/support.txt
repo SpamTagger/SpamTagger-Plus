@@ -1,51 +1,51 @@
 <?php
 $txt['SFALSENEGTITLE'] = "FALSOS NEGATIVOS";
 $txt['SFALSENEGSUBTITLE'] = "¿Has recibido un mensaje que consideras spam?";
-$txt['SVERIFYPASS'] = "Compruebe que el mensaje ha sido procesado por el filtro Mailcleaner mirando las cabeceras del correo electrónico.";
-$txt['SMCLOGTITLE'] = "En los encabezados, verá las siguientes líneas que mencionan Mailcleaner:";
-$txt['SMCLOGLINE1'] = "Recibido: De mailcleaner.net (demonio de filtrado)";
-$txt['SMCLOGLINE2'] = "por mailcleaner.net con esmtp (demonio entrante)";
-$txt['SMCFILTERINGLOG'] = "Resultado del filtrado: X-Mailcleaner-spamscore: oooo";
-$txt['SFALSENEGTUTOR'] = "Si realmente considera que el mensaje es spam, transfiéralo a spam@mailcleaner.net, o mejor aún, si su programa de correo electrónico se lo permite, elija \"Transferir como archivo adjunto\" para mantener intactas las cabeceras del mensaje. Nuestro centro de análisis difundirá el contenido del mensaje y adaptará los criterios de filtrado de Mailcleaner en consecuencia, para que todos los usuarios de Mailcleaner se beneficien del análisis.";
+$txt['SVERIFYPASS'] = "Compruebe que el mensaje ha sido procesado por el filtro SpamTagger mirando las cabeceras del correo electrónico.";
+$txt['SSTLOGTITLE'] = "En los encabezados, verá las siguientes líneas que mencionan SpamTagger:";
+$txt['SSTLOGLINE1'] = "Recibido: De spamtagger.org (demonio de filtrado)";
+$txt['SSTLOGLINE2'] = "por spamtagger.org con esmtp (demonio entrante)";
+$txt['SSTFILTERINGLOG'] = "Resultado del filtrado: X-SpamTagger-spamscore: oooo";
+$txt['SFALSENEGTUTOR'] = "Si realmente considera que el mensaje es spam, transfiéralo a spam@spamtagger.org, o mejor aún, si su programa de correo electrónico se lo permite, elija \"Transferir como archivo adjunto\" para mantener intactas las cabeceras del mensaje. Nuestro centro de análisis difundirá el contenido del mensaje y adaptará los criterios de filtrado de SpamTagger en consecuencia, para que todos los usuarios de SpamTagger se beneficien del análisis.";
 $txt['SFALSEPOSTITLE'] = "FALSOS POSITIVOS";
 $txt['SFALSEPOSSUB1TITLE'] = "¿No recibiste un mensaje que deberías haber recibido?";
-$txt['SFALSEPOSSUB1'] = "Puede comprobar si el mensaje ha sido bloqueado por Mailcleaner a través de la interfaz web de usuario, en el apartado \"Cuarentena\". Si no lo encuentra en la lista de cuarentena, verifique los siguientes puntos:";
+$txt['SFALSEPOSSUB1'] = "Puede comprobar si el mensaje ha sido bloqueado por SpamTagger a través de la interfaz web de usuario, en el apartado \"Cuarentena\". Si no lo encuentra en la lista de cuarentena, verifique los siguientes puntos:";
 $txt['SFALSEPOSSUB1POINT1'] = "la dirección de destino utilizada por el remitente es correcta";
 $txt['SFALSEPOSSUB1POINT2'] = "el correo electrónico ha tenido la oportunidad de ser procesado (un proceso que puede tardar unos minutos)";
 $txt['SFALSEPOSSUB2TITLE'] = "¿Un correo electrónico fue considerado como spam y no entiendes el por qué?";
-$txt['SFALSEPOSSUB2'] = "Desde la lista de cuarentena, puedes ver los criterios que Mailcleaner ha utilizado para considerar el mensaje como spam a través del botón <img src=\"/templates/$template/images/support/reasons.gif\" align=\"middle\" alt=\"\">. Si considera que estos criterios no son justificables, puede solicitar un análisis por parte de nuestro centro de análisis haciendo clic en el botón <img src=\"/templates/$template/images/support/analyse.gif\" align=\"middle\" alt=\"\">. También puede liberar el mensaje haciendo clic en el botón <img src=\"/templates/$template/images/support/force.gif\" align=\"middle\" alt=\"\">.";
+$txt['SFALSEPOSSUB2'] = "Desde la lista de cuarentena, puedes ver los criterios que SpamTagger ha utilizado para considerar el mensaje como spam a través del botón <img src=\"/templates/$template/images/support/reasons.gif\" align=\"middle\" alt=\"\">. Si considera que estos criterios no son justificables, puede solicitar un análisis por parte de nuestro centro de análisis haciendo clic en el botón <img src=\"/templates/$template/images/support/analyse.gif\" align=\"middle\" alt=\"\">. También puede liberar el mensaje haciendo clic en el botón <img src=\"/templates/$template/images/support/force.gif\" align=\"middle\" alt=\"\">.";
 $txt['SFALSEPOSSUB3TITLE'] = "Listas de correo";
-$txt['SFALSEPOSSUB3'] = "En ocasiones, ciertas listas de correo son bloqueadas por Mailcleaner. Esto se debe a su formato, que suele ser muy similar al del spam. Puede solicitar un análisis de estos mensajes como se ha explicado anteriormente, y nuestro centro de análisis se encargará de poner dichas listas de correo en listas blancas para evitar que sean bloqueadas en el futuro.";
+$txt['SFALSEPOSSUB3'] = "En ocasiones, ciertas listas de correo son bloqueadas por SpamTagger. Esto se debe a su formato, que suele ser muy similar al del spam. Puede solicitar un análisis de estos mensajes como se ha explicado anteriormente, y nuestro centro de análisis se encargará de poner dichas listas de correo en listas blancas para evitar que sean bloqueadas en el futuro.";
 $txt['SOTHERTITLE'] = "OTROS PROBLEMAS";
-$txt['SOTHER'] = "¿Tiene algún otro problema con la recepción de su correo electrónico y ha seguido los procedimientos anteriores sin resultados positivos? Si es así, póngase en contacto con el Centro de Análisis de Mailcleaner rellenando este formulario.";
-$txt['FAQTITLE'] = "Comprendiendo Mailcleaner";
+$txt['SOTHER'] = "¿Tiene algún otro problema con la recepción de su correo electrónico y ha seguido los procedimientos anteriores sin resultados positivos? Si es así, póngase en contacto con el Centro de Análisis de SpamTagger rellenando este formulario.";
+$txt['FAQTITLE'] = "Comprendiendo SpamTagger";
 $txt['DOCTITLE'] = "Ayuda de interfaz de usuario";
 $txt['WEBDOCTITLE'] = "Documentación en línea";
 $txt['FAQ'] = "
                <ul>
-                 <li> <h2>¿Qué hace Mailcleaner?</h2>
-                      Mailcleaner es un filtro de correo electrónico que comprueba sus mensajes entrantes contra el spam conocido, los virus y otros contenidos peligrosos, evitando que lleguen a su escritorio. Es una solución del lado del servidor, lo que significa que no tienes ningún software instalado en tu sistema para filtrar tus correos electrónicos. Esto lo hace el proveedor de su cuenta de correo electrónico. Con la interfaz basada en la web, usted está directamente conectado al filtro de Mailcleaner, desde el cual puede ajustar algunos parámetros del filtro, y ver todo el spam bloqueado.
+                 <li> <h2>¿Qué hace SpamTagger?</h2>
+                      SpamTagger es un filtro de correo electrónico que comprueba sus mensajes entrantes contra el spam conocido, los virus y otros contenidos peligrosos, evitando que lleguen a su escritorio. Es una solución del lado del servidor, lo que significa que no tienes ningún software instalado en tu sistema para filtrar tus correos electrónicos. Esto lo hace el proveedor de su cuenta de correo electrónico. Con la interfaz basada en la web, usted está directamente conectado al filtro de SpamTagger, desde el cual puede ajustar algunos parámetros del filtro, y ver todo el spam bloqueado.
                  </li>
                  <li> <h2>¿Qué es el spam?</h2>
                       El spam son mensajes de correo electrónico no solicitados o no deseados. Generalmente utilizados para publicidad, estos mensajes pueden llenar rápidamente su bandeja de entrada. Estos mensajes no suelen ser peligrosos, pero sí muy molestos.
                  </li>
                  <li> <h2>¿Qué son los virus y los contenidos peligrosos?</h2>
-                      Los virus son pequeños programas informáticos capaces de explotar y permitir que personas malintencionadas tomen el control de su ordenador. Pueden ser enviados por correo electrónico como archivos adjuntos, e infectar su sistema una vez abiertos (algunos pueden incluso activarse sin ser abiertos). Los contenidos peligrosos son lo mismo, salvo que pueden habilitarse por medios más inteligentes, escondiéndose directamente en el contenido del mensaje, o incluso siendo dirigidos desde el exterior mediante un enlace rebotado en el correo electrónico. Estos son muy difíciles de detectar mediante el uso de filtros de correo electrónico estándar, porque el verdadero virus no está realmente incluido dentro del mensaje. Mailcleaner realiza más comprobaciones para evitar que el correo electrónico potencialmente peligroso llegue a su bandeja de entrada.
+                      Los virus son pequeños programas informáticos capaces de explotar y permitir que personas malintencionadas tomen el control de su ordenador. Pueden ser enviados por correo electrónico como archivos adjuntos, e infectar su sistema una vez abiertos (algunos pueden incluso activarse sin ser abiertos). Los contenidos peligrosos son lo mismo, salvo que pueden habilitarse por medios más inteligentes, escondiéndose directamente en el contenido del mensaje, o incluso siendo dirigidos desde el exterior mediante un enlace rebotado en el correo electrónico. Estos son muy difíciles de detectar mediante el uso de filtros de correo electrónico estándar, porque el verdadero virus no está realmente incluido dentro del mensaje. SpamTagger realiza más comprobaciones para evitar que el correo electrónico potencialmente peligroso llegue a su bandeja de entrada.
                  </li>
-                 <li> <h2>Criterios antispam de Mailcleaner</h2>
-                      Mailcleaner utiliza una serie de pruebas para detectar el spam con la mayor precisión posible. Utiliza, entre otras cosas, una simple coincidencia de palabras o frases clave, bases de datos de spam de todo el mundo y computación estadística de tokens. La agregación de todos estos criterios dará una puntuación global para cada mensaje, sobre la cual Mailcleaner tomará la decisión final: Spam o jamón. Como el spam es un objetivo que se mueve muy rápido, estas reglas también se adaptan lo más rápido posible. Este es el trabajo de Mailcleaner para mantener estas configuraciones tan buenas como sea posible.
+                 <li> <h2>Criterios antispam de SpamTagger</h2>
+                      SpamTagger utiliza una serie de pruebas para detectar el spam con la mayor precisión posible. Utiliza, entre otras cosas, una simple coincidencia de palabras o frases clave, bases de datos de spam de todo el mundo y computación estadística de tokens. La agregación de todos estos criterios dará una puntuación global para cada mensaje, sobre la cual SpamTagger tomará la decisión final: Spam o jamón. Como el spam es un objetivo que se mueve muy rápido, estas reglas también se adaptan lo más rápido posible. Este es el trabajo de SpamTagger para mantener estas configuraciones tan buenas como sea posible.
                  </li>
                  <li> <h2>Errores</h2>
-                      Dado que Mailcleaner es un sistema de filtrado automático, también es propenso a cometer errores. Hay básicamente dos tipos de errores que puede generar Mailcleaner:
+                      Dado que SpamTagger es un sistema de filtrado automático, también es propenso a cometer errores. Hay básicamente dos tipos de errores que puede generar SpamTagger:
                       <ul>
-                       <li> <h3>Falsos negativos</h3> Los falsos negativos son mensajes de spam que consiguen colarse en el filtro de Mailcleaner y llegar a tu bandeja de entrada sin ser detectados. Son molestos, pero mientras sean relativamente raros, no supondrán una pérdida significativa para tu productividad en el trabajo. ¿Recuerdas cuando sólo recibías un par de mensajes de spam a la semana? Mailcleaner puede devolverte al menos a este punto.
+                       <li> <h3>Falsos negativos</h3> Los falsos negativos son mensajes de spam que consiguen colarse en el filtro de SpamTagger y llegar a tu bandeja de entrada sin ser detectados. Son molestos, pero mientras sean relativamente raros, no supondrán una pérdida significativa para tu productividad en el trabajo. ¿Recuerdas cuando sólo recibías un par de mensajes de spam a la semana? SpamTagger puede devolverte al menos a este punto.
                        </li>
-                       <li> <h3>Falsos positivos</h3> Estos son errores más molestos, ya que son el resultado de correos electrónicos válidos que son bloqueados por el sistema. Si no estás lo suficientemente atento y no compruebas la cuarentena o los informes con cuidado, esto puede llevar a la pérdida de mensajes importantes. Mailcleaner está optimizado para reducir al máximo estos errores. Sin embargo, aunque es muy muy raro, esto puede ocurrir. Por eso Mailcleaner incluye acceso a la cuarentena en tiempo real e informes periódicos para ayudarle a minimizar el riesgo de pérdida de mensajes.
+                       <li> <h3>Falsos positivos</h3> Estos son errores más molestos, ya que son el resultado de correos electrónicos válidos que son bloqueados por el sistema. Si no estás lo suficientemente atento y no compruebas la cuarentena o los informes con cuidado, esto puede llevar a la pérdida de mensajes importantes. SpamTagger está optimizado para reducir al máximo estos errores. Sin embargo, aunque es muy muy raro, esto puede ocurrir. Por eso SpamTagger incluye acceso a la cuarentena en tiempo real e informes periódicos para ayudarle a minimizar el riesgo de pérdida de mensajes.
                        </li>
                       </ul>
                   </li>
-                  <li> <h2>Qué puede hacer para corregir Mailcleaner</h2>
-                      Ante los errores de Mailcleaner, lo mejor es ayudar a corregir el filtro enviando comentarios a su administrador. No piense que la mejor solución es simplemente poner en la lista blanca o negra a los remitentes, ya que esto es sólo una forma rápida pero sucia (revise esto para más información). Aunque a veces es la única posibilidad, siempre es mejor averiguar la verdadera causa del error y corregirla. Esto sólo lo pueden hacer los técnicos, así que no dudes en enviar los comentarios tras los errores a tu administrador.
+                  <li> <h2>Qué puede hacer para corregir SpamTagger</h2>
+                      Ante los errores de SpamTagger, lo mejor es ayudar a corregir el filtro enviando comentarios a su administrador. No piense que la mejor solución es simplemente poner en la lista blanca o negra a los remitentes, ya que esto es sólo una forma rápida pero sucia (revise esto para más información). Aunque a veces es la única posibilidad, siempre es mejor averiguar la verdadera causa del error y corregirla. Esto sólo lo pueden hacer los técnicos, así que no dudes en enviar los comentarios tras los errores a tu administrador.
                   </li>
                 </ul>";
 $txt['DOCUMENTATION'] = "
@@ -59,7 +59,7 @@ $txt['DOCUMENTATION'] = "
                                    haga clic en este icono para liberar el mensaje correspondiente. A continuación, se enviará directamente a su casilla de correo.
                                 </li>
                                 <li> <h3>ver información (<img src=\"/templates/$template/images/reasons.gif\" align=\"top\" alt=\"\">): </h3>
-                                   si desea ver por qué un mensaje ha sido detectado como spam, clic en este ícono. Verá los criterios de Mailcleaner con los puntajes correspondientes. Con un puntaje igual o superior a 5, un mensaje se considera correo no deseado.
+                                   si desea ver por qué un mensaje ha sido detectado como spam, clic en este ícono. Verá los criterios de SpamTagger con los puntajes correspondientes. Con un puntaje igual o superior a 5, un mensaje se considera correo no deseado.
                                 </li>
                                 <li> <h3>enviar para analizar (<img src=\"/templates/$template/images/analyse.gif\" align=\"top\" alt=\"\">): </h3>
                                    en caso de un falso positivo, haga clic en este ícono correspondiente al mensaje inocente para enviar un comentario a su administrador.
@@ -90,7 +90,7 @@ $txt['DOCUMENTATION'] = "
   utilice esta opción para aplicar cambios a todas las direcciones.
 </li>
 <li><h3>modo de entrega de spam: </h3>
-  elija lo que quiere que haga Mailcleaner con los mensajes detectados como correo no deseado.
+  elija lo que quiere que haga SpamTagger con los mensajes detectados como correo no deseado.
   <ul>
 <li><h4>quarantine:</h4> los mensajes se almacenan en cuarentena y se borran periódicamente.</li>
 <li><h4>tag:</h4> spams no se bloquearán, pero se agregará una marca al tema.</li>
@@ -98,7 +98,7 @@ $txt['DOCUMENTATION'] = "
 </ul>
 </li>
 <li><h3>rebote de cuarentena: </h3>
-  esta opción hará que Mailcleaner ponga en cuarentena el mensaje de rebote y envíe una notificación de error. Esto puede ser útil si usted es víctima de mensajes masivos de rebote debido a virus ampliamente difundidos por ejemplo. Esto sólo debe activarse durante un pequeño lapso de tiempo porque es muy peligroso.
+  esta opción hará que SpamTagger ponga en cuarentena el mensaje de rebote y envíe una notificación de error. Esto puede ser útil si usted es víctima de mensajes masivos de rebote debido a virus ampliamente difundidos por ejemplo. Esto sólo debe activarse durante un pequeño lapso de tiempo porque es muy peligroso.
  </li>
 <li><h3>etiqueta de spam: </h3>
 elige y personaliza el mensaje que aparecerá en el asunto de los spams etiquetados. Esto es inútil si ha elegido el modo de cuarentena.
@@ -109,4 +109,4 @@ elige y personaliza el mensaje que aparecerá en el asunto de los spams etiqueta
 </ul>
 </li>
 </ul>";
-$txt['WEBDOC'] = "<ul><li>Puede encontrar más información y documentación en nuestro sitio web: <a href=\"https://wiki2.mailcleaner.net/doku.php/documentation:userfaq\" target=\"_blank\">Documentación de usuario de Mailcleaner </a></li></ul>";
+$txt['WEBDOC'] = "<ul><li>Puede encontrar más información y documentación en nuestro sitio web: <a href=\"https://wiki2.spamtagger.org/doku.php/documentation:userfaq\" target=\"_blank\">Documentación de usuario de SpamTagger </a></li></ul>";

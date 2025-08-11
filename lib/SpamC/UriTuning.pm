@@ -42,7 +42,7 @@ sub gglapi_domain {
 	chomp(@elems);
 
         # Recipient detection
-        my $Recipients = lc( $permsgstatus->get('X-MailCleaner-recipients') );
+        my $Recipients = lc( $permsgstatus->get('X-SpamTagger-recipients') );
         chomp($Recipients);
         my @AllRecipients = split(', ', $Recipients);
         my %AllRecipientsDomains;

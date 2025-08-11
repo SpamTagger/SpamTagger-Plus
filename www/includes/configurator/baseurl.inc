@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   Base Url page change of MailCleaner "Configurator" wizard
+#   Base Url page change of SpamTagger "Configurator" wizard
 #
 -->
 <?php
@@ -24,11 +24,11 @@ if ('baseurl.inc' == basename($_SERVER['SCRIPT_FILENAME']))
   die ('Try again later.');
 ?>
 	<h2 class="text-center">Step: <?php echo $validStep['title'] ?></h2>
-	<p>Set the MailCleaner Base URL. This is the URL users and administrators will use to access MailCleaner. This should be the associated address in your DNS server too.</p>
+	<p>Set the SpamTagger Base URL. This is the URL users and administrators will use to access SpamTagger. This should be the associated address in your DNS server too.</p>
         <form class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF']."?step=".$_GET['step']; ?>" method="post">
 	  <div class="form-group">
 	    <label class="col-md-5 control-label" for="burl">Base URL :</label>
-	    <div class="col-md-4"><input type="text" class="form-control" name="burl" placeholder="mailcleaner.mycompany.com"></div>
+	    <div class="col-md-4"><input type="text" class="form-control" name="burl" placeholder="spamtagger.mycompany.com"></div>
 	  </div>
 	  <div class="form-group">
 	    <div class="col-md-offset-5 col-md-4">
@@ -43,7 +43,7 @@ if ('baseurl.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 		  exec("echo \"UPDATE httpd_config SET servername='".$_POST['burl']."';\" |/usr/spamtagger/bin/st_mysql -m st_config", $outputburl, $retburl);
      		  touch('/var/spamtagger/run/configurator/baseurl');
           $_SESSION['burl'] = $_POST['burl'];
-		  ($retburl == 0) ? $retburl = "<span class='text-success'>MailCleaner Base URL changed</span>" : $retburl = "<span class='text-danger'>Failed to change MailCleaner Base URL</span>";
+		  ($retburl == 0) ? $retburl = "<span class='text-success'>SpamTagger Base URL changed</span>" : $retburl = "<span class='text-danger'>Failed to change SpamTagger Base URL</span>";
 		  echo $retburl;	          
 	      } else {
 	        echo "<span class='text-danger'>No field should stay empty !</span>";

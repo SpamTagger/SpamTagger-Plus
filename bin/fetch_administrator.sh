@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,10 @@
 #
 #   Usage:
 #           fetch_administrator.sh [-r]
+
+# TODO: Disabled during transition to spamtagger
+echo "Not currently supported for SpamTagger"
+exit
 
 usage() {
   cat <<EOF
@@ -73,7 +77,7 @@ fi
 ret=$(downloadDatas "$SRCDIR/etc/apache/" "administrator" $randomize "null" "" "noexit")
 if [ -f $SRCDIR/etc/apache/support ]; then
   support=$(cat $SRCDIR/etc/apache/support)
-  echo "INSERT INTO administrator VALUES ('mailcleaner-support', '$support','1','1','1','1','1','*','0','default',NULL) ON DUPLICATE KEY UPDATE password='$support';" | /usr/spamtagger/bin/st_mysql -m st_config
+  echo "INSERT INTO administrator VALUES ('spamtagger-support', '$support','1','1','1','1','1','*','0','default',NULL) ON DUPLICATE KEY UPDATE password='$support';" | /usr/spamtagger/bin/st_mysql -m st_config
 fi
 
 removeLockFile "$FILE_NAME"

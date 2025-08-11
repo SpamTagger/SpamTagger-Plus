@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ sub connect {
     }
     if (! ( $host eq "" || $port eq "" || $password eq "") ) {
       $dbh = DBI->connect("DBI:mysql:database=$dbase;host=$host:$port;",
-			"mailcleaner", $password, {RaiseError => 0, PrintError => 0, AutoCommit => 1})
+			"spamtagger", $password, {RaiseError => 0, PrintError => 0, AutoCommit => 1})
 		or fatal_error("CANNOTCONNECTDB", $critical);
 	  
       $realmaster = 1;
@@ -87,7 +87,7 @@ sub connect {
   } 
   if ($realmaster < 1) {
     $dbh = DBI->connect("DBI:mysql:database=$db;host=localhost;mysql_socket=$socket",
-			"mailcleaner", $conf->getOption('MYMAILCLEANERPWD'), {RaiseError => 0, PrintError => 0})
+			"spamtagger", $conf->getOption('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0})
 		or fatal_error("CANNOTCONNECTDB", $critical);
   }
   my $this = {

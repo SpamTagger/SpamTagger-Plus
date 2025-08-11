@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
 /**
@@ -14,7 +14,7 @@ require_once("tequila/TequilaClient.php");
 /**
  * This is the TequilyAuthenticator class
  * This will take care of authenticate user against a Radius server
- * @package mailcleaner
+ * @package SpamTagger Plus
  */
 class TequilaAuthenticator extends AuthManager {
     
@@ -58,10 +58,10 @@ class TequilaAuthenticator extends AuthManager {
         $tequila = new TequilaClient($url, '/tmp/tequila');
         $requestInfo = array(
                                 'urlacces'  => $tequila->getCurrentUrl(),
-                                'service'   => 'MailCleaner',
+                                'service'   => 'SpamTagger',
                                 'request'   => $settings->getSetting('fields'),
                              );
-        $tequila->setApplicationName('MailCleaner');
+        $tequila->setApplicationName('SpamTagger');
         $tequila->SetWantedAttributes(split(',', $settings->getSetting('fields')));
         $tequila->SetAllowsFilter($settings->getSetting('allowsfilter'));
         $tequila->Authenticate();    

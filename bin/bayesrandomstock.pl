@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #
 #
 #   This script will compare the actual slave or master database with
-#   the up-to-date database from Mailcleaner Update Services
+#   the up-to-date database from SpamTagger Update Services
 #
 #   Usage:
 #           check_db.pl [-s|-m] [--dbs=database] [--update|--mycheck|--myrepair]
@@ -125,7 +125,7 @@ foreach my $WHAT (@whats) {
     my $tarfile = "$STOCKDIR/$WHAT-".$conf->getOption('CLIENTID')."-".$conf->getOption('HOSTID')."_$date.tar.gz";
     system("tar", "-C", "$STOCKDIR/$WHAT/", "-cvzf", "$tarfile", "cur");
 
-    my $CVSHOST='cvs.mailcleaner.net';
+    my $CVSHOST='cvs.spamtagger.org';
     my $rc = eval
     {
         require IPC::Run;

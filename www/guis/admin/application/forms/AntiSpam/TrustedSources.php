@@ -1,9 +1,9 @@
 <?php 
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * TrustedSources form
  */
@@ -33,7 +33,7 @@ class Default_Form_AntiSpam_TrustedSources extends Default_Form_AntiSpam_Default
     	
 		 $use_alltrusted = new Zend_Form_Element_Checkbox('use_alltrusted', array(
 	        'label'   => $t->_('Enable all trusted path detection'). " :",
-		'title' => $t->_("The all trusted path detection is the way MailCleaner detects that a message is all internal and was not issued by an external host"),
+		'title' => $t->_("The all trusted path detection is the way SpamTagger detects that a message is all internal and was not issued by an external host"),
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));

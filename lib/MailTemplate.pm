@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -292,7 +292,7 @@ sub send {
                        Data => $this->{sup_part}
 	            );
        }   
-       $mime_msg->replace('X-Mailer', 'MailCleaner');
+       $mime_msg->replace('X-Mailer', 'SpamTagger');
        $txt = $mime_msg->stringify();
      }
   } else {
@@ -355,7 +355,7 @@ sub send {
 
     } 
     
-    $mime_msg->replace('X-Mailer', 'MailCleaner');
+    $mime_msg->replace('X-Mailer', 'SpamTagger');
     $txt = $mime_msg->stringify();
   }
  
@@ -519,7 +519,7 @@ sub parseTemplate {
   my %wellknown = (
     '__BASEURL__' => $baseurl,
     '__WEBBASEURL__' => $baseurl,
-    '__MAILCLEANERURL__' => $baseurl,
+    '__SPAMTAGGERURL__' => $baseurl,
     '__FORCEURL__' => $baseurl,
     '__STOREID__' => $conf->getOption('HOSTID'),
     '__ADDRESS__' => $this->{to},

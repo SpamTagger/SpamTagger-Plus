@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Pending alias request
  */
@@ -186,7 +186,7 @@ class Default_Model_RRDGraphicElement
 	}
 	
 	private function getRRDArchiveFile() {
-	        $config = MailCleaner_Config::getInstance();
+	        $config = SpamTagger_Config::getInstance();
     	        $file = $config->getOption('VARDIR').'/spool/newrrds/'.$this->_graphic->getName().'_'.$this->_graphic->getType().'/'.$this->_graphic->getHost().'.rrd';
                 return $file;
 	}

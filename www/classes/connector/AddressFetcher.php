@@ -1,16 +1,16 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
  
 /**
  * This class is the mother of the different address fetcher.
  * These are used to the email addresses bounded to a specific user
- * @package mailcleaner
+ * @package SpamTagger Plus
  */
 abstract class AddressFetcher {
     

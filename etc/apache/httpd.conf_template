@@ -47,8 +47,8 @@ HostnameLookups On
     MaxConnectionsPerChild 20
 </IfModule>
 
-User mailcleaner
-Group mailcleaner
+User spamtagger
+Group spamtagger
 
 #LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
 LoadModule mpm_itk_module modules/mpm_itk.so
@@ -170,11 +170,11 @@ RewriteEngine On
 RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
 RewriteRule .* - [F]
 
-#AssignUserId mailcleaner mailcleaner
+#AssignUserId spamtagger spamtagger
 
 Listen 5132
 <VirtualHost *:5132>
-    AssignUserId root mailcleaner
+    AssignUserId root spamtagger
 
     DocumentRoot "__SRCDIR__/www/soap/htdocs"
     ErrorLog __VARDIR__/log/apache/error_soap.log

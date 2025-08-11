@@ -1,4 +1,4 @@
-# GRUB2 gfxmenu MailCleaner theme.
+# GRUB2 gfxmenu SpamTagger theme.
 # Designed for 1024x768 resolution.
 # Created by Olivier Diserens
 
@@ -7,7 +7,7 @@
 title-text: ""
 title-font: "Courier Regular 16"
 title-color: "#000000"
-desktop-image: "mailcleaner.png"
+desktop-image: "spamtagger.png"
 desktop-color: "#000000"
 message-font: "Courier Regular 16"
 
@@ -49,11 +49,11 @@ message-font: "Courier Regular 16"
 + hbox {
 		top = 100%-22
 		left = 5
-		+ label {text = "MailCleaner Enterprise Edition 2012" font = "Arial Regular 12" color = "#333333" align = "left"}
+		+ label {text = "SpamTagger Plus" font = "Arial Regular 12" color = "#333333" align = "left"}
 }
 
 + hbox {
                 top = 100%-22
                 left = 100%-160
-                + label {text = "©2012 www.mailcleaner.net" font = "Arial Regular 12" color = "#333333" align = "left"}
+                + label {text = "©2012 spamtagger.org" font = "Arial Regular 12" color = "#333333" align = "left"}
 }

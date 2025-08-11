@@ -23,17 +23,17 @@ NAME="Exim stage 4"
 test -x $DAEMON || exit 0
 
 prepare() {
-  chown mailcleaner:mailcleaner $VARDIR/log/exim_stage4/mainlog >/dev/null 2>&1
+  chown spamtagger:spamtagger $VARDIR/log/exim_stage4/mainlog >/dev/null 2>&1
 
   $SRCDIR/bin/dump_exim_config.pl 4 >/dev/null 2>&1
-  chown -R mailcleaner:mailcleaner $VARDIR/spool/tmp/spamtagger/*.list >/dev/null 2>&1
+  chown -R spamtagger:spamtagger $VARDIR/spool/tmp/spamtagger/*.list >/dev/null 2>&1
 
   # replace system config
   cp $SRCDIR/etc/exim/exim_stage4.conf /opt/exim4/etc/exim.conf
   if [ ! -f /etc/aliases ]; then
-    echo "root:  mailcleaner" >/etc/aliases
+    echo "root:  spamtagger" >/etc/aliases
   fi
-  chown -R mailcleaner:mailcleaner /var/mail >/dev/null 2>&1
+  chown -R spamtagger:spamtagger /var/mail >/dev/null 2>&1
 }
 
 case "$1" in

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -169,7 +169,7 @@ sub dumpPrefsFromRow {
   my $prefdir = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$this->{name};
   my $preffile = $prefdir."/prefs.list";
 
-  my $stuid = getpwnam('mailcleaner');
+  my $stuid = getpwnam('SpamTagger');
 
   my @prefs_to_dump = ('viruswall', 'report_template', 'virus_subject', 'enable_whitelists', 'language',
           'warnhit_template', 'support_email', 'spamwall', 'enable_warnlists', 'content_subject',
@@ -180,8 +180,8 @@ sub dumpPrefsFromRow {
       print "CANNOTMAKEPREFDIR ($prefdir)";
       return 0;
     }
-    my $uid = getpwnam( 'mailcleaner' );
-    my $gid = getgrnam( 'mailcleaner' );
+    my $uid = getpwnam( 'SpamTagger' );
+    my $gid = getgrnam( 'SpamTagger' );
     chown $uid, $gid, $prefdir;
   }
   if (! open PREFFILE, ">".$preffile) {
@@ -242,7 +242,7 @@ sub dumpLocalAddresses {
   my $this = shift;
   my $slave_db = shift;
   
-  my $stuid = getpwnam('mailcleaner');
+  my $stuid = getpwnam('SpamTagger');
   require DB;
 
   my $conf = ReadConfig::getInstance();

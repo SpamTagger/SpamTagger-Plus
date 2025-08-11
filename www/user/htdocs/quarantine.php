@@ -1,7 +1,7 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
  *                2015-2017 Mentor Reka <reka.mentor@gmail.com>
@@ -101,8 +101,8 @@ $default_filename='st-info-box-user-en.php';
 $filename='st-info-box-user-'.$user_pref_lang.'.php';
 
 if ($is_enterprise) {
-        // MailCleaner Staff CONTENT
-        $stmanager='https://www.mailcleaner.net/infobox/';
+        // SpamTagger Staff CONTENT
+        $stmanager='https://spamtagger.org/infobox/';
         $url_to_get=$stmanager.$filename;
 
         $curl = curl_init();
@@ -130,7 +130,7 @@ if ($is_enterprise) {
                 $result2 = curl_exec($curl);
                 curl_close($curl);
                 if ($result2 === false) {
-                        $content="<h4>No text or no access to remote server MailCleaner server. Please inform your administrator.</h4>";
+                        $content="<h4>No text or no access to remote server SpamTagger server. Please inform your administrator.</h4>";
                 } else {
                         if (isset($result2)) {
                                 $content = $result2;
@@ -146,7 +146,7 @@ if ($is_enterprise) {
 // Customer CONTENT
 // Get the infobox file according to the user language.
 // If there is no file for the language, we take the default language: en
-// Finaly, we merge the MailCleaner Staff content with the Customer content if exists
+// Finaly, we merge the SpamTagger Staff content with the Customer content if exists
 $local_directory='/var/tmp/';
 $file_to_get=$local_directory.$filename;
 $default_file_to_get=$local_directory.$default_filename;

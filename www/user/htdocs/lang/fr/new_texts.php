@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
 /* 
@@ -110,7 +110,7 @@ $txt['DESCRIPTION']             = "Description";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT']              = "Merci d'avoir utilis&eacute; Mailcleaner.<br/><br/>Vous &ecirc;tes &agrave; pr&eacute;sent d&eacute;connect&eacute; de votre compte.<br/><br/>Si vous souhaitez vous reconnecter, cliquez sur le lien suivant:";
+$txt['LOGOUTTEXT']              = "Merci d'avoir utilis&eacute; SpamTagger.<br/><br/>Vous &ecirc;tes &agrave; pr&eacute;sent d&eacute;connect&eacute; de votre compte.<br/><br/>Si vous souhaitez vous reconnecter, cliquez sur le lien suivant:";
 
 /*
  * parameters page
@@ -137,7 +137,7 @@ $txt['NOTFILTEREDDOMAIN']       = "Ce domaine n'est pas filtr&eacute; par le sys
 $txt['ALIASALREADYREGISTERD']   = "Cette adresse est d&eacute;j&agrave; enregistr&eacute;e.";
 $txt['ALIASALREADYPENDING']     = "Une demande est d&eacute;j&agrave; en attente pour cette adresse.";
 $txt['ALIASPENDING']            = "Une demande de confirmation a &eacute;t&eacute; envoy&eacute;e.<br/> Veuillez contr&ocirc;ler votre e-mail pour valider la demande.";
-$txt['ALIASREQUESTSUBJECT']     = "[Mailcleaner] Demande d'ajout d'adresse/alias";
+$txt['ALIASREQUESTSUBJECT']     = "[SpamTagger] Demande d'ajout d'adresse/alias";
 $txt['ALIASERRORSENDIG']        = "Une erreur s'est produite lors de l'envoi de la confirmation";
 $txt['ALIASNOTPENDING']         = "Aucune demande pour cette adresse n'est en attente.";
 $txt['ALIASADDED']              = "L'adresse a bien &eacute;t&eacute; ajout&eacute;e.";
@@ -220,7 +220,7 @@ $txt['CHOOSELANGUAGE']          = "Choisissez la langue de navigation";
 /*
  * aliases (new)
  */
-$txt['ADDLISTSHORTHELP']        = "Vous pouvez lier d'autres adresses ou alias &agrave; votre compte MailCleaner principal.<br /> 
+$txt['ADDLISTSHORTHELP']        = "Vous pouvez lier d'autres adresses ou alias &agrave; votre compte SpamTagger principal.<br /> 
                                    Vous pourrez ainsi acc&eacute;der directement &agrave; toutes vos adresses en vous connectant une seule fois.";
 $txt['ADDANADDRESS']            = "Lier une adresse";
 $txt['ADDTHEADDRESS']           = "&lt; Lier l'adresse";
@@ -228,7 +228,7 @@ $txt['ADDANADDRESSSHORTHELP']   = "Entrez l'adresse que vous souhaitez lier &agr
 $txt['REMANADDRESS']            = "D&eacute;lier une adresse";
 $txt['REMTHEADDRESS']           = "D&eacute;lier les adresses s&eacute;lectionn&eacute;es";
 $txt['REMANADDRESSSHORTHELP']   = "S&eacute;lectionner la (ou les) adresse(s) que vous souhaitez d&eacute;lier de ce compte 
-                                   MailCleaner.";
+                                   SpamTagger.";
 $txt['WAITINGCONFIRMATION']     = "en attente de confirmation";
 
 /*
@@ -241,7 +241,7 @@ $txt['TAGMESSAGEWITHTAG']       = "D&eacute;livrer le message en marquant l'obje
 $txt['DROPMESSAGE']             = "Supprimer imm&eacute;diatement le message";
 $txt['SUMMARYSENTFREQ']         = "Envoi des rapports de quarantaine &agrave; l'adresse s&eacute;lectionn&eacute;e";
 $txt['SUMMARYFORMAT']           = "Envoi des rapports de quarantaine au format";
-$txt['APPLYTOALLADDRESSES']     = "Appliquer ces r&eacute;glages &agrave; toutes les adresses du compte MailCleaner";
+$txt['APPLYTOALLADDRESSES']     = "Appliquer ces r&eacute;glages &agrave; toutes les adresses du compte SpamTagger";
 $txt['PLAINTEXT']               = "Texte brut";
 $txt['HTML']                    = "Formatt&eacute; (HTML)";
 $txt['KEEPBOUNCESINQUARANTINE'] = "Retenir syst&eacute;matiquement les messages d'erreur";
@@ -289,6 +289,6 @@ $txt['RECORDALREADYEXISTS']     = "Cette entr&eacute;e existe d&eacute;j&agrave;
 /*
  * logout (new)
  */
-$txt['BEENLOGGEDOUT']           = "Vous avez bien &eacute;t&eacute; d&eacute;connect&eacute;.<br /> Merci de votre utilisation de MailCleaner.<br />
+$txt['BEENLOGGEDOUT']           = "Vous avez bien &eacute;t&eacute; d&eacute;connect&eacute;.<br /> Merci de votre utilisation de SpamTagger.<br />
                                   Vous pouvez vous reconnecter &agrave; l'adresse suivante: <a href=\"__PARAM__\" >__PARAM__</a>";
 ?>

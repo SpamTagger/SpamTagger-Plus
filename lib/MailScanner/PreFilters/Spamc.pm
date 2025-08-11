@@ -79,7 +79,7 @@ sub Checks {
   my @WholeMessage;
   push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   if ($message->{infected}) {
-      push(@WholeMessage, "X-MailCleaner-Internal-Scan: infected\n");
+      push(@WholeMessage, "X-SpamTagger-Internal-Scan: infected\n");
   }
   push(@WholeMessage, "\n");
   $message->{store}->ReadBody(\@WholeMessage, 0);

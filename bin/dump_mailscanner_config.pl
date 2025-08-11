@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2021 John Mertz <git@john.me.tz>
 #
@@ -33,7 +33,7 @@ if ($0 =~ m/(\S*)\/\S+.pl$/) {
 }
 require ConfigTemplate;
 require DB;
-require MCDnsLists;
+require STDnsLists;
 require GetDNS;
 
 my $db = DB::connect('slave', 'st_config');
@@ -584,7 +584,7 @@ sub dump_dnsblacklists_conf
                           'etc/mailscanner/dnsblacklists.conf');
    my $subtmpl = $template->getSubTemplate('DNSLIST');
    my $res = "";
-   my $dnslists = new MCDnsLists(\&log_dns, 1);
+   my $dnslists = new STDnsLists(\&log_dns, 1);
    $dnslists->loadRBLs( $conf->getOption('SRCDIR')."/etc/rbls", '', 'IPRBL', '', '', '', 'dump_dnslists');
    my $rbls = $dnslists->getAllRBLs();
    foreach my $r (keys %{$rbls}) {

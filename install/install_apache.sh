@@ -14,7 +14,7 @@ if [ ! -f $sudoersfile ]; then
 fi
 cat >$sudoersfile <<EOF
 root    ALL=(ALL) ALL
-User_Alias      MAILCLEANER = mailcleaner
+User_Alias      SPAMTAGGER = spamtagger
 Runas_Alias     ROOT = root
 Cmnd_Alias      NTPSTARTER = /etc/init.d/ntp-server
 Cmnd_Alias      NTPDATESTARTER = /etc/init.d/ntpdate
@@ -27,24 +27,24 @@ Cmnd_Alias      STOPSTART = $SRCDIR/scripts/starters/[S|H|R]_*
 
 Defaults        mailto = root
 
-MAILCLEANER     * = (ROOT) NOPASSWD: NTPSTARTER
-MAILCLEANER     * = (ROOT) NOPASSWD: NTPDATESTARTER
-MAILCLEANER     * = (ROOT) NOPASSWD: DATE
-MAILCLEANER     * = (ROOT) NOPASSWD: IFDOWN
-MAILCLEANER     * = (ROOT) NOPASSWD: IFUP
-MAILCLEANER     * = (ROOT) NOPASSWD: PASSWD
-MAILCLEANER     * = (ROOT) NOPASSWD: UPDATE
-MAILCLEANER     * = (ROOT) NOPASSWD: STOPSTART
+SPAMTAGGER     * = (ROOT) NOPASSWD: NTPSTARTER
+SPAMTAGGER     * = (ROOT) NOPASSWD: NTPDATESTARTER
+SPAMTAGGER     * = (ROOT) NOPASSWD: DATE
+SPAMTAGGER     * = (ROOT) NOPASSWD: IFDOWN
+SPAMTAGGER     * = (ROOT) NOPASSWD: IFUP
+SPAMTAGGER     * = (ROOT) NOPASSWD: PASSWD
+SPAMTAGGER     * = (ROOT) NOPASSWD: UPDATE
+SPAMTAGGER     * = (ROOT) NOPASSWD: STOPSTART
 EOF
 
 touch /etc/ntp.conf 2>&1
-chgrp mailcleaner /etc/ntp.conf 2>&1
+chgrp spamtagger /etc/ntp.conf 2>&1
 chmod g+w /etc/ntp.conf 2>&1
-chgrp mailcleaner /etc/network/interfaces 2>&1
+chgrp spamtagger /etc/network/interfaces 2>&1
 chmod g+w /etc/network/interfaces 2>&1
-chgrp mailcleaner /etc/network/run/ifstate 2>&1
+chgrp spamtagger /etc/network/run/ifstate 2>&1
 chmod g+w /etc/network/run/ifstate 2>&1
-chgrp mailcleaner /etc/resolv.conf 2>&1
+chgrp spamtagger /etc/resolv.conf 2>&1
 chmod g+w /etc/resolv.conf 2>&1
 
 if [ "$USEDEBS" = "Y" ]; then
@@ -71,7 +71,7 @@ else
 
   cat >/usr/sudo/etc/sudoers <<EOF
 root    ALL=(ALL) ALL
-User_Alias      MAILCLEANER = mailcleaner
+User_Alias      SPAMTAGGER = spamtagger
 Runas_Alias     ROOT = root
 Cmnd_Alias      NTPSTARTER = /etc/init.d/ntp-server
 Cmnd_Alias      NTPDATESTARTER = /etc/init.d/ntpdate
@@ -83,23 +83,23 @@ Cmnd_Alias      UPDATE = $SRCDIR/scripts/cron/spamtagger_cron.pl
 
 Defaults        mailto = root
 
-MAILCLEANER     * = (ROOT) NOPASSWD: NTPSTARTER
-MAILCLEANER     * = (ROOT) NOPASSWD: NTPDATESTARTER
-MAILCLEANER     * = (ROOT) NOPASSWD: DATE
-MAILCLEANER     * = (ROOT) NOPASSWD: IFDOWN
-MAILCLEANER     * = (ROOT) NOPASSWD: IFUP
-MAILCLEANER     * = (ROOT) NOPASSWD: PASSWD
-MAILCLEANER     * = (ROOT) NOPASSWD: UPDATE
+SPAMTAGGER     * = (ROOT) NOPASSWD: NTPSTARTER
+SPAMTAGGER     * = (ROOT) NOPASSWD: NTPDATESTARTER
+SPAMTAGGER     * = (ROOT) NOPASSWD: DATE
+SPAMTAGGER     * = (ROOT) NOPASSWD: IFDOWN
+SPAMTAGGER     * = (ROOT) NOPASSWD: IFUP
+SPAMTAGGER     * = (ROOT) NOPASSWD: PASSWD
+SPAMTAGGER     * = (ROOT) NOPASSWD: UPDATE
 EOF
 
   touch /etc/ntp.conf 2>&1
-  chgrp mailcleaner /etc/ntp.conf 2>&1
+  chgrp spamtagger /etc/ntp.conf 2>&1
   chmod g+w /etc/ntp.conf 2>&1
-  chgrp mailcleaner /etc/network/interfaces 2>&1
+  chgrp spamtagger /etc/network/interfaces 2>&1
   chmod g+w /etc/network/interfaces 2>&1
-  chgrp mailcleaner /etc/network/run/ifstate 2>&1
+  chgrp spamtagger /etc/network/run/ifstate 2>&1
   chmod g+w /etc/network/run/ifstate 2>&1
-  chgrp mailcleaner /etc/resolv.conf 2>&1
+  chgrp spamtagger /etc/resolv.conf 2>&1
   chmod g+w /etc/resolv.conf 2>&1
 
   if [ "$USEDEBS" = "Y" ]; then
@@ -124,7 +124,7 @@ if [ "$REP" = "y" ]; then
   cd httpd-2.2.2
   ./configure --prefix=/opt/apache --datadir=/var/www --sysconfdir=/etc/apache --enable-file-cache --enable-echo --enable-charset-lite --enable-cache --enable-disk-cache --enable-mem-cache --enable-logio --enable-mime-magic --enable-cern-meta --enable-expires --enable-headers --enable-usertrack --enable-unique-id --enable-ssl --enable-http --enable-info --enable-rewrite --enable-so --with-ssl=/usr/openssl
   #export SSL_BASE=/usr/openssl
-  #./configure --prefix=/opt/apache --enable-module=ssl --enable-shared=ssl --enable-module=log_referer --disable-module=userdir --enable-module=so --server-uid=mailcleaner --server-gid=mailcleaner 2>&1
+  #./configure --prefix=/opt/apache --enable-module=ssl --enable-shared=ssl --enable-module=log_referer --disable-module=userdir --enable-module=so --server-uid=spamtagger --server-gid=spamtagger 2>&1
 
   make 2>&1
   make install 2>&1

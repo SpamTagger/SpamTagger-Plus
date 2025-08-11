@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * controller for reporting page
  */
@@ -142,7 +142,7 @@ class MonitorreportingController extends Zend_Controller_Action
 		$params = $this->getSearchParams();
 		$view->params = $params;
 		
-        $session = new Zend_Session_Namespace('MailCleaner');
+        $session = new Zend_Session_Namespace('SpamTagger');
         
         $element = new Default_Model_ReportingStats();
         $elements = array();

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Mentor Reka <reka.mentor@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -18,16 +18,20 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This script will fetch the last MailCleaner demo configuration
+#   This script will fetch the last SpamTagger demo configuration
 #
 #   Usage:
 #           fetch_autoconf.sh [-r]
+
+# TODO: Disabled during transition to spamtagger
+echo "Not currently supported for SpamTagger"
+exit
 
 usage() {
   cat <<EOF
 usage: $0 options
 
-This script will fetch the last MailCleaner demo configuration
+This script will fetch the last SpamTagger demo configuration
 
 OPTIONS:
   -r   randomize start of the script, for automated process
@@ -69,16 +73,16 @@ fi
 . $SRCDIR/lib/updates/download_files.sh
 
 ##
-## MC Autoconf
+## ST Autoconf
 ##
 
-MC_AUTOCONF_DIR=$SRCDIR/etc/autoconf/
+ST_AUTOCONF_DIR=$SRCDIR/etc/autoconf/
 # Check if directory exists
-if [ ! -d "$MC_AUTOCONF_DIR" ]; then
-  mkdir $MC_AUTOCONF_DIR
+if [ ! -d "$ST_AUTOCONF_DIR" ]; then
+  mkdir $ST_AUTOCONF_DIR
 fi
 
-ret=$(downloadDatas "$MC_AUTOCONF_DIR" "st_autoconfig" $randomize "null" "" "noexit")
+ret=$(downloadDatas "$ST_AUTOCONF_DIR" "st_autoconfig" $randomize "null" "" "noexit")
 if [[ "$ret" -eq "1" ]]; then
   log "Autoconf downloaded"
 fi

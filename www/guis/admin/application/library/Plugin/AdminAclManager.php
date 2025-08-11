@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Main access management
  */
@@ -55,7 +55,7 @@
         $this->acl->add(new Zend_Acl_Resource('Menu_Management'));
         $this->acl->add(new Zend_Acl_Resource('Menu_Monitoring'));
         
-        $sysconf = MailCleaner_Config::getInstance();
+        $sysconf = SpamTagger_Config::getInstance();
  
         $this->acl->deny();
         $this->acl->allow('guest', 'user', array('login', 'logout'));

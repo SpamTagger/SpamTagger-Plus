@@ -15,7 +15,7 @@ CREATE TABLE external_access (
 
 INSERT INTO external_access SET service='web', port='80:443', protocol='TCP', allowed_ip='0.0.0.0/0';
 #INSERT INTO external_access SET service='mysql', port='3306:3307', protocol='TCP', allowed_ip='127.0.0.1';
-#INSERT INTO external_access SET service='snmp', port='161', protocol='UDP', allowed_ip='127.0.0.1', auth='mailcleaner';
+#INSERT INTO external_access SET service='snmp', port='161', protocol='UDP', allowed_ip='127.0.0.1', auth='spamtagger';
 #INSERT INTO external_access SET service='ssh', port='22', protocol='TCP', allowed_ip='0.0.0.0/0';
 ## allow support ranges
 INSERT INTO external_access SET service='ssh', port='22', protocol='TCP', allowed_ip='193.246.63.0/24';

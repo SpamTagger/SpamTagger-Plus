@@ -30,15 +30,15 @@ ldconfig
 
 HOST=$(cat /etc/hostname)
 cat >>/etc/sudoers <<EOF
-User_Alias      MAILCLEANER = mailcleaner
+User_Alias      SPAMTAGGER = spamtagger
 Runas_Alias     ROOT = root
 Host_Alias      LOCALHOST = $HOSTNAME
 Cmnd_Alias      ETRUST = $SRCDIR/bin/etrust_wrapper.sh
 Cmnd_Alias	ETRUSTUPDATE = $SRCDIR/bin/etrust_updater.sh
 Defaults        mailto = root
 
-MAILCLEANER  LOCALHOST = (ROOT) NOPASSWD: ETRUST
-MAILCLEANER  LOCALHOST = (ROOT) NOPASSWD: ETRUSTUPDATE
+SPAMTAGGER  LOCALHOST = (ROOT) NOPASSWD: ETRUST
+SPAMTAGGER  LOCALHOST = (ROOT) NOPASSWD: ETRUSTUPDATE
 EOF
 
 cd $BACK

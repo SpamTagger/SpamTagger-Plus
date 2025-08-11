@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "Bülten";
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "Kullanıcı tarafından serbest bırakılan mesajları giz
 $txt['FORCESPAM'] = "mesajı serbest bırak";
 //old
 $txt['ASKREASON'] = "filtreleme kurallarını göster";
-$txt['CONFSENDANALYSE'] = "MailCleaner Çözümleme Merkezine bir filtre ayar talebi gönderilecektir; yanlışlıkla engellenmiş mesajın bir kopyasını içerir.</br>Not: Bir filtre ayarı beyaz veya kara listeye almakla aynı şey değildir.";
+$txt['CONFSENDANALYSE'] = "SpamTagger Çözümleme Merkezine bir filtre ayar talebi gönderilecektir; yanlışlıkla engellenmiş mesajın bir kopyasını içerir.</br>Not: Bir filtre ayarı beyaz veya kara listeye almakla aynı şey değildir.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Bu mesajın analiz edilmesini ve filtre ayarlamalarının uygulanmasını istediğinizden emin misiniz?</span>";
 $txt['ASKANALYSE'] = "Filtre ayarlama talebi";
 $txt['PAGE'] = "Sayfa";
@@ -157,7 +157,7 @@ $txt['SCORE'] = "Skor";
 $txt['TOTAL'] = "Toplam";
 //old
 $txt['SENDANALYSETITLE'] = "Filtre düzenleme talebi";
-$txt['SENTTOANALYSE'] = "MailCleaner Çözümleme Merkezine bir filtre düzenleme talebi gönderildi; bu mesaj incelenecek ve filtre düzeltmeleri bir iş günü içerisinde uygulanacaktır.";
+$txt['SENTTOANALYSE'] = "SpamTagger Çözümleme Merkezine bir filtre düzenleme talebi gönderildi; bu mesaj incelenecek ve filtre düzeltmeleri bir iş günü içerisinde uygulanacaktır.";
 /*
  * quick actions
  */
@@ -192,12 +192,12 @@ $txt['ID'] = "Tanımlayıcı";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT'] = "<p>MailCleaner oturumunuz kapandı.</p><p>Yeni oturum açmak için şu bağlantıyı takip edin:</p>";
+$txt['LOGOUTTEXT'] = "<p>SpamTagger oturumunuz kapandı.</p><p>Yeni oturum açmak için şu bağlantıyı takip edin:</p>";
 /*
  * parameters page
  */
 //old
-$txt['PARAMTITLE'] = "Kişisel MailCleaner ayarları";
+$txt['PARAMTITLE'] = "Kişisel SpamTagger ayarları";
 //old
 $txt['USERPARAM'] = "Kullanıcı ayarları";
 //old
@@ -278,11 +278,11 @@ $txt['REMADDRESSALT'] = "adresi kaldır";
 //old
 $txt['ADDADDRESSALT'] = "adres ekle";
 $txt['BADADDRESSFORMAT'] = "Girilen adres geçersiz. Lütfen tekrar deneyin.";
-$txt['NOTFILTEREDDOMAIN'] = "Bu etki alanı MailCleaner tarafından filtrelenmiyor. Adres eklenemedi.";
-$txt['ALIASALREADYREGISTERD'] = "Bu adres zaten bir MailCleaner hesabı tarafından kullanılıyor. Eklenemedi.";
+$txt['NOTFILTEREDDOMAIN'] = "Bu etki alanı SpamTagger tarafından filtrelenmiyor. Adres eklenemedi.";
+$txt['ALIASALREADYREGISTERD'] = "Bu adres zaten bir SpamTagger hesabı tarafından kullanılıyor. Eklenemedi.";
 $txt['ALIASALREADYPENDING'] = "Bu hesap için zaten bir doğrulama işlemi bekliyor.";
 $txt['ALIASPENDING'] = "Bu adrese bir doğrulama mesajı gönderildi. <br/> Güvenlik sebeplerinden dolayı, sadece 24 saat içinde onaylandığı takdirde adres eklenir.";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner] Adres ekleme talebi";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger] Adres ekleme talebi";
 $txt['ALIASERRORSENDIG'] = "Dahili bir hata nedeniyle istek gönderilemedi. Lütfen daha sonra tekrar deneyin.";
 $txt['ALIASNOTPENDING'] = "Şu anda bu adres için bekleyen bir talep yok.";
 $txt['ALIASADDED'] = "Adres eklendi.";
@@ -324,9 +324,9 @@ $txt['FROMDATETODATE'] = "kimden __PARAM1__.__PARAM2__.__PARAM3__ kime __PARAM4_
 /*
  * some error messages
  */
-$txt['BADARGS'] = "MailCleaner iç hatası (__PARAM__). Lütfen hata ayrıntılarıyla birlikte sistem yöneticisine başvurun.";
+$txt['BADARGS'] = "SpamTagger iç hatası (__PARAM__). Lütfen hata ayrıntılarıyla birlikte sistem yöneticisine başvurun.";
 $txt['INCORRECTMSGID'] = "İleti tanımlayıcısı yanlış olduğu için istenilen eylem tamamlanamadı.";
-$txt['NOSUCHADDR'] = "Verilen adres MailCleaner tarafından korunamaz.";
+$txt['NOSUCHADDR'] = "Verilen adres SpamTagger tarafından korunamaz.";
 $txt['ERRORSENDING'] = "Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen sistem yöneticinize başvurun.";
 $txt['MSGFORCED'] = "Mesaj serbest bırakıldı ve posta kutunuza teslim edildi. Önümüzdeki birkaç dakika içinde hazır olacaktır.";
 $txt['MSGFILENOTFOUND'] = "İleti artık karantinada olmadığından, istenilen eylem tamamlanamadı.";

@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -69,13 +69,13 @@ while (<>) {
 	$line = $_;
 
 	# parse if message is forced
-	if (/^X\-Mailcleaner\:\ message\ forced\ $config{'CLIENTID'}$/i) {
+	if (/^X\-SpamTagger\:\ message\ forced\ $config{'CLIENTID'}$/i) {
 		$has_forced_tag = 1;
 		next;
 	}
 
 	# parse if it is a bounce
-	if (/^X\-Mailcleaner\-Bounce\:\ /i) {
+	if (/^X\-SpamTagger\-Bounce\:\ /i) {
 		$is_bounce = 1;
 		next;
 	}
@@ -87,7 +87,7 @@ while (<>) {
 
 	# parse for subject
 	if ( $has_subject < 1 ) {
-		if (/^Subject:\s+(\{MC_SPAM\}\s+)?(.*)/i) {
+		if (/^Subject:\s+(\{ST_SPAM\}\s+)?(.*)/i) {
 			if ( defined($2) ) {
 				$subject = $2;
 			}
@@ -106,7 +106,7 @@ while (<>) {
 	}
 
 	# parse for score
-	if (/^X-MailCleaner-SpamCheck:.*\(.*score=(\S+)\,/) {
+	if (/^X-SpamTagger-SpamCheck:.*\(.*score=(\S+)\,/) {
 		$score = $1;
 	}
 
@@ -144,8 +144,8 @@ $subject = clean($subject);
 ## connect to local slave configuration database as we need it a lot of time from now
 $config_dbh = DBI->connect(
 "DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
-	"mailcleaner",
-	"$config{'MYMAILCLEANERPWD'}",
+	"spamtagger",
+	"$config{'MYSPAMTAGGERPWD'}",
 	{ RaiseError => $DEBUG, PrintError => $DEBUG }
 );
 $config_dbh->{mysql_auto_reconnect} = 1;
@@ -389,7 +389,7 @@ sub log_in_master {
 
 	my $master_dbh =
 	  DBI->connect( "DBI:mysql:database=st_spool;host=$host;port=$port",
-		"mailcleaner", "$password",
+		"spamtagger", "$password",
 		{ RaiseError => $DEBUG, PrintError => $DEBUG } )
 	  or return 0;
 	$master_dbh->{mysql_auto_reconnect} = 1;
@@ -422,8 +422,8 @@ sub log_in_slave {
 
 	my $slave_dbh = DBI->connect(
 "DBI:mysql:database=st_spool;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
-		"mailcleaner",
-		"$config{'MYMAILCLEANERPWD'}",
+		"spamtagger",
+		"$config{'MYSPAMTAGGERPWD'}",
 		{ RaiseError => $DEBUG, PrintError => $DEBUG }
 	  )
 	  or return 0;

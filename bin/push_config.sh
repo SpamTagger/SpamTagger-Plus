@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,7 @@ if [ "$ISMASTER" = "Y" ] || [ "$ISMASTER" = "y" ]; then
 
   DATE=$(date +%Y%m%d)
   chmod g+w $CONFIGFILE
-  scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $CONFIGFILE mcscp@team01.mailcleaner.net:/upload/configs/$CLIENTID-$HOSTID-$DATE.sql >/dev/null 2>&1
+  scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $CONFIGFILE mcscp@team01.spamtagger.org:/upload/configs/$CLIENTID-$HOSTID-$DATE.sql >/dev/null 2>&1
 fi
 
 removeLockFile "$FILE_NAME"

@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Quarantined spam mapper
  */
@@ -26,7 +26,7 @@ class Default_Model_QuarantinedSpamMapper
 			throw new Exception('Invalid table data gateway provided');
 		}
 		$this->_dbTable = $dbTable;
-		$table = MailCleaner_Config::getInstance()->getOption('SPAMTABLE');
+		$table = SpamTagger_Config::getInstance()->getOption('SPAMTABLE');
 		if ($table != "") {
 			$this->_table = 'spam';
 		}
@@ -38,7 +38,7 @@ class Default_Model_QuarantinedSpamMapper
 		if (null === $this->_dbTable) {
 			$this->setDbTable('Default_Model_DbTable_QuarantinedSpam');
 		}
-	    $table = MailCleaner_Config::getInstance()->getOption('SPAMTABLE');
+	    $table = SpamTagger_Config::getInstance()->getOption('SPAMTABLE');
 		if ($table != "") {
 			$this->_table = $table;
 		}

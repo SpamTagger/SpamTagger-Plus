@@ -9,7 +9,7 @@ if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
-MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
+MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 HTTPPROXY=$(grep -e '^HTTPPROXY' /etc/spamtagger.conf | cut -d ' ' -f3)
 export http_proxy=$HTTPPROXY
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
@@ -21,7 +21,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This is a custom log rotate script for mailcleaner logs
+#   This is a custom log rotate script for SpamTagger logs
 #
 
 DAYSTOKEEP=366
@@ -35,7 +35,7 @@ if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
-MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
+MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 #########################
 ## Dumper log rotating ##
@@ -59,7 +59,7 @@ if [ -x /usr/bin/savelog ]; then
   done
 fi
 touch $VARDIR/log/apache/st_auth.log
-chown mailcleaner:mailcleaner $VARDIR/log/apache/st_auth.log
+chown spamtagger:spamtagger $VARDIR/log/apache/st_auth.log
 
 # Exim Stages 1 and 2
 for stage in 1 2; do
@@ -86,7 +86,7 @@ if [ -x /usr/bin/savelog ]; then
     fi
   done
 fi
-chown -R mailcleaner:mailcleaner $VARDIR/log/mailscanner/
+chown -R spamtagger:spamtagger $VARDIR/log/mailscanner/
 
 # Exim Stage 4
 $SRCDIR/etc/init.d/exim_stage4 stop
@@ -151,7 +151,7 @@ for i in SpamHandler.log; do
   fi
 done
 
-# MailCleaner
+# SpamTagger
 if [ -x /usr/bin/savelog ]; then
   for i in update.log update2.log autolearn.log rules.log spam_sync.log st_counts-cleaner.log downloadDatas.log summaries.log updater4mc.log; do
     if [ -e $VARDIR/log/spamtagger/$i ]; then
@@ -177,7 +177,7 @@ if [ -x /usr/bin/savelog ]; then
   fi
 fi
 
-/opt/mysql5/bin/mysqladmin -S $VARDIR/run/mysql_slave/mysqld.sock -umailcleaner -p$MYMAILCLEANERPWD flush-logs
+/opt/mysql5/bin/mysqladmin -S $VARDIR/run/mysql_slave/mysqld.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
 $SRCDIR/etc/init.d/mysql_slave restart
 
 ##################
@@ -189,7 +189,7 @@ if [ -x /usr/bin/savelog ]; then
   fi
 fi
 
-/opt/mysql5/bin/mysqladmin -S $VARDIR/run/mysql_master/mysqld.sock -umailcleaner -p$MYMAILCLEANERPWD flush-logs
+/opt/mysql5/bin/mysqladmin -S $VARDIR/run/mysql_master/mysqld.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
 $SRCDIR/etc/init.d/mysql_master restart
 
 ###################
@@ -217,7 +217,7 @@ $SRCDIR/etc/init.d/apache start
 ## Cleanup ##
 #############
 
-# MailCleaner
+# SpamTagger
 for i in $(seq 1 10); do
   rm -rf /tmp/.spamassassin$1* >/dev/null 2>&1
 done

@@ -7,7 +7,7 @@ if ($0 =~ m/(\S*)\/\S+.pl$/) {
   my $path = $1."/../lib";
   unshift (@INC, $path);
 }
-require MCDnsLists;
+require STDnsLists;
 require GetDNS;
 require DB;
 

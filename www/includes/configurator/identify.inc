@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   Identification page of MailCleaner "Configurator" wizard
+#   Identification page of SpamTagger "Configurator" wizard
 #
 -->
 <?php
@@ -40,7 +40,7 @@ if ('identify.inc' == basename($_SERVER['SCRIPT_FILENAME']))
             <div class="col-md-offset-5 col-md-4">
             <?php
         if (isset($_POST['autofill_identify'])) {
-          echo '<script type="text/javascript">document.getElementById("autofill_identify").value="'.'MCPassw0rd'.'";</script>';
+          echo '<script type="text/javascript">document.getElementById("autofill_identify").value="'.'STPassw0rd'.'";</script>';
          }
 	    if (isset($_POST['submit_identify'])) {
   	      if (!empty($_POST['identpass'])) {

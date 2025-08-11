@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * controller for message tracing page
  */
@@ -138,7 +138,7 @@ class ManagetracingController extends Zend_Controller_Action
 		$element = new Default_Model_MessageTrace();
 		$params = $this->getSearchParams();
 			
-		$session = new Zend_Session_Namespace('MailCleaner');
+		$session = new Zend_Session_Namespace('SpamTagger');
 		
 		// escape params args
                 array_walk($params, function(&$arg_value, $key) {
@@ -225,7 +225,7 @@ class ManagetracingController extends Zend_Controller_Action
                 $log = '';
 
                 $request = $this->getRequest();
-                $session = new Zend_Session_Namespace('MailCleaner');
+                $session = new Zend_Session_Namespace('SpamTagger');
                 if (isset($session->trace_id) && $session->trace_id) {
                     $traceid = $session->trace_id;
                 } 
@@ -274,7 +274,7 @@ class ManagetracingController extends Zend_Controller_Action
                    $file = $request->getParam('f');
                 }
 
-                $session = new Zend_Session_Namespace('MailCleaner');
+                $session = new Zend_Session_Namespace('SpamTagger');
                 if (isset($session->trace_id) && $session->trace_id) {
                     $traceid = $session->trace_id;
                 }
@@ -294,7 +294,7 @@ class ManagetracingController extends Zend_Controller_Action
                     }
                   }
                 }
-                $stconfig = MailCleaner_Config::getInstance();
+                $stconfig = SpamTagger_Config::getInstance();
                 $tmpdir = $stconfig->getOption('VARDIR').'/run/spamtagger/log_search/';
                 $tmpfile = tempnam($tmpdir, 'download_');
                 if (!$handle = fopen($tmpfile, 'w')) {

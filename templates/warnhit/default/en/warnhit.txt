@@ -1,4 +1,4 @@
-Subject: MailCleaner warn list hit
+Subject: SpamTagger warn list hit
 
 Hello,
 
@@ -18,6 +18,6 @@ Analyse: __BASEURL__/send_to_analyse.php?id=3D__ID__&a=3D__ADDRESS__&s=3D__STORE
 If you think that this is really a spam, you can trash these message.
 
 ------------------------------------------------------
-This is an automatic message sent by MailCleaner.
+This is an automatic message sent by SpamTagger.
 Please do not reply.
 For more information: __BASEURL__

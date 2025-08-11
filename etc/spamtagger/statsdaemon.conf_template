@@ -1,5 +1,5 @@
-runasuser=mailcleaner
-runasgroup=mailcleaner
+runasuser=spamtagger
+runasgroup=spamtagger
 prefork=5
 reserve_set_socks=2
 syslog_facility=

@@ -10,7 +10,7 @@ use IO;
 use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
 use Net::IP;
 use Net::CIDR::Lite;
-use MCDnsLists;
+use STDnsLists;
 
 my $MODULE = "PreRBLs";
 my %conf;
@@ -58,7 +58,7 @@ sub initialise {
     MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
   }
 
-  $PreRBLs::dnslists = new MCDnsLists(\&MailScanner::Log::WarnLog, $PreRBLs::conf{debug});
+  $PreRBLs::dnslists = new STDnsLists(\&MailScanner::Log::WarnLog, $PreRBLs::conf{debug});
   $PreRBLs::dnslists->loadRBLs( $PreRBLs::conf{rblsDefsPath}, $PreRBLs::conf{rbls}, 'IPRBL DNSRBL BSRBL', 
                                 $PreRBLs::conf{whitelistDomainsFile}, $PreRBLs::conf{TLDsFiles}, 
                                 $PreRBLs::conf{localDomainsFile}, $MODULE);
@@ -108,12 +108,12 @@ sub Checks {
         $senderhostname = $1;
         MailScanner::Log::InfoLog("$MODULE found sender hostname: $senderhostname for $senderip on message ".$message->{id});
     }
-    if ($hl =~ m/^X-MailCleaner-SPF: (.*)/) {
+    if ($hl =~ m/^X-SpamTagger-SPF: (.*)/) {
     	if ($1 eq 'pass' && $PreRBLs::conf{avoidgoodspf}) {
        	MailScanner::Log::InfoLog("$MODULE not checking against: $senderdomain because of good SPF record for ".$message->{id});
        	$continue = 0;
       } 
-      last; ## we can here because X-MailCleaner-SPF will always be after the Received fields.
+      last; ## we can here because X-SpamTagger-SPF will always be after the Received fields.
     }
   }	
 

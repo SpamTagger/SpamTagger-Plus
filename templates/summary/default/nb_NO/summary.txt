@@ -1,19 +1,19 @@
-Subject: MailCleaner karantene rapport
+Subject: SpamTagger karantene rapport
 Hei,
 
-Dette er Mailcleaner-rapporten de siste ??NBDAYS dagene.
+Dette er SpamTagger-rapporten de siste ??NBDAYS dagene.
 
 For adressen: ??ADDRESS
 
 Følgende sammendrag viser alle meldingene som er blokkert av
-Mailcleaner.
+SpamTagger.
 
 Hvis en av disse meldingene ikke burde vært blokkert, kan du tvinge den til å bli levert
 ved å klikke på lenken "Levér:".
 
 Meldingene som er oppført, blir ødelagt om ??SPAMNBDAYS dager.
 
-Hvis du ønsker å tilpasse innstillingene dine for MailCleaner, eller
+Hvis du ønsker å tilpasse innstillingene dine for SpamTagger eller
 se sanntid karantenen, vennligst besøk brukergrensesnittet på:
 
 ??WEBBASEURL?d=??DIGEST_ID&amp;p=u
@@ -33,8 +33,8 @@ Message ID: ??ID
 ??END_LIST
 
 ------------------------------------------------------
-Dette er en automatisk melding sendt av MailCleaner.
+Dette er en automatisk melding sendt av SpamTagger.
 Ikke svar.
-For mer informasjon: ??MAILCLEANERURL
+For mer informasjon: ??SPAMTAGGERURL
 
 ??SUMSIGNATURE

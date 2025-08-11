@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
 /**
@@ -341,7 +341,7 @@ public function getRawBody() {
  * @return  array  array of reason with score
  */
 public function getReasons() {
-  $header = $this->headers_['X-MailCleaner-SpamCheck'];
+  $header = $this->headers_['X-SpamTagger-SpamCheck'];
   $full = preg_replace('/\n/', ' ', $header);
   if (!preg_match('/(?:SpamAssassin|Spamc) \((.*\))/', $full, $matches)) {
   	return array();
@@ -385,11 +385,11 @@ private function setRulesDescription() {
   }
   
   $sysconf = SystemConfig::getInstance();
-  $MC_BASE_PATH = $sysconf->SRCDIR_."/share/spamassassin";
+  $ST_BASE_PATH = $sysconf->SRCDIR_."/share/spamassassin";
   $i = 0;
   foreach ($this->ruleset_ as $rule) {
     $tag = $rule['tag'];
-    $cmd = "egrep \"(describe|description).*$tag\" ".$MC_BASE_PATH."/*.cf";
+    $cmd = "egrep \"(describe|description).*$tag\" ".$ST_BASE_PATH."/*.cf";
     $res = array();
     $ret = 0;
     exec($cmd, $res, $ret);

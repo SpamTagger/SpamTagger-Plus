@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ my $score          = "unknown";
 my $rbls           = "";
 my $prefilters     = "";
 my $bounced_add    = "";
-my $spam_type      = 'MC_SPAM';
+my $spam_type      = 'ST_SPAM';
 my $tag            = "";
 my $store_id       = $config{'HOSTID'};
 my @rbl_tags      = ('SBL\+XBL', 'SPAMHAUS-ZEN', 'spamcop.net', 'NJABL', 'SORBS-DNSBL', 'RFC-Ignorant', 'CompleteWhois', 'AHBL', 'SORBS-DUL', 'DSBL', 'SECURITYUSAGE');
@@ -143,7 +143,7 @@ sub parseInputMessage {
 	$line = $_;
 
 	# parse if it is a bounce
-	if (/^X\-Mailcleaner\-Bounce\:\ /i) {
+	if (/^X\-SpamTagger\-Bounce\:\ /i) {
 		$is_bounce = 1;
 		next;
 	}
@@ -155,7 +155,7 @@ sub parseInputMessage {
 
 	# parse for subject
 	if ( $has_subject < 1 ) {
-		if (/^Subject:\s+(\{(MC_SPAM|MC_HIGHSPAM)\}\s+)?(.*)/i) {
+		if (/^Subject:\s+(\{(ST_SPAM|ST_HIGHSPAM)\}\s+)?(.*)/i) {
 			if ( defined($3) ) {
 			  $subject = $3;
 			  $spam_type = $2;
@@ -179,9 +179,9 @@ sub parseInputMessage {
        $in_score = 0;
     }
     # parse for scores
-    if (/^X-MailCleaner-SpamCheck:/ || $in_score) {
+    if (/^X-SpamTagger-SpamCheck:/ || $in_score) {
       $in_score = 1;
-      if (/^X-MailCleaner-SpamCheck: (?:spam|not spam)?(.*)$/ || /^\s+(.*)/) {
+      if (/^X-SpamTagger-SpamCheck: (?:spam|not spam)?(.*)$/ || /^\s+(.*)/) {
       	my @tags = split(/[,()]/, $1);
         foreach my $tag (@tags) {
           $tag =~ s/^\s+//g;
@@ -206,7 +206,7 @@ sub parseInputMessage {
       }
 	}
 	# parse for score
-	if (/^X-MailCleaner-SpamCheck:.*\(.*score=(\S+)\,/) {
+	if (/^X-SpamTagger-SpamCheck:.*\(.*score=(\S+)\,/) {
 		$score = $1;
 		if (int($score) >= 5) { $globalscore++; }
         if (int($score) >= 7) { $globalscore++; }
@@ -275,7 +275,7 @@ sub sendAnyway {
 		$msg =~ s/Subject:\ /Subject: $tag /i;
 	  }
     } else {
-        $msg =~ s/X-MailCleaner-SpamCheck: spam,/X-MailCleaner-SpamCheck: spam, whitelisted by $level{$whitelisted},/i;
+        $msg =~ s/X-SpamTagger-SpamCheck: spam,/X-SpamTagger-SpamCheck: spam, whitelisted by $level{$whitelisted},/i;
     }
 
 	unless ( $smtp = Net::SMTP->new('localhost:2525') ) {

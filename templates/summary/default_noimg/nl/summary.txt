@@ -1,19 +1,19 @@
-Subject: MailCleaner quarantine rapport
+Subject: SpamTagger quarantine rapport
 Hallo,
 
-Dit is het Mailcleaner rapport voor de laatste ??NBDAYS dagen.
+Dit is het SpamTagger rapport voor de laatste ??NBDAYS dagen.
 
 Voor het adres: ??ADDRESS
 
 De volgende samenvatting bevat alle berichten die geblokkeerd werden
-door Mailcleaner.
+door SpamTagger.
 
 Als één van deze berichten niet geblokkeerd hoefde te worden, kan je het toch nog
 ontvangen door op de link "Force:" te klikken.
 
 De berichten in deze lijst zullen vernietigd worden in ??SPAMNBDAYS dagen.
 
-Als je de instellingen voor MailCleaner wilt aanpassen, of de real-time quarantine
+Als je de instellingen voor SpamTagger wilt aanpassen, of de real-time quarantine
 wilt bekijken, bezoek dan de gebruikersinterface op:
 
 ??WEBBASEURL
@@ -33,8 +33,8 @@ Message ID: ??ID
 ??END_LIST
 
 ------------------------------------------------------
-Dit is een automatisch bericht verzonden door MailCleaner.
+Dit is een automatisch bericht verzonden door SpamTagger.
 Gelieve niet te antwoorden.
-Voor meer informatie: ??MAILCLEANERURL
+Voor meer informatie: ??SPAMTAGGERURL
 
 ??SUMSIGNATURE

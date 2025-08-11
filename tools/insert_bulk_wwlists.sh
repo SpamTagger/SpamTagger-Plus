@@ -4,7 +4,7 @@ if [ -z "$1" ]; then
   echo ""
   echo "Please provide a file with the format"
   echo "sender recipient type"
-  echo "if the recipient should be a whole domain, you need to include the '@' sign on it for example @mailcleaner.net"
+  echo "if the recipient should be a whole domain, you need to include the '@' sign on it for example @spamtagger.org"
   echo "if the rule is for all domains please use --- as domain name"
   echo "type can be either white or black"
   exit 0
@@ -21,7 +21,7 @@ if [ "$ISMASTER" = "Y" ] || [ "$ISMASTER" = "y" ]; then
   sed -i 's/^\s*//' $FILE
   sed -i 's/ /", "/g' $FILE
   sed -i 's/^/insert ignore into wwlists (sender, recipient, type, comments) values ("/' $FILE
-  sed -i 's/$/", "inserting bulk rules - MC script");/g' $FILE
+  sed -i 's/$/", "inserting bulk rules - ST script");/g' $FILE
   sed -i 's/
 //g' $FILE
   sed -i 's/"---"/""/' $FILE

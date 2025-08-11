@@ -1,4 +1,4 @@
-Subject: MailCleaner warn/white list hit
+Subject: SpamTagger warn/white list hit
 
 Hello,
 

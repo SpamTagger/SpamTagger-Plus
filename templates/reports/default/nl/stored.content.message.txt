@@ -1,5 +1,5 @@
-Dit is een bericht van MailCleaner
-----------------------------------
+Dit is een bericht van SpamTagger
+---------------------------------
 Het originele e-mail bericht bevatte mogelijk schadelijke inhoud.
 Deze werd verwijderd voor jouw veiligheid.
 
@@ -10,5 +10,5 @@ zoals paswoorden of kredietkaart nummers.
 Op $date zeiden de inhoud filters:
 $report
 Nota aan de beheerder: $hostname in $datenumber/$id
--- 
-Mailcleaner
+----------
+SpamTagger

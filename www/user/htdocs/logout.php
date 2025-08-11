@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * This is the controller for the logout page
  */
@@ -41,25 +41,15 @@ if ($http->getPref('use_ssl')) {
 	}
 }
 
-// Check if this is a registered version
-require_once ('helpers/DataManager.php');
-$file_conf = DataManager :: getFileConfig($sysconf_ :: $CONFIGFILE_);
-
-$is_enterprise = $file_conf['REGISTERED'] == '1';
-if ($is_enterprise) {
-        $stlink="https://www.mailcleaner.net";
-	$stlinklabel="www.mailcleaner.net";
-} else {
-        $stlink="https://www.mailcleaner.org";
-	$stlinklabel="www.mailcleaner.org";
-}
+$stlink="https://spamtagger.org";
+$stlinklabel="spamtagger.org";
 
 // prepare replacements
 $replace = array(
     "__BASE_URL__" => $_SERVER['SERVER_NAME'],
     "__BEENLOGGEDOUT__" => $lang_->print_txt_param('BEENLOGGEDOUT', $http_sheme."://".$_SERVER['SERVER_NAME'].$port),
-    "__MCLINK__" => $stlink,
-    "__MCLINKLABEL__" => $stlinklabel,
+    "__STLINK__" => $stlink,
+    "__STLINKLABEL__" => $stlinklabel,
 );
 //display page
 $template_->output($replace);

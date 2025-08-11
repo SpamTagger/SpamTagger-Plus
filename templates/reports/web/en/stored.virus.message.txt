@@ -1,15 +1,15 @@
-This is a message from Mailcleaner
-----------------------------------
+This is a message from SpamTagger
+---------------------------------
 The original e-mail attachment "$filename"
 was believed to be infected by a virus and has been replaced by this warning
 message.
 
 If you wish to receive a copy of the *infected* attachment,
 please visit the link below:
-https://www.mailcleaner.net/support/dangerous-content-release.html
+https://spamtagger.org/support/dangerous-content-release.html
 
 At $date the virus scanner said:
 $report
 Note to administrator: $hostname in $datenumber/$id
--- 
-Mailcleaner
+---------- 
+SpamTagger

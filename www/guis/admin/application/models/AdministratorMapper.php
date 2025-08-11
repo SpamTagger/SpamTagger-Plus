@@ -1,7 +1,7 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
  *                2017 Mentor Reka <reka.mentor@gmail.com>

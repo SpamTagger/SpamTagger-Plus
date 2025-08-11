@@ -37,25 +37,25 @@ HASMESSAGESNIFFER=0
 HASKASPERSKY=0
 
 prepare() {
-  chown mailcleaner:mailcleaner $VARDIR/log/mailscanner/infolog >/dev/null 2>&1
-  chown mailcleaner:mailcleaner $VARDIR/log/mailscanner/warnlog >/dev/null 2>&1
+  chown spamtagger:spamtagger $VARDIR/log/mailscanner/infolog >/dev/null 2>&1
+  chown spamtagger:spamtagger $VARDIR/log/mailscanner/warnlog >/dev/null 2>&1
 
   $SRCDIR/bin/dump_mailscanner_config.pl >/dev/null 2>&1
   $SRCDIR/bin/dump_html_controls_wl.pl >/dev/null 2>&1
   $SRCDIR/bin/dump_domains.pl >/dev/null 2>&1
-  chown -R mailcleaner:mailcleaner $SRCDIR/etc/mailscanner >/dev/null 2>&1
+  chown -R spamtagger:spamtagger $SRCDIR/etc/mailscanner >/dev/null 2>&1
 
   if [ ! -d $VARDIR/spool/spamtagger/counts ]; then
     mkdir -p $VARDIR/spool/spamtagger/counts
   fi
   USER=$(stat -c '%U' $VARDIR/spool/spamtagger/counts)
-  if [[ "$USER" != 'mailcleaner' ]]; then
-    chown -R mailcleaner:mailcleaner $VARDIR/spool/spamtagger/counts
+  if [[ "$USER" != 'spamtagger' ]]; then
+    chown -R spamtagger:spamtagger $VARDIR/spool/spamtagger/counts
   fi
 
   GROUP=$(stat -c '%G' $VARDIR/spool/spamtagger/counts)
-  if [[ "$GROUP" != 'mailcleaner' ]]; then
-    chown -R mailcleaner:mailcleaner $VARDIR/spool/spamtagger/counts
+  if [[ "$GROUP" != 'spamtagger' ]]; then
+    chown -R spamtagger:spamtagger $VARDIR/spool/spamtagger/counts
   fi
 
   SRCDIR_SANE=$(echo $SRCDIR | perl -p -e 's/\//\\\//g')
@@ -73,11 +73,11 @@ prepare() {
   ## if no temp dir, then create it
   if [ ! -d $VARDIR/spool/tmp/mailscanner ]; then
     mkdir $VARDIR/spool/tmp/mailscanner
-    chown mailcleaner:mailcleaner $VARDIR/spool/tmp/mailscanner
+    chown spamtagger:spamtagger $VARDIR/spool/tmp/mailscanner
   fi
   if [ ! -d $VARDIR/spool/tmp/mailscanner/incoming ]; then
     mkdir $VARDIR/spool/tmp/mailscanner/incoming
-    chown mailcleaner:mailcleaner $VARDIR/spool/tmp/mailscanner/incoming
+    chown spamtagger:spamtagger $VARDIR/spool/tmp/mailscanner/incoming
   fi
 
   PREFILTER_CT=$(grep 'Pre Filters' $SRCDIR/etc/mailscanner/MailScanner.conf | grep 'Commtouch')

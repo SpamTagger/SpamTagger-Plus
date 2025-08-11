@@ -1,5 +1,5 @@
-Dies ist eine Nachricht vom Mailcleaner
----------------------------------------
+Dies ist eine Nachricht vom SpamTagger
+--------------------------------------
 
 Der Dateianhang "$filename"
 ist in der Liste unerwueschter bzw. unsicherer Dateianhaenge und wurde durch 
@@ -15,5 +15,5 @@ $report
 Hinweis an den Administrator: 
 Datei: $hostname in $datenumber/$id
 
---
-Mailcleaner
+----------
+SpamTagger

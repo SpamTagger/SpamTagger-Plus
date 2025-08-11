@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #
 #
 #   This script will compare the actual slave or master database with
-#   the up-to-date database from Mailcleaner Update Services
+#   the up-to-date database from SpamTagger Update Services
 #
 #   Usage:
 #           check_db.pl [-s|-m] [--dbs=database] [--update|--mycheck|--myrepair] [-r|-R]
@@ -292,7 +292,7 @@ sub addDatabase {
   print "Creating database $dbname...\n";
   $dbr->execute("CREATE DATABASE $dbname");
   print "Adding new permissions...\n";
-  $dbr->execute("INSERT INTO db VALUES('%', '".$dbname."', 'mailcleaner', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')");
+  $dbr->execute("INSERT INTO db VALUES('%', '".$dbname."', 'spamtagger', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')");
   print "Restarting $dbtype database with new permissions...\n";
   `$mysqld restart 2>&1`;
   sleep(20);

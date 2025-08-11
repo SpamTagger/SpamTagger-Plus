@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
-#   Copyright (C) 2018 MailCleaner <support@mailcleaner.net>
+#   SpamTagger Plus - Open Source Spam Filtering
+#   Copyright (C) 2018 SpamTagger <support@spamtagger.org>
 #   Copyright (C) 2020 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #   This script will add a blacklist to the database.
-#   This script is intended to be used by the MailCleaner SOAP API (Soaper).
+#   This script is intended to be used by the SpamTagger SOAP API (Soaper).
 #
 #   Usage:
 #           add_to_blacklist.pl msg_dest msg_sender

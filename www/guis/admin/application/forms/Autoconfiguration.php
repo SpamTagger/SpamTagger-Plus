@@ -1,16 +1,16 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Mentor Reka
- * @copyright 2017, Mentor Reka
+ * @copyright 2025, SpamTagger
  * 
  * Auto-configuration settings form
  */
 
 class Default_Form_Autoconfiguration extends ZendX_JQuery_Form
 {
-	private $MC_AUTOCONF_TAG_FILE="/spool/spamtagger/st-autoconf";
+	private $ST_AUTOCONF_TAG_FILE="/spool/spamtagger/st-autoconf";
 	
 	protected $_autoconfmanager;
 	
@@ -29,9 +29,9 @@ class Default_Form_Autoconfiguration extends ZendX_JQuery_Form
 		$this->setMethod('post'); 
 		$this->setAttrib('id', 'autoconfiguration_form');
         
-		require_once('MailCleaner/Config.php');
-	        $config = new MailCleaner_Config();
-		$autoconf_enabled = file_exists($config->getOption('VARDIR').$this->MC_AUTOCONF_TAG_FILE);
+		require_once('SpamTagger/Config.php');
+	        $config = new SpamTagger_Config();
+		$autoconf_enabled = file_exists($config->getOption('VARDIR').$this->ST_AUTOCONF_TAG_FILE);
 
         	$autoconf = new  Zend_Form_Element_Checkbox('autoconfiguration', array(
             		'label' => "Enable auto-configuration :",

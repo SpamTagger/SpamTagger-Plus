@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,7 @@ sub do {
 
   my $name = `hostname`;
   chomp($name);
-  $name //= 'mailcleaner';
+  $name //= 'spamtagger';
   $dlg->build('Enter the new hostname', "$name");
   $name = $dlg->display();
 
@@ -61,7 +61,7 @@ sub do {
     $cmd = "echo 127.0.0.1 $name >> ".$this->{hostsfile};
     `$cmd`;
     `echo "UPDATE httpd_config SET servername = '$name';" | /usr/spamtagger/bin/st_mysql -m st_config`;
-    `sed -i -r 's/(MCHOSTNAME *= *).*/\\1$name/' /etc/spamtagger.conf`;
+    `sed -i -r 's/(STHOSTNAME *= *).*/\\1$name/' /etc/spamtagger.conf`;
     `/usr/spamtagger/etc/init.d/apache restart`;
   } else {
     print("Invalid hostname: $name\n");

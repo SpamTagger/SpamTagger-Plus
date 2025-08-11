@@ -1,5 +1,5 @@
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2016 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   Newsl prefilter module for MailScanner (Custom version for MailCleaner)
+#   Newsl prefilter module for MailScanner (Custom version for SpamTagger)
 #
 
 package MailScanner::Newsl;
@@ -104,7 +104,7 @@ sub Checks {
   my @WholeMessage;
   push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   if ($message->{infected}) {
-      push(@WholeMessage, "X-MailCleaner-Internal-Scan: infected\n");
+      push(@WholeMessage, "X-SpamTagger-Internal-Scan: infected\n");
   }
   push(@WholeMessage, "\n");
   $message->{store}->ReadBody(\@WholeMessage, 0);

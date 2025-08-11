@@ -21,7 +21,7 @@
 #
 
 ####
-## Olivier Diserens, for MailCleaner
+## Olivier Diserens, for SpamTagger
 ###
 SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
@@ -55,7 +55,7 @@ prepare() {
   fi
   cp /opt/messagesniffer/share/snf-server/*.snf $VARDIR/spool/messagesniffer/
 }
-## End Mailcleaner
+## End SpamTagger
 
 # Directory to run in.
 runDir=$VARDIR/spool/messagesniffer

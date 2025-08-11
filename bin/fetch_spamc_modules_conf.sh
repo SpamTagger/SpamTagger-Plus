@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,10 @@
 #
 #   Usage:
 #           fetch_spamc_modules_conf.sh [-r]
+
+# TODO: Disabled during transition to spamtagger
+echo "Not currently supported for SpamTagger"
+exit
 
 usage() {
   cat <<EOF

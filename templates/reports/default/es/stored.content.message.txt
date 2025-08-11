@@ -1,6 +1,6 @@
 Este es un mensaje del Servicio de Protección de Virus para Correo
-Electrónico MailCleaner
-----------------------------------------------------------------------
+Electrónico SpamTagger
+---------------------------------------------------------------------
 El mensaje de correo electrónico original tenía contenido
 potencialmente peligroso que ha sido eliminado para su seguridad.
 
@@ -13,5 +13,5 @@ $report
 
 Nota para el departamento de soporte: $hostname:$datenumber/$id
 
--- 
-MailCleaner
+---------- 
+SpamTagger

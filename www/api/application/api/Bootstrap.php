@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  *
  * admin application bootstrap
  */
@@ -42,14 +42,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
 	protected function _initDatabases()
 	{
-		require_once('MailCleaner/Config.php');
-		$stconfig = MailCleaner_Config::getInstance();
+		require_once('SpamTagger/Config.php');
+		$stconfig = SpamTagger_Config::getInstance();
 			
 		$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
                               'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
-                              'username'    => 'mailcleaner',
-                              'password'    => $stconfig->getOption('MYMAILCLEANERPWD'),
+                              'username'    => 'spamtagger',
+                              'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_config'
                               ));
                                
@@ -58,7 +58,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
 	protected function _initAuth()
 	{
-                $config = MailCleaner_Config::getInstance();
+                $config = SpamTagger_Config::getInstance();
                 if ($config->getOption('ISMASTER') != 'Y' ) {
                    Zend_Registry::get('response')->setResponse(404, 'API is only available on master host');
                 }
@@ -109,7 +109,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 }
 				### if we need to have interactive authentication (which is probably not the case for an API)
 				#if (!$authentified) {
-				#	header('WWW-Authenticate: Basic realm="MailCleaner API"');
+				#	header('WWW-Authenticate: Basic realm="SpamTagger API"');
 				#	header('HTTP/1.0 401 Unauthorized');
 				#	die();
 				#}
@@ -135,7 +135,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
 		$view=$layout->getView();
 		$view->doctype('XHTML11');
-		$view->headTitle('MailCleaner API');
+		$view->headTitle('SpamTagger API');
 		$view->headTitle()->setSeparator(' - ');
 			
 		return $layout;

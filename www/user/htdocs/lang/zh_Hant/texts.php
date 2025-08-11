@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "電子報";
@@ -141,7 +141,7 @@ $txt['HIDEFORCED'] = "隱藏使用者發佈的消息";
 $txt['FORCESPAM'] = "釋放郵件";
 //old
 $txt['ASKREASON'] = "顯示篩選規則";
-$txt['CONFSENDANALYSE'] = "篩選器調整請求將發送到 MailCleaner 分析中心;它包含錯誤阻止的郵件的副本。</br> 注意：篩選器調整與白名單或黑名單不同";
+$txt['CONFSENDANALYSE'] = "篩選器調整請求將發送到 SpamTagger 分析中心;它包含錯誤阻止的郵件的副本。</br> 注意：篩選器調整與白名單或黑名單不同";
 $txt['AREYOUSURE'] = "<span class=\"question\"> 是否確實要分析此消息, 以及是否可以應用篩選器調整？ </span>";
 $txt['ASKANALYSE'] = "篩選器調整請求";
 $txt['PAGE'] = "頁";
@@ -154,7 +154,7 @@ $txt['SCORE'] = "Score";
 $txt['TOTAL'] = "Total";
 //old
 $txt['SENDANALYSETITLE'] = "篩選器調整請求";
-$txt['SENTTOANALYSE'] = "已將篩選器調整要求傳送到 MailCleaner 分析中心;此資訊將被檢查, 並可在一個工作日內應用篩選器更正。";
+$txt['SENTTOANALYSE'] = "已將篩選器調整要求傳送到 SpamTagger 分析中心;此資訊將被檢查, 並可在一個工作日內應用篩選器更正。";
 /*
  * quick actions
  */
@@ -189,12 +189,12 @@ $txt['ID'] = "識別碼";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT'] = "<p>您的 MailCleaner  進程已結束. </p><p> 如果希望啟動新的 進程, 請按一下以下連結:</p>";
+$txt['LOGOUTTEXT'] = "<p>您的 SpamTagger  進程已結束. </p><p> 如果希望啟動新的 進程, 請按一下以下連結:</p>";
 /*
  * parameters page
  */
 //old
-$txt['PARAMTITLE'] = "MailCleaner個人設置";
+$txt['PARAMTITLE'] = "SpamTagger個人設置";
 //old
 $txt['USERPARAM'] = "使用者設置";
 //old
@@ -275,11 +275,11 @@ $txt['REMADDRESSALT'] = "刪除地址";
 //old
 $txt['ADDADDRESSALT'] = "添加地址";
 $txt['BADADDRESSFORMAT'] = "給定地址無效。請重試。";
-$txt['NOTFILTEREDDOMAIN'] = "MailCleaner不篩選此郵件域。無法添加地址。";
-$txt['ALIASALREADYREGISTERD'] = "此地址已由 MailCleaner 帳戶使用。無法添加。";
+$txt['NOTFILTEREDDOMAIN'] = "SpamTagger不篩選此郵件域。無法添加地址。";
+$txt['ALIASALREADYREGISTERD'] = "此地址已由 SpamTagger 帳戶使用。無法添加。";
 $txt['ALIASALREADYPENDING'] = "此地址的確認已掛起。";
 $txt['ALIASPENDING'] = "已將確認發送到此地址. <br/>出於安全原因, 只有在24小時內確認請求時, 才會添加地址。";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner]地址添加請求";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger]地址添加請求";
 $txt['ALIASERRORSENDIG'] = "由於內部錯誤, 無法發送請求。請稍後再試。";
 $txt['ALIASNOTPENDING'] = "此地址當前未掛起任何請求。";
 $txt['ALIASADDED'] = "已成功添加地址。";
@@ -321,9 +321,9 @@ $txt['FROMDATETODATE'] = "從 __PARAM1__ __PARAM2__ __PARAM3__ 到 __PARAM4__ __
 /*
  * some error messages
  */
-$txt['BADARGS'] = "MailCleaner 內部錯誤 (_PARAM_)。請與系統管理員聯繫, 瞭解問題的詳細資訊。";
+$txt['BADARGS'] = "SpamTagger 內部錯誤 (_PARAM_)。請與系統管理員聯繫, 瞭解問題的詳細資訊。";
 $txt['INCORRECTMSGID'] = "由於消息識別碼不正確, 無法完成請求的操作。";
-$txt['NOSUCHADDR'] = "給定的address不受 MailCleaner 的保護。";
+$txt['NOSUCHADDR'] = "給定的address不受 SpamTagger 的保護。";
 $txt['ERRORSENDING'] = "發送郵件時出錯。請重試。如果問題仍然存在, 請與系統管理員聯繫。";
 $txt['MSGFORCED'] = "郵件已被釋放並傳送到您的郵箱。它應該在接下來的幾分鐘內可用。";
 $txt['MSGFILENOTFOUND'] = "無法完成請求的操作, 因為該消息不再在隔離中。";

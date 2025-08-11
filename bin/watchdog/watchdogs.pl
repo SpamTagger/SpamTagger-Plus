@@ -105,7 +105,7 @@ sub chargement_params {
 
 ###
 # Rajoute une ligne au fichier $MYOUTFILE
-sub MC_log {
+sub ST_log {
     my $MYOUTFILE;
 
     # Fichier de sortie pour Watchdog
@@ -140,7 +140,7 @@ if( ! -d WATCHDOG_TMP  ) {
 
 # récupérer le liste des fichiers du répertoire $watchdog_tools
 chdir(WATCHDOG_BIN) or exit(1);
-my @files	= glob('MC_mod_*');
+my @files	= glob('ST_mod_*');
 push(@files,glob('EE_mod_*'));
 push(@files,glob('CUSTOM_mod_*'));
 @files		= sort { $a cmp $b } @files;
@@ -205,7 +205,7 @@ foreach my $current_process (@processes) {
 
 	# vérifier si déjà lancé
 	if ( -f $current_process->{pid_file}) {
-        MC_log("MODULE : $current_process->{file}\nRETURN CODE : N/A\nRAPPORT : Pid file found. Skipped");
+        ST_log("MODULE : $current_process->{file}\nRETURN CODE : N/A\nRAPPORT : Pid file found. Skipped");
 
 		next;
 	}

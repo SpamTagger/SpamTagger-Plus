@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -40,8 +40,8 @@ my $DEBUG = 0;
 
 my %greylist_conf = get_greylist_config() or fatal_error("NOGREYLISTDONFIGURATIONFOUND", "no greylistd configuration found");
 
-my $uid = getpwnam( 'mailcleaner' );
-my $gid = getgrnam( 'mailcleaner' );
+my $uid = getpwnam( 'spamtagger' );
+my $gid = getgrnam( 'spamtagger' );
 
 dump_greylistd_file(\%greylist_conf) or fatal_error("CANNOTDUMPGREYLISTDFILE", $lasterror);
 

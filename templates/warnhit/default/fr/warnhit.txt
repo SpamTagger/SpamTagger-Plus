@@ -1,4 +1,4 @@
-Subject: MailCleaner: Avertissement de blocage
+Subject: SpamTagger: Avertissement de blocage
 
 Bonjour,
 
@@ -17,6 +17,6 @@ Analyse: __BASEURL__/send_to_analyse.php?id=3D__ID__&a=3D__ADDRESS__&s=3D__STORE
 Si vous pensez que ce message est r=E9ellement un spam, vous pouvez simplement ignorer ce message.
 
 ------------------------------------------------------
-Ceci est un message automatique g=E9n=E9r=E9 par MailCleaner
+Ceci est un message automatique g=E9n=E9r=E9 par SpamTagger
 Merci de ne pas y r=E9pondre
 Pour plus d'informations: __BASEURL__

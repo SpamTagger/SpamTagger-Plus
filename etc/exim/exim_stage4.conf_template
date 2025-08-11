@@ -8,7 +8,7 @@ SRCDIR = __SRCDIR__
 ARCHIVERDIR = VARDIR/spool/tmp/exim_stage1/archiver
 COPYTODIR = VARDIR/spool/tmp/exim_stage1/copyto
 
-primary_hostname = mailcleaner
+primary_hostname = spamtagger
 qualify_domain = __HELO_NAME__
 smtp_active_hostname = __HELO_NAME__
 smtp_banner = __SMTP_BANNER__
@@ -18,8 +18,8 @@ __FI__
 
 log_selector = +smtp_confirmation +delivery_size
 message_logs = true
-exim_user = mailcleaner
-exim_group = mailcleaner
+exim_user = spamtagger
+exim_group = spamtagger
 log_file_path = __IF_USE_SYSLOGENABLED__ VARDIR/log/exim_stage4/%slog
 pid_file_path = VARDIR/run/exim_stage4.pid
 spool_directory = VARDIR/spool/exim_stage4
@@ -109,20 +109,20 @@ begin routers
 forced:
   driver      = manualroute
   transport   = remote_smtp
-  condition   = ${if match{$header_X-MailCleaner-Forced:}{message forced}}
+  condition   = ${if match{$header_X-SpamTagger-Forced:}{message forced}}
   route_data  = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtagger/domains.list}}
 
 full_whitelist:
    driver     = manualroute
    transport  = remote_smtp
-   condition  = ${if def:header_X-MailCleaner-FullWhitelist:{$h_X-MailCleaner-FullWhitelist:}{yes} }
+   condition  = ${if def:header_X-SpamTagger-FullWhitelist:{$h_X-SpamTagger-FullWhitelist:}{yes} }
    senders    = +full_whitelisted_senders
    route_data = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtaggerspamtaggerst}}
 
 filter_newsletter:
   driver = accept
   transport = spam_store
-  condition = ${if  match {$header_subject:}{\{MC_NEWS\}} {yes}{no} }
+  condition = ${if  match {$header_subject:}{\{ST_NEWS\}} {yes}{no} }
   headers_remove = Subject
   headers_add = "${perl{getNoNewsTagSubject}}"
   headers_add = X-Auto-Response-Suppress: DR, NDR, RN, NRN, OOF, AutoReply
@@ -131,10 +131,10 @@ filter_newsletter:
 filter_blacklist:
   driver = accept
   condition = ${if >{${perl{isBlacklisted}{$local_part}{$domain}}}{0} }
-  #condition = ${if ! match {$header_X-MailCleaner-Status:}{\{${perl{getBlacklistedFlag}{$local_part}{$domain}}\}} {yes}{no} }
+  #condition = ${if ! match {$header_X-SpamTagger-Status:}{\{${perl{getBlacklistedFlag}{$local_part}{$domain}}\}} {yes}{no} }
   transport = spam_store
-  headers_add = X-MailCleaner-Status: Blacklisted (${perl{getBlacklistedFlag}{$local_part}{$domain}})
-  headers_remove = X-MailCleaner-Status
+  headers_add = X-SpamTagger-Status: Blacklisted (${perl{getBlacklistedFlag}{$local_part}{$domain}})
+  headers_remove = X-SpamTagger-Status
   ___INCLUDE__ stage4/remove_headers
 
 __IF__ TAGMODEBYPASSWHITELISTS
@@ -144,15 +144,15 @@ filter_checktag_mx:
   domains = !@ : +forward_by_mx
   condition = ${if and \
                   { \
-                     {match {$header_suspamtaggerMC_SPAM\}}} \
+                     {match {$header_suspamtaggerST_SPAM\}}} \
                      { >{${perl{wantTag}{$local_part}{$domain}}}{0} } \
                   }{yes}{no} \
                 }
 
-  headers_remove = X-MailCleaner-Bounce:subject
+  headers_remove = X-SpamTagger-Bounce:subject
   headers_add = "${perl{getTaggedSubject}}"
   headers_add = X-Auto-Response-Suppress: DR, NDR, RN, NRN, OOF, AutoReply
-#  headers_add = X-MailCleaner-ReportURL: __REPORT_URL__
+#  headers_add = X-SpamTagger-ReportURL: __REPORT_URL__
   __INCLUDE__ stage4/remove_headers
 
 filter_checktag:
@@ -161,14 +161,14 @@ filter_checktag:
   domains = !@ : +relay_to_domainsspamtaggerta = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtagger/domains.list}}
   hosts_randomize = truespamtaggern = ${if and \
                   { \
-                     {match {$header_subject:}{^\{MC_SPAM\}}} \
+                     {match {$header_subject:}{^\{ST_SPAM\}}} \
                      { >{${perl{wantTag}{$local_part}{$domain}}}{0} } \
                   }{yes}{no} \
                 }
-  headers_remove = X-MailCleaner-Bounce:subject
+  headers_remove = X-SpamTagger-Bounce:subject
   headers_add = "${perl{getTaggedSubject}}"
   headers_add = X-Auto-Response-Suppress: DR, NDR, RN, NRN, OOF, AutoReply
-#  headers_add = X-MailCleaner-ReportURL: __REPORT_URL__
+#  headers_add = X-SpamTagger-ReportURL: __REPORT_URL__
   __INCLUDE__ stage4/remove_headers
 __FI__
 
@@ -186,7 +186,7 @@ filter_checkbounces:
                      { eq {$sender_address}{} } \
                      { >{${perl{quarantineBounce}{$local_part}{$domain}}}{0} } \
                    }{yes}{no} \spamtagger     }
-  headers_add = X-MailCleaner-Bounce: bounce message
+  headers_add = X-SpamTagger-Bounce: bounce message
   __INCLUDE__ stage4/remove_headers
 
 __IF__ USEARCHIVER
@@ -217,7 +217,7 @@ copyto_route:
   driver = redirect
   check_ancestor
   qualify_preserve_domain
-  headers_add = X-MailCleaner-CopyTo: this is a message copy (original recipient: ${original_local_part}@${original_domain})
+  headers_add = X-SpamTagger-CopyTo: this is a message copy (original recipient: ${original_local_part}@${original_domain})
   domains = ${lookup{$domain}nwildlsearch,ret=key{VARDIR/spool/tmp/spamtagger/domains.list}}
   data = ${if \
              exists{COPYTODIR/${domain_data}} \
@@ -234,8 +234,8 @@ copyto_route:
   driver = dnslookup
   transport = remote_smtp
   domains = !@ : +forward_by_mx
-  headers_remove = X-MailCleaner-Bounce
-  headers_add = X-MailCleaner-ReportURL: __REPORT_URL__
+  headers_remove = X-SpamTagger-Bounce
+  headers_add = X-SpamTagger-ReportURL: __REPORT_URL__
   __INCLUDE__ stage4/remove_headers
 
 filter_forward:
@@ -245,8 +245,8 @@ filter_forward:
   route_data = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtagger/domains.list}}
   hosts_randomize = true
   host_find_failed = ignore
-  headers_remove = X-MailCleaner-Bounce
-  headers_add = X-MailCleaner-ReportURL: __REPORT_URL__
+  headers_remove = X-SpamTagger-Bounce
+  headers_add = X-SpamTagger-ReportURL: __REPORT_URL__
   __INCLUDE__ stage4/remove_headers
 
 dnslookup_gateway:
@@ -303,21 +303,21 @@ begin transports
 stockme:
   driver = appendfile
   create_directory = yes
-  user = mailcleaner
-  group = mailcleaner
+  user = spamtagger
+  group = spamtagger
 
 spam_pipe:
   driver = pipe
-  user = mailcleaner
-  group = mailcleaner
+  user = spamtagger
+  group = spamtagger
   log_output = true
   environment = "PERLLIB=__SRCDIR__/lib"
   command = "__OUTSCRIPT__ $message_id $local_part $domain $sender_address"
 
 spam_store:
   driver = appendfile
-  user = mailcleaner
-  group = mailcleaner
+  user = spamtagger
+  group = spamtagger
   mode = 640
   mailstore_format
   create_directory = true
@@ -325,8 +325,8 @@ spam_store:
 
 spam_transport:
   driver = appendfile
-  user = mailcleaner
-  group = mailcleaner
+  user = spamtagger
+  group = spamtagger
   mode = 640
 
 remote_smtp:

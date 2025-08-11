@@ -1,5 +1,5 @@
 #!/bin/bash
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This script will backup the Mailcleaner configuration to a sql file that
+#   This script will backup the SpamTagger configuration to a sql file that
 #   can be reimported in another system.
 #
 #   Usage:
@@ -29,19 +29,19 @@ if [ "VARDIR" = "" ]; then
 fi
 
 SOCKET=$VARDIR/run/mysql_master/mysqld.sock
-MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
+MYSPAMTAGGERPWD=$(grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 DATE=$(date '+%d-%m-%Y')
 SAVECONFIG=/tmp/spamtagger_config_$DATE.sql
 
-/opt/mysql5/bin/mysqldump -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -ntce st_config >$SAVECONFIG
+/opt/mysql5/bin/mysqldump -S $SOCKET -uspamtagger -p$MYSPAMTAGGERPWD -ntce st_config >$SAVECONFIG
 
 perl -pi -e 's/INSERT/REPLACE/g' $SAVECONFIG
 
 echo "**************************************"
 echo "config saved in: $SAVECONFIG"
 echo "--------------------------------------"
-echo "to reimport datas in mailcleaner config: st_mysql -m < backupfile"
+echo "to reimport datas in spamtagger config: st_mysql -m < backupfile"
 echo "**************************************"
 
 exit 0

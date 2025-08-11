@@ -1,7 +1,7 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @copyright 2015 Fastnet SA
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @copyright 2025, SpamTagger
  */
 class Default_Model_DbTable_NewsletterRule extends Zend_Db_Table_Abstract
 {

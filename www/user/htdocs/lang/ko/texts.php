@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "뉴스레터";
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "사용자가 전달한 메시지 숨기기";
 $txt['FORCESPAM'] = "메시지 전달";
 //old
 $txt['ASKREASON'] = "필터링 규칙 표시";
-$txt['CONFSENDANALYSE'] = "메일 필터링 조절에 대한 요청을 MailCleaner 분석 센터로 보냅니다; 이는 차단된 메시지 사본을 포함합니다. </br> 참고: 필터 조정은 화이트리스트 또는 블랙리스트와 동일하지 않습니다.";
+$txt['CONFSENDANALYSE'] = "메일 필터링 조절에 대한 요청을 SpamTagger 분석 센터로 보냅니다; 이는 차단된 메시지 사본을 포함합니다. </br> 참고: 필터 조정은 화이트리스트 또는 블랙리스트와 동일하지 않습니다.";
 $txt['AREYOUSURE'] = "<span class=\"question\">이 메시지를 분석하여 필터 조절에 적용할 것을 원하십니까?</span>";
 $txt['ASKANALYSE'] = "필터 조절 요청";
 $txt['PAGE'] = "Page";
@@ -157,7 +157,7 @@ $txt['SCORE'] = "Score";
 $txt['TOTAL'] = "Total";
 //old
 $txt['SENDANALYSETITLE'] = "필터 조정 요청";
-$txt['SENTTOANALYSE'] = "필터 조절 요청이 MailCleaner 분석 센터로 전달되었습니다; 이 메시지는 검사하여 1일 이내에 필터 보정에 적용됩니다.";
+$txt['SENTTOANALYSE'] = "필터 조절 요청이 SpamTagger 분석 센터로 전달되었습니다; 이 메시지는 검사하여 1일 이내에 필터 보정에 적용됩니다.";
 /*
  * quick actions
  */
@@ -192,12 +192,12 @@ $txt['ID'] = "식별자";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT'] = "<p>MailCleaner 세션이 끝났습니다.</p><p>다시시작하고 싶으면 다음 링크를 클릭하세요:</p>";
+$txt['LOGOUTTEXT'] = "<p>SpamTagger 세션이 끝났습니다.</p><p>다시시작하고 싶으면 다음 링크를 클릭하세요:</p>";
 /*
  * parameters page
  */
 //old
-$txt['PARAMTITLE'] = "개인 MailCleaner 설정";
+$txt['PARAMTITLE'] = "개인 SpamTagger 설정";
 //old
 $txt['USERPARAM'] = "사용자 설정";
 //old
@@ -278,11 +278,11 @@ $txt['REMADDRESSALT'] = "주소 제거";
 //old
 $txt['ADDADDRESSALT'] = "주소 추가";
 $txt['BADADDRESSFORMAT'] = "주소가 유효하지 않습니다. 다시 시도 시도하십시오.";
-$txt['NOTFILTEREDDOMAIN'] = "이 도메인은 MailCleaner에 의해 필터링 되지 않습니다. 주소를 추가할 수 없습니다.";
-$txt['ALIASALREADYREGISTERD'] = "이 주소는 MailCleaner 계정에서 이미 사용 중 입니다. 추가할 수 없습니다.";
+$txt['NOTFILTEREDDOMAIN'] = "이 도메인은 SpamTagger에 의해 필터링 되지 않습니다. 주소를 추가할 수 없습니다.";
+$txt['ALIASALREADYREGISTERD'] = "이 주소는 SpamTagger 계정에서 이미 사용 중 입니다. 추가할 수 없습니다.";
 $txt['ALIASALREADYPENDING'] = "이 주소에 대한 확인 요청이 이미 대기 중 입니다.";
 $txt['ALIASPENDING'] = "이 주소에 대한 확인이 요청되었습니다.<br/> 보안상의 이유로 요청한 주소를 24시간 이내에 확인되면 추가 됩니다.";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner] 주소 추가 요청";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger] 주소 추가 요청";
 $txt['ALIASERRORSENDIG'] = "내부 오류로 인해 요청을 보낼 수 없습니다. 나중에 다시 시도하십시오.";
 $txt['ALIASNOTPENDING'] = "현재 이 주소에 대해 보류 중인 요청이 없습니다.";
 $txt['ALIASADDED'] = "주소가 추가되었습니다.";
@@ -324,9 +324,9 @@ $txt['FROMDATETODATE'] = "__PARAM1__.__PARAM2__.__PARAM3__ 부터 __PARAM4__.__P
 /*
  * some error messages
  */
-$txt['BADARGS'] = "MailCleaner 내부 에러(__PARAM__). 자세한 내용은 시스템 관리자에게 문의하여 주십시오.";
+$txt['BADARGS'] = "SpamTagger 내부 에러(__PARAM__). 자세한 내용은 시스템 관리자에게 문의하여 주십시오.";
 $txt['INCORRECTMSGID'] = "메시지 식별자가 잘못되어 요청한 작업을 완료 할 수 없습니다.";
-$txt['NOSUCHADDR'] = "주어진 주소는 MailCleaner에 의해 보호되지 않습니다.";
+$txt['NOSUCHADDR'] = "주어진 주소는 SpamTagger에 의해 보호되지 않습니다.";
 $txt['ERRORSENDING'] = "메시지를 보내는 중 오류가 발생했습니다. 다시 시도하십시오. 문제가 지속되면 시스템 관리자에게 문의하십시오.";
 $txt['MSGFORCED'] = "메시지가 해제되어 사서함에 전달되었습니다. 몇 분 안에 사용할 수 있어야합니다.";
 $txt['MSGFILENOTFOUND'] = "메시지가 더 이상 검역소에 없으므로 요청한 작업을 완료 할 수 없습니다.";

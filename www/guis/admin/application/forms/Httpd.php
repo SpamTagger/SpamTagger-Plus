@@ -34,7 +34,7 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
 	    require_once('Validate/HostList.php');
 		$allowed_ip = new Zend_Form_Element_Textarea('allowed_ip', array(
 		      'label'    =>  $t->_('Allowed IP/ranges')." :",
-                      'title' => $t->_("IP/range allowed to connect to the MailCleaner web interface"),
+                      'title' => $t->_("IP/range allowed to connect to the SpamTagger web interface"),
 		      'required'   => false,
 		      'rows' => 5,
 		      'cols' => 30,

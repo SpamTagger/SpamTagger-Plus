@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * User authentification form
  */
@@ -119,7 +119,7 @@ class Default_Form_Manage_UserAuthentification extends Zend_Form
             $pass = Text_Password::create(12, 'pronounceable', 'numeric');
             $local->setPassword($pass);
             foreach ($user->getAddresses() as $add) {
-                $config = MailCleaner_Config::getInstance();
+                $config = SpamTagger_Config::getInstance();
                 $cmd = $config->getOption('SRCDIR')."/bin/send_userpassword.pl '".$add."' '".$user->getParam('username')."' '".$pass."' 0";
                 $res = `$cmd`;
             }

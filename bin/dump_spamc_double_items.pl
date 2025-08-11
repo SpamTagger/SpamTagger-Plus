@@ -16,14 +16,14 @@ while (<FH_TXT>) {
         my ($w1, $w2) = split(' ', $_);
         next if ( ! defined($w2) );
         print RULES "# auto generated rule to prevent links containing both $w1 and $w2\n";
-        print RULES "uri __MC_URI_DBL_ITEM_$i /$w1.*$w2/i\n";
+        print RULES "uri __ST_URI_DBL_ITEM_$i /$w1.*$w2/i\n";
         $j = $i;
         $i++;
-        print RULES "uri __MC_URI_DBL_ITEM_$i /$w2.*$w1/i\n";
+        print RULES "uri __ST_URI_DBL_ITEM_$i /$w2.*$w1/i\n";
 
-        print RULES "\nmeta MC_URI_DBL_ITEM_$j ( __MC_URI_DBL_ITEM_$j || __MC_URI_DBL_ITEM_$i )\n";
-        print RULES "describe MC_URI_DBL_ITEM_$j Link containing both $w1 and $w2\n";
-        print RULES "score MC_URI_DBL_ITEM_$j 7.0\n\n";
+        print RULES "\nmeta ST_URI_DBL_ITEM_$j ( __ST_URI_DBL_ITEM_$j || __ST_URI_DBL_ITEM_$i )\n";
+        print RULES "describe ST_URI_DBL_ITEM_$j Link containing both $w1 and $w2\n";
+        print RULES "score ST_URI_DBL_ITEM_$j 7.0\n\n";
         $i++;
 }
 close FH_TXT;

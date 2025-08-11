@@ -75,10 +75,10 @@ else
   echo "<br/>" >$WWW
 fi
 
-# Report to MailCleaner
+# Report to SpamTagger
 if [ $CLIENTID ]; then
   tar cvf - reports.wrk 2>/dev/null | gzip -9 - >$FILE
-  scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $FILE mcscp@team01.mailcleaner.net:/upload/watchdog-reports/ &>/dev/null
+  scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $FILE mcscp@team01.spamtagger.org:/upload/watchdog-reports/ &>/dev/null
   if [[ $? = 0 ]]; then
     rm -Rf $REPORTSWRK >/dev/null 2>&1
     rm $FILE >/dev/null 2>&1

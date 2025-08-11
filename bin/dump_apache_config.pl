@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
 #   
@@ -38,7 +38,7 @@ my $lasterror = "";
 
 my $dbh;
 $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-			"mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+			"spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
 		or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
 my %sys_conf = get_system_config() or fatal_error("NOSYSTEMCONFIGURATIONFOUND", "no record found for system configuration");
@@ -93,7 +93,7 @@ sub dump_apache_file
 
 		$line =~ s/__VARDIR__/$config{'VARDIR'}/g;
 		$line =~ s/__SRCDIR__/$config{'SRCDIR'}/g;
-		$line =~ s/__DBPASSWD__/$config{'MYMAILCLEANERPWD'}/g;
+		$line =~ s/__DBPASSWD__/$config{'MYSPAMTAGGERPWD'}/g;
 
 		foreach my $key (keys %sys_conf) {
 			$line =~ s/$key/$sys_conf{$key}/g;

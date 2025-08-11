@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   This script let you set/change the MailCleaner Host ID
+#   This script let you set/change the SpamTagger Host ID
 #   WARNING!:  Before using it, delete the concerned node of your cluster
 #              then re-add it to the cluster after the change.
 #   WARNING2!: Previously quarantined messages of this node will not be
@@ -40,7 +40,7 @@ REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)
 OLDID=$(grep 'HOSTID' $CONFFILE | cut -d ' ' -f3)
 
 if [ "$REGISTERED" == "1" ] || [ "$REGISTERED" == "2" ]; then
-  echo "Your MailCleaner has to be unregistered first !"
+  echo "Your SpamTagger has to be unregistered first !"
   exit 1
 fi
 

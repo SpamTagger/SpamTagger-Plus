@@ -12,12 +12,12 @@ bayes_auto_learn __BAYES_AUTOLEARN__
 bayes_auto_learn_threshold_spam 10.0
 bayes_auto_learn_threshold_nonspam 0.1
 
-bayes_ignore_header X-MailCleaner
-bayes_ignore_header X-MailCleaner-ID
-bayes_ignore_header X-MailCleaner-SpamCheck 
-bayes_ignore_header X-MailCleaner-SpamScore 
-bayes_ignore_header X-MailCleaner-Information
-bayes_ignore_header X-MailCleaner-SPF
+bayes_ignore_header X-SpamTagger
+bayes_ignore_header X-SpamTagger-ID
+bayes_ignore_header X-SpamTagger-SpamCheck 
+bayes_ignore_header X-SpamTagger-SpamScore 
+bayes_ignore_header X-SpamTagger-Information
+bayes_ignore_header X-SpamTagger-SPF
 bayes_ignore_header X-Newsl
 bayes_ignore_header X-Nicebayes
 bayes_ignore_header X-PreRBLs
@@ -83,12 +83,12 @@ spf_timeout __SPF_TIMEOUT__
 endif
 
 __IF__ QUARANTINE_DMARC
-header   MC_DMARC_QUARANTINE   X-MailCleaner-DMARC =~ /quarantine/i
-describe MC_DMARC_QUARANTINE   Message failed sender's DMARC policy, quarantine
-score    MC_DMARC_QUARANTINE   50.0
+header   ST_DMARC_QUARANTINE   X-SpamTagger-DMARC =~ /quarantine/i
+describe ST_DMARC_QUARANTINE   Message failed sender's DMARC policy, quarantine
+score    ST_DMARC_QUARANTINE   50.0
 __FI__
 
-envelope_sender_header X-MailCleaner-From
+envelope_sender_header X-SpamTagger-From
 
 ifplugin FuzzyOcr
 focr_global_wordlist __SRCDIR__/share/spamassassin/FuzzyOcr.words

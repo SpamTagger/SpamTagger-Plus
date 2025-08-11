@@ -1,5 +1,5 @@
-This is a message from the Mailcleaner
---------------------------------------
+This is a message from the SpamTagger
+-------------------------------------
 The original e-mail message contained potentially dangerous content,
 which has been removed for your safety.
 
@@ -17,5 +17,5 @@ At $date the virus scanner said:
 $report
 Note to Administrator: $hostname in $datenumber/$id
 
-- 
-Mailcleaner
+---------- 
+SpamTagger

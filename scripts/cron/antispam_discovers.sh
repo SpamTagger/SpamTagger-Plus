@@ -8,7 +8,7 @@ VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-MYMAILCLEANERPWD=$(grep -e '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
+MYSPAMTAGGERPWD=$(grep -e '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 HTTPPROXY=$(grep -e '^HTTPPROXY' /etc/spamtagger.conf | cut -d ' ' -f3)
 export http_proxy=$HTTPPROXY
 
@@ -16,19 +16,19 @@ export http_proxy=$HTTPPROXY
 ## razor discover ##
 ####################
 
-su mailcleaner -c "razor-admin -discover"
+su spamtagger -c "razor-admin -discover"
 
 ####################
 ## pyzor discover ##
 ####################
 
-su mailcleaner -c "pyzor discover" 2>&1 >/dev/null
+su spamtagger -c "pyzor discover" 2>&1 >/dev/null
 
 if [ ! -d $VARDIR/.pyzor ]; then
   mkdir $VARDIR/.pyzor
 fi
 #echo "82.94.255.100:24441" > $VARDIR/.pyzor/servers
-chown -R mailcleaner:mailcleaner $VARDIR/.pyzor
+chown -R spamtagger:spamtagger $VARDIR/.pyzor
 
 if [ ! -d /root/.pyzor ]; then
   mkdir /root/.pyzor

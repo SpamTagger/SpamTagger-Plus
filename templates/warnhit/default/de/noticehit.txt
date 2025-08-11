@@ -1,4 +1,4 @@
-Subject: MailCleaner Warn/Weisse Liste getroffen
+Subject: SpamTagger Warn/Weisse Liste getroffen
 
 Guten Tag,
 

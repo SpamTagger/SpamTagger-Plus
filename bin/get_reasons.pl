@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -67,11 +67,11 @@ if ( open(MSG, $msg_file)) {
         my $describe_line;
 	my $line = "";
 	while (($line=<MSG>) && ($keep_in > 0)) {
-		if ( $line =~ /^X-MailCleaner-SpamCheck:.*\(.*score=([\-]?[0-9\.]*)\,.*$/) {
+		if ( $line =~ /^X-SpamTagger-SpamCheck:.*\(.*score=([\-]?[0-9\.]*)\,.*$/) {
                         print "TOTAL_SCORE::$1::\n";
                         $in_it = 1;
                 }
-		elsif ( $line =~ /^X-MailCleaner-SpamScore:.*/) {
+		elsif ( $line =~ /^X-SpamTagger-SpamScore:.*/) {
                                 $keep_in = 0;
                                 $in_it = 0;
                 }

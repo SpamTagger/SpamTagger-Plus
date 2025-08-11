@@ -1,6 +1,6 @@
 Este es un mensaje del Servicio de Protección de Virus para Correo
-Electrónico MailCleaner
-----------------------------------------------------------------------
+Electrónico SpamTagger
+---------------------------------------------------------------------
 El archivo anexado original "$filename"
 está en la lista de anexos inaceptables para este sitio y el mismo
 ha sido reemplazado por este mensaje de aviso.
@@ -15,5 +15,5 @@ $report
 
 Nota para el departamento de soporte: $hostname:$datenumber/$id
 
--- 
-MailCleaner
+---------- 
+SpamTagger

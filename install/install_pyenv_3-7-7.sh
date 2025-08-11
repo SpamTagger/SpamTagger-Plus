@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
@@ -22,6 +22,7 @@
 #
 #   This script will install pyenv, python 3.7.7 and MailCleaner library
 #
+# TODO: Re-package this library with the SpamTagger name. Host it via PyPy, or something else.
 VARDIR="/var/spamtagger"
 cd $VARDIR
 
@@ -55,7 +56,7 @@ if [ -f "openssl-1.1.1g.tar.gz" ]; then
   LD_LIBRARY_PATH="${HOME}/lib/openssl/lib" LDFLAGS="-L${HOME}/lib/openssl/lib -Wl,-rpath,${HOME}/lib/openssl/lib" CFLAGS="-I$HOME/lib/openssl/include" SSH="$HOME/lib/openssl" pyenv install 3.7.7 -s
   pyenv local 3.7.7
 
-  pip install mailcleaner-library --trusted-host repository.mailcleaner.net --index https://repository.mailcleaner.net/python/ --extra-index https://pypi.org/simple/
+  pip install mailcleaner-library --trusted-host repository.spamtagger.org --index https://repository.mailcleaner.net/python/ --extra-index https://pypi.org/simple/
 
   SSL_VERSION=$(python -c "import ssl; print(ssl.OPENSSL_VERSION)")
   if [[ "$SSL_VERSION" != "OpenSSL 1.1.1g  21 Apr 2020" ]]; then
@@ -64,7 +65,7 @@ if [ -f "openssl-1.1.1g.tar.gz" ]; then
     exit
   fi
 
-  IMPORT_MC_LIB=$(python -c "import mailcleaner")
+  IMPORT_ST_LIB=$(python -c "import mailcleaner")
   if [ $? -eq 1 ]; then
     echo "[Errno 4]: Can't import mailcleaner" >>$VARDIR/log/spamtagger/install_pyenv.log
     exit

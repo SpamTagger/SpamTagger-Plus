@@ -20,7 +20,7 @@ rundir=$VARDIR/run/greylistd
 datadir=$VARDIR/spool/greylistd
 pidfile=$rundir/pid
 socket=$rundir/socket
-user=mailcleaner
+user=spamtagger
 
 export PATH=$PATH:/usr/bin:/usr/local/bin:/sbin:/usr/sbin
 
@@ -34,8 +34,8 @@ prepare() {
   if [ ! -d $VARDIR/run/greylistd ]; then
     mkdir $VARDIR/run/greylistd
   fi
-  chown -R mailcleaner:mailcleaner $VARDIR/spool/greylistd >/dev/null 2>&1
-  chown -R mailcleaner:mailcleaner $VARDIR/run/greylistd >/dev/null 2>&1
+  chown -R spamtagger:spamtagger $VARDIR/spool/greylistd >/dev/null 2>&1
+  chown -R spamtagger:spamtagger $VARDIR/run/greylistd >/dev/null 2>&1
 }
 
 case "$1" in

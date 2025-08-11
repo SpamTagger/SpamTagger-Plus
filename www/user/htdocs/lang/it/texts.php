@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "Newsletter";
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "Nascondi i messaggi utente rilasciati";
 $txt['FORCESPAM'] = "rilascia il messaggio";
 //old
 $txt['ASKREASON'] = "visualizza regole filtri";
-$txt['CONFSENDANALYSE'] = "Una richiesta di aggiustamento filtro verr&agrave inviata al Centro di analisi MailCleaner; insieme ad una copia del messaggio che &egrave stato erroneamente bloccato.";
+$txt['CONFSENDANALYSE'] = "Una richiesta di aggiustamento filtro verr&agrave inviata al Centro di analisi SpamTagger; insieme ad una copia del messaggio che &egrave stato erroneamente bloccato.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Sei sicuro di volere che questo messaggio venga analizzato e che venga applicata una richiesta di aggiustamento al filtro?</span>";
 $txt['ASKANALYSE'] = "Richiesta aggiustamento filtro";
 $txt['PAGE'] = "Pagina";
@@ -157,7 +157,7 @@ $txt['SCORE'] = "Punteggio";
 $txt['TOTAL'] = "Totale";
 //old
 $txt['SENDANALYSETITLE'] = "Richiesta aggiustamento filtro";
-$txt['SENTTOANALYSE'] = "Una richiesta di aggiustamento filtro verr&agrave inviata al Centro di analisi MailCleaner; questo messaggio verr&agrave esaminato ed una correzione del filtro verr&agrave applicata entro un giorno lavorativo.";
+$txt['SENTTOANALYSE'] = "Una richiesta di aggiustamento filtro verr&agrave inviata al Centro di analisi SpamTagger; questo messaggio verr&agrave esaminato ed una correzione del filtro verr&agrave applicata entro un giorno lavorativo.";
 /*
  * azioni rapide
  */
@@ -192,12 +192,12 @@ $txt['ID'] = "Identificatore";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT'] = "<p>La tua sessione MailCleaner &egrave scaduta.</p><p>Se vuoi iniziare una nuova sessione, seleziona il seguente link:</p>";
+$txt['LOGOUTTEXT'] = "<p>La tua sessione SpamTagger &egrave scaduta.</p><p>Se vuoi iniziare una nuova sessione, seleziona il seguente link:</p>";
 /*
  * parameters page
  */
 //old
-$txt['PARAMTITLE'] = "Impostazioni personali di MailCleaner";
+$txt['PARAMTITLE'] = "Impostazioni personali di SpamTagger";
 //old
 $txt['USERPARAM'] = "Impostazioni utente";
 //old
@@ -278,11 +278,11 @@ $txt['REMADDRESSALT'] = "rimuovi un indirizzo";
 //old
 $txt['ADDADDRESSALT'] = "aggiungi un indirizzo";
 $txt['BADADDRESSFORMAT'] = "L'indirizzo indicato non &Egrave valido. Si prega di riprovare.";
-$txt['NOTFILTEREDDOMAIN'] = "Questo dominio non &egrave filtrato da MailCleaner. L'indirizzo non pu&ograve essere aggiunto.";
-$txt['ALIASALREADYREGISTERD'] = "Questo indirizzo &egrave gi&agrave usato da un'utenza MailCleaner. Non pu&ograve essere aggiunto.";
+$txt['NOTFILTEREDDOMAIN'] = "Questo dominio non &egrave filtrato da SpamTagger. L'indirizzo non pu&ograve essere aggiunto.";
+$txt['ALIASALREADYREGISTERD'] = "Questo indirizzo &egrave gi&agrave usato da un'utenza SpamTagger. Non pu&ograve essere aggiunto.";
 $txt['ALIASALREADYPENDING'] = "C'&egrave gi&agrave un'attesa di conferma per questo indirizzo.";
 $txt['ALIASPENDING'] = "&Egrave stata inviata una conferma a questo indirizzo.<br/> Per motivi di sicurezza, l'indirizzo verr&agrave aggiunto solo se confermato entro 24 ore.";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner] Richiesta indirizzo aggiuntivo";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger] Richiesta indirizzo aggiuntivo";
 $txt['ALIASERRORSENDIG'] = "La richiesta non pu&ograve essere inviata a causa di un errore interno. Si prega di riprovare pi&ugrave tardi.";
 $txt['ALIASNOTPENDING'] = "Nessuna richiesta &egrave attualmente in sospeso per questo indirizzo.";
 $txt['ALIASADDED'] = "L'indirizzo &egrave stato aggiunto con successo.";
@@ -324,9 +324,9 @@ $txt['FROMDATETODATE'] = "da __PARAM1__.__PARAM2__.__PARAM3__ a __PARAM4__.__PAR
 /*
  * some error messages
  */
-$txt['BADARGS'] = "Errore interno di MailCleaner (_PARAM_MESSAGE_ERREUR__). Si prega di contattare il proprio amministratore di sistema fornendogli i dettagli del problema.";
+$txt['BADARGS'] = "Errore interno di SpamTagger (_PARAM_MESSAGE_ERREUR__). Si prega di contattare il proprio amministratore di sistema fornendogli i dettagli del problema.";
 $txt['INCORRECTMSGID'] = "L'azione richiesta non pu&ograve essere completata in quanto l'identificatore del messaggio non &egrave corretto.";
-$txt['NOSUCHADDR'] = "L'indirizzo indicato non &egrave protetto da MailCleaner.";
+$txt['NOSUCHADDR'] = "L'indirizzo indicato non &egrave protetto da SpamTagger.";
 $txt['ERRORSENDING'] = "Si è verificato un errore durante l'invio del messaggio. Si prega di riprovare. Se il problema persiste, contattare l'amministratore di sistema.";
 $txt['MSGFORCED'] = "Il messaggio &egrave stato rilasciato e consegnato alla casella postale. Dovrebbe essere disponibile entro i prossimi minuti.";
 $txt['MSGFILENOTFOUND'] = "L'azione richiesta non pu&ograve essere completata perch&eacute il messaggio non &egrave pi&ugrave in quarantena.";

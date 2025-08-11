@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-# Mailcleaner - SMTP Antivirus/Antispam Gateway
+# SpamTagger Plus - Open Source Spam Filtering
 # Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 # Copyright (C) 2021-2023 John Mertz <git@john.me.tz>
 #
@@ -62,8 +62,8 @@ unlink($stop_script);
 my $dbh;
 $dbh = DBI->connect(
 	"DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-	"mailcleaner",
-	"$config{MYMAILCLEANERPWD}",
+	"spamtagger",
+	"$config{MYSPAMTAGGERPWD}",
 	{RaiseError => 0, PrintError => 0}
 ) or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 

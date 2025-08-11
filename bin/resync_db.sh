@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -118,7 +118,7 @@ fi
 
 # Resync
 
-MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
+MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 echo "select hostname, password from master;" | $SRCDIR/bin/st_mysql -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
 
 if [ "$MHOST" != "" ]; then
@@ -132,9 +132,9 @@ else
   export MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
 fi
 
-/opt/mysql5/bin/mysqldump -S$VARDIR/run/mysql_slave/mysqld.sock -umailcleaner -p$MYMAILCLEANERPWD st_config update_patch >/var/tmp/updates.sql
+/opt/mysql5/bin/mysqldump -S$VARDIR/run/mysql_slave/mysqld.sock -uspamtagger -p$MYSPAMTAGGERPWD st_config update_patch >/var/tmp/updates.sql
 
-/opt/mysql5/bin/mysqldump -h $MHOST -umailcleaner -p$MPASS --master-data st_config >/var/tmp/master.sql
+/opt/mysql5/bin/mysqldump -h $MHOST -uspamtagger -p$MPASS --master-data st_config >/var/tmp/master.sql
 $SRCDIR/etc/init.d/mysql_slave stop
 sleep 2
 rm $VARDIR/spool/mysql_slave/master.info >/dev/null 2>&1
@@ -151,7 +151,7 @@ rm $VARDIR/spool/mysql_slave/relay-log.info >/dev/null 2>&1
 $SRCDIR/bin/st_mysql -s st_config </var/tmp/master.sql
 
 sleep 2
-echo "CHANGE MASTER TO master_host='$MHOST', master_user='mailcleaner', master_password='$MPASS'; " | $SRCDIR/bin/st_mysql -s
+echo "CHANGE MASTER TO master_host='$MHOST', master_user='spamtagger', master_password='$MPASS'; " | $SRCDIR/bin/st_mysql -s
 # Return code should be 0 if there are no errors. Log code to RUN to catch errors that might not be presented with 'check_status'
 $SRCDIR/bin/st_mysql -s st_config </var/tmp/master.sql
 RUN=$?

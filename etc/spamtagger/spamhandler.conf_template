@@ -1,5 +1,5 @@
-runasuser=mailcleaner
-runasgroup=mailcleaner
+runasuser=spamtagger
+runasgroup=spamtagger
 prefork = 5
 reportspamtodnslists=0
 reportrbls=

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w -I../lib/
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2020 John Mertz <git@john.me.tz>
 #
@@ -45,8 +45,8 @@ my %time_in;
 my $start_time = time();
 my $previous_time = $start_time;
 
-my $uid = getpwnam( 'mailcleaner' );
-my $gid = getgrnam( 'mailcleaner' );
+my $uid = getpwnam( 'spamtagger' );
+my $gid = getgrnam( 'spamtagger' );
 
 my $conf = ReadConfig::getInstance();
 my $op = $conf->getOption('SRCDIR');
@@ -468,7 +468,7 @@ sub dumpDomainsFile {
         	if (defined($domains{$domain_name}{dkim_selector})) {
         		print DKIMFILE $domains{$domain_name}{dkim_selector}."\n";
         	} else {
-        		print DKIMFILE "mailcleaner\n";
+        		print DKIMFILE "spamtagger\n";
         	}
         	if (defined($domains{$domain_name}{dkim_pkey}) && $domains{$domain_name}{dkim_pkey} ne '') {
         		if (open DKIMPKEY, ">$dkim_pkey_file") {

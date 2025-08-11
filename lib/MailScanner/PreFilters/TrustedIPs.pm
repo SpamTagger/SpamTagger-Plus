@@ -49,7 +49,7 @@ sub Checks {
   my $message = shift; 
   
   foreach my $hl ($global::MS->{mta}->OriginalMsgHeaders($message)) {
-    if ($hl =~ m/^X-MailCleaner-TrustedIPs: Ok/i) {
+    if ($hl =~ m/^X-SpamTagger-TrustedIPs: Ok/i) {
       my $string = 'sending IP is in Trusted IPs';
       if ($TrustedIPs::conf{debug}) {
           MailScanner::Log::InfoLog("$MODULE result is ham ($string) for ".$message->{id});
@@ -63,7 +63,7 @@ sub Checks {
       return 0;
     }
 
-    if ($hl =~ m/^X-MailCleaner-White-IP-DOM: WhIPDom/i) {
+    if ($hl =~ m/^X-SpamTagger-White-IP-DOM: WhIPDom/i) {
       my $string = 'sending IP is whitelisted for this domain';
       if ($TrustedIPs::conf{debug}) {
           MailScanner::Log::InfoLog("$MODULE result is ham ($string) for ".$message->{id});

@@ -27,7 +27,7 @@ use POSIX qw(:signal_h);    # For Solaris 9 SIG bug workaround
 use MIME::Parser;
 use Net::IP;
 use Net::CIDR::Lite;
-use MCDnsLists;
+use STDnsLists;
 
 my $MODULE = "UriRBLs";
 my %conf;
@@ -78,7 +78,7 @@ sub initialise {
 	}
 
 	$UriRBLs::dnslists =
-	  new MCDnsLists( \&MailScanner::Log::WarnLog, $UriRBLs::conf{debug} );
+	  new STDnsLists( \&MailScanner::Log::WarnLog, $UriRBLs::conf{debug} );
 	$UriRBLs::dnslists->loadRBLs(
 		$UriRBLs::conf{rblsDefsPath}, $UriRBLs::conf{rbls},
 		'URIRBL',                     $UriRBLs::conf{whitelistDomainsFile},
@@ -132,8 +132,8 @@ sub Checks {
                   $senderhostname = $1;
                   MailScanner::Log::InfoLog("$MODULE found sender hostname: $senderhostname for $senderip on message ".$message->{id});
             }
-            if ($hl =~ m/^X-MailCleaner-SPF: (.*)/) {
-                 last; ## we can here because X-MailCleaner-SPF will always be after the Received fields.
+            if ($hl =~ m/^X-SpamTagger-SPF: (.*)/) {
+                 last; ## we can here because X-SpamTagger-SPF will always be after the Received fields.
             }
         }
 

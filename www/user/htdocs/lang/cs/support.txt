@@ -1,7 +1,7 @@
 <?php
 $txt['SFALSENEGSUBTITLE'] = "Obdrželi jste zprávu, kterou považujete za spam?";
-$txt['SVERIFYPASS'] = "Zkontrolujte, zda byla zpráva zpracována filtrem Mailcleaner, a to tak, že se podíváte na hlavičky e-mailu.";
-$txt['SMCLOGTITLE'] = "V záhlavích uvidíte následující řádky se zmínkou o Mailcleaner:";
-$txt['SMCLOGLINE1'] = "přijato: z mailcleaner.net (filtr démon)";
-$txt['SMCLOGLINE2'] = "mailcleaner.net s esmtp (příchozí démon)";
-$txt['SMCFILTERINGLOG'] = "";
+$txt['SVERIFYPASS'] = "Zkontrolujte, zda byla zpráva zpracována filtrem SpamTagger, a to tak, že se podíváte na hlavičky e-mailu.";
+$txt['SSTLOGTITLE'] = "V záhlavích uvidíte následující řádky se zmínkou o SpamTagger:";
+$txt['SSTLOGLINE1'] = "přijato: z spamtagger.org (filtr démon)";
+$txt['SSTLOGLINE2'] = "spamtagger.org s esmtp (příchozí démon)";
+$txt['SSTFILTERINGLOG'] = "";

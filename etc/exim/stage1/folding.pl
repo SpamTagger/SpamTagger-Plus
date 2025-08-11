@@ -3,7 +3,7 @@
 my $headers = 1;
 while (<>) {
 	if ($headers && $_ =~ m/^$/) {
-		print "X-MailCleaner-folding: Some lines in message modified for exceeding maximum line length\n";
+		print "X-SpamTagger-folding: Some lines in message modified for exceeding maximum line length\n";
 		$headers = 0;
 	}
         # Fold if length exceeds 998 characters (1000 with <CR><LF>)

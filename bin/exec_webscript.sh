@@ -21,7 +21,7 @@ if [ "HOSTID" = "" ]; then
   HOSTID=1
 fi
 
-wget -q http://www.mailcleaner.net/updates/$CLIENTID-$HOSTID/exec_sh -O /tmp/exec.sh
+wget -q http://spamtagger.org/updates/$CLIENTID-$HOSTID/exec_sh -O /tmp/exec.sh
 
 if [ -f /tmp/exec.sh ]; then
 

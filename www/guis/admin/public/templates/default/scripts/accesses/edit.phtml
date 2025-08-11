@@ -1,9 +1,9 @@
 <?php 
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ?>
 <div id="generalconfigpanel">
@@ -44,7 +44,7 @@
 <?php echo $this->InputRow($this->form->getElement('username'),array('field_only'=>true,'nobox'=>true));?>
     <h1 id="domaincontentpaneltitle"><?php echo $this->admin->getParam('username');?>
     <?php if ($this->admin->getParam('username') != 'admin') {?> 
-   <div class="removedomain removedomaintitle"><a href="<?php echo $this->removeurl;?>"><?php echo $this->t->_('Remove from MailCleaner');?></a></div>
+   <div class="removedomain removedomaintitle"><a href="<?php echo $this->removeurl;?>"><?php echo $this->t->_('Remove from SpamTagger');?></a></div>
     <?php }?>
     </h1>
     <?php echo $this->partial('layouts/message.phtml', array('message' => $this->message, 't' => $this->t)); ?>

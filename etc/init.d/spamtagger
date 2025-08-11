@@ -1,12 +1,12 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          mailcleaner
+# Provides:          spamtagger
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Start all MailCleaner services
-# Description:       MailCleaner
+# Short-Description: Start all SpamTagger services
+# Description:       SpamTagger
 ### END INIT INFO
 
 APACHE_RESTART=1
@@ -26,7 +26,7 @@ if [ "$VARDIR" = "" ]; then
 fi
 ISMASTER=`grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3`
 
-NAME=mailcleaner
+NAME=spamtagger
 FW=firewall
 EXIM1=exim_stage1
 EXIM2=exim_stage2
@@ -52,7 +52,7 @@ case "$1" in
 
     EDITION=`cat $SRCDIR/etc/edition.def`
     VERSION=`cat $SRCDIR/etc/spamtagger/version.def`
-    echo "MailCleaner $EDITION $VERSION (kernel \\\r on \\\m, \\\l)\n" > /etc/issue
+    echo "SpamTagger $EDITION $VERSION (kernel \\\r on \\\m, \\\l)\n" > /etc/issue
 
     ## checking for tmpfs dir
     DF=`df | grep '/spool/tmp'`
@@ -63,7 +63,7 @@ case "$1" in
     fi
 
     ## checking for opt binaries
-    for i in mysql4 mysql5 MailScanner bogofilter clamav exim4 mailcleaner php5; do
+    for i in mysql4 mysql5 MailScanner bogofilter clamav exim4 spamtagger php5; do
      if [ ! -d /opt/$i ]; then
       ln -s /usr/$i /opt/$i >/dev/null 2>&1
      fi
@@ -101,20 +101,20 @@ case "$1" in
     if [ ! -f "${FIRSTUPDATE_FLAG_RAN}" ]; then
         if [ ! -f "${FIRSTUPDATE_FLAG_RUNNING}" ]; then
             echo "Needs update" >> ${FIRSTUPDATE_LOG}
-            ping -c 1 cvs.mailcleaner.net > /dev/null
+            ping -c 1 cvs.spamtagger.org > /dev/null
             net_status=$?
             if [ ${net_status} -eq 0 ]; then
                 touch ${FIRSTUPDATE_FLAG_RUNNING}
                 echo "Updating..." >> ${FIRSTUPDATE_LOG}
                 mkdir -p ${FIRSTUPDATE_FLAG_DIR}
-                /root/Updater4MC/updater4mc.sh || rm -f ${FIRSTUPDATE_FLAG_RUNNING}  # If error during upgrade, it will try again every time
+                /root/Updater4ST/updater4mc.sh || rm -f ${FIRSTUPDATE_FLAG_RUNNING}  # If error during upgrade, it will try again every time
                 ${SRCDIR}/bin/internal_access --generate --propagate --install &>> ${FIRSTUPDATE_LOG}
                 touch ${FIRSTUPDATE_FLAG_RAN}
                 echo "Finished update" >> ${FIRSTUPDATE_LOG}
                 rm -f ${FIRSTUPDATE_FLAG_RUNNING}
             else
-                echo "WARNING: MailCleaner has not been updated on first launch." >> ${FIRSTUPDATE_LOG}
-                echo "Ensure you have a running connection and restart MailCleaner." >> ${FIRSTUPDATE_LOG}
+                echo "WARNING: SpamTagger has not been updated on first launch." >> ${FIRSTUPDATE_LOG}
+                echo "Ensure you have a running connection and restart SpamTagger." >> ${FIRSTUPDATE_LOG}
             fi
         fi
     fi

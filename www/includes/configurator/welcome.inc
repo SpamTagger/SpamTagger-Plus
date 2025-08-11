@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   Last page with advices of MailCleaner "Configurator" wizard
+#   Last page with advices of SpamTagger "Configurator" wizard
 #
 -->
 <?php

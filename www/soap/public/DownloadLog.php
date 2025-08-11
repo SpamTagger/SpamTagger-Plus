@@ -1,9 +1,9 @@
 <?php 
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 
 error_reporting('E_ALL');
@@ -25,7 +25,7 @@ if (preg_match('/(\.\.|[\/\{\}$\*\?\[\]])/', $fileparam, $illegal)) {
 }
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/../../guis/admin/application/library/SpamTagger/Config.php');
-$stconfig = MailCleaner_Config::getInstance();
+$stconfig = SpamTagger_Config::getInstance();
 
 $file = preg_replace('/\-/', '/', $fileparam);
 

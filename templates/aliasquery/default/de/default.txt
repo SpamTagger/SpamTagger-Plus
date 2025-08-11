@@ -1,4 +1,4 @@
-Subject: [Mailcleaner] Demande d'ajout d'adresse
+Subject: [SpamTagger] Demande d'ajout d'adresse
 
 Bonjour
 
@@ -18,6 +18,6 @@ Si vous ne souhaitez pas inscrire cet alias pour ce compte, veuillez cliquer sur
 
 __REFUSEURL__
 
----------------
-Mailcleaner
+----------
+SpamTagger
 

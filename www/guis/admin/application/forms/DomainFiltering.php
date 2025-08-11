@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Domain filtering settings form
  */
@@ -61,7 +61,7 @@ class Default_Form_DomainFiltering extends Zend_Form
 		
 		$useantispam = new Zend_Form_Element_Checkbox('spamwall', array(
 	        'label'   => $t->_('Enable advanced antispam controls'). " :",
-                'title' => $t->_("Enable/Disable antispam part of MailCleaner"),
+                'title' => $t->_("Enable/Disable antispam part of SpamTagger"),
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));
@@ -72,7 +72,7 @@ class Default_Form_DomainFiltering extends Zend_Form
 	    
 	    $usecontent = new Zend_Form_Element_Checkbox('contentwall', array(
 	        'label'   => $t->_('Enable dangerous content controls'). " :",
-                'title' => $t->_("Enable / disable antivirus part of MailCleaner"),
+                'title' => $t->_("Enable / disable antivirus part of SpamTagger"),
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));
@@ -127,7 +127,7 @@ class Default_Form_DomainFiltering extends Zend_Form
 	    
 	    $enablewhitelist = new Zend_Form_Element_Checkbox('enable_whitelists', array(
 	        'label'   => $t->_('Enable whitelists'). " :",
-                'title' => $t->_("Enable the use of whitelist /!\ (http://www.mailcleaner.net/antispam/documentations/whitelist.html) must be enabled in Configuration > Anti-Spam first"),
+                'title' => $t->_("Enable the use of whitelist /!\ (http://spamtagger.org/antispam/documentations/whitelist.html) must be enabled in Configuration > Anti-Spam first"),
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));

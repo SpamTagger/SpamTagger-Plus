@@ -12,8 +12,8 @@
 ###############################
 
 Max Children = __NBPROCESSES__
-Run As User = mailcleaner
-Run As Group = mailcleaner
+Run As User = spamtagger
+Run As Group = spamtagger
 
 Additional Library Paths = __SRCDIR__/lib
 
@@ -96,7 +96,7 @@ Deliver Disinfected Files = no
 Silent Viruses = __SILENT__
 Still Deliver Silent Viruses = no
 Non-Forging Viruses = Joke/ OF97/ WM97/ W97M/ eicar Zip-Password
-Spam-Virus Header = X-%org-name%-MailCleaner-SpamVirus-Report:
+Spam-Virus Header = X-%org-name%-SpamTagger-SpamVirus-Report:
 Virus Names Which Are Spam = Sane.Auction*UNOFFICIAL Sane.Casino*UNOFFICIAL Sane.Doc*UNOFFICIAL Sane.Phishing*UNOFFICIAL Sane.PhishingTestSig*UNOFFICIAL Sane.TestSig_Type3_Bdy*UNOFFICIAL Sane.TestSig_Type4_Bdy*UNOFFICIAL Sane.TestSig_Type4_Hdr*UNOFFICIAL HTML/* *Phish*
 
 Block Encrypted Messages = __BLOCKENCRYPT__
@@ -201,16 +201,16 @@ Sender Size Report = %report-dir%/sender.content.report.txt
 Hide Incoming Work Dir = yes
 Include Scanner Name In Reports = yes
 
-Mail Header = X-MailCleaner:
-Spam Header = X-MailCleaner-SpamCheck:
-Spam Score Header = X-MailCleaner-SpamScore:
-Information Header = X-MailCleaner-Information:
+Mail Header = X-SpamTagger:
+Spam Header = X-SpamTagger-SpamCheck:
+Spam Score Header = X-SpamTagger-SpamScore:
+Information Header = X-SpamTagger-Information:
 Add Envelope From Header = no
 Add Envelope To Header = no
-Envelope From Header = X-MailCleaner-From:
-Envelope To Header = X-MailCleaner-To:
-ID Header = X-MailCleaner-ID:
-IP Protocol Version Header = # X-MailCleaner-IP-Protocol:
+Envelope From Header = X-SpamTagger-From:
+Envelope To Header = X-SpamTagger-To:
+ID Header = X-SpamTagger-ID:
+IP Protocol Version Header = # X-SpamTagger-IP-Protocol:
 Spam Score Character = o
 SpamScore Number Instead Of Stars = no
 Minimum Stars If On Spam List = 0
@@ -254,9 +254,9 @@ Size Subject Text = &ContentSubject
 Disarmed Subject Text = 
 Disarmed Modify Subject = no
 Spam Modify Subject = yes
-Spam Subject Text = {MC_SPAM}
+Spam Subject Text = {ST_SPAM}
 High Scoring Spam Modify Subject = yes
-High Scoring Spam Subject Text = {MC_SPAM}
+High Scoring Spam Subject Text = {ST_SPAM}
 Warning Is Attachment = yes
 Attachment Warning Filename = AttentionVirus.txt
 Attachment Encoding Charset = ISO-8859-1
@@ -267,7 +267,7 @@ Send Notices = __SENDNOTICE__
 Notices Include Full Headers = no
 Hide Incoming Work Dir in Notices = no
 Notice Signature =
-Notices From = MailCleaner
+Notices From = SpamTagger
 Notices To = __NOTICETO__
 Local Postmaster = &LocalPostmaster
 
@@ -304,7 +304,7 @@ Treat Invalid Watermarks With No Sender as Spam = nothing
 Check Watermarks To Skip Spam Checks = yes
 Watermark Secret = %org-name%-Secret
 Watermark Lifetime = 604800
-Watermark Header = X-MailCleaner-Watermark:
+Watermark Header = X-SpamTagger-Watermark:
 
 Use SpamAssassin = no
 Use Custom Spam Scanner = no
@@ -347,7 +347,7 @@ First Check = mcp
 MCP Required SpamAssassin Score = 1
 MCP High SpamAssassin Score = 10
 MCP Error Score = 1
-MCP Header = X-%org-name%-MailCleaner-MCPCheck:
+MCP Header = X-%org-name%-SpamTagger-MCPCheck:
 Non MCP Actions = deliver
 MCP Actions = deliver
 High Scoring MCP Actions = deliver

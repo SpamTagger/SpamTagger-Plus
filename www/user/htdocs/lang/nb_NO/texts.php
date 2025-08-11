@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "Nyhetsbrev";
@@ -141,7 +141,7 @@ $txt['HIDEFORCED'] = "Skjul brukerfrigitte meldinger";
 $txt['FORCESPAM'] = "frislipp meldingen";
 //old
 $txt['ASKREASON'] = "vis filtreringsregler";
-$txt['CONFSENDANALYSE'] = "En filterjusteringsforespørsel vil bli sendt til MailCleaners analysesenter; den inneholder en kopi av meldingen som ble feilaktig blokkert.</br>Merk: Filterjustering er ikke det samme som hvit- eller svartelisting.";
+$txt['CONFSENDANALYSE'] = "En filterjusteringsforespørsel vil bli sendt til SpamTaggers analysesenter; den inneholder en kopi av meldingen som ble feilaktig blokkert.</br>Merk: Filterjustering er ikke det samme som hvit- eller svartelisting.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Er du sikker på at du ønsker at denne meldingen skal analyseres og at filterjusteringene skal legges til?</span>";
 $txt['ASKANALYSE'] = "Filterjusteringsforespørsel";
 $txt['PAGE'] = "Side";
@@ -154,7 +154,7 @@ $txt['SCORE'] = "Poengsum";
 $txt['TOTAL'] = "Totalt";
 //old
 $txt['SENDANALYSETITLE'] = "Filterjusteringsforespørsel";
-$txt['SENTTOANALYSE'] = "En forespørsel om filterjustering har blitt sendt til MailCleaners analysesenter; denne meldingen vil bli granskes og filterjusteringer vil bli lagt til innen én arbeidsdag.";
+$txt['SENTTOANALYSE'] = "En forespørsel om filterjustering har blitt sendt til SpamTaggers analysesenter; denne meldingen vil bli granskes og filterjusteringer vil bli lagt til innen én arbeidsdag.";
 /*
  * quick actions
  */
@@ -189,12 +189,12 @@ $txt['ID'] = "Identifikator";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT'] = "<p>Din MailCleaner-økt er over.</p><p>Hvis du vil starte ny økt, klikk på denne lenken:</p>";
+$txt['LOGOUTTEXT'] = "<p>Din SpamTagger-økt er over.</p><p>Hvis du vil starte ny økt, klikk på denne lenken:</p>";
 /*
  * parameters page
  */
 //old
-$txt['PARAMTITLE'] = "Personlige MailCleaner-innstillinger";
+$txt['PARAMTITLE'] = "Personlige SpamTagger-innstillinger";
 //old
 $txt['USERPARAM'] = "Brukerinnstillinger";
 //old
@@ -275,11 +275,11 @@ $txt['REMADDRESSALT'] = "fjern en adresse";
 //old
 $txt['ADDADDRESSALT'] = "legg til en adresse";
 $txt['BADADDRESSFORMAT'] = "Angitt adresse er ugyldig. Prøv igjen.";
-$txt['NOTFILTEREDDOMAIN'] = "Dette domenet er ikke filtrert av MailCleaner. Adressen kunne ikke legges til.";
-$txt['ALIASALREADYREGISTERD'] = "Denne adressen er allerede i bruk av en MailCleaner-konto. Den kunne ikke legges til.";
+$txt['NOTFILTEREDDOMAIN'] = "Dette domenet er ikke filtrert av SpamTagger. Adressen kunne ikke legges til.";
+$txt['ALIASALREADYREGISTERD'] = "Denne adressen er allerede i bruk av en SpamTagger-konto. Den kunne ikke legges til.";
 $txt['ALIASALREADYPENDING'] = "En bekreftelse venter allerede for denne adressen.";
 $txt['ALIASPENDING'] = "En bekreftelse har blitt sendt til denne adressen.<br/> Av sikkerhetshensyn, vil adressen bare bli lagt til hvis du bekrefter forespørselen innen et døgn.";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner] Forespørsel om tillegg av adresse";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger] Forespørsel om tillegg av adresse";
 $txt['ALIASERRORSENDIG'] = "Forespørselen kunne ikke sendes som følge av en intern feil. Prøv igjen senere.";
 $txt['ALIASNOTPENDING'] = "Det er ingen ventende forespørsler for denne adressen.";
 $txt['ALIASADDED'] = "Adresse lagt til.";
@@ -321,9 +321,9 @@ $txt['FROMDATETODATE'] = "fra __PARAM1__.__PARAM2__.__PARAM3__ til __PARAM4__.__
 /*
  * some error messages
  */
-$txt['BADARGS'] = "Intern MailCleaner-feil (_PARAM_MESSAGE_ERREUR__). Kontakt din systemadministrator med detaljer om problemer.";
+$txt['BADARGS'] = "Intern SpamTagger-feil (_PARAM_MESSAGE_ERREUR__). Kontakt din systemadministrator med detaljer om problemer.";
 $txt['INCORRECTMSGID'] = "Forespurt melding kunne ikke fullføres fordi meldingsidentifikatoren er uriktig.";
-$txt['NOSUCHADDR'] = "Den angitte adressen er ikke beskyttet av MailCleaner.";
+$txt['NOSUCHADDR'] = "Den angitte adressen er ikke beskyttet av SpamTagger.";
 $txt['ERRORSENDING'] = "En feil inntraff under forsendelse av meldingen. Prøv igjen. Hvis problemet vedvarer, kontakt systemadministratoren din.";
 $txt['MSGFORCED'] = "Meldingen har blitt frisluppet og levert til din innboks. Dens bør være tilgjengelig i løpet av et par minutter.";
 $txt['MSGFILENOTFOUND'] = "Forespurt handling kan ikke fullføres fordi meldingen ikke lenger er i karantene.";
