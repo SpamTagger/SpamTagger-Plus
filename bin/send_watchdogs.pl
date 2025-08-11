@@ -44,7 +44,6 @@ if (-e "$vardir/spool/spamtagger/disable-watchdog-emails") {
 	exit 0;
 }
 
-my $enterprise = $conf->getOption('REGISTERED');
 my $baseurl;
 ## select language
 my $sysconf = SystemPref::getInstance();

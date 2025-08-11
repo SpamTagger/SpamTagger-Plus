@@ -19,60 +19,8 @@
 
 <div id="generalconfigcontent">
   <div id="registrationonfigpanel" class="configpanel">
-
-
-      <div id="registrationformcontent">
-          <?php echo $this->partial('forms/changeHostIdForm.phtml', array('form' => $this->formhostid,'t' => $this->t, 'message' => $this->message, 'images_path' => $this->images_path)); ?>
-      </div>
-
-	<hr/>
-<?php if (!$this->is_registered) { ?>
-      <div id="freetrial">
-          <?php echo $this->partial('forms/freeTrialForm.phtml'); ?>
-      </div>
-      <hr/>
-<?php } ?>
-      <div id="commercialoptions">
-          <?php echo $this->partial('forms/commercialOptionsForm.phtml', array('is_registered' => $this->is_registered)); ?>
-      </div>
-      <hr/>
-
-      <div id="registrationformcontent">
-          <?php echo $this->partial('forms/registrationForm.phtml', array('form' => $this->form,'t' => $this->t, 'message' => $this->message, 'images_path' => $this->images_path)); ?>
-      </div>
-
-      <div class="registerstatus">
-          <?php echo $this->t->_('System is')?>
-          <?php if ($this->registered == 1) {?>
-              <span class="okregister"><?php echo $this->t->_('registered');?></span>
-          <?php } else { ?>
-              <span class="nokregister"><?php echo $this->t->_('unregistered');?></span>
-          <?php } ?>
-      </div>
-
-	<hr/>	
-
-      <div id="registrationformcontent">
-          <?php echo $this->partial('forms/registrationCEForm.phtml', array('form' => $this->formCE,'t' => $this->t, 'message' => $this->message, 'images_path' => $this->images_path)); ?>
-      </div>
-
-      <div class="registerstatus">
-          <?php echo $this->t->_('System is')?>
-          <?php if ($this->registered == 2) {?>
-              <span class="okregister"><?php echo $this->t->_('registered');?></span>
-          <?php } else { ?>
-              <span class="nokregister"><?php echo $this->t->_('unregistered');?></span>
-          <?php } ?>
-      </div>
-
-      <?php if ($this->registered == 2 || $this->registered == 1) {?>
-	<hr/>
-      	<div id="registrationformcontent">
-          	<?php echo $this->partial('forms/unregistrationForm.phtml', array('form' => $this->formun,'t' => $this->t, 'message' => $this->message, 'images_path' => $this->images_path, 'registered' => $this->registered)); ?>
-      	</div>
-      <?php } ?>
+      <p>Hi! SpamTagger is no longer a commercial product and does not require registration or the sharing of data to use all of it's features. Some of the features which previously existed have been temporarily removed as we seek out better ways to deliver them, but they will be restored automatically with updates.</p>
+  </div>
 </div>
 
-
-</div>
 </div>

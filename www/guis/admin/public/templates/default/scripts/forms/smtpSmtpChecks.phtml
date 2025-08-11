@@ -34,6 +34,7 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
           <tr>
             <td class="flabel flabeltextarea flabelchecklist"><?php echo $this->t->_('Check connecting hosts against RBLs')?> : </td>
             <td class="fvalue fvaluechecklist">
+          <!-- TODO: commercial RBL options temporarily disabled
               <?php foreach ($this->form->_rbl_checks as $check) {
                 if (preg_match('/^INACTIVE/',$check->getLabel())) {
 	          echo '<input type="checkbox" onclick="return false;" /><span>' . preg_replace('/^use_rbl_/','',$check->getName()) . "&nbsp;&nbsp;";
@@ -46,6 +47,7 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
 	          echo $this->InputRow($check, array('field_only'=>true,'nobox'=>'true','post_field_text'=>$check->getLabel()."<br />"));
                 }
               }?>
+          -->
             </td>
           </tr>
           

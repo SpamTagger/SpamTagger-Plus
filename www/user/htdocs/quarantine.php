@@ -90,58 +90,10 @@ if (!isset($address)) {
     $address = '';
 }
 
-// UserInfoBox
-require_once ('helpers/DataManager.php');
-$file_conf = DataManager :: getFileConfig($sysconf_ :: $CONFIGFILE_);
-
-$is_enterprise = $file_conf['REGISTERED'] == '1';
 $content='';
 $user_pref_lang=$lang_->getLanguage();
 $default_filename='st-info-box-user-en.php';
 $filename='st-info-box-user-'.$user_pref_lang.'.php';
-
-if ($is_enterprise) {
-        // SpamTagger Staff CONTENT
-        $stmanager='https://spamtagger.org/infobox/';
-        $url_to_get=$stmanager.$filename;
-
-        $curl = curl_init();
-	curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-	curl_setopt($curl, CURLOPT_TIMEOUT, 3); //timeout in seconds
-        curl_setopt_array($curl, array(
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_URL => $url_to_get,
-                CURLOPT_FAILONERROR => true
-        ));
-        $result = curl_exec($curl);
-        if ($result === false) {
-                curl_close($curl);
-                // The st-info-box-user-<lang> file doesn't exists
-                // We try to get the default file (in en)
-                $url_to_get=$stmanager.$default_filename;
-                $curl = curl_init();
-		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 3); //timeout in seconds
-                curl_setopt_array($curl, array(
-                        CURLOPT_RETURNTRANSFER => 1,
-                        CURLOPT_URL => $url_to_get,
-                        CURLOPT_FAILONERROR => true
-                ));
-                $result2 = curl_exec($curl);
-                curl_close($curl);
-                if ($result2 === false) {
-                        $content="<h4>No text or no access to remote server SpamTagger server. Please inform your administrator.</h4>";
-                } else {
-                        if (isset($result2)) {
-                                $content = $result2;
-                        }
-                }
-        }
-        else {
-                if (isset($result))
-                        $content = $result;
-        }
-}
 
 // Customer CONTENT
 // Get the infobox file according to the user language.

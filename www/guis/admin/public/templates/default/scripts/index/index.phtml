@@ -5,122 +5,6 @@ $user = Zend_Registry::get('user');
 $stconfig = SpamTagger_Config::getInstance();
 
 if ($user && $user->getUserType() == 'administrator') {
-    if (!$this->is_registered) {
-?>
-
-<div id="RegisterBloc" class="registerbloc">
-    <h1>Register - Get add-ons</h1>
-    <div class="registerblocdiv">
-        <table style="width:100%">
-            <tr>
-                <th class="registerbloccolumn">Free Entreprise Edition trial</th>
-                <th class="registerbloccolumn">Get commercial Add-ons</th>
-                <th class="registerbloccolumn">Community Edition Registration</th>
-            </tr>
-	        <tr>
-                <td>Test the Enterprise Edition
-                    <div>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td class="globalstatuskey">
-                                        <img style="width: 50%" src="/admin/templates/default/images/status_ok.png" alt="ok">
-                                    </td>
-                                    <td class=globalstatusvalue">Commercial RBLs
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="globalstatuskey">
-                                        <img style="width: 50%" src="/admin/templates/default/images/status_ok.png" alt="ok">
-                                    </td>
-                                    <td class=globalstatusvalue">Additionnal filtering rules
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="globalstatuskey">
-                                        <img style="width: 50%" src="/admin/templates/default/images/status_ok.png" alt="ok">
-                                    </td>
-                                    <td class=globalstatusvalue">Support
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-                <td>You can add
-                    <div>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td class="globalstatuskey">
-                                        <img style="width: 50%" src="/admin/templates/default/images/status_ok.png" alt="ok">
-                                    </td>
-                                    <td class=globalstatusvalue">ESET Anti-Virus
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="globalstatuskey">
-                                        <img style="width: 50%" src="/admin/templates/default/images/status_ok.png" alt="ok">
-                                    </td>
-                                    <td class=globalstatusvalue">Spamhaus RBL
-                                    </td>
-                                </tr>
-                            </tbody>
-                            </table>
-                    </div>
-                </td>
-                <td>Register your free Community Edition to
-                    <div>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td class="globalstatuskey">
-                                        <img style="width: 50%" src="/admin/templates/default/images/status_ok.png" alt="ok">
-                                    </td>
-                                    <td class=globalstatusvalue">be added to our newsletter
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="globalstatuskey">
-                                        <img style="width: 50%" src="/admin/templates/default/images/status_ok.png" alt="ok">
-                                    </td>
-                                    <td class=globalstatusvalue">get updates notices
-                                       </td>
-                                </tr>
-                                <tr>
-                                    <td class="globalstatuskey">
-                                        <img style="width: 50%" src="/admin/templates/default/images/status_ok.png" alt="ok">
-                                    </td>
-                                    <td class=globalstatusvalue">free updates for the bayesian filters
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a class="notunderlined" href="https://spamtagger.org/trial-request.html?key=Tx3kshaf7324fdD0!" target="_blank">
-                        <input type="button" class="linkrebutton" value="Enterprise Edition Trial" />
-                    </a>
-                </td>
-                <td>
-                    <a class="notunderlined" href="https://spamtagger.org/community-edition-add-ons.html" target="_blank">
-                        <input type="button" class="linkrebutton" value="Purchase Add-ons" />
-                    </a>
-                </td>
-                <td>
-                    <a class="notunderlined" href="/admin/baseconfiguration/registration">
-                        <input type="button" class="linkrebutton" value="Register your Community Edition" />
-                    </a>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
-<?php
-    }
 ?>
 <div class="globalbloc" style="min-height: 0px; padding-bottom: 12px;">
      <h1>InfoBox by SpamTagger Team</h1>
@@ -131,11 +15,7 @@ if ($user && $user->getUserType() == 'administrator') {
 $urltoget='https://spamtagger.org/infobox/';
 
 if ($user && $user->getUserType() == 'administrator') {
-    if ($stconfig->getOption('REGISTERED') == "1") {
-        $urltoget = $urltoget.'st-info-box.php';
-    } else {
-        $urltoget = $urltoget.'st-ce-info-box.php';
-    }
+    $urltoget = $urltoget.'st-info-box.php';
 	
     $curl = curl_init();
 	curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3); 

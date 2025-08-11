@@ -22,6 +22,7 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
 <tr id="iprbls" class="<?php echo $this->form->_rbls_class?>">
     <td class="flabel flabeltextarea flabelchecklist"><?php echo $this->t->_('Using these DNS RBLs')?> : </td>
     <td class="fvalue fvaluechecklist">
+    <!-- TODO: temporarily hide commercial rbls
     <?php foreach ($this->form->_ip_rbls as $check) {
         if (preg_match('/^INACTIVE/',$check->getLabel())) {
 	  echo '<input type="checkbox" onclick="return false;" /><span>' . preg_replace('/^use_rbl_/','',$check->getName()) . "&nbsp;&nbsp;";
@@ -34,12 +35,14 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
 	  echo $this->InputRow($check, array('field_only'=>true,'nobox'=>'true','post_field_text'=>$check->getLabel()."<br />"));
         }
     } ?>
+    -->
     </td>
 </tr>
 
 <tr id="urirbls" class="<?php echo $this->form->_rbls_class?>">
     <td class="flabel flabeltextarea flabelchecklist"><?php echo $this->t->_('Using these URI RBLs')?> : </td>
     <td class="fvalue fvaluechecklist">
+    <!-- TODO: temporarily hide commercial rbls
     <?php foreach ($this->form->_uri_rbls as $check) {
         if (preg_match('/^INACTIVE/',$check->getLabel())) {
 	  echo '<input type="checkbox" onclick="return false;" /><span>' . preg_replace('/^use_rbl_/','',$check->getName()) . "&nbsp;&nbsp;";
@@ -52,6 +55,7 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
 	  echo $this->InputRow($check, array('field_only'=>true,'nobox'=>'true','post_field_text'=>$check->getLabel()."<br />"));
         }
     } ?>
+    -->
     </td>
 </tr>
 
