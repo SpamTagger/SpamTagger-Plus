@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
 #
 #   Usage:
 #           CDN_fetch_bayes.sh
+
+# TODO: Find a different way to sync bayes data
+exit
 
 CONFFILE=/etc/spamtagger.conf
 SRCDIR=$(grep 'SRCDIR' $CONFFILE | cut -d ' ' -f3)
@@ -72,7 +75,7 @@ if [ -f /tmp/bayes_secrets ]; then
 fi
 
 # Getting secrets
-scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no mcscp@cvs.mailcleaner.net:/data_credentials/bayes_secrets /tmp/bayes_secrets
+scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no mcscp@cvs.spamtagger.org:/data_credentials/bayes_secrets /tmp/bayes_secrets
 
 OLD_SA_SECRET=''
 OLD_BOGO_SECRET=''

@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "通讯";
@@ -141,7 +141,7 @@ $txt['HIDEFORCED'] = "隐藏用户发布的消息";
 $txt['FORCESPAM'] = "发布消息";
 //old
 $txt['ASKREASON'] = "显示筛选规则";
-$txt['CONFSENDANALYSE'] = "过滤器调整请求将被发送到 MailCleaner 分析中心;它包含错误阻止的消息的副本。";
+$txt['CONFSENDANALYSE'] = "过滤器调整请求将被发送到 SpamTagger 分析中心;它包含错误阻止的消息的副本。";
 $txt['AREYOUSURE'] = "<span class=\"question\"> 是否确实要分析此消息, 并且可以应用筛选器调整？ </span>";
 $txt['ASKANALYSE'] = "筛选器调整请求";
 $txt['PAGE'] = "页";
@@ -154,7 +154,7 @@ $txt['SCORE'] = "分数";
 $txt['TOTAL'] = "总计";
 //old
 $txt['SENDANALYSETITLE'] = "筛选器调整请求";
-$txt['SENTTOANALYSE'] = "已将过滤器调整请求发送到 MailCleaner 分析中心;此消息将被检查, 过滤器更正可以在一个工作日内应用。";
+$txt['SENTTOANALYSE'] = "已将过滤器调整请求发送到 SpamTagger 分析中心;此消息将被检查, 过滤器更正可以在一个工作日内应用。";
 /*
  * quick actions
  */
@@ -189,12 +189,12 @@ $txt['ID'] = "识别码";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT'] = "<p> 您的 MailCleaner 会话已结束. </p><p> 如果希望启动新会话, 请单击以下链接: </p>";
+$txt['LOGOUTTEXT'] = "<p> 您的 SpamTagger 会话已结束. </p><p> 如果希望启动新会话, 请单击以下链接: </p>";
 /*
  * parameters page
  */
 //old
-$txt['PARAMTITLE'] = "个人 MailCleaner 设置";
+$txt['PARAMTITLE'] = "个人 SpamTagger 设置";
 //old
 $txt['USERPARAM'] = "用户设置";
 //old
@@ -275,11 +275,11 @@ $txt['REMADDRESSALT'] = "移除地址";
 //old
 $txt['ADDADDRESSALT'] = "添加地址";
 $txt['BADADDRESSFORMAT'] = "给予的地址无效。请重试。";
-$txt['NOTFILTEREDDOMAIN'] = "MailCleaner 不筛选此域。无法添加地址。";
-$txt['ALIASALREADYREGISTERD'] = "此地址已由 MailCleaner 帐户使用。无法添加该项。";
+$txt['NOTFILTEREDDOMAIN'] = "SpamTagger 不筛选此域。无法添加地址。";
+$txt['ALIASALREADYREGISTERD'] = "此地址已由 SpamTagger 帐户使用。无法添加该项。";
 $txt['ALIASALREADYPENDING'] = "此地址的确认已挂起。";
 $txt['ALIASPENDING'] = "已将确认发送到此地址. <br/>出于安全原因, 只有在24小时内确认请求时, 才会添加地址。";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner]地址添加请求";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger]地址添加请求";
 $txt['ALIASERRORSENDIG'] = "由于内部错误, 无法发送请求。请稍后再试。";
 $txt['ALIASNOTPENDING'] = "当前未挂起此地址的请求。";
 $txt['ALIASADDED'] = "地址已成功添加。";
@@ -321,9 +321,9 @@ $txt['FROMDATETODATE'] = "从 __PARAM1__.__PARAM2__.__PARAM3__ 到 __PARAM4__.__
 /*
  * some error messages
  */
-$txt['BADARGS'] = "内部 MailCleaner 错误 (__PARAM__)。请与系统管理员联系, 了解问题的详细信息。";
+$txt['BADARGS'] = "内部 SpamTagger 错误 (__PARAM__)。请与系统管理员联系, 了解问题的详细信息。";
 $txt['INCORRECTMSGID'] = "由于消息标识符不正确, 请求的操作无法完成。";
-$txt['NOSUCHADDR'] = "给定地址不受 MailCleaner 保护。";
+$txt['NOSUCHADDR'] = "给定地址不受 SpamTagger 保护。";
 $txt['ERRORSENDING'] = "发送邮件时出错。请重试。如果问题仍然存在, 请与系统管理员联系。";
 $txt['MSGFORCED'] = "邮件已发布并发送到您的邮箱。它应该在接下来的几分钟内提供。";
 $txt['MSGFILENOTFOUND'] = "由于邮件不再在隔离中, 请求的操作无法完成。";

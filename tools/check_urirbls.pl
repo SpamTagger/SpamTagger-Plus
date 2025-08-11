@@ -6,7 +6,7 @@ BEGIN {
 	$SRCDIR = '/usr/spamtagger';
 }
 use lib "$SRCDIR/lib";
-use MCDnsLists;
+use STDnsLists;
 use Regexp::Common qw/URI/;
 use MIME::QuotedPrint;
 require DB;
@@ -69,7 +69,7 @@ foreach my $type (keys(%rbl_sources)) {
 $config->{rbls} = join(' ', keys(%rbl_levels));
 
 # Initialize lookup library
-my $dnslists = new MCDnsLists(sub{ print STDERR "STDERR: " . shift . "\n"; });
+my $dnslists = new STDnsLists(sub{ print STDERR "STDERR: " . shift . "\n"; });
 $dnslists->loadRBLs( $config->{rblsDefsPath}, $config->{rbls}, 'URIRBL', $config->{whitelistDomainsFile}, $config->{TLDsFiles}, $config->{localDomainsFile}, $0);
 
 # Build input hash

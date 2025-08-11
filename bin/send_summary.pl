@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
 #   Copyright (C) 2021 John Mertz <git@john.me.tz>
@@ -161,7 +161,7 @@ foreach my $a (@addresses) {
   my %replace = (
     '__NBDAYS__' => $days,
     '__SPAMNBDAYS__' => $spamnbdays,
-    '__SUMSIGNATURE__' => 'MailCleaner',
+    '__SUMSIGNATURE__' => 'SpamTagger',
     '\?\?END_LIST' => $textquarantine,
     '__HTMLQUARANTINE__' => $htmlquarantine,
     '__TEXTQUARANTINE__' => $textquarantine,

@@ -1,4 +1,4 @@
-Subject: [Mailcleaner] Address/Alias activation
+Subject: [SpamTagger] Address/Alias activation
 
 Hello,
 
@@ -18,6 +18,6 @@ If you do not wish to activate it, please click on the following link:
 
 __REFUSEURL__
 
----------------
-Mailcleaner
+----------
+SpamTagger
 

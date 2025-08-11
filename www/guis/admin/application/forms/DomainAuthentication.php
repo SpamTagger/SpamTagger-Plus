@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Domain authentication settings form
  */
@@ -68,7 +68,7 @@ class Default_Form_DomainAuthentication extends Zend_Form
 		
 		$connectorlist = new Zend_Form_Element_Select('connector', array(
 		    'label'      => $t->_('Authentication type')." : ",
-                    'title' => $t->_("Choose how users will authenticate on MailCleaner web interface"),
+                    'title' => $t->_("Choose how users will authenticate on SpamTagger web interface"),
             'required'   => true,
 		    'onchange'   => 'javascript:changeAuthConnector();',
             'filters'    => array('StringTrim')));
@@ -82,7 +82,7 @@ class Default_Form_DomainAuthentication extends Zend_Form
         
         $usernameformat = new Zend_Form_Element_Select('usernameformat', array(
             'label'      => $t->_('Username modifier')." : ",
-            'title' => $t->_("How MailCleaner will send the login to the auth server"),
+            'title' => $t->_("How SpamTagger will send the login to the auth server"),
             'required'   => false,
             'filters'    => array('StringTrim')));
         
@@ -94,7 +94,7 @@ class Default_Form_DomainAuthentication extends Zend_Form
         
         $addresslookup = new Zend_Form_Element_Select('addresslookup', array(
             'label'      => $t->_('Address lookup')." : ",
-            'title' => $t->_("How MailCleaner fetch or build address for a user"),
+            'title' => $t->_("How SpamTagger fetch or build address for a user"),
             'required'   => false,
             'filters'    => array('StringTrim')));
         

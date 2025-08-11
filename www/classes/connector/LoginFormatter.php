@@ -1,16 +1,16 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
  
 /**
  * This class is the mother of the Login Formatters.
  * These are used to modify and reformat the login entered by the user in order to be correctly passed to the autentication server
- * @package mailcleaner
+ * @package SpamTagger Plus
  */
 abstract class LoginFormatter {
  

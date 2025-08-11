@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 
 // Define path to application directory
@@ -30,7 +30,7 @@ if (!$argv[1]) {
   exit;
 }
 
-include('MCSoap/Services.php');
-$res = MCSoap_Services::$argv[1](); 
+include('STSoap/Services.php');
+$res = STSoap_Services::$argv[1](); 
 echo $res;
 ?>

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2016 Mentor Reka <reka.mentor@gmail.com>
 #   Copyright (C) 2016 Florian Billebault <florian.billebault@gmail.com>
 #
@@ -23,6 +23,10 @@
 #
 #   Usage:
 #           fetch_watchdog_config.sh [-r]
+
+# TODO: Disabled during transition to spamtagger
+echo "Not currently supported for SpamTagger"
+exit
 
 usage() {
   cat <<EOF

@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
   
 /**
@@ -130,7 +130,7 @@ public function load() {
      $slave = $slaves[0];
      $slave_id = 1;
    } 
-   $db = DM_Custom :: getInstance($this->getFilter('slave'), $slave[0], 'mailcleaner', $slave[1], 'st_stats');
+   $db = DM_Custom :: getInstance($this->getFilter('slave'), $slave[0], 'spamtagger', $slave[1], 'st_stats');
    // now we clean up the filter criteria
    // now we clean up the filter criteria
    if (!is_numeric($this->getFilter('days'))) {

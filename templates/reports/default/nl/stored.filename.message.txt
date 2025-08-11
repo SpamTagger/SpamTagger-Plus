@@ -1,5 +1,5 @@
-Dit is een bericht van Mailcleaner
-----------------------------------
+Dit is een bericht van SpamTagger
+---------------------------------
 De originele bijlage "$filename" staat op de lijst
 van niet-toegelaten attachments voor deze site en werd vervangen
 door deze waarschuwing.
@@ -12,5 +12,5 @@ van dit bericht bij de hand hebt.
 Op $date zei de virus scanner:
 $report
 Bericht aan Administrator: $hostname in $datenumber/$id
--- 
-Mailcleaner
+----------
+SpamTagger

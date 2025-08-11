@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * SMTP ssl settings form
  */
@@ -103,7 +103,7 @@ class Default_Form_SmtpTls extends ZendX_JQuery_Form
 		require_once('Validate/HostList.php');
         $require_tls = new Zend_Form_Element_Textarea('hosts_require_tls', array(
               'label'    =>  $t->_('Force encryption to these hosts')." :",
-              'title' => $t->_("Force the MailCleaner server to use encryption when dealing with those distant hosts"),
+              'title' => $t->_("Force the SpamTagger server to use encryption when dealing with those distant hosts"),
               'required'   => false,
               'rows' => 5,
               'cols' => 30,
@@ -114,7 +114,7 @@ class Default_Form_SmtpTls extends ZendX_JQuery_Form
         
         $require_incoming_tls = new Zend_Form_Element_Textarea('hosts_require_incoming_tls', array(
               'label'    =>  $t->_('Force encryption from these hosts')." :",
-              'title' => $t->_("Force the distant server to use encryption when dealing with the MailCleaner server"),
+              'title' => $t->_("Force the distant server to use encryption when dealing with the SpamTagger server"),
               'required'   => false,
               'rows' => 5,
               'cols' => 30,
@@ -126,7 +126,7 @@ class Default_Form_SmtpTls extends ZendX_JQuery_Form
         require_once('Validate/DomainList.php');
         $domains_require_tls_to = new Zend_Form_Element_Textarea('domains_require_tls_to', array(
               'label'    =>  $t->_('Force encryption to these external domains')." :",
-              'title' => $t->_("Force the MailCleaner server to use encryption when dealing with those distant domains"),
+              'title' => $t->_("Force the SpamTagger server to use encryption when dealing with those distant domains"),
               'required'   => false,
               'rows' => 5,
               'cols' => 30,
@@ -137,7 +137,7 @@ class Default_Form_SmtpTls extends ZendX_JQuery_Form
         
         $domains_require_tls_from = new Zend_Form_Element_Textarea('domains_require_tls_from', array(
               'label'    =>  $t->_('Force encryption from these external domains')." :",
-              'title' => $t->_("Force the distant domains to use encryption when dealing with the MailCleaner server"),
+              'title' => $t->_("Force the distant domains to use encryption when dealing with the SpamTagger server"),
               'required'   => false,
               'rows' => 5,
               'cols' => 30,

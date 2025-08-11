@@ -1,49 +1,49 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 
 $htxt['INTRODUCTION'] = '
 <h1>Welcome to a world where the e-mail you get is the e-mail you want.</h1>
-<p>MailCleaner is an extremely powerful antivirus and anti-spam system.</p>
-<p>Based on the latest generation of filtering technology, MailCleaner does not need to be installed on your computer.
+<p>SpamTagger is an extremely powerful antivirus and anti-spam system.</p>
+<p>Based on the latest generation of filtering technology, SpamTagger does not need to be installed on your computer.
 Instead, it acts before e-mail messages reach your mailbox, at the highest level of the network infrastructure of your company, organization or ISP.
-MailCleaner relies on sophisticated rules that are updated daily by the engineers of the <em>MailCleaner Analysis Center</em> in response to spammers\'
-ever-changing strategies and the appearance of new viruses. Thanks to MailCleaner\'s unblinking surveillance, you can be assured 24 hours a day
+SpamTagger relies on sophisticated rules that are updated daily by the engineers of the <em>SpamTagger Analysis Center</em> in response to spammers\'
+ever-changing strategies and the appearance of new viruses. Thanks to SpamTagger\'s unblinking surveillance, you can be assured 24 hours a day
 that you have the best tool to prevent viral attacks, intrusion of dangerous files and undesirable e-mail messages.</p>
 ';
 
 $htxt['FIRSTCONTACT'] = '
-<h1>Take a couple of minutes to discover how MailCleaner works with your e-mail software.</h1>
+<h1>Take a couple of minutes to discover how SpamTagger works with your e-mail software.</h1>
 <p>This chapter contains all the necessary information to help you master your new antivirus and anti-spam system in just a few minutes.
-The default configuration of the MailCleaner filter immediately provides you with maximum protection, so you can rely on MailCleaner from the very start.</p>
-<p>MailCleaner requires only minimal attention on your part. It works autonomously to eradicate viruses, identify dangerous content and remove spam from your e-mail 24 hours a day.
-MailCleaner works transparently, and you will receive regular quarantine reports that will tell you everything about its activity.</p>
+The default configuration of the SpamTagger filter immediately provides you with maximum protection, so you can rely on SpamTagger from the very start.</p>
+<p>SpamTagger requires only minimal attention on your part. It works autonomously to eradicate viruses, identify dangerous content and remove spam from your e-mail 24 hours a day.
+SpamTagger works transparently, and you will receive regular quarantine reports that will tell you everything about its activity.</p>
 <h2>Quarantine reports </h2>
-<p>As a MailCleaner user, you will be receiving a quarantine report for each e-mail address that is protected by the system. Quarantine reports may be sent to you daily,
+<p>As a SpamTagger user, you will be receiving a quarantine report for each e-mail address that is protected by the system. Quarantine reports may be sent to you daily,
 weekly, or monthly, depending on the configuration chosen by your e-mail administrator or your Internet Service Provider (ISP). A quarantine report lists all the messages
 received in a given period that are identified as spam. These messages are quarantined, meaning that they are retained in a special zone outside of your e-mail system.</p>
-<p>During the first few weeks as a new MailCleaner user, you should examine your quarantine reports carefully to make sure that the system does not inadvertently block any
+<p>During the first few weeks as a new SpamTagger user, you should examine your quarantine reports carefully to make sure that the system does not inadvertently block any
 legitimate e-mail message that should have been delivered to your mailbox. Such instances are very rare, but not impossible.</p>
 <p>After a test period, you will have the option to disable the delivery of quarantine reports, depending on whether or not you are interested in reviewing
 the activity of the filtering system.</p>
 
 <h2>What to do if a message is blocked inadvertently</h2>
-<p>It is possible, although extremely rare, that a message that you want to receive is blocked by MailCleaner.  This may be caused by different factors, such as a non-standard
-format of the e-mail message or a compromised reputation of the mail server used to send the message. It does not mean that MailCleaner is malfunctioning, but simply that the
+<p>It is possible, although extremely rare, that a message that you want to receive is blocked by SpamTagger.  This may be caused by different factors, such as a non-standard
+format of the e-mail message or a compromised reputation of the mail server used to send the message. It does not mean that SpamTagger is malfunctioning, but simply that the
 system acts cautiously when encountering an e-mail message with unusual characteristics that cannot be correctly interpreted by a simple scan of the message contents.</p>
 <p>If you encounter such a situation, there are two things you should do:</p>
 <ul>
 <li><em>Release the message</em> from the quarantine to allow it to reach your mailbox.</li>
-<li>Notify the <em>MailCleaner Analysis Center</em> so that the engineers may render the filter more tolerant towards
-  the sender or format of the blocked message. This is referred to as a <em>filter adjustment</em> in the MailCleaner vocabulary.</li>
+<li>Notify the <em>SpamTagger Analysis Center</em> so that the engineers may render the filter more tolerant towards
+  the sender or format of the blocked message. This is referred to as a <em>filter adjustment</em> in the SpamTagger vocabulary.</li>
 </ul>
 <p>If you are unsure about the nature of the message that has been blocked, you can view its contents before deciding whether it should be released
-  or not via the MailCleaner Management Center.</p>
-<p class="note"><strong>Note:</strong> The <em>MailCleaner Analysis Center</em>, located on our premises, is composed of a team of highly specialized engineers whose role
+  or not via the SpamTagger Management Center.</p>
+<p class="note"><strong>Note:</strong> The <em>SpamTagger Analysis Center</em>, located on our premises, is composed of a team of highly specialized engineers whose role
 is to guarantee the highest possible quality of filtering in response to global spam traffic, emergence of viruses and filter adjustment requests emanating from users worldwide.</p>
 <h3>Viewing the contents of a message</h3>
 <ul>
@@ -64,15 +64,15 @@ is to guarantee the highest possible quality of filtering in response to global 
 </ul>
 <p class="note"><strong>Note:</strong> If you use any of the preceding tools available in the quarantine report, your browser will open a new window or a confirmation dialog box.</p>
 <h2>What to do if a spam has not been blocked</h2>
-<p>If a spam slips undetected through the MailCleaner system, the differences between this spam and a legitimate e-mail message are likely very small.
-In such a situation, MailCleaner chooses to deliver the message to your mailbox. It is better to receive spam on an exceptional basis than to miss a potentially
+<p>If a spam slips undetected through the SpamTagger system, the differences between this spam and a legitimate e-mail message are likely very small.
+In such a situation, SpamTagger chooses to deliver the message to your mailbox. It is better to receive spam on an exceptional basis than to miss a potentially
 important legitimate message.</p>
-<p>If you receive a spam message, you should request a filter adjustment to fine tune MailCleaner detection rules.</p>
+<p>If you receive a spam message, you should request a filter adjustment to fine tune SpamTagger detection rules.</p>
 <h3>Spam received by Microsoft Outlook</h3>
-<p>A plug-in may be added to Microsoft Outlook for Windows to automatically notify MailCleaner that unfiltered spam has been received.
-This plug-in installs a button in the menu bar that displays the MailCleaner logo and the caption <em>Unwanted</em>.</p>
+<p>A plug-in may be added to Microsoft Outlook for Windows to automatically notify SpamTagger that unfiltered spam has been received.
+This plug-in installs a button in the menu bar that displays the SpamTagger logo and the caption <em>Unwanted</em>.</p>
 
-<p>To notify the <em>MailCleaner Analysis Center</em> of received spam using the MailCleaner plug-in:</p>
+<p>To notify the <em>SpamTagger Analysis Center</em> of received spam using the SpamTagger plug-in:</p>
 <ul>
  <li>Select the received spam in the list of messages.</li>
  <li>Click on the Unwanted button in the Tools bar.</li>
@@ -80,14 +80,14 @@ This plug-in installs a button in the menu bar that displays the MailCleaner log
  <li>You may then delete the spam.</li>
  <li>No confirmation will be sent to you, but your request will be taken into account in the continuous filter adjustment process.</li>
 </ul>
-<p class="note"><strong>Note:</strong> If the MailCleaner plug-in is missing in Outlook, ask your e-mail administrator to install it
+<p class="note"><strong>Note:</strong> If the SpamTagger plug-in is missing in Outlook, ask your e-mail administrator to install it
 for you or consult the installation instructions in this manual.</p>
 <h3>Spam received by another e-mail program</h3>
-<p>All filter adjustment requests resulting from unwanted spam must be sent manually to a specific e-mail address at the <em>MailCleaner Analysis Center</em>.</p>
+<p>All filter adjustment requests resulting from unwanted spam must be sent manually to a specific e-mail address at the <em>SpamTagger Analysis Center</em>.</p>
 <p><strong>This address is defined by your e-mail administrator or ISP. It cannot be found in this manual.</strong>
 To obtain this address, click on the Help section of the Management Center and then on Filter Adjustment Request.
 Copy the e-mail address, as it will be needed in the subsequent steps.</p>
-<p>To manually notify the <em>MailCleaner Analysis Center</em> of received spam:</p>
+<p>To manually notify the <em>SpamTagger Analysis Center</em> of received spam:</p>
 <ul>
  <li>Select the received spam in the list of messages.</li>
  <li>Resend the message using the resend function of your e-mail software.</li>
@@ -100,18 +100,18 @@ Copy the e-mail address, as it will be needed in the subsequent steps.</p>
 <p class="important"><strong>Important:</strong> Do not forward the contents of the spam message using the copy and paste function.
 Doing so will prevent the transmission of the long header in the original message which is needed to properly analyze the spam.
 Regardless of your e-mail software or operating system (PC or Mac), you should only use the Resend function (or its equivalent) to send your filter adjustment request. </p>
-<h2>Improving your knowledge of MailCleaner</h2>
-<p>After mastering the basics, you will undoubtedly want to learn more about customizing MailCleaner to precisely fit your needs.</p>
+<h2>Improving your knowledge of SpamTagger</h2>
+<p>After mastering the basics, you will undoubtedly want to learn more about customizing SpamTagger to precisely fit your needs.</p>
 ';
 
-$htxt['MANUAL_FULL_NAME'] = 'mailcleaner_user_manual.pdf';
-$htxt['MANUAL_FIRSTCONTACT_NAME'] = 'mailcleaner_quick_guide.pdf';
-$htxt['MANUAL_GENERICCONCEPT_NAME'] = 'mailcleaner_general_principles.pdf';
-$htxt['MANUAL_GUI_NAME'] = 'mailcleaner_management_center.pdf';
-$htxt['MANUAL_QUARANTINE_NAME'] = 'mailcleaner_quarantine.pdf';
-$htxt['MANUAL_STATS_NAME'] = 'mailcleaner_statistics.pdf';
-$htxt['MANUAL_CONFIGURATION_NAME'] = 'mailcleaner_configuration.pdf';
-$htxt['MANUAL_ERRORS_NAME'] = 'mailcleaner_filter_inaccuracies.pdf';
+$htxt['MANUAL_FULL_NAME'] = 'spamtagger_user_manual.pdf';
+$htxt['MANUAL_FIRSTCONTACT_NAME'] = 'spamtagger_quick_guide.pdf';
+$htxt['MANUAL_GENERICCONCEPT_NAME'] = 'spamtagger_general_principles.pdf';
+$htxt['MANUAL_GUI_NAME'] = 'spamtagger_management_center.pdf';
+$htxt['MANUAL_QUARANTINE_NAME'] = 'spamtagger_quarantine.pdf';
+$htxt['MANUAL_STATS_NAME'] = 'spamtagger_statistics.pdf';
+$htxt['MANUAL_CONFIGURATION_NAME'] = 'spamtagger_configuration.pdf';
+$htxt['MANUAL_ERRORS_NAME'] = 'spamtagger_filter_inaccuracies.pdf';
 
 $htxt['USERMANUAL'] = '
 <h1>User manual &ndash; Version 1.0 &ndash; June 2008</h1>
@@ -124,7 +124,7 @@ $htxt['USERMANUAL'] = '
 <p class="download"><a href="__MANUAL_FIRSTCONTACT_LINK__"><img src="__IMAGE_BASE__images/pdf.gif" alt="__MANUAL_FIRSTCONTACT_NAME__" /></a> <a href="__MANUAL_FIRSTCONTACT_LINK__">Download chapter</a> (__MANUAL_FIRSTCONTACT_SIZE__)</p>
 
 <h3>General principles</h3>
-<p>Understand the principles and techniques used by MailCleaner.</p>
+<p>Understand the principles and techniques used by SpamTagger.</p>
 <p class="download"><a href="__MANUAL_GENERICCONCEPT_LINK__"><img src="__IMAGE_BASE__images/pdf.gif" alt="__MANUAL_GENERICCONCEPT_NAME__" /></a> <a href="__MANUAL_GENERICCONCEPT_LINK__">Download chapter</a> (__MANUAL_GENERICCONCEPT_SIZE__)</p>
 
 <h3>Management Center</h3>
@@ -140,7 +140,7 @@ $htxt['USERMANUAL'] = '
 <p class="download"><a href="__MANUAL_STATS_LINK__"><img src="__IMAGE_BASE__images/pdf.gif" alt="__MANUAL_STATS_NAME__" /></a> <a href="__MANUAL_STATS_LINK__">Download chapter</a> (__MANUAL_STATS_SIZE__)</p>
 
 <h3>Configuration</h3>
-<p>Customize MailCleaner to fit your needs and habits.</p>
+<p>Customize SpamTagger to fit your needs and habits.</p>
 <p class="download"><a href="__MANUAL_CONFIGURATION_LINK__"><img src="__IMAGE_BASE__images/pdf.gif" alt="__MANUAL_CONFIGURATION_NAME__" /></a> <a href="__MANUAL_CONFIGURATION_LINK__">Download chapter</a> (__MANUAL_CONFIGURATION_SIZE__)</p>
 
 <h3>Filter inaccuracies</h3>
@@ -153,24 +153,24 @@ $htxt['FAQ'] = '
 <h1>Simple answers to common questions.</h1>
 <h2>Management Center</h2>
 <h3>Where can I get my user name and password?</h3>
-<p>For any given address filtered by MailCleaner, your user name and password are the same as those used for your e-mail account in your standard e-mail software.</p>
+<p>For any given address filtered by SpamTagger, your user name and password are the same as those used for your e-mail account in your standard e-mail software.</p>
 <h2>Spam and quarantine</h2>
 <h3>What is a quarantine?</h3>
 <p>A quarantine is an isolated zone outside of your mailbox which retains messages identified as spam.</p>
 <h4>Filter adjustment</h4>
 <h3>What is a filter adjustment?</h3>
 <p>A filter adjustment results from a request that you decide to make when you encounter a legitimate mail that is wrongfully quarantined,
-or a spam message that is wrongfully delivered to your mailbox. In the first case, MailCleaner will relax a rule to be more tolerant towards
-a specific sender or format. In the second case, MailCleaner becomes more strict.</p>
+or a spam message that is wrongfully delivered to your mailbox. In the first case, SpamTagger will relax a rule to be more tolerant towards
+a specific sender or format. In the second case, SpamTagger becomes more strict.</p>
 <h3>What happens when I request a filter adjustment?</h3>
-<p>A copy of the message is sent to the <em>MailCleaner Analysis Center</em>. The message is examined by MailCleaner engineers and the filter may be corrected.</p>
+<p>A copy of the message is sent to the <em>SpamTagger Analysis Center</em>. The message is examined by SpamTagger engineers and the filter may be corrected.</p>
 <h4>Quarantined messages</h4>
 <h3>A legitimate message has been mistakenly quarantined. What should I do?</h3>
 <p>Release the message to allow its delivery to your mailbox and request a filter adjustment from within the quarantine.</p>
-<h3>Why did MailCleaner quarantine a message that I was supposed to receive?</h3>
+<h3>Why did SpamTagger quarantine a message that I was supposed to receive?</h3>
 <p>Such a situation may occur if the message was relayed by a mail server that may temporarily have a compromised reputation, caused for example by spammers
 that use it as a spam relay. Alternatively, a specific, unusual format of the message may have triggered an anti-spam rule.
-It does not mean that MailCleaner has malfunctioned, but simply that the system acts cautiously when encountering unusual characteristics of an e-mail message
+It does not mean that SpamTagger has malfunctioned, but simply that the system acts cautiously when encountering unusual characteristics of an e-mail message
 that cannot be correctly interpreted by a simple scan of the message contents.</p>
 <h3>How do I release a message?</h3>
 <p>Click on the arrow icon located on the same line as the message to release it. This can be done either in the quarantine report or within the Management Center.</p>
@@ -182,17 +182,17 @@ If you choose to disable reporting, you will need to visit your Management Cente
 <h4>Unblocked spam</h4>
 <h3>A spam has not been filtered. What should I do?</h3>
 <p>Use your e-mail software to request a Filter Adjustment which will reinforce the filter rules.</p>
-<h3>Why did MailCleaner let a spam reach my mailbox?</h3>
+<h3>Why did SpamTagger let a spam reach my mailbox?</h3>
 <p>Some spam messages manage to slip through the filter because none of the mathematical analyses carried out at the time were able to differentiate it from legitimate e-mail.
-It is therefore very important that you report this error to the <em>MailCleaner Analysis Center</em>, which will then reinforce the relevant filter rules.
-In borderline situations, MailCleaner chooses to deliver the message to your mailbox, since it is better to receive spam on an exceptional basis
+It is therefore very important that you report this error to the <em>SpamTagger Analysis Center</em>, which will then reinforce the relevant filter rules.
+In borderline situations, SpamTagger chooses to deliver the message to your mailbox, since it is better to receive spam on an exceptional basis
 than to miss a potentially important message.</p>
 <h2>Viruses and dangerous messages</h2>
-<h3>How does MailCleaner handle viruses?</h3>
+<h3>How does SpamTagger handle viruses?</h3>
 <p>Viruses are eliminated without any notification.</p>
 <h3>What do you mean by dangerous content?</h3>
 <p>Dangerous content is the type of content that your e-mail administrator must filter as a preventive measure. Examples include attachments with executable scripts (.exe)
-or links to suspicious web sites. MailCleaner removes dangerous content and delivers the remainder of the message to your mailbox along with a note explaining how to ask
+or links to suspicious web sites. SpamTagger removes dangerous content and delivers the remainder of the message to your mailbox along with a note explaining how to ask
 your administrator to send you the complete message.</p>
 <h3>How do I know that a message included dangerous content?</h3>
 <p>The subject of such a message includes a keyword&mdash;usually "{DANGEROUS CONTENT}"&mdash;as well as an attached document explaining how to release it.</p>
@@ -204,29 +204,29 @@ If your administrator believes that the original attachment poses a genuine thre
 $htxt['GLOSSARY'] = '
 <h1>Definitions of the most commonly used words.</h1>
 <h3>Authentication</h3>
-<p>A process that verifies that the true identity of a person matches the identity claimed by this person. Successful authentication in MailCleaner is necessary for a user to access his or her quarantine.</p>
+<p>A process that verifies that the true identity of a person matches the identity claimed by this person. Successful authentication in SpamTagger is necessary for a user to access his or her quarantine.</p>
 <h3>Analysis Center</h3>
-<p>A team of specialized engineers working at the MailCleaner headquarters whose role is to guarantee at all times the best possible quality of filtering in response to global spam traffic, virus activity and adjustment requests from MailCleaner users worldwide.</p>
+<p>A team of specialized engineers working at the SpamTagger headquarters whose role is to guarantee at all times the best possible quality of filtering in response to global spam traffic, virus activity and adjustment requests from SpamTagger users worldwide.</p>
 <h3>Dangerous content</h3>
 <p>Suspicious content found in a message that has been filtered out as a preventive measure by your ISP or e-mail administrator.</p>
 <h3>Domains under protection</h3>
-<p>All of the Internet domains examined by the same instance of MailCleaner (examples: company.com, enterprise.com).</p>
+<p>All of the Internet domains examined by the same instance of SpamTagger (examples: company.com, enterprise.com).</p>
 <h3>False negative</h3>
-<p>Spam that has not been identified as such by the MailCleaner filter. All false negatives should be reported to the Analysis Center to take corrective action.</p>
+<p>Spam that has not been identified as such by the SpamTagger filter. All false negatives should be reported to the Analysis Center to take corrective action.</p>
 <h3>False positive</h3>
-<p>A legitimate message considered as spam by MailCleaner. All false positives should be reported via a filter adjustment request.</p>
+<p>A legitimate message considered as spam by SpamTagger. All false positives should be reported via a filter adjustment request.</p>
 <h3>Fastnet SA</h3>
-<p>The nice folks who are the authors of MailCleaner. They are just the opposite of spammers. Fastnet headquarters are in St-Sulpice, Switzerland.</p>
+<p>The nice folks who are the authors of SpamTagger. They are just the opposite of spammers. Fastnet headquarters are in St-Sulpice, Switzerland.</p>
 <h3>Filter Adjustment Request</h3>
-<p>A voluntary action on the part of a user in case a legitimate message is blocked or spam is delivered to your mailbox. In the first case, filter adjustment will render MailCleaner more tolerant towards a particular sender or format. In the second case, MailCleaner will reinforce its filter. Filter adjustment requests are handled by the <em>MailCleaner Analysis Center</em>.</p>
+<p>A voluntary action on the part of a user in case a legitimate message is blocked or spam is delivered to your mailbox. In the first case, filter adjustment will render SpamTagger more tolerant towards a particular sender or format. In the second case, SpamTagger will reinforce its filter. Filter adjustment requests are handled by the <em>SpamTagger Analysis Center</em>.</p>
 <h3>Filter rule</h3>
 <p>A mathematical and statistical analysis of specific characteristics of a message in order to determine whether it should be considered as spam.</p>
 <h3>ISP</h3>
 <p>Internet Service Provider, a company providing access to the Internet and offering e-mail services.</p>
 <h3>Management Center</h3>
-<p>A private Internet zone where you can inspect incoming quarantined messages and configure different MailCleaner options.</p>
+<p>A private Internet zone where you can inspect incoming quarantined messages and configure different SpamTagger options.</p>
 <h3>Plug-in</h3>
-<p>An extension that can be added to a preexisting software application. The MailCleaner plug-in for Microsoft Outlook simplifies the process of notifying of false negatives.</p>
+<p>An extension that can be added to a preexisting software application. The SpamTagger plug-in for Microsoft Outlook simplifies the process of notifying of false negatives.</p>
 <h3>Quarantine</h3>
 <p>An isolated area outside of your mailbox for storing messages identified as spam.</p>
 <h3>Quarantine report</h3>
@@ -246,23 +246,23 @@ $htxt['GLOSSARY'] = '
 <h3>Spoofing</h3>
 <p>E-mail address spoofing is a spammer\'s strategy where the sender of a message is forged in an attempt to disguise spam as a legitimate message from another sender.</p>
 <h3>Switzerland</h3>
-<p>Country of origin of MailCleaner, where spam is eradicated with watchmaker\'s quality and precision.</p>
+<p>Country of origin of SpamTagger, where spam is eradicated with watchmaker\'s quality and precision.</p>
 <h3>Virus</h3>
 <p>An intrusive software entity, sometimes included as an attachment to a message, which may alter the integrity of your computer.</p>
 <h3>Warn list</h3>
-<p>A list of e-mail addresses that are trustworthy and should not generate spam. You will receive a warning if a message sent from a warn list address is blocked by MailCleaner.</p>
+<p>A list of e-mail addresses that are trustworthy and should not generate spam. You will receive a warning if a message sent from a warn list address is blocked by SpamTagger.</p>
 <h3>White list</h3>
-<p>A list of e-mail addresses that are fully trustworthy. Messages sent from white list addresses will never be blocked by MailCleaner.</p>
+<p>A list of e-mail addresses that are fully trustworthy. Messages sent from white list addresses will never be blocked by SpamTagger.</p>
 <h3>Wow.</h3>
-<p>What we hope you will say as a MailCleaner user.</p>
+<p>What we hope you will say as a SpamTagger user.</p>
 ';
 
 $htxt['PLUGIN'] = '<h1>Non più supportato.</h1>';
 
 $htxt['ANALYSE'] = '
 <h1>Filter adjustment request</h1>
-<h6>If you do not use Microsoft Outlook with the __LINKHELP_plugin__MailCleaner extension__LINK__, all filter adjustment requests resulting from unwanted spam must
-be sent manually to a specific e-mail address at the <em>MailCleaner Analysis Center</em>.</h6>
+<h6>If you do not use Microsoft Outlook with the __LINKHELP_plugin__SpamTagger extension__LINK__, all filter adjustment requests resulting from unwanted spam must
+be sent manually to a specific e-mail address at the <em>SpamTagger Analysis Center</em>.</h6>
 <p>The spam will be analyzed and taken into account in the continuous filter adjustment process.</p>
 <h2>Address to report spam</h2>
 <p>The generic e-mail address to report spam is:</p><p>__SPAM_EMAIL__</p>

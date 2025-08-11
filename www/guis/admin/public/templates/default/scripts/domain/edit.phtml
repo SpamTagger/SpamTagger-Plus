@@ -1,9 +1,9 @@
 <?php 
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ?>
 <div id="generalconfigpanel">
@@ -53,7 +53,7 @@
       <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction()?>" id="<?php echo $this->form->getId()?>"> 
    <?php if ($this->domain->getParam('name') != '__global__') {?>
    <h1 id ="domaincontentpaneltitle"><span id="domainname"><?php echo $this->domain->getParam('name');?></span>
-   <a id="removedomain" class="removedomain removedomaintitle" href="<?php echo $this->removeurl;?>"><?php echo $this->t->_('Remove from MailCleaner');?></a>
+   <a id="removedomain" class="removedomain removedomaintitle" href="<?php echo $this->removeurl;?>"><?php echo $this->t->_('Remove from SpamTagger');?></a>
    </h1>
   <?php } else {?>
         <h1 id ="domaincontentpaneltitle"><?php echo $this->t->_('Domain default settings');?></h1>

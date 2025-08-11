@@ -1,20 +1,20 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
  *                2015-2017 Mentor Reka <reka.mentor@gmail.com>
  *                2015-2017 Florian Billebault <florian.billebault@gmail.com>
  */
 
-require_once('MCSoap/Status.php');
-require_once('MCSoap/Config.php');
-require_once('MCSoap/Services.php');
-require_once('MCSoap/Content.php');
-require_once('MCSoap/Quarantine.php');
-require_once('MCSoap/Logs.php');
-require_once('MCSoap/Stats.php');
+require_once('STSoap/Status.php');
+require_once('STSoap/Config.php');
+require_once('STSoap/Services.php');
+require_once('STSoap/Content.php');
+require_once('STSoap/Quarantine.php');
+require_once('STSoap/Logs.php');
+require_once('STSoap/Stats.php');
 
 class SoapInterface
 {
@@ -30,8 +30,8 @@ class SoapInterface
    * @return string
    */
 	public function Test_getResponse($question) {
-		require_once('MCSoap/Test.php');
-		return MCSoap_Test::Test_getResponse($question);
+		require_once('STSoap/Test.php');
+		return STSoap_Test::Test_getResponse($question);
 	}
 	
 	
@@ -47,7 +47,7 @@ class SoapInterface
    * @return array
    */
    static public function Status_getStatusValues($params) {
-        return MCSoap_Status::Status_getStatusValues($params);
+        return STSoap_Status::Status_getStatusValues($params);
    }
    
   /**
@@ -56,7 +56,7 @@ class SoapInterface
    * @return array
    */
 	public function Status_getProcessesStatus() {
-		return MCSoap_Status::Status_getProcessesStatus();
+		return STSoap_Status::Status_getProcessesStatus();
 	}
   /**
    * This function simply answer with the question
@@ -64,7 +64,7 @@ class SoapInterface
    * @return float
    */
 	public function Status_getSystemLoad() {
-		return MCSoap_Status::Status_getSystemLoad();
+		return STSoap_Status::Status_getSystemLoad();
 	}
    /**
     * This function return the current hardware status
@@ -72,7 +72,7 @@ class SoapInterface
     * @return array
     */
 	static public function Status_getHardwareHealth() {
-		return MCSoap_Status::Status_getHardwareHealth();
+		return STSoap_Status::Status_getHardwareHealth();
 	}
 	
 	/**
@@ -81,7 +81,7 @@ class SoapInterface
 	* @return array
 	*/
 	static public function Status_getInformationalMessages($params) {
-		return MCSoap_Status::Status_getInformationalMessages($params);
+		return STSoap_Status::Status_getInformationalMessages($params);
 	}
 	
 	/**
@@ -93,7 +93,7 @@ class SoapInterface
    * @return string
    */
 	static public function Config_saveInterfaceConfig() {
-		return MCSoap_Config::Config_saveInterfaceConfig();
+		return STSoap_Config::Config_saveInterfaceConfig();
 	}
 	
   /**
@@ -102,7 +102,7 @@ class SoapInterface
    * @return string
    */
    static public function Config_applyNetworkSettings() {
-   	    return MCSoap_Config::Config_applyNetworkSettings();
+   	    return STSoap_Config::Config_applyNetworkSettings();
    }
    
   /**
@@ -111,7 +111,7 @@ class SoapInterface
    * @return string
    */
 	static public function Config_saveDnsConfig() {
-		return MCSoap_Config::Config_saveDnsConfig();
+		return STSoap_Config::Config_saveDnsConfig();
 	}
 	
   /**
@@ -121,7 +121,7 @@ class SoapInterface
    * @return string
    */
 	static public function Config_saveTimeZone($zone) {
-		return MCSoap_Config::Config_saveTimeZone($zone);
+		return STSoap_Config::Config_saveTimeZone($zone);
 	}
 	
   /**
@@ -131,7 +131,7 @@ class SoapInterface
    * @return string
    */
 	static public function Config_saveNTPConfig($sync = false) {
-		return MCSoap_Config::Config_saveNTPConfig($sync);
+		return STSoap_Config::Config_saveNTPConfig($sync);
 	}
 	
   /**
@@ -141,17 +141,17 @@ class SoapInterface
    * @return string
    */
 	static public function Config_saveDateTime($string) {
-        return MCSoap_Config::Config_saveDateTime($string);
+        return STSoap_Config::Config_saveDateTime($string);
 	}
 	
  /**
-   * This function will save some mailcleaner config option
+   * This function will save some spamtagger config option
    *
    * @param  array  options
    * @return string
    */
-	static public function Config_saveMCConfigOption($options) {
-	    return MCSoap_Config::Config_saveMCConfigOption($options);
+	static public function Config_saveSTConfigOption($options) {
+	    return STSoap_Config::Config_saveSTConfigOption($options);
 	}
 	
   /**
@@ -161,7 +161,7 @@ class SoapInterface
    * @return string
    */
 	static public function Config_saveRegistration($serial) {
-		return MCSoap_Config::Config_saveRegistration($serial);
+		return STSoap_Config::Config_saveRegistration($serial);
 	}
 
  /**
@@ -171,7 +171,7 @@ class SoapInterface
    * @return string
    */
         static public function Config_register($data) {
-            return MCSoap_Config::Config_register($data);
+            return STSoap_Config::Config_register($data);
        }
 
 
@@ -181,7 +181,7 @@ class SoapInterface
    * @return string
    */
         static public function Config_register_ce($data) {
-            return MCSoap_Config::Config_register_ce($data);
+            return STSoap_Config::Config_register_ce($data);
        }
 
 
@@ -191,7 +191,7 @@ class SoapInterface
    * @return string
    */
         static public function Config_unregister($data) {
-            return MCSoap_Config::Config_unregister($data);
+            return STSoap_Config::Config_unregister($data);
        }
 
 
@@ -201,25 +201,25 @@ class SoapInterface
    * @return string
    */
         static public function Config_hostid($data) {
-            return MCSoap_Config::Config_hostid($data);
+            return STSoap_Config::Config_hostid($data);
        }
 
 /**
-   * This function will enable auto-configuration on MailCleaner
+   * This function will enable auto-configuration on SpamTagger
    * @param  array data
    * @return string
    */
 	static public function Config_autoconfiguration($data) {
-	    return MCSoap_Config::Config_autoconfiguration($data);
+	    return STSoap_Config::Config_autoconfiguration($data);
 	}
 
 /**
-   * This function will download and set one time the MailCleaner reference configuration
+   * This function will download and set one time the SpamTagger reference configuration
    * @param  array data
    * @return string
    */
         static public function Config_autoconfigurationDownload($data) {
-            return MCSoap_Config::Config_autoconfigurationDownload($data);
+            return STSoap_Config::Config_autoconfigurationDownload($data);
         }
 
   /**
@@ -228,7 +228,7 @@ class SoapInterface
    * @return string
    */
 	static public function Services_restartSyslog() {
-		return  MCSoap_Services::Services_restartSyslog();
+		return  STSoap_Services::Services_restartSyslog();
 	}
 	
   /**
@@ -239,7 +239,7 @@ class SoapInterface
    * @return string
    */
 	static public function Services_stopstartMTA($stages, $command) {
-		return  MCSoap_Services::Services_stopstartMTA($stages, $command);
+		return  STSoap_Services::Services_stopstartMTA($stages, $command);
 	}
 	
   /**
@@ -249,7 +249,7 @@ class SoapInterface
    * @return string
    */
 	static public function Services_getStarterLog($service) {
-		return  MCSoap_Services::Services_getStarterLog($service);
+		return  STSoap_Services::Services_getStarterLog($service);
 	}
 	
    /**
@@ -259,7 +259,7 @@ class SoapInterface
     * @return string
     */
 	static public function Service_setServiceToRestart($services) {
-	    return  MCSoap_Services::Service_setServiceToRestart($services);
+	    return  STSoap_Services::Service_setServiceToRestart($services);
 	}
 	
    /**
@@ -269,7 +269,7 @@ class SoapInterface
     * @return array
     */
     static public function Service_silentStopStart($params) {
-    	return  MCSoap_Services::Service_silentStopStart($params);
+    	return  STSoap_Services::Service_silentStopStart($params);
     }
     
     /**
@@ -279,7 +279,7 @@ class SoapInterface
     * @return array
     */
     static public function Service_clearCalloutCache($params) {
-    	return  MCSoap_Services::Service_clearCalloutCache($params);
+    	return  STSoap_Services::Service_clearCalloutCache($params);
     }
 
     /**
@@ -289,7 +289,7 @@ class SoapInterface
     * @return array
     */
     static public function Service_clearSMTPAutCache($params) {
-    	return  MCSoap_Services::Service_clearSMTPAutCache($params);
+    	return  STSoap_Services::Service_clearSMTPAutCache($params);
     }
     
    /**
@@ -299,7 +299,7 @@ class SoapInterface
     * @return array
     */
     static public function Service_silentDump($params) {
-        return  MCSoap_Services::Service_silentDump($params);
+        return  STSoap_Services::Service_silentDump($params);
     }
     
    /**
@@ -309,7 +309,7 @@ class SoapInterface
     * @return array
     */
 	static public function Content_fetchAll($params, $limit=0) {
-	    return  MCSoap_Content::Content_fetchAll($params, $limit);
+	    return  STSoap_Content::Content_fetchAll($params, $limit);
 	}
 	
    /**
@@ -319,7 +319,7 @@ class SoapInterface
     * @return array
     */
 	static public function Content_find($params) {
-	    return  MCSoap_Content::Content_find($params);
+	    return  STSoap_Content::Content_find($params);
 	}
 	
    /**
@@ -329,7 +329,7 @@ class SoapInterface
     * @return array
     */
 	static public function Content_release($params) {
-	    return  MCSoap_Content::Content_release($params);		
+	    return  STSoap_Content::Content_release($params);		
 	}
 	
    /**
@@ -339,7 +339,7 @@ class SoapInterface
     * @return array
     */
         static public function Quarantine_findSpam($params) {
-            return  MCSoap_Quarantine::Quarantine_findSpam($params);
+            return  STSoap_Quarantine::Quarantine_findSpam($params);
         }
 
   /**
@@ -349,7 +349,7 @@ class SoapInterface
    * @return array
    */
 	static public function Logs_StartTrace($params) {
-		return MCSoap_Logs::Logs_StartTrace($params);
+		return STSoap_Logs::Logs_StartTrace($params);
 	}
 	
   /**
@@ -359,7 +359,7 @@ class SoapInterface
    * @return array
    */
 	static public function Logs_GetTraceResult($params, $limit = 0) {
-		return MCSoap_Logs::Logs_GetTraceResult($params, $limit);
+		return STSoap_Logs::Logs_GetTraceResult($params, $limit);
 	}
   /**
    * This function will stop a messages tracing
@@ -368,7 +368,7 @@ class SoapInterface
    * @return array
    */
 	static public function Logs_AbortTrace($params) {
-	    return MCSoap_Logs::Logs_AbortTrace($params);
+	    return STSoap_Logs::Logs_AbortTrace($params);
 	}
 	
   /**
@@ -378,7 +378,7 @@ class SoapInterface
    * @return array
    */
 	static public function Logs_StartGetStat($params) {
-		return MCSoap_Stats::Logs_StartGetStat($params);
+		return STSoap_Stats::Logs_StartGetStat($params);
 	}
 	
   /**
@@ -388,7 +388,7 @@ class SoapInterface
    * @return array
    */
 	static public function Logs_GetStatsResult($params, $limit = 0) {
-		return MCSoap_Stats::Logs_GetStatsResult($params, $limit);
+		return STSoap_Stats::Logs_GetStatsResult($params, $limit);
 	}
 	
   /**
@@ -398,7 +398,7 @@ class SoapInterface
    * @return array
    */
 	static public function Logs_AbortStats($params) {
-		return MCSoap_Stats::Logs_AbortStats($params);
+		return STSoap_Stats::Logs_AbortStats($params);
 	}
 	
 	/**
@@ -408,7 +408,7 @@ class SoapInterface
 	 * @return array
 	 */
 	static public function Logs_FindLogFiles($params) {
-	    return MCSoap_Logs::Logs_FindLogFiles($params);
+	    return STSoap_Logs::Logs_FindLogFiles($params);
 	}
 	
 	/**
@@ -418,7 +418,7 @@ class SoapInterface
 	 * @return array
 	 */
 	static public function Logs_GetLogLines($params) {
-		return MCSoap_Logs::Logs_GetLogLines($params);
+		return STSoap_Logs::Logs_GetLogLines($params);
 	}
 
         /**
@@ -428,7 +428,7 @@ class SoapInterface
          * @return array
          */
         static public function Logs_ExtractLog($params) {
-                return MCSoap_Logs::Logs_ExtractLog($params);
+                return STSoap_Logs::Logs_ExtractLog($params);
         }	
 
 	/**
@@ -438,7 +438,7 @@ class SoapInterface
      * @return array
      */
     static public function Status_getTodayStats($params) {
-    	return MCSoap_Status::Status_getTodayStats($params);
+    	return STSoap_Status::Status_getTodayStats($params);
     }
     
     /**
@@ -448,7 +448,7 @@ class SoapInterface
      * @return array
      */
     static public function Status_getSpool($params) {
-    	return MCSoap_Status::Status_getSpool($params);
+    	return STSoap_Status::Status_getSpool($params);
     }
     
     /**
@@ -458,7 +458,7 @@ class SoapInterface
      * @return array
      */
     static public function Status_spoolDelete($params) {
-        return MCSoap_Status::Status_spoolDelete($params);
+        return STSoap_Status::Status_spoolDelete($params);
     }
     
     /**
@@ -468,7 +468,7 @@ class SoapInterface
      * @return array
      */
     static public function Status_spoolTry($params) {
-        return MCSoap_Status::Status_spoolTry($params);
+        return STSoap_Status::Status_spoolTry($params);
     }
 }
 ?>

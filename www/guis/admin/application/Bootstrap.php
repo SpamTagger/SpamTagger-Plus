@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * admin application bootstrap
  */
@@ -29,14 +29,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     
     protected function _initDatabases()
     {
-    	require_once('MailCleaner/Config.php');
-    	$stconfig = MailCleaner_Config::getInstance();
+    	require_once('SpamTagger/Config.php');
+    	$stconfig = SpamTagger_Config::getInstance();
     	
     	$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
                               'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
-                              'username'    => 'mailcleaner',
-                              'password'    => $stconfig->getOption('MYMAILCLEANERPWD'),
+                              'username'    => 'spamtagger',
+                              'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_config'
                              ));
                              
@@ -45,8 +45,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $spoolDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
                               'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
-                              'username'    => 'mailcleaner',
-                              'password'    => $stconfig->getOption('MYMAILCLEANERPWD'),
+                              'username'    => 'spamtagger',
+                              'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_spool'
                              ));
                              
@@ -58,7 +58,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     	$controller = Zend_Controller_Front::getInstance();
     	require_once('Plugin/AdminAclManager.php');
     	$auth = Zend_Auth::getInstance();
-    	$auth->setStorage(new Zend_Auth_Storage_Session('MailCleanerAdmin'));
+    	$auth->setStorage(new Zend_Auth_Storage_Session('SpamTaggerAdmin'));
     	$controller->registerPlugin(new Plugin_AdminAclManager($auth));
     	if ($auth->hasIdentity()) {
     		$identity = $auth->getIdentity();
@@ -87,10 +87,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     	$view=$layout->getView();
     	$view->doctype('XHTML11');
     	#$view->doctype('HTML5');
-    	$view->headTitle('MailCleaner');
+    	$view->headTitle('SpamTagger');
     	$view->headTitle()->setSeparator(' - ');
         $view->setScriptPath(APPLICATION_PATH . '/../public/templates/'.$template.'/scripts/');
-        $view->addHelperPath(APPLICATION_PATH . '/library/Helper','MailCleaner_View_Helper');
+        $view->addHelperPath(APPLICATION_PATH . '/library/Helper','SpamTagger_View_Helper');
         Zend_Registry::set('basic_script_path', APPLICATION_PATH . '/../public/templates/'.$template.'/scripts/');
         Zend_Registry::set('ajax_script_path', APPLICATION_PATH . '/../public/templates/'.$template.'/scripts/ajax');
         
@@ -100,7 +100,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         
         $view->loggedusername = Zend_Registry::get('identity');
 
-        $sysconf = MailCleaner_Config::getInstance();
+        $sysconf = SpamTagger_Config::getInstance();
 
         $view->is_slave = 1;
         if ($sysconf->getOption('ISMASTER') == 'Y') {

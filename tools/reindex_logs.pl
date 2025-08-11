@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2024 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -47,14 +47,14 @@ our $VAR = "/var/spamtagger";
 		ends with '%a %b %d .* %Z %Y: Cleaning terminated'
 	'summaries.log'
 		need to insert 'Send daily summaries:' at the start of each file '%Y-%m-%d',
-	'updater4mc.log'
-		starts with '%Y-%m-%d.* Launching Updater4MC'
-		ends with '>> Logfile present here: /var/spamtagger/log/spamtagger/updater4mc.log'
+	'updater4st.log'
+		starts with '%Y-%m-%d.* Launching Updater4ST'
+		ends with '>> Logfile present here: /var/spamtagger/log/spamtagger/updater4st.log'
 =cut
 my $cluid = getpwnam('clamav');
 my $clgid = getgrnam('clamav');
-my $stuid = getpwnam('mailcleaner');
-my $stgid = getgrnam('mailcleaner');
+my $stuid = getpwnam('spamtagger');
+my $stgid = getgrnam('spamtagger');
 my $myuid = getpwnam('mysql');
 our $services = {
 	'apache' => {

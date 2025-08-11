@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2020 MailCleaner
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ do_htmls_wl();
 sub do_htmls_wl {
         my $dbh;
         $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                        "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+                        "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                         or return;
 
         my $sth = $dbh->prepare("SELECT sender FROM wwlists WHERE type='htmlcontrols'");

@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Antivirus global settings form
  */
@@ -76,7 +76,7 @@ class Default_Form_AntivirusGlobalSettings extends ZendX_JQuery_Form
 	    
 	    $max_archive_depth_disable = new Zend_Form_Element_Checkbox('max_archive_depth_disable', array(
 	        'label'   => $t->_('disable content controls in archives'),
-                'title' => $t->_("If checked, MailCleaner wont check the items inside archives / If unchecked the files in the archives will be analyzed with the same rules as files not in archives"),
+                'title' => $t->_("If checked, SpamTagger wont check the items inside archives / If unchecked the files in the archives will be analyzed with the same rules as files not in archives"),
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));
@@ -101,7 +101,7 @@ class Default_Form_AntivirusGlobalSettings extends ZendX_JQuery_Form
 	    
 	    $deliver_bad_tnef = new Zend_Form_Element_Checkbox('deliver_bad_tnef', array(
 	        'label'   => $t->_('Still deliver bad TNEF attachments')." :",
-                'title' => $t->_("Delivers the TNEF attachments even if they are seen as corrupted by MailCleaner"),
+                'title' => $t->_("Delivers the TNEF attachments even if they are seen as corrupted by SpamTagger"),
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));

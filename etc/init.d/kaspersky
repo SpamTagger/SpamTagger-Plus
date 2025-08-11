@@ -24,7 +24,7 @@ prepare() {
   $SRCDIR/bin/dump_mailscanner_config.pl >/dev/null 2>&1
 }
 
-chown -R mailcleaner:mailcleaner $VARDIR/log/kaspersky
+chown -R spamtagger:spamtagger $VARDIR/log/kaspersky
 
 case "$1" in
 start)

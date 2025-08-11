@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   Index page of MailCleaner "Configurator" wizard
+#   Index page of SpamTagger "Configurator" wizard
 #
 -->
 
@@ -119,7 +119,7 @@
 
        $pagePath = '../includes/configurator/';
        $infoPage = array('welcome' => array('page' => 'welcome.inc', 'prev' => '', 'next' => 'updater', 'sesstep' => 'welcome', 'title' => 'Welcome', 'progress' => '0'),
-    'updater' => array('page' => 'updater.inc', 'prev' => 'welcome', 'next' => 'identify', 'sesstep' => 'updater', 'title' => 'MailCleaner Update', 'progress' => '7'),
+    'updater' => array('page' => 'updater.inc', 'prev' => 'welcome', 'next' => 'identify', 'sesstep' => 'updater', 'title' => 'SpamTagger Update', 'progress' => '7'),
   'identify' => array('page' => 'identify.inc', 'prev' => 'updater', 'next' => 'adminpass', 'sesstep' => 'identify', 'title' => 'Configurator Identification', 'progress' => '14'),
   'adminpass' => array('page' => 'adminpass.inc', 'prev' => 'identify', 'next' => 'rootpass', 'sesstep' => 'adminpass', 'title' => 'Change Admin (Web) Password', 'progress' => '28'),
   'rootpass' => array('page' => 'rootpass.inc', 'prev' => 'adminpass', 'next' => 'dbpass', 'sesstep' => 'rootpass', 'title' => 'Change Root Password', 'progress' => '42'),
@@ -153,7 +153,7 @@
   
   ?>
     <header class="text-center row">
-      <h1><img src="img/header_config_assistant.png" title="MailCleaner logo" alt="MailCleaner logo"/>
+      <h1><img src="img/header_config_assistant.png" title="SpamTagger logo" alt="SpamTagger logo"/>
       </h1>
       <!--[if lt IE 8]>
           <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -189,7 +189,7 @@
     </div><!-- End of Main row -->
     <footer class="row footer text-right">
       <hr>
-      <p>&copy; MailCleaner</p>
+      <p>&copy; SpamTagger</p>
     </footer>
     <script src="https//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery.min.js"><\/script>')</script>

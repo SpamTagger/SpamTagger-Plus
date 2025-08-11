@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * DNS lists
  */
@@ -15,7 +15,7 @@ class Default_Model_DnsLists
 	protected $_all_lists = array();
 	
 	public function __construct() {
-		$conf = MailCleaner_Config::getInstance();
+		$conf = SpamTagger_Config::getInstance();
 		$this->_config_path = $conf->getOption('SRCDIR')."/etc/rbls";
 	}
 	

@@ -1,4 +1,4 @@
-Temat: [Mailcleaner] Aktywacja adresu/aliasu
+Temat: [SpamTagger] Aktywacja adresu/aliasu
 
 Cześć,
 
@@ -19,5 +19,5 @@ Jeśli nie chcesz go aktywować, kliknij poniższy link:
 __REFUSEURL__
 
 ---------------
-Mailcleaner
+SpamTagger
 

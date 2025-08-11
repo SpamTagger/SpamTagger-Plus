@@ -22,7 +22,7 @@ if [ -d /dev/shm ]; then
 fi
 
 #sa-learn -p $SRCDIR/etc/mailscanner/spam.assassin.prefs.conf --force-expire 2>&1
-chown -R mailcleaner:mailcleaner $VARDIR/spool/spamassassin
+chown -R spamtagger:spamtagger $VARDIR/spool/spamassassin
 
 # purge stock
 find $VARDIR/spool/learningcenter/stockham/ -ctime +3 -exec rm -rf \{\} \; >/dev/null 2>&1

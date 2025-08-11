@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "Naujienlaiškis";
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "Slėpti vartotojo paleistas žinutes.";
 $txt['FORCESPAM'] = "Paleisti žinutę";
 //old
 $txt['ASKREASON'] = "rodyti filtravimo taisykles";
-$txt['CONFSENDANALYSE'] = "Filtro koregavimo užklausa bus nusiųsta į MailCleaner analizės centrą; jame yra klaidingai užblokuoto pranešimo kopija.</br> Pastaba: filtro koregavimas nėra tas pats, kas įtraukimas į baltąjį sąrašą arba juodąjį sąrašą.";
+$txt['CONFSENDANALYSE'] = "Filtro koregavimo užklausa bus nusiųsta į SpamTagger analizės centrą; jame yra klaidingai užblokuoto pranešimo kopija.</br> Pastaba: filtro koregavimas nėra tas pats, kas įtraukimas į baltąjį sąrašą arba juodąjį sąrašą.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Are you sure you want this message to be analyzed and that filter adjustments may be applied?</span>";
 $txt['ASKANALYSE'] = "Filter adjustment request";
 $txt['PAGE'] = "Page";
@@ -157,7 +157,7 @@ $txt['SCORE'] = "Score";
 $txt['TOTAL'] = "Total";
 //old
 $txt['SENDANALYSETITLE'] = "Filter adjustment request";
-$txt['SENTTOANALYSE'] = "A filter adjustment request has been sent to the MailCleaner Analysis Center; this message will be examined and filter corrections may be applied within one working day.";
+$txt['SENTTOANALYSE'] = "A filter adjustment request has been sent to the SpamTagger Analysis Center; this message will be examined and filter corrections may be applied within one working day.";
 /*
  * quick actions
  */
@@ -192,12 +192,12 @@ $txt['ID'] = "Identifier";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT'] = "<p>Your MailCleaner session ended.</p><p>If you would like to start a new session, click on the following link:</p>";
+$txt['LOGOUTTEXT'] = "<p>Your SpamTagger session ended.</p><p>If you would like to start a new session, click on the following link:</p>";
 /*
  * parameters page
  */
 //old
-$txt['PARAMTITLE'] = "Personal MailCleaner settings";
+$txt['PARAMTITLE'] = "Personal SpamTagger settings";
 //old
 $txt['USERPARAM'] = "User settings";
 //old
@@ -282,11 +282,11 @@ $txt['REMADDRESSALT'] = "remove an address";
 //old
 $txt['ADDADDRESSALT'] = "add an address";
 $txt['BADADDRESSFORMAT'] = "The given address is invalid. Please try again.";
-$txt['NOTFILTEREDDOMAIN'] = "This domain is not filtered by MailCleaner. The address could not be added.";
-$txt['ALIASALREADYREGISTERD'] = "This address is already used by a MailCleaner account. It could not be added.";
+$txt['NOTFILTEREDDOMAIN'] = "This domain is not filtered by SpamTagger. The address could not be added.";
+$txt['ALIASALREADYREGISTERD'] = "This address is already used by a SpamTagger account. It could not be added.";
 $txt['ALIASALREADYPENDING'] = "A confirmation is already pending for this address.";
 $txt['ALIASPENDING'] = "A confirmation has been sent to this address.<br/> For security reasons, the address will only be added if you confirm the request within 24 hours.";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner] Address addition request";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger] Address addition request";
 $txt['ALIASERRORSENDIG'] = "The request could not be sent because of an internal error. Please try again later.";
 $txt['ALIASNOTPENDING'] = "No request is currently pending for this address.";
 $txt['ALIASADDED'] = "The address has been added.";
@@ -328,9 +328,9 @@ $txt['FROMDATETODATE'] = "from __PARAM1__.__PARAM2__.__PARAM3__ to __PARAM4__.__
 /*
  * some error messages
  */
-$txt['BADARGS'] = "Vidinė MailCleaner klaida (__PARAM__). Susisiekite su sistemos administratoriumi ir pateikite išsamią informaciją apie problemą.";
+$txt['BADARGS'] = "Vidinė SpamTagger klaida (__PARAM__). Susisiekite su sistemos administratoriumi ir pateikite išsamią informaciją apie problemą.";
 $txt['INCORRECTMSGID'] = "The requested action could not be completed because the message identifier is incorrect.";
-$txt['NOSUCHADDR'] = "The given address is not protected by MailCleaner.";
+$txt['NOSUCHADDR'] = "The given address is not protected by SpamTagger.";
 $txt['ERRORSENDING'] = "Siunčiant pranešimą įvyko klaida. Bandykite dar kartą. Jei problema išlieka, kreipkitės į sistemos administratorių.";
 $txt['MSGFORCED'] = "The message has been released and delivered to your mailbox. It should be available within the next few minutes.";
 $txt['MSGFILENOTFOUND'] = "The requested action could not be completed because the message is no longer in the quarantine.";

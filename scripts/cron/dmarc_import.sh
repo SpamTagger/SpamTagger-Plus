@@ -15,10 +15,10 @@ MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
 if [ -s $VARDIR/spool/tmp/exim/dmarc.history ]; then
 
   echo -n "Importing to master database at $MHOST..."
-  /opt/exim4/sbin/opendmarc-import --dbhost=$MHOST --dbport=3306 --dbname=dmarc_reporting --dbuser=mailcleaner --dbpasswd=$MPASS <$VARDIR/spool/tmp/exim/dmarc.history
+  /opt/exim4/sbin/opendmarc-import --dbhost=$MHOST --dbport=3306 --dbname=dmarc_reporting --dbuser=spamtagger --dbpasswd=$MPASS <$VARDIR/spool/tmp/exim/dmarc.history
   /bin/rm $VARDIR/spool/tmp/exim/dmarc.history
   /bin/touch $VARDIR/spool/tmp/exim/dmarc.history
-  /bin/chown mailcleaner:mailcleaner $VARDIR/spool/tmp/exim/dmarc.history
+  /bin/chown spamtagger:spamtagger $VARDIR/spool/tmp/exim/dmarc.history
   echo "done."
 fi
 

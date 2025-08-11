@@ -1,4 +1,4 @@
-Subject: [Mailcleaner] direcciòn/Alias activation
+Subject: [SpamTagger] direcciòn/Alias activation
 
 Hola
 
@@ -18,6 +18,6 @@ Si no désea activarlo, por favor pulse el siguiente enlace:
 
 __REFUSEURL__
 
----------------
-Mailcleaner
+----------
+SpamTagger
 

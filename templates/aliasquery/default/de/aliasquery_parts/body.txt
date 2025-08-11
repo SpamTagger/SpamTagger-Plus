@@ -1,8 +1,8 @@
-Subject: =?iso-8859-1?Q?MailCleaner:_Anfrage_um_Zuf=FCgen_neuer_Adresse?=
+Subject: =?iso-8859-1?Q?SpamTagger:_Anfrage_um_Zuf=FCgen_neuer_Adresse?=
 
-Anfrage um Best=E4tigung neuer Adresse an das MailCleaner Konto.
+Anfrage um Best=E4tigung neuer Adresse an das SpamTagger Konto.
 
-Der Benutzer __USER__ hat das Zuf=FCgen der Adresse (__ALIAS__) von seinem MailCleaner Konto verlangt.
+Der Benutzer __USER__ hat das Zuf=FCgen der Adresse (__ALIAS__) von seinem SpamTagger Konto verlangt.
 Dies erfordert eine Best=E4tigung Ihrerseits:
 
 - Wenn Sie diese Anfrage best=E4tigen m=F6chten, klicken Sie hier: __WEBBASEURL____VALIDATEQUERY__
@@ -13,6 +13,6 @@ Dies erfordert eine Best=E4tigung Ihrerseits:
 Ohne Reaktion Ihrerseits, wird diese Anfrage automatisch innerhalb 24 Stunden abgelehnt.
 
 --------------------------------------------------------------------------------------
-Diese Meldung wurde von MailCleaner automatisch erstellt. Beantworten Sie es bitte nicht.
+Diese Meldung wurde von SpamTagger automatisch erstellt. Beantworten Sie es bitte nicht.
 F=FCr weitere Informationen: __BASEURL__
 

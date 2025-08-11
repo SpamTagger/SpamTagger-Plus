@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2021 John Mertz <git@john.me.tz>
 #
@@ -67,10 +67,10 @@ exit 0;
 ##########################################
 sub get_system_config {
 
-	my %default = (days_to_keep_spams => 30, sysadmin => 'support@localhost', summary_subject => 'Mailcleaner analysis request', summary_from => 'support@localhost', servername => 'localhost', analyse_to => 'analyse@localhost');
+	my %default = (days_to_keep_spams => 30, sysadmin => 'support@localhost', summary_subject => 'SpamTagger Plus analysis request', summary_from => 'support@localhost', servername => 'localhost', analyse_to => 'analyse@localhost');
         
         my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                                "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+                                "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                                         or die "cannot connect to database | get_system_config() |";
         
         my $sth =  $dbh->prepare("SELECT s.days_to_keep_spams, s.sysadmin, s.summary_subject, s.summary_from, h.servername, s.analyse_to, s.falsepos_to FROM system_conf s, httpd_config h")
@@ -96,7 +96,7 @@ sub get_domain_config {
   my %default = (language => 'en', support_email => '');
 
   my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                          "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+                          "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
 			           or die "cannot connect to database | get_domain_config() |";
 
   my $sth =  $dbh->prepare("SELECT dp.language, dp.support_email, dp.falsepos_to, dp.systemsender FROM domain_pref dp, domain d WHERE d.prefs=dp.id AND (d.name='$d' or d.name='*') order by name DESC LIMIT 1")

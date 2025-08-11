@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 
 // Define path to application directory
@@ -53,8 +53,8 @@ function handleSOAP() {
   require_once('Zend/Soap/Server.php');
   $server = new Zend_Soap_Server($url);
 
-#  $server->setClass('MCSoap_Test');
-#  $server->setObject(new MCSoap_Test());
+#  $server->setClass('STSoap_Test');
+#  $server->setObject(new STSoap_Test());
   $server->setClass('SoapInterface');
   $server->setObject(new SoapInterface());
 
@@ -67,7 +67,7 @@ function handleWSDL() {
   
   require_once('Zend/Soap/AutoDiscover.php');
   $autodiscover = new Zend_Soap_AutoDiscover();
-#  $autodiscover->setClass('MCSoap_Test');
+#  $autodiscover->setClass('STSoap_Test');
   $autodiscover->setClass('SoapInterface');
   $autodiscover->handle();
 }

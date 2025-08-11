@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ sub getFullVersion {
 	my ($versiontype, $version) = getVersion();
 	my ($patchtype, $patchlevel) = getPatchLevel();
 	
-	my $fullstring = 'MailCleaner '.$edition." ".$version." (".$patchlevel.")";
+	my $fullstring = 'SpamTagger '.$edition." ".$version." (".$patchlevel.")";
     return (ASN_OCTET_STR, $fullstring);
 }
 sub getEdition {
@@ -153,7 +153,7 @@ sub getPatchLevel {
 
         if ($patch eq 'Unknown') {
           my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=".$conf->getOption('VARDIR')."/run/mysql_slave/mysqld.sock",
-                                         "mailcleaner",$conf->getOption('MYMAILCLEANERPWD'), {RaiseError => 0, PrintError => 1} );
+                                         "spamtagger",$conf->getOption('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 1} );
 	  my $sth = $dbh->prepare("SELECT id FROM update_patch ORDER BY id DESC LIMIT 1");
 	  if ($sth->execute()) {
 	     if (my $row = $sth->fetchrow_hashref()) {

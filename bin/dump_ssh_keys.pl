@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -37,8 +37,8 @@ unlink($known_hosts_file);
 unlink($authorized_file);
 
 do_known_hosts();
-my $uid = getpwnam('mailcleaner');
-my $gid = getgrnam('mailcleaner');
+my $uid = getpwnam('spamtagger');
+my $gid = getgrnam('spamtagger');
 chown($uid, $gid, $known_hosts_file);
 
 do_authorized_keys();
@@ -51,7 +51,7 @@ sub do_known_hosts {
 
 	my $dbh;
 	$dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_master/mysqld.sock",
-			"mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+			"spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
         	        or return;
 
 	my $sth = $dbh->prepare("SELECT hostname, ssh_pub_key FROM slave");
@@ -69,7 +69,7 @@ sub do_known_hosts {
 sub do_authorized_keys {
 	my $dbh;
         $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                        "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+                        "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                         or return;
 
 	my $sth = $dbh->prepare("SELECT ssh_pub_key FROM master");

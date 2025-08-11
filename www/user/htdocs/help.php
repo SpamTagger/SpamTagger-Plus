@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * This is the controller for the help page
  */
@@ -91,8 +91,8 @@ function getHelpContent($carray) {
   $ret = "";
   foreach ($carray as $top) {
 	if ($top == 'USERMANUAL') {
-	  $ret .= file_get_contents('http://cdn.mailcleaner.net/downloads/documentations/'.$lang_->getLanguage().'/body.html');
-##http://www.mailcleaner.net/downloads/documentations/en/body.html');
+	  $ret .= file_get_contents('http://cdn.spamtagger.org/downloads/documentations/'.$lang_->getLanguage().'/body.html');
+##http://spamtagger.org/downloads/documentations/en/body.html');
 	}
         else {
   	  $ret .= $htxt[$top];
@@ -116,10 +116,10 @@ function getHelpContent($carray) {
   $supportaddress = $spamaddress;
   $salesaddress = $spamaddress;
 
-  $spamaddress='spam@mailcleaner.net';
-  $nospamaddress = 'nospam@mailcleaner.net';
-  $supportaddress = 'support@mailcleaner.net';
-  $salesaddress = 'sales@mailcleaner.net';
+  $spamaddress='spam@spamtagger.org';
+  $nospamaddress = 'nospam@spamtagger.org';
+  $supportaddress = 'support@spamtagger.org';
+  $salesaddress = 'sales@spamtagger.org';
   
   $ret = preg_replace('/__SPAM_EMAIL__/', "<a href=\"mailto:$spamaddress\">$spamaddress</a>", $ret);
   $ret = preg_replace('/__NOSPAM_EMAIL__/', "<a href=\"mailto:$spamaddress\">$spamaddress</a>", $ret);
@@ -147,12 +147,12 @@ function getHelpContent($carray) {
 #    $ret = preg_replace("/__MANUAL_".$helpt."_SIZE__/", format_size($size), $ret);
 #    $ret = preg_replace("/__MANUAL_".$helpt."_LINK__/", $link, $ret);
     $ret = preg_replace("/__MANUAL_".$helpt."_SIZE__/", "Remote documentation website", $ret);
-    $ret = preg_replace("/__MANUAL_".$helpt."_LINK__/", 'http://cdn.mailcleaner.net/downloads/documentations/'.$lang_->getLanguage(), $ret);
+    $ret = preg_replace("/__MANUAL_".$helpt."_LINK__/", 'http://cdn.spamtagger.org/downloads/documentations/'.$lang_->getLanguage(), $ret);
 
   }
   
-  $ou2003name = 'MailCleaner_outlook2003.zip';
-  $ou2007name = 'MailCleaner_outlook2007.zip';
+  $ou2003name = 'SpamTagger_outlook2003.zip';
+  $ou2007name = 'SpamTagger_outlook2007.zip';
   $ou2003relpath = '/plugins/'.$lang_->getLanguage().'/'.$ou2003name;
   $ou2007relpath = '/plugins/'.$lang_->getLanguage().'/'.$ou2007name;
   $ou2003abspath = $sysconf_->SRCDIR_.'/www/user/htdocs/'.$ou2003relpath;
@@ -173,7 +173,7 @@ function getHelpContent($carray) {
   $ret = preg_replace("/__PLUGIN_OU2003_SIZE__/", format_size($ou2003size), $ret);
   $ret = preg_replace("/__PLUGIN_OU2007_SIZE__/", format_size($ou2007size), $ret);
 
-  $ret = preg_replace('/__LINKHELP_(\S+)__(.*)__LINK__/', "<a href=\"".'http://cdn.mailcleaner.net/downloads/documentations/'.$lang_->getLanguage()."\">\\2</a>", $ret);
+  $ret = preg_replace('/__LINKHELP_(\S+)__(.*)__LINK__/', "<a href=\"".'http://cdn.spamtagger.org/downloads/documentations/'.$lang_->getLanguage()."\">\\2</a>", $ret);
   #$ret = preg_replace('/__LINKHELP_(\S+)__(.*)__LINK__/', "<a href=\"".$_SERVER['PHP_SELF']."?t=\\1\">\\2</a>", $ret);
   $ret = preg_replace('/__ANCHOR_(\S+)__(.*)__ANCHOR__/', "<a id=\"\\1\">\\2</a>", $ret);
   return $ret; 

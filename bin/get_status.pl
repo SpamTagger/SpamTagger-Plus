@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2023 John Mertz <git@john.me.tz>
 #
@@ -218,7 +218,7 @@ if ($mode_given =~ /s/) {
         print($res."\n");
     }
 } elsif ($mode_given =~ /u/) {
-    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S $config{VARDIR}/run/mysql_slave/mysqld.sock -umailcleaner -p$config{MYMAILCLEANERPWD}";
+    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S $config{VARDIR}/run/mysql_slave/mysqld.sock -uspamtagger -p$config{MYSPAMTAGGERPWD}";
     $res = `$cmd`;
     my $patch = "";
     if ($res =~ /^(\d+)\s+(\S+)$/) {
@@ -239,7 +239,7 @@ sub usage
 "Usage:
     get_status.pl [-s, -p, -l, -d, -m, -t, -u] <-v>
 
-    -s: output status of vital Mailcleaner processes:
+    -s: output status of vital SpamTagger processes:
         Incoming MTA
         Filtering MTA
         Outgoing MTA

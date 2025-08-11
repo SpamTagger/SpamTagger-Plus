@@ -1,8 +1,8 @@
-<p class="welcome"><?php echo $this->t->_('Welcome to MailCleaner administration panel')?></p>
+<p class="welcome"><?php echo $this->t->_('Welcome to SpamTagger administration panel')?></p>
 
 <?php 
 $user = Zend_Registry::get('user'); 
-$stconfig = MailCleaner_Config::getInstance();
+$stconfig = SpamTagger_Config::getInstance();
 
 if ($user && $user->getUserType() == 'administrator') {
     if (!$this->is_registered) {
@@ -101,12 +101,12 @@ if ($user && $user->getUserType() == 'administrator') {
             </tr>
             <tr>
                 <td>
-                    <a class="notunderlined" href="https://www.mailcleaner.net/trial-request.html?key=Tx3kshaf7324fdD0!" target="_blank">
+                    <a class="notunderlined" href="https://spamtagger.org/trial-request.html?key=Tx3kshaf7324fdD0!" target="_blank">
                         <input type="button" class="linkrebutton" value="Enterprise Edition Trial" />
                     </a>
                 </td>
                 <td>
-                    <a class="notunderlined" href="https://www.mailcleaner.net/community-edition-add-ons.html" target="_blank">
+                    <a class="notunderlined" href="https://spamtagger.org/community-edition-add-ons.html" target="_blank">
                         <input type="button" class="linkrebutton" value="Purchase Add-ons" />
                     </a>
                 </td>
@@ -123,12 +123,12 @@ if ($user && $user->getUserType() == 'administrator') {
     }
 ?>
 <div class="globalbloc" style="min-height: 0px; padding-bottom: 12px;">
-     <h1>InfoBox by MailCleaner Team</h1>
+     <h1>InfoBox by SpamTagger Team</h1>
      <div class="maclasseamoi" style="min-height: 20px; max-height: 240px; padding: 6px 12px; overflow-y: scroll; text-align: justify">
 <?php
 } 
 
-$urltoget='https://www.mailcleaner.net/infobox/';
+$urltoget='https://spamtagger.org/infobox/';
 
 if ($user && $user->getUserType() == 'administrator') {
     if ($stconfig->getOption('REGISTERED') == "1") {

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -31,11 +31,11 @@ if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
 
-MYMAILCLEANERPWD=$(grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
+MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 BACKUPFILE=$1
 if [ "$BACKUPFILE" = "" ]; then
-  BACKUPFILE="mailcleaner_config_.sql"
+  BACKUPFILE="spamtagger_config_.sql"
 fi
 
-/opt/mysql5/bin/mysqldump -u mailcleaner -p$MYMAILCLEANERPWD -S $VARDIR/run/mysql_master/mysqld.sock --ignore-table=st_config.update_patch --ignore-table=st_config.master --ignore-table=st_config.slave --master-data=2 st_config >$BACKUPFILE
+/opt/mysql5/bin/mysqldump -u spamtagger -p$MYSPAMTAGGERPWD -S $VARDIR/run/mysql_master/mysqld.sock --ignore-table=st_config.update_patch --ignore-table=st_config.master --ignore-table=st_config.slave --master-data=2 st_config >$BACKUPFILE

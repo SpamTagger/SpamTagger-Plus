@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -97,6 +97,6 @@ HOSTID=$(grep 'HOSTID' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 DATE=$(date --date "now -1 day" +%Y%m%d)
 chmod g+w $STATFILE
-scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $STATFILE mcscp@team01.mailcleaner.net:/upload/stats/$CLIENTID-$HOSTID-$DATE.txt >/dev/null 2>&1
+scp -q -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $STATFILE mcscp@team01.spamtagger.org:/upload/stats/$CLIENTID-$HOSTID-$DATE.txt >/dev/null 2>&1
 
 removeLockFile "$FILE_NAME"

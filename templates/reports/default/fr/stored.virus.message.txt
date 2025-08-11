@@ -1,5 +1,5 @@
-Avertissement de la passerelle antivirus Mailcleaner
-----------------------------------------------------
+Avertissement de la passerelle antivirus SpamTagger
+---------------------------------------------------
 
 La pièce jointe "$filename"
 contient probablement un virus.  Elle a été remplacée par cet avertissement.
@@ -16,5 +16,5 @@ Contactez $localpostmaster pour plus d'informations.
 
 Information de repérage: $hostname:$datenumber/$id
 
------------ 
-Mailcleaner
+---------- 
+SpamTagger

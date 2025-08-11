@@ -16,7 +16,7 @@ while [[ $INODES -gt 70 ]]; do
     EMAIL=$(echo "select contact_email from system_conf" | st_mysql -s st_config | grep -v 'contact_email')
     # Only if he gave an email address !
     if [[ ! -z $EMAIL ]]; then
-      swaks -f ' ' -t $EMAIL --header "Subject: Please open a support ticket at https://support.mailcleaner.net for an inodes issue"
+      swaks -f ' ' -t $EMAIL --header "Subject: Please open a support ticket at https://support.spamtagger.org for an inodes issue"
     fi
     exit
   fi

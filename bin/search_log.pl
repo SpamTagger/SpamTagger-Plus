@@ -145,7 +145,7 @@ if (@messages > 0) {
   ### do second pass (search for real ID through all files)
   loopThroughLogs('exim_stage2/mainlog', 'exim', '', \%stage2_ids);
   loopThroughLogs('mailscanner/infolog', 'mailscanner', '', \%ms_ids);
-  loopThroughLogs('mailcleaner/SpamHandler.log', 'spamhandler', '', \%spamhandler_ids);
+  loopThroughLogs('spamtagger/SpamHandler.log', 'spamhandler', '', \%spamhandler_ids);
   loopThroughLogs('exim_stage4/mainlog', 'exim', '', \%stage4_ids);
 
   my $fullogfile = '/dev/stdout';

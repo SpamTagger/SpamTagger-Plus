@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * admin application bootstrap
  */
@@ -29,14 +29,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     
     protected function _initDatabases()
     {
-    	require_once('MailCleaner/Config.php');
-    	$stconfig = MailCleaner_Config::getInstance();
+    	require_once('SpamTagger/Config.php');
+    	$stconfig = SpamTagger_Config::getInstance();
     	
     	$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
                               'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
-                              'username'    => 'mailcleaner',
-                              'password'    => $stconfig->getOption('MYMAILCLEANERPWD'),
+                              'username'    => 'spamtagger',
+                              'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_config'
                              ));
                              
@@ -46,8 +46,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $spoolDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
                               'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
-                              'username'    => 'mailcleaner',
-                              'password'    => $stconfig->getOption('MYMAILCLEANERPWD'),
+                              'username'    => 'spamtagger',
+                              'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_spool'
                              ));
                              
@@ -94,7 +94,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     	
         # $view->doctype('HTML5');
 
-        $view->headTitle('MailCleaner');
+        $view->headTitle('SpamTagger');
 
         return $layout;
     }

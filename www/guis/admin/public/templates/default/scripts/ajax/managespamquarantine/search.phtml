@@ -1,16 +1,16 @@
 <?php 
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ?>
 <?php if ($this->loading) {?>
  <table id="quarantinetable"> 
  
    <tr id="quarantinebanner">
-     <td colspan="<?php echo count($this->columns)?>"><img src="<?php echo $this->images_path;?>/logopmc.png" alt="MailCleaner" />
+     <td colspan="<?php echo count($this->columns)?>"><img src="<?php echo $this->images_path;?>/logopmc.png" alt="SpamTagger Plus" />
      <p><strong><?php echo $this->t->_('In spam quarantine')?> :</strong></p></td>
    </tr>
    
@@ -29,7 +29,7 @@
 <table id="quarantinetable">
  
    <tr id="quarantinebanner">
-     <td colspan="<?php echo count($this->columns)?>"><img src="<?php echo $this->images_path;?>/logopmc.png" alt="MailCleaner" />
+     <td colspan="<?php echo count($this->columns)?>"><img src="<?php echo $this->images_path;?>/logopmc.png" alt="SpamTagger Plus" />
      <p><strong><?php echo $this->t->_('In spam quarantine')?> :</strong> 
          <?php echo $this->nbspams?> <?php echo $this->t->_('messages')?>
          (<?php echo $this->t->_('sorted by')?> <?php echo $this->t->_($this->columns[$this->orderfield]['label2'])?>)</p></td>

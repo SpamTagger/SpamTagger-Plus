@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -46,13 +46,13 @@ if ($opt && $opt =~ /\-D/) {
 # connect to slave database
 my $slave_dbh;
 $slave_dbh = DBI->connect("DBI:mysql:database=st_spool;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock", 
-                           "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+                           "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                or die("CANNOTCONNECTSLAVEDB\n", $slave_dbh->errstr);
 
 # connect to master database
 my $master_dbh;
 $master_dbh = DBI->connect("DBI:mysql:database=st_spool;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}", 
-			   "mailcleaner", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0})
+			   "spamtagger", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0})
 		or die("CANNOTCONNECTMASTERDB\n", $master_dbh->errstr);
 
 my $total = 0;
@@ -100,7 +100,7 @@ sub get_master_config
 	my %mconfig;
 	my $dbh;
         $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                        "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+                        "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                 or die("CANNOTCONNECTDB", $dbh->errstr);
  
 	my $sth = $dbh->prepare("SELECT hostname, port, password FROM master");

@@ -1,5 +1,5 @@
-To jest wiadomość od MailCleaner
-----------------------------------
+To jest wiadomość od SpamTagger
+---------------------------------
 Oryginalna wiadomość e-mail zawierała potencjalnie niebezpieczne treści,
 które zostały usunięte dla twojego bezpieczeństwa.
 
@@ -9,5 +9,5 @@ Twoich danych osobowych lub poufnych informacji, takich jak hasła lub kredyty n
 W dniu $date filtry treści zweryfikowały:
 $report
 Uwaga dla administratora: $hostname w $datenumber/$id
--- 
-Mailcleaner
+----------
+SpamTagger

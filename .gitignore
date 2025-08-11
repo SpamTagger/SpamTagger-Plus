@@ -1,9 +1,9 @@
 # Created by https://www.gitignore.io/api/emacs,vim
 
-### MailCleaner ignore list
+### SpamTagger ignore list
 *.conflict_*
 dbs.md5
-### End of MailCleaner ignore list
+### End of SpamTagger ignore list
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
@@ -77,7 +77,6 @@ etc/rbls/
 share/newsld/siteconfig/
 share/spamassassin/
 etc/autoconf/
-etc/exim/st_binary/
 updates/
 etc/spamtagger/version.def
 

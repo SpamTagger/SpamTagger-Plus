@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
@@ -134,9 +134,9 @@ sub mainLoopHook() {
 	my $spamdir = $this->{spamdir};
 
 	if ( $this->{reportspamtodnslists} > 0 ) {
-		require MCDnsLists;
+		require STDnsLists;
 		$this->{dnslists} =
-		  new MCDnsLists( sub { my $msg = shift; $this->doLog($msg, 'spamhandler'); },
+		  new STDnsLists( sub { my $msg = shift; $this->doLog($msg, 'spamhandler'); },
 			$this->{debug} );
 		$this->{dnslists}->loadRBLs(
 			$this->{rblsDefsPath}, $this->{reportrbls},

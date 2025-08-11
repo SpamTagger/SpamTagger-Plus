@@ -69,19 +69,19 @@ STATUSURL="http://localhost/server-status"
 prepare() {
   rm -rf /tmp/php_sessions >/dev/null 2>&1
   mkdir /tmp/php_sessions >/dev/null 2>&1
-  chown mailcleaner /tmp/php_sessions >/dev/null 2>&1
+  chown spamtagger /tmp/php_sessions >/dev/null 2>&1
   sessiondb=/tmp/sessions.sqlite
   if [ -f $sessiondb ]; then
     rm $sessiondb >/dev/null 2>&1
     touch $sessiondb
-    chown mailcleaner:mailcleaner $sessiondb
+    chown spamtagger:spamtagger $sessiondb
   fi
   rm /etc/apache/php.ini >/dev/null 2>&1
   rm /etc/opt/php5/php.ini >/dev/null 2>&1
   ln -s $SRCDIR/etc/apache/php.ini /etc/apache/php.ini >/dev/null 2>&1
   ln -s $SRCDIR/etc/apache/php.ini /etc/opt/php5/php.ini >/dev/null 2>&1
   chown -R $VARDIR/log/mailscanner >/dev/null 2>&1
-  chown -R mailcleaner $VARDIR/run/configurator
+  chown -R spamtagger $VARDIR/run/configurator
 
   sudofile=/usr/sudo/etc/sudoers
   if [ ! -f $sudofile ]; then
@@ -89,7 +89,7 @@ prepare() {
   fi
   cat >$sudofile <<EOF
 root    ALL=(ALL) ALL
-User_Alias      MAILCLEANER = mailcleaner
+User_Alias      SPAMTAGGER = spamtagger
 Runas_Alias     ROOT = root
 Cmnd_Alias      NTPSTARTER = /etc/init.d/ntp-server
 Cmnd_Alias      NTPCSTARTER = /etc/init.d/ntp
@@ -107,37 +107,37 @@ Cmnd_Alias      SETPINDB = $SRCDIR/scripts/configuration/set_pass_in_db.sh
 
 Defaults        mailto = root
 
-MAILCLEANER     * = (ROOT) NOPASSWD: NTPSTARTER
-MAILCLEANER     * = (ROOT) NOPASSWD: NTPCSTARTER
-MAILCLEANER     * = (ROOT) NOPASSWD: NTPDATESTARTER
-MAILCLEANER     * = (ROOT) NOPASSWD: NTPDATE
-MAILCLEANER     * = (ROOT) NOPASSWD: DATE
-MAILCLEANER     * = (ROOT) NOPASSWD: IFDOWN
-MAILCLEANER     * = (ROOT) NOPASSWD: IFUP
-MAILCLEANER     * = (ROOT) NOPASSWD: PASSWD
-MAILCLEANER     * = (ROOT) NOPASSWD: UPDATE
-MAILCLEANER     * = (ROOT) NOPASSWD: STOPSTART
-MAILCLEANER     * = (ROOT) NOPASSWD: SSHSTARTER
-MAILCLEANER     * = (ROOT) NOPASSWD: CHGHOSTID
-MAILCLEANER     * = (ROOT) NOPASSWD: DISIF
-MAILCLEANER     * = (ROOT) NOPASSWD: SETPINDB
+SPAMTAGGER     * = (ROOT) NOPASSWD: NTPSTARTER
+SPAMTAGGER     * = (ROOT) NOPASSWD: NTPCSTARTER
+SPAMTAGGER     * = (ROOT) NOPASSWD: NTPDATESTARTER
+SPAMTAGGER     * = (ROOT) NOPASSWD: NTPDATE
+SPAMTAGGER     * = (ROOT) NOPASSWD: DATE
+SPAMTAGGER     * = (ROOT) NOPASSWD: IFDOWN
+SPAMTAGGER     * = (ROOT) NOPASSWD: IFUP
+SPAMTAGGER     * = (ROOT) NOPASSWD: PASSWD
+SPAMTAGGER     * = (ROOT) NOPASSWD: UPDATE
+SPAMTAGGER     * = (ROOT) NOPASSWD: STOPSTART
+SPAMTAGGER     * = (ROOT) NOPASSWD: SSHSTARTER
+SPAMTAGGER     * = (ROOT) NOPASSWD: CHGHOSTID
+SPAMTAGGER     * = (ROOT) NOPASSWD: DISIF
+SPAMTAGGER     * = (ROOT) NOPASSWD: SETPINDB
 
 bb        ALL=(root) NOPASSWD:/etc/init.d/xymon, /sbin/poweroff
 #includedir /etc/sudoers.d
 EOF
   touch /etc/ntp.conf >/dev/null 2>&1
-  chgrp mailcleaner /etc/ntp.conf >/dev/null 2>&1
+  chgrp spamtagger /etc/ntp.conf >/dev/null 2>&1
   chmod g+w /etc/ntp.conf >/dev/null 2>&1
-  chgrp mailcleaner /etc/network/interfaces >/dev/null 2>&1
+  chgrp spamtagger /etc/network/interfaces >/dev/null 2>&1
   chmod g+w /etc/network/interfaces >/dev/null 2>&1
-  chgrp mailcleaner /etc/network/run/ifstate >/dev/null 2>&1
+  chgrp spamtagger /etc/network/run/ifstate >/dev/null 2>&1
   chmod g+w /etc/network/run/ifstate >/dev/null 2>&1
-  chgrp mailcleaner /etc/resolv.conf >/dev/null 2>&1
+  chgrp spamtagger /etc/resolv.conf >/dev/null 2>&1
   chmod g+w /etc/resolv.conf >/dev/null 2>&1
   $SRCDIR/bin/dump_apache_config.pl >/dev/null 2>&1
   $SRCDIR/bin/dump_snmpd_config.pl >/dev/null 2>&1
 
-  chown -R mailcleaner $SRCDIR/etc/apache/sites 2>&1
+  chown -R spamtagger $SRCDIR/etc/apache/sites 2>&1
   rm -rf $VARDIR/www/stats/*.png >/dev/null 2>&1
 
   ## set up ldap settings for TLS
@@ -159,7 +159,7 @@ createStubStatus() {
   done
 }
 
-chown -R mailcleaner:mailcleaner $SRCDIR/www/guis/admin/public/tmp >/dev/null 2>&1
+chown -R spamtagger:spamtagger $SRCDIR/www/guis/admin/public/tmp >/dev/null 2>&1
 
 ERROR=0
 ARGV="$@"

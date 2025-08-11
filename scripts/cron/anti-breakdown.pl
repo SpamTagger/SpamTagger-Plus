@@ -1,8 +1,8 @@
 #! /usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
-#   Copyright (C) 2015-2018 Pascal Rolle <rolle@mailcleaner.net>
-#   Copyright (C) 2015-2018 Mentor Reka <reka@mailcleaner.net>
+#   SpamTagger Plus - Open Source Spam Filtering
+#   Copyright (C) 2015-2018 Pascal Rolle <rolle@spamtagger.org>
+#   Copyright (C) 2015-2018 Mentor Reka <reka@spamtagger.org>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ my $is_data_ok = 0;
 my $dns_ko_file		= '/var/tmp/st_checks_dns.ko';
 my $data_ko_file	= '/var/tmp/sstchecks_data.ko';
 my $rbl_sql_file	= '/var/tmp/st_checks_rbls.bak';
-my @rbls_to_disable	= qw/MCIPRWL MCIPRBL SIPURIRBL MCURIBL MCERBL SIPINVALUEMENT SIPDEUXQUATREINVALUEMENT MCTRUSTEDSPF/;
+my @rbls_to_disable	= qw/STIPRWL STIPRBL SIPURIRBL STURIBL STERBL SIPINVALUEMENT SIPDEUXQUATREINVALUEMENT STTRUSTEDSPF/;
 
 my %rbl_field = (
 	'trustedSources'	=> 'whiterbls',
@@ -76,7 +76,7 @@ sub get_master_config
         my %mconfig;
         my $dbh;
         $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                        "mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+                        "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                 or die("CANNOTCONNECTDB", $dbh->errstr);
 
         my $sth = $dbh->prepare("SELECT hostname, port, password FROM master");
@@ -146,7 +146,7 @@ sub is_dns_service_available {
 
 	$res->nameservers($host);
 
-	if ( $res->send("mailcleaner.net", 'MX') ) {
+	if ( $res->send("spamtagger.org", 'MX') ) {
 		return 1;
 	} else {
 		return 0;
@@ -180,13 +180,13 @@ sub is_port_ok {
 	return 1;	
 }
 
-sub remove_and_save_MC_RBLs {
+sub remove_and_save_ST_RBLs {
 	my $sth;
 	my $reboot_service = 0;
 
 	my %master_conf = get_master_config();
 	my $master_dbh = DBI->connect("DBI:mysql:database=st_config;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
-                           "mailcleaner", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0});
+                           "spamtagger", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0});
 	if ( ! defined($master_dbh) ) {
 		warn "CANNOTCONNECTMASTERDB\n", $master_dbh->errstr;
 		return 0;
@@ -240,7 +240,7 @@ sub handle_dns_ok {
 		# Database connexion
         	my %master_conf = get_master_config();
 	        my $master_dbh = DBI->connect("DBI:mysql:database=st_config;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
-                           "mailcleaner", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0});
+                           "spamtagger", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0});
 	        if ( ! defined($master_dbh) ) {
                 	warn "CANNOTCONNECTMASTERDB\n", $master_dbh->errstr;
         	        return 0;
@@ -266,19 +266,19 @@ sub handle_dns_ok {
 	}
 }
 
-# DNS service is KO. We remove RBLs hosted by MailCleaner from the configuration
+# DNS service is KO. We remove RBLs hosted by SpamTagger from the configuration
 sub handle_dns_ko {
-	# There is nothing to do if MailCleaner was already away
+	# There is nothing to do if SpamTagger was already away
 	return if ( -e $dns_ko_file );
 
 	# Creating the DNS KO flag file : /var/tmp/st_checks_dns.ko
 	touch($dns_ko_file);
 
-	# Removes and saves the RBLs hosted by MailCleaner then restarts associated services
-	remove_and_save_MC_RBLs();
+	# Removes and saves the RBLs hosted by SpamTagger then restarts associated services
+	remove_and_save_ST_RBLs();
 }
 
-# MailCleaner servers used for updating scripts and data are offline
+# SpamTagger servers used for updating scripts and data are offline
 # We set a flag which will prevent associated services to run
 sub handle_data_ko {
 	# Creating the Data KO flag file : /var/tmp/st_checks_data.ko
@@ -301,8 +301,8 @@ if ($rc == 0) {
   exit;	
 }
 
-# Getting IPs for cvs.mailcleaner.net
-my @teams = getIPAddresses('cvs.mailcleaner.net', 'A');
+# Getting IPs for cvs.spamtagger.org
+my @teams = getIPAddresses('cvs.spamtagger.org', 'A');
 
 if ( @teams) {
 	$is_dns_ok	= is_port_ok(0, 53, @teams);

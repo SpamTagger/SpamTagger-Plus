@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
-MYMAILCLEANERPWD=$(grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
+MYSPAMTAGGERPWD=$(grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 SOCKET=$VARDIR/run/mysql_slave/mysqld.sock
 COMMAND=/opt/mysql5/bin/mysql
@@ -42,7 +42,7 @@ if [[ -z $1 ]]; then
 fi
 QUERY="SELECT exim_id,to_user,to_domain FROM spam WHERE sender LIKE \"%$1%\";"
 
-results=($(echo "$QUERY" | $COMMAND -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -N st_spool))
+results=($(echo "$QUERY" | $COMMAND -S $SOCKET -uspamtagger -p$MYSPAMTAGGERPWD -N st_spool))
 for ((i = 0; i < ${#results[@]}; i = i + 3)); do
   id="${results[i]}"
   to="${results[$((i + 1))]}@${results[$((i + 2))]}"

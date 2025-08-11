@@ -1,11 +1,11 @@
-Subject: Rapport de quarantaine Mailcleaner
+Subject: Rapport de quarantaine SpamTagger
 Bonjour,
 
-Ceci est le rapport de Mailcleaner pour les ??NBDAYS dernier(s) jour(s).
+Ceci est le rapport de SpamTagger pour les ??NBDAYS dernier(s) jour(s).
 
 Pour l'adresse: ??ADDRESS
 
-Ce message vous informe des emails qui ont =E9t=E9 bloqu=E9s par Mailcleaner.
+Ce message vous informe des emails qui ont =E9t=E9 bloqu=E9s par SpamTagger.
 Si un de ces emails ne vous semble pas =EAtre du spam, vous pouvez le lib=E9rer 
 en cliquant sur le lien "Lib=E9rer:".
 
@@ -14,7 +14,7 @@ Il est donc important de lib=E9rer ceux qui sont d=E9sir=E9s d'ici =E0 cette =E9
 
 Si vous souhaitez r=E9gler les param=E8tres des rapports, visualiser l'=E9tat actuel
 de la quarantaine ou faire une demande de support, veuillez visiter l'interface
-web de Mailcleaner =E0 l'adresse:
+web de SpamTagger =E0 l'adresse:
 
 ??WEBBASEURL?d=??DIGEST_ID&amp;p=u
 
@@ -35,8 +35,8 @@ Identificateur: ??ID
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D
-Ce message vous a =E9t=E9 envoy=E9 automatiquement par Mailcleaner.
+Ce message vous a =E9t=E9 envoy=E9 automatiquement par SpamTagger.
 Veuillez ne pas y r=E9pondre.
-Pour plus d'informations: ??MAILCLEANERURL
+Pour plus d'informations: ??SPAMTAGGERURL
 
 ??SUMSIGNATURE

@@ -23,8 +23,8 @@ NAME="Exim stage 1"
 test -x $DAEMON || exit 0
 
 prepare() {
-  chown mailcleaner:mailcleaner $VARDIR/log/exim_stage1/mainlog >/dev/null 2>&1
-  chown mailcleaner:mailcleaner $VARDIR/log/exim_stage1/rejectlog >/dev/null 2>&1
+  chown spamtagger:spamtagger $VARDIR/log/exim_stage1/mainlog >/dev/null 2>&1
+  chown spamtagger:spamtagger $VARDIR/log/exim_stage1/rejectlog >/dev/null 2>&1
 
   if [ -f $VARDIR/spool/exim_stage1/db/callout ]; then
     rm $VARDIR/spool/exim_stage1/db/callout*
@@ -36,7 +36,7 @@ prepare() {
 
   if [ ! -d $VARDIR/spool/tmp/exim_stage1/auth_cache ]; then
     mkdir $VARDIR/spool/tmp/exim_stage1/auth_cache
-    chown mailcleaner:mailcleaner $VARDIR/spool/tmp/exim_stage1/auth_cache
+    chown spamtagger:spamtagger $VARDIR/spool/tmp/exim_stage1/auth_cache
   fi
 
   if [ ! -d $VARDIR/spool/tmp/exim/blacklists ]; then
@@ -44,11 +44,11 @@ prepare() {
   fi
 
   touch $VARDIR/spool/tmp/exim/frozen_senders
-  chown mailcleaner:mailcleaner $VARDIR/spool/tmp/exim/frozen_senders
+  chown spamtagger:spamtagger $VARDIR/spool/tmp/exim/frozen_senders
 
   if [ ! -f $VARDIR/spool/tmp/exim/dmarc.history ]; then
     touch $VARDIR/spool/tmp/exim/dmarc.history
-    chown mailcleaner:mailcleaner $VARDIR/spool/tmp/exim/dmarc.history
+    chown spamtagger:spamtagger $VARDIR/spool/tmp/exim/dmarc.history
   fi
 
   for f in hosts senders; do
@@ -66,7 +66,7 @@ prepare() {
   cp $SRCDIR/etc/exim/certs/*.* $VARDIR/spool/tmp/exim/certs/
 
   $SRCDIR/bin/dump_exim_config.pl 1 >/dev/null 2>&1
-  chown -R mailcleaner:mailcleaner $VARDIR/spool/tmp/spamtagger/*.list >/dev/null 2>&1
+  chown -R spamtagger:spamtagger $VARDIR/spool/tmp/spamtagger/*.list >/dev/null 2>&1
 }
 
 case "$1" in

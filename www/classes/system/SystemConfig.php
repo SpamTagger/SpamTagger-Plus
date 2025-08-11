@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
  /**
@@ -20,15 +20,15 @@ require_once ("helpers/PrefHandler.php");
  * This class contains the global preferences and setting of the system
  * such as base paths, database access, etc...
  * 
- * @package mailcleaner
+ * @package SpamTagger Plus
  * @todo set members as private !
  */
  
 class SystemConfig extends PrefHandler {
     
   /**
-   * Main mailcleaner configuration file
-   * This file contains the settings of the mailcleaner configuration
+   * Main spamtagger configuration file
+   * This file contains the settings of the spamtagger configuration
    * @var $CONFIGFILE   string
    */
   public static $CONFIGFILE_ = '/etc/spamtagger.conf';
@@ -36,19 +36,19 @@ class SystemConfig extends PrefHandler {
    * @todo these variables will have to be removed ! all classes should now use DataManager
    */
     private $dbhost_ = 'localhost';
-    var $dbusername_ = 'mailcleaner';
+    var $dbusername_ = 'spamtagger';
     var $dbconfig_ = 'st_config';
     var $dbspool_ = 'st_spool';
     var $dbstats_ = 'st_stats';
     var $dbpassword_ = '';
     
     /**
-     * Path to the Mailcleaner installation directory
+     * Path to the spamtagger installation directory
      * @var string
      */
     var $SRCDIR_ = '/usr/spamtagger';
     /**
-     * Path to the Mailcleaner spool directory (given during installation process)
+     * Path to the spamtagger spool directory (given during installation process)
      * @var string
      */
     var $VARDIR_ = '/var/spamtagger';
@@ -70,7 +70,7 @@ class SystemConfig extends PrefHandler {
       */
      private $pref_ = array (
                     'organisation' => 'your_organisation', 
-                    'hostname' => 'mailcleaner', 
+                    'hostname' => 'spamtagger', 
                     'hostid' => 1, 
                     'clientid' => 0, 
                     'default_domain' => 'your_domain', 
@@ -152,7 +152,7 @@ class SystemConfig extends PrefHandler {
                 case 'VARDIR' :
                     $this->VARDIR_ = $value;
                     break;
-                case 'MYMAILCLEANERPWD' :
+                case 'MYSPAMTAGGERPWD' :
                     $this->dbpassword_ = $value;
                     break;
                 case 'ISMASTER' :

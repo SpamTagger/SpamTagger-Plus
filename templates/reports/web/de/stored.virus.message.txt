@@ -1,10 +1,10 @@
-Dies ist eine Nachricht vom Mailcleaner
----------------------------------------
+Dies ist eine Nachricht vom SpamTagger
+--------------------------------------
 Der Dateianhang "$filename"
 ist von einem Virus verseucht und wurde durch diese Nachricht ersetzt.
 
 Wenn Sie eine Kopie der Original Nachricht wuenschen, gehen Sie bitte zur :
-https://www.mailcleaner.net/support/support-request.html
+https://spamtagger.org/support/support-request.html
 
 Am $date meldete der Virenscanner folgendes:
 $report
@@ -12,5 +12,5 @@ $report
 Hinweis an den Administrator: 
 Datei ist auf Rechner: $hostname im Verzeichnis $datenumber/$id
 
--- 
-Mailcleaner
+---------- 
+SpamTagger

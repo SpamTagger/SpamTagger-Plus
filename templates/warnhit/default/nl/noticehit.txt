@@ -1,4 +1,4 @@
-Onderwerp: MailCleaner waarschuw/white list hit
+Onderwerp: SpamTagger waarschuw/white list hit
 
 Hallo,
 

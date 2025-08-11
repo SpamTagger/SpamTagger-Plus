@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Administrator
  */
@@ -16,8 +16,8 @@ class Default_Model_InformationalMessage_ServiceRestart extends Default_Model_In
 	protected $_services = array();
 	
 	public function check() {
-		require_once('MailCleaner/Config.php');
-		$config = new MailCleaner_Config();
+		require_once('SpamTagger/Config.php');
+		$config = new SpamTagger_Config();
 		
 		$services_to_test = array('exim_stage1', 'exim_stage2', 'exim_stage4', 'mailscanner', 'clamd', 'firewall', 'greylistd', 'apache', 'snmpd');
 		

@@ -1,7 +1,7 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
  *                2017 Mentor Reka <reka.mentor@gmail.com>
@@ -929,7 +929,7 @@ class Default_Model_Domain
 		require_once('helpers/DM_SlaveConfig.php');
 		require_once('system/SystemConfig.php');
 		require_once('connector/AuthManager.php');
-		$MCLOGLEVEL = PEAR_LOG_WARNING;
+		$STLOGLEVEL = PEAR_LOG_WARNING;
 		$conf_ = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_);
 		global $sysconf_;
 		$sysconf_ = SystemConfig::getInstance();
@@ -989,7 +989,7 @@ class Default_Model_Domain
 		require_once('helpers/DM_SlaveConfig.php');
 		require_once('system/SystemConfig.php');
 		require_once('connector/AuthManager.php');
-		$MCLOGLEVEL = PEAR_LOG_WARNING;
+		$STLOGLEVEL = PEAR_LOG_WARNING;
 		$conf_ = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_);
 		global $sysconf_;
 		$sysconf_ = SystemConfig::getInstance();
@@ -1024,7 +1024,7 @@ class Default_Model_Domain
 		require_once('system/SystemConfig.php');
 		require_once('connector/AuthManager.php');
                 require_once('domain/Domain.php');
-		$MCLOGLEVEL = PEAR_LOG_WARNING;
+		$STLOGLEVEL = PEAR_LOG_WARNING;
 		$conf_ = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_);
 		global $sysconf_;
 		$sysconf_ = SystemConfig::getInstance();
@@ -1076,7 +1076,7 @@ class Default_Model_Domain
 		require_once('helpers/DM_SlaveConfig.php');
 		require_once('system/SystemConfig.php');
 		require_once('connector/AuthManager.php');
-		$MCLOGLEVEL = PEAR_LOG_WARNING;
+		$STLOGLEVEL = PEAR_LOG_WARNING;
 		$conf_ = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_);
 		global $sysconf_;
 		$sysconf_ = SystemConfig::getInstance();
@@ -1112,19 +1112,19 @@ class Default_Model_Domain
 	 * templates
 	 */
 	public function getWebTemplates() {
-		$config = MailCleaner_Config::getInstance();
+		$config = SpamTagger_Config::getInstance();
 		$path = $config->getOption('SRCDIR')."/www/user/htdocs/templates";
 		return $this->getTemplates($path);
 	}
 	 
 	public function getSummaryTemplates() {
-		$config = MailCleaner_Config::getInstance();
+		$config = SpamTagger_Config::getInstance();
 		$path = $config->getOption('SRCDIR')."/templates/summary/";
 		return $this->getTemplates($path);
 	}
 
         public function getReportTemplates() {
-                $config = MailCleaner_Config::getInstance();
+                $config = SpamTagger_Config::getInstance();
                 $path = $config->getOption('SRCDIR')."/templates/reports/";
                 return $this->getTemplates($path);
         }

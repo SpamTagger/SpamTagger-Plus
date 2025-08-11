@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   HostID change page of MailCleaner "Configurator" wizard
+#   HostID change page of SpamTagger "Configurator" wizard
 #
 -->
 <?php
@@ -24,7 +24,7 @@ if ('hostid.inc' == basename($_SERVER['SCRIPT_FILENAME']))
   die ('Try again later.');
 ?>
 	<h2 class="text-center">Step: <?php echo $validStep['title'] ?></h2>
-	<p>Set a unique host ID. This ID will be needed when you use MailCleaner in Cluster.</p>
+	<p>Set a unique host ID. This ID will be needed when you use SpamTagger in Cluster.</p>
         <form class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF']."?step=".$_GET['step']; ?>" method="post">
 	  <div class="form-group">
 	    <label class="col-md-5 control-label" for="hid">Host ID :</label>
@@ -41,9 +41,9 @@ if ('hostid.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 	    if (isset($_POST['submit_hostid'])) {
   	      if (!empty($_POST['hid'])) {
 	        if (preg_match('/^\d+$/', $_POST['hid'])) {
-		  exec("sudo /usr/mailcleaner/bin/change_hostid.sh ".$_POST['hid']." -f", $outputhid, $rethid);
+		  exec("sudo /usr/spamtagger/bin/change_hostid.sh ".$_POST['hid']." -f", $outputhid, $rethid);
        		  touch('/var/spamtagger/run/configurator/hostid');
-($rethid == 0) ? $rethid = "<span class='text-success'>MailCleaner ID changed</span>" : $rethid = "<span class='text-danger'>Failed to change MailCleaner ID</span>";
+($rethid == 0) ? $rethid = "<span class='text-success'>SpamTagger ID changed</span>" : $rethid = "<span class='text-danger'>Failed to change SpamTagger ID</span>";
                   echo $rethid;
 	        } else {
 	          echo "<span class='text-danger'>Not a valid value.</span>";

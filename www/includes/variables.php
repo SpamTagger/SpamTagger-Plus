@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
 /**
@@ -16,11 +16,11 @@ ini_set('display_errors', 0);
 
 // do the logging stuff as soon as possible
 require_once('Log.php');
-$MCLOGLEVEL = PEAR_LOG_WARNING;  // normal is: PEAR_LOG_WARNING or PEAR_LOG_INFO
+$STLOGLEVEL = PEAR_LOG_WARNING;  // normal is: PEAR_LOG_WARNING or PEAR_LOG_INFO
 require_once('helpers/DataManager.php');
 require_once('system/SystemConfig.php');
 $conf_ = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_);
-$log_ = Log::singleton('file', $conf_['VARDIR']."/log/spamtagger/webgui.log", 'none', null, $MCLOGLEVEL);
+$log_ = Log::singleton('file', $conf_['VARDIR']."/log/spamtagger/webgui.log", 'none', null, $STLOGLEVEL);
 global $log_;
 
 ## set the timezone

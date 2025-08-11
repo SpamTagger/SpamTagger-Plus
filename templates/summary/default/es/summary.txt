@@ -1,17 +1,17 @@
-Subject: Informe de cuarentena MailCleaner
+Subject: Informe de cuarentena SpamTagger
 Hola,
 
-Esto es el informe de MailCleaner para los ??NBDAYS =FAltimos d=EDas.
+Esto es el informe de SpamTagger para los ??NBDAYS =FAltimos d=EDas.
 
 Para la direcci=F3n: ??ADDRESS
 
-El resumen siguiente lista todos los mensajes que fueron bloqueado por Mailcleaner.
+El resumen siguiente lista todos los mensajes que fueron bloqueado por SpamTagger.
 
 Si uno de estos mensajes no fue bloqueado, puede obligarlo haciendo click en el link "Obligado:".
 
 Los mensajes de la lista ser=E1n destruidos en ??SPAMNBDAYS d=EDas.
 
-Si quiere personalizar sus parametros para MailCleaner, o ver en real-tiempo la cuarentena, por favor visita la interfaz de usuario:
+Si quiere personalizar sus parametros para SpamTagger o ver en real-tiempo la cuarentena, por favor visita la interfaz de usuario:
 
 ??WEBBASEURL?d=??DIGEST_ID&amp;p=u
 
@@ -30,8 +30,8 @@ Mensaje ID: ??ID
 ??END_LIST
 
 ------------------------------------------------------
-Esto es un mensaje autom=E1tico enviado por MailCleaner.
+Esto es un mensaje autom=E1tico enviado por SpamTagger.
 Por favor no responde.
-Para m=E1s informaci=F3n: ??MAILCLEANERURL
+Para m=E1s informaci=F3n: ??SPAMTAGGERURL
 
 ??SUMSIGNATURE

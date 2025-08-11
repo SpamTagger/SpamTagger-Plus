@@ -1,11 +1,11 @@
-/* URL source ---> https://gate-pp2-jessie.mailcleaner.net/admin/templates/default/css/global.css */
-/* Page exemple ---> https://gate-pp2-jessie.mailcleaner.net/admin/monitorstatus */
+/* URL source ---> https://gate-pp2-jessie.spamtagger.org/admin/templates/default/css/global.css */
+/* Page exemple ---> https://gate-pp2-jessie.spamtagger.org/admin/monitorstatus */
 
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 
 html, body {

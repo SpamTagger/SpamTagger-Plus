@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
 #
@@ -23,6 +23,10 @@
 #
 #   Usage:
 #           fetch_magic.sh [-r]
+
+# TODO: Disabled during transition to spamtagger
+echo "Not currently supported for SpamTagger"
+exit
 
 usage() {
   cat <<EOF
@@ -69,8 +73,8 @@ fi
 
 . $SRCDIR/lib/updates/download_files.sh
 
-MC_FILE_DIR=/opt/file/share/misc/
-ret=$(downloadDatas "$MC_FILE_DIR" "magic" $randomize "null" "" "noexit")
+ST_FILE_DIR=/opt/file/share/misc/
+ret=$(downloadDatas "$ST_FILE_DIR" "magic" $randomize "null" "" "noexit")
 if [[ "$ret" -eq "1" ]]; then
   log "Magic downloaded"
 fi

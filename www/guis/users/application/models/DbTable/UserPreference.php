@@ -1,9 +1,9 @@
 <?php
 /**
- * MailCleaner
+ * SpamTagger
  * 
- * @license http://www.mailcleaner.net/open/licence_en.html MailCleaner Public License
- * @copyright 2015 Fastnet SA
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @copyright 2025, SpamTagger
  */
 
 /**

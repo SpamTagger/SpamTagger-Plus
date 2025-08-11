@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * System DNS settings
  */
@@ -70,7 +70,7 @@ class Default_Model_DnsSettings
 	   	  	}
 	   	  }
 	   }
-	   $config = MailCleaner_Config::getInstance();
+	   $config = SpamTagger_Config::getInstance();
 	   $this->setHeloName($config->getOption('HELONAME'));
 	}
 	
@@ -91,7 +91,7 @@ class Default_Model_DnsSettings
         $written = file_put_contents($tmpfile, $txt);
     	if ($written || $txt == '') {
     	   $soapres = Default_Model_Localhost::sendSoapRequest('Config_saveDnsConfig', null);
-           $soapres = Default_Model_Localhost::sendSoapRequest('Config_saveMCConfigOption', array('HELONAME' => $this->getHeloName()));
+           $soapres = Default_Model_Localhost::sendSoapRequest('Config_saveSTConfigOption', array('HELONAME' => $this->getHeloName()));
            return $soapres;
     	}
     	return 'NOK could not write config file';

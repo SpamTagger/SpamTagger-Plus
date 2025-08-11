@@ -1,8 +1,8 @@
 <?xml version ='1.0' encoding ='UTF-8' ?>
-<definitions name='Mailcleaner'
-  targetNamespace='urn:Mailcleaner'
-  xmlns:tns='urn:Mailcleaner'
-  xmlns:typens='urn:Mailcleaner'
+<definitions name='SpamTagger'
+  targetNamespace='urn:SpamTagger'
+  xmlns:tns='urn:SpamTagger'
+  xmlns:typens='urn:SpamTagger'
   xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/'
   xmlns:xsd='http://www.w3.org/2001/XMLSchema'
   xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/'
@@ -10,7 +10,7 @@
   xmlns='http://schemas.xmlsoap.org/wsdl/'>
 
 <types>
-  <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Mailcleaner">
+  <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:SpamTagger">
     <xsd:complexType name="spools">
       <xsd:all>
          <xsd:element name="incoming" type="xsd:int"/>
@@ -415,316 +415,316 @@
   <soap:binding style='rpc'
     transport='http://schemas.xmlsoap.org/soap/http'/>
   <operation name='forceContent'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#forceContent'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#forceContent'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getHeaders'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getHeaders'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getHeaders'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getMIMEPart'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getMIMEPart'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getMIMEPart'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getBody'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getBody'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getBody'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='forceSpam'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#forceSpam'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#forceSpam'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='addToNewslist'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#addToNewslist'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#addToNewslist'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='addToWhitelist'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#addToWhitelist'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#addToWhitelist'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='addToBlacklist'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#addToBlacklist'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#addToBlacklist'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getReasons'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getReasons'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getReasons'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='sendToAnalyse'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#sendToAnalyse'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#sendToAnalyse'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='setAuthenticated'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#setAuthenticated'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#setAuthenticated'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='checkAuthenticated'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#checkAuthenticated'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#checkAuthenticated'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getProcessesStatus'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getProcessesStatus'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getProcessesStatus'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getSpools'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getSpools'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getSpools'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getLoad'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getLoad'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getLoad'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getDiskUsage'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getDiskUsage'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getDiskUsage'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getMemUsage'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getMemUsage'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getMemUsage'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getQueueTime'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getQueueTime'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getQueueTime'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getTodaysCounts'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getTodaysCounts'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getTodaysCounts'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getStats'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getStats'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getStats'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getLastPatch'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getLastPatch'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getLastPatch'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='startService'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#startService'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#startService'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='stopService'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#stopService'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#stopService'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='restartService'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#restartService'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#restartService'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='getAdminName'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#getAdminName'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#getAdminName'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='dumpConfiguration'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#dumpConfiguration'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#dumpConfiguration'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='processNeedsRestart'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#processNeedsRestart'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#processNeedsRestart'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
   <operation name='setRestartStatus'>
-    <soap:operation soapAction='urn:localhost-mailcleaner#setRestartStatus'/>
+    <soap:operation soapAction='urn:localhost-spamtagger#setRestartStatus'/>
     <input>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </input>
     <output>
-      <soap:body use='encoded' namespace='urn:localhost-mailcleaner'
+      <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
 </binding>
 
-<service name='MailcleanerService'>
+<service name='SpamTaggerService'>
   <port name='mcPort' binding='mcBinding'>
     <soap:address location='http://__HOST__:5132/spamtagger.php'/>
   </port>

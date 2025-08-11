@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -44,8 +44,8 @@ my $dir = $config{VARDIR}."/spool/mailscanner/quarantine/".$quardir;
 my $id = $1;
 chomp $dir;
 
-my $uid = getpwnam( 'mailcleaner' );
-my $gid = getgrnam( 'mailcleaner' );
+my $uid = getpwnam( 'spamtagger' );
+my $gid = getgrnam( 'spamtagger' );
 
 if (! -d $dir ) {
 	print  "NOTFOUND\n";
@@ -134,7 +134,7 @@ sub mark_forced
 	use DBI;
 	my $id = shift;
 	my $dbh = DBI->connect("DBI:mysql:database=st_stats;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-		"mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0}) || return;
+		"spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0}) || return;
 
 	my $query = "UPDATE maillog SET content_forced='1' WHERE id='$id'";
 	my $sth = $dbh->prepare($query);

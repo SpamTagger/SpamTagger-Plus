@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
 $txt['SUBMIT']                      = "submit";
@@ -23,7 +23,7 @@ $txt['REALNAME']                    = "Real name";
 
 $txt['BADLOGIN']                    = "Wrong login name or password.";
 $txt['SESSIONEXPIRED']              = "Session has expired.";
-$txt['LOGOUTTEXT']                  = "Thank for using Mailcleaner";
+$txt['LOGOUTTEXT']                  = "Thank for using SpamTagger";
 $txt['LOGGEDAS']                    = "you are connected as:";
 
 $txt['DOMAINS']                     = "Domains";
@@ -548,12 +548,12 @@ $txt['ISAMASTER']                   = "is a master";
 
 $txt['FIREWALL']                    = "Firewall";
 
-$txt['WELCOMEADMIN']                = "Welcome to the MailCleaner administration interface!";
+$txt['WELCOMEADMIN']                = "Welcome to the SpamTagger administration interface!";
 $txt['TODAYIS']                     = "Today is";
 $txt['THISHOSTIDIS']                = "This host id is";
 $txt['YOUMAYCONFIGNET']             = "You may wish to configure the network configuration";
 $txt['HERE']                        = "here";
-$txt['FORMOREHELP']                 = "For more help configuring and using MailCleaner";
+$txt['FORMOREHELP']                 = "For more help configuring and using SpamTagger";
 $txt['FREESUPPORT']                 = "Free support";
 $txt['COMMERCIALSUPPORT']           = "Commercial support";
 $txt['CONTACTINTEGRATOR']           = "Contact your integrator";

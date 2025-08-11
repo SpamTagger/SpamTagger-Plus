@@ -1,4 +1,4 @@
-MAILCLEANER-MIB DEFINITIONS ::= BEGIN
+SPAMTAGGER-MIB DEFINITIONS ::= BEGIN
 
 IMPORTS
         MODULE-IDENTITY,
@@ -12,23 +12,23 @@ IMPORTS
         DisplayString
                 FROM SNMPv2-TC;
 
-mailcleaner MODULE-IDENTITY
+spamtagger MODULE-IDENTITY
     LAST-UPDATED "201911030000Z"
     ORGANIZATION "Fastnet SA"
     CONTACT-INFO
-        "MailCleaner Support (support@mailcleaner.net)"
+        "SpamTagger Support (support@spamtagger.org)"
     DESCRIPTION
-        "This MIB module defines objects for MailCleaner statistics."
+        "This MIB module defines objects for SpamTagger statistics."
     REVISION     "201911030000Z"
     DESCRIPTION
         "First try..."
     ::= { enterprises 36661 }
 
-status OBJECT IDENTIFIER ::= { mailcleaner 1 }
+status OBJECT IDENTIFIER ::= { spamtagger 1 }
 
-configuration OBJECT IDENTIFIER ::= { mailcleaner 2 }
+configuration OBJECT IDENTIFIER ::= { spamtagger 2 }
 
-statistics OBJECT IDENTIFIER ::= { mailcleaner 3 }
+statistics OBJECT IDENTIFIER ::= { spamtagger 3 }
 
 ----------------
 -- status
@@ -42,7 +42,7 @@ fullVersion OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "MailCleaner full string version"
+            "SpamTagger full string version"
     ::= { version 1 }
 
 edition OBJECT-TYPE
@@ -50,7 +50,7 @@ edition OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "MailCleaner edition"
+            "SpamTagger edition"
     ::= { version 2 }
 
 productVersion OBJECT-TYPE
@@ -58,7 +58,7 @@ productVersion OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "MailCleaner current software version"
+            "SpamTagger current software version"
     ::= { version 3 }
 
 patchLevel OBJECT-TYPE
@@ -66,7 +66,7 @@ patchLevel OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "MailCleaner current patch level"
+            "SpamTagger current patch level"
     ::= { version 4 }
 
   --------------
@@ -79,7 +79,7 @@ spoolIncoming OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "MailCleaner Incoming spool message count"
+            "SpamTagger Incoming spool message count"
     ::= { spools 1 }
 
 spoolFiltering OBJECT-TYPE
@@ -87,7 +87,7 @@ spoolFiltering OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "MailCleaner Filtering spool message count"
+            "SpamTagger Filtering spool message count"
     ::= { spools 2 }
 
 spoolOutgoing OBJECT-TYPE
@@ -95,7 +95,7 @@ spoolOutgoing OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "MailCleaner Outgoing spool message count"
+            "SpamTagger Outgoing spool message count"
     ::= { spools 4 }
 
   --------------
@@ -108,7 +108,7 @@ processTable OBJECT-TYPE
     MAX-ACCESS  not-accessible
     STATUS      current
     DESCRIPTION
-        "Table of MailCleaner internal processes."
+        "Table of SpamTagger internal processes."
     ::= { status 3 }
 
 processEntry OBJECT-TYPE

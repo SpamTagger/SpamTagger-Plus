@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ my $syslog_facility = '';
 my %mib = ();
 
 sub init {
-  doLog('MailCleaner SNMP Agent Initializing...', 'daemon', 'debug');
+  doLog('SpamTagger SNMP Agent Initializing...', 'daemon', 'debug');
   
   my $conf = ReadConfig::getInstance();
   my $agents_dir = $conf->getOption('SRCDIR')."/lib/SNMPAgent/";
@@ -81,9 +81,9 @@ sub init {
                               'dont_init_lib' => 1);
 
   my $regoid = new NetSNMP::OID($rootOID);
-  $agent->register("MailCleaner SNMP agent", $regoid, \&SNMPHandler);
+  $agent->register("SpamTagger SNMP agent", $regoid, \&SNMPHandler);
  
-  doLog('MailCleaner SNMP Agent Initialized.', 'daemon', 'debug');
+  doLog('SpamTagger SNMP Agent Initialized.', 'daemon', 'debug');
 }
 
 sub SNMPHandler {

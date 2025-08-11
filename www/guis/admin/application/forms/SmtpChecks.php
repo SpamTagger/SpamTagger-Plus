@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * SMTP checks form
  */
@@ -115,7 +115,7 @@ class Default_Form_SmtpChecks extends ZendX_JQuery_Form
 	    
 	    $rbltimeout = new  Zend_Form_Element_Text('rbls_timeout', array(
 	        'label'    => $t->_('RBL checks timeout')." :",
-		      'title'  => $t->_('this timeout will apply to ALL RBL checks throughout MailCleaner'),
+		      'title'  => $t->_('this timeout will apply to ALL RBL checks throughout SpamTagger'),
 		    'required' => true,
 		    'size' => 2,
 	        'class' => 'fieldrighted',

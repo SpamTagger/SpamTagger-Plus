@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,8 @@ use LWP::UserAgent;
 use Getopt::Std;
 use Proc::ProcessTable;
 
-my $CVSHOST='team01.mailcleaner.net';
-my $REPORTHOST='reselleradmin.mailcleaner.net';
+my $CVSHOST='team01.spamtagger.org';
+my $REPORTHOST='reselleradmin.spamtagger.org';
 
 my %config = readConfig("/etc/spamtagger.conf");
 
@@ -72,7 +72,7 @@ if (defined $options{h}) {
 ## get http proxy settings:
 ##########################
 my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
-                                         "mailcleaner","$config{'MYMAILCLEANERPWD'}", {RaiseError => 1, PrintError => 1} );
+                                         "spamtagger","$config{'MYSPAMTAGGERPWD'}", {RaiseError => 1, PrintError => 1} );
 my $http_proxy = "";
 if ($dbh) {
   my $proxy_sth =  $dbh->prepare("SELECT http_proxy FROM system_conf");
@@ -246,7 +246,7 @@ sub call_uri {
   my $uri = shift;
 
   my $ua = LWP::UserAgent->new;
-  $ua->agent("Mailcleaner");
+  $ua->agent("SpamTagger");
 
   if (defined($config{'HTTPPROXY'})) {
     $ENV{'http_proxy'} = $config{'HTTPPROXY'};

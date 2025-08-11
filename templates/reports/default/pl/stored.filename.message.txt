@@ -1,5 +1,5 @@
-To jest wiadomość od Mailcleaner
-----------------------------------
+To jest wiadomość od SpamTagger
+-------------------------------
 Oryginalny załącznik do wiadomości e-mail "$filename"
 znajduje się na liście niedopuszczalnych załączników do tej witryny i jest
 zastąpiony tym komunikatem ostrzegawczym.
@@ -10,5 +10,5 @@ wiadomości w wysyłanej prośbie. Możesz też do nas zadzwonić, używając tr
 W dniu $date skaner antywirusowy zweryfikował:
 $report
 Uwaga dla administratora: $hostname w $datenumber/$id
--- 
-Mailcleaner
+---------- 
+SpamTagger

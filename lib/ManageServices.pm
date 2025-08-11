@@ -1130,7 +1130,7 @@ __END__
 
 =head1 NAME
 
-MailCleaner Service Management
+SpamTagger Service Management
 
 =head1 SYNOPSIS
 
@@ -1214,7 +1214,7 @@ status of all available services.
 
 This module provides a robust way to manage services while removing ambiguity
 as to the success of an action or subsequent changes to a services state for
-all or select MailCleaner services.
+all or select SpamTagger services.
 
 =head2 EXPORT
 
@@ -1228,7 +1228,7 @@ John Mertz <git@john.me.tz>
 
 =head1 COPYRIGHT AND LICENSE
 
-MailCleaner - SMTP Antivirus/Antispam Gateway
+SpamTagger Plus - Open Source Spam Filtering
 Copyright (C) 2021 by John Mertz <git@john.me.tz>
 
 This program is free software; you can redistribute it and/or modify

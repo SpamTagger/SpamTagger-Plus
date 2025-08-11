@@ -8,8 +8,8 @@ smtp_active_hostname = __HELO_NAME__
 qualify_recipient = __QUALIFY_RECIPIENT__
 
 message_logs = false
-exim_user = mailcleaner
-exim_group = mailcleaner
+exim_user = spamtagger
+exim_group = spamtagger
 log_file_path = VARDIR/log/exim_stage2/%slog
 pid_file_path = VARDIR/run/exim_stage2.pid
 spool_directory = VARDIR/spool/exim_stage2

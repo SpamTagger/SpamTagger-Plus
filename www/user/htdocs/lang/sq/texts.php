@@ -109,7 +109,7 @@ $txt['HIDEFORCED'] = "Fshih mesazhet e lëshuara nga përdoruesit";
 $txt['FORCESPAM'] = "lironi mesazhin";
 //old
 $txt['ASKREASON'] = "rregullat e filtrimit";
-$txt['CONFSENDANALYSE'] = "Një kërkesë rregullimi filtri do të dërgohet në Qendrën e Analizës së MailCleaner; ai përfshin një kopje të mesazhit që është bllokuar gabimisht.";
+$txt['CONFSENDANALYSE'] = "Një kërkesë rregullimi filtri do të dërgohet në Qendrën e Analizës së SpamTagger; ai përfshin një kopje të mesazhit që është bllokuar gabimisht.";
 $txt['AREYOUSURE'] = "<span class=\"question\">A jeni i sigurt që dëshironi që ky mesazh të analizohet dhe që rregullimet e filtrit mund të aplikohen?</span>";
 $txt['ASKANALYSE'] = "Kërkesa e rregullimit të filtrit";
 $txt['PAGE'] = "Faqe";

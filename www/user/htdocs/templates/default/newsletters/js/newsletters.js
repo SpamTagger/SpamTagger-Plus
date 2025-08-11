@@ -1,7 +1,7 @@
 /**
- * MailCleaner AntiSpam
- * @copyright 2015 Fastnet SA 
- * @license Mailcleaner Public License http://www.mailcleaner.net/open/licence_en.html
+ * SpamTagger Plus, Open Source Spam Filtering
+ * @copyright 2025, SpamTagger
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  */
 
 /**

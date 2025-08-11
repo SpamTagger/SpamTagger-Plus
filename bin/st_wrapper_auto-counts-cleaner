@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2015 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 #
 #
 #   This script is a wrapper for st_counts-cleaner allowing cleaning of old
-#   mailcleaner counts file smoothly over time.
+#   SpamTagger counts file smoothly over time.
 #
 #   Usage:
 #           st_wrapper_auto-counts-cleaner

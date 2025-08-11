@@ -1,7 +1,7 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  */
 
 class Default_Form_DomainSpamcovercharge extends Zend_Form {
@@ -55,7 +55,7 @@ class Default_Form_DomainSpamcovercharge extends Zend_Form {
 		$wwelement = new Default_Model_WWElement();
 
 		$spamcovercharge = new Zend_Form_Element_Textarea('spamcovercharge', array(
-			'label'		=>  $t->_('Adjust these SpamC rules :</br>Example :</br>MC_LOTS_OF_MONEY -1.0'),
+			'label'		=>  $t->_('Adjust these SpamC rules :</br>Example :</br>ST_LOTS_OF_MONEY -1.0'),
 			'title'		=> $t->_("You need to enter the exact name of a SpamC rule and an associated score. Keep in mind that the original score will also be applied"),
 			'required'	=> false,
 			'rows'		=> 10,

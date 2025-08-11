@@ -1,19 +1,19 @@
-Subject: MailCleaner quarantine report
+Subject: SpamTagger quarantine report
 Hello,
 
-This is the Mailcleaner report for the last ??NBDAYS days.
+This is the SpamTagger report for the last ??NBDAYS days.
 
 For the address: ??ADDRESS
 
 The following summary lists all the messages that have been blocked by 
-Mailcleaner.
+SpamTagger.
 
 If one of these messages should not have been blocked, you can force it to be 
 delivered by clicking on the link "Force:".
 
 The messages listed will be destroyed in ??SPAMNBDAYS days.
 
-If you wish to customize your settings for MailCleaner, or
+If you wish to customize your settings for SpamTagger or
 see the real-time quarantine, please visit the user interface at:
 
 ??WEBBASEURL?d=??DIGEST_ID&amp;p=u
@@ -33,8 +33,8 @@ Message ID: ??ID
 ??END_LIST
 
 ------------------------------------------------------
-This is an automatic message sent by MailCleaner.
+This is an automatic message sent by SpamTagger.
 Please do not reply.
-For more information: ??MAILCLEANERURL
+For more information: ??SPAMTAGGERURL
 
 ??SUMSIGNATURE

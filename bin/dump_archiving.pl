@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w -I../lib/
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -37,8 +37,8 @@ use File::Copy;
 
 my $domain = shift;
 
-my $uid = getpwnam( 'mailcleaner' );
-my $gid = getgrnam( 'mailcleaner' );
+my $uid = getpwnam( 'spamtagger' );
+my $gid = getgrnam( 'spamtagger' );
 
 my $conf = ReadConfig::getInstance();
 my $op = $conf->getOption('SRCDIR');

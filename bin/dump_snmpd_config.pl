@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2021 John Mertz <git@john.me.tz>
 #
@@ -38,17 +38,17 @@ require GetDNS;
 my $DEBUG = 1;
 
 my %config = readConfig("/etc/spamtagger.conf");
-my $system_mibs_file = '/usr/share/snmp/mibs/MAILCLEANER-MIB.txt';
+my $system_mibs_file = '/usr/share/snmp/mibs/SPAMTAGGER-MIB.txt';
 if ( ! -d '/usr/share/snmp/mibs') {
  mkpath('/usr/share/snmp/mibs');
 }
-my $st_mib_file = $config{'SRCDIR'}.'/www/guis/admin/public/downloads/MAILCLEANER-MIB.txt';
+my $st_mib_file = $config{'SRCDIR'}.'/www/guis/admin/public/downloads/SPAMTAGGER-MIB.txt';
 
 my $lasterror = "";
 
 my $dbh;
 $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-			"mailcleaner", "$config{MYMAILCLEANERPWD}", {RaiseError => 0, PrintError => 0})
+			"spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
 		or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
 my %snmpd_conf;

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sed -i "s/^MYMAILCLEANERPWD.*$/MYMAILCLEANERPWD = ${@}/g" /etc/spamtagger.conf
+sed -i "s/^MYSPAMTAGGERPWD.*$/MYSPAMTAGGERPWD = ${@}/g" /etc/spamtagger.conf

@@ -1,9 +1,9 @@
 <?php 
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ?>
 <?php echo $this->doctype() ?>
@@ -61,7 +61,7 @@
  </div>
  
  <div id="mainheader">
-  <a href="<?php echo $this->indexurl?>"><img id="stlogo" src="<?php echo $this->images_path; ?>/logo_name.png" alt="MailCleaner, antispam and antivirus" /></a>
+  <a href="<?php echo $this->indexurl?>"><img id="stlogo" src="<?php echo $this->images_path; ?>/logo_name.png" alt="SpamTagger Plus, Open Source Spam Filtering" /></a>
   <?php if (!$this->is_slave) { ?>
   <div id="statuspanel">
   </div>
@@ -99,19 +99,10 @@
 </div>
 
 <div id="pagefoot">
-<div id="legalpanel">
-  <?php
-        $sysconf = MailCleaner_Config::getInstance();
-        if ($sysconf->getOption('REGISTERED') == "1") {
-                echo '<p id="copyright"><a href="http://www.mailcleaner.net" target="_blank">&copy; www.mailcleaner.net</a></p>';
-                echo '<p id="company"><a href="https://support.mailcleaner.net/" target="_blank">Support provided by MailCleaner</a></p>';
-        } else {
-                echo '<p id="copyright"><a href="http://www.mailcleaner.org" target="_blank">&copy; www.mailcleaner.org</a></p>';
-                echo '<p id="company"><a href="http://forum.mailcleaner.org/" target="_blank">Support provided by Community</a></p>';
-        }
-
- ?>
-</div>
+  <div id="legalpanel">
+    <p id="copyright"><a href="https://Spamtagger.org" target="_blank">&copy; SpamTagger</a></p>
+    <p id="company"><a href="https://github.com/SpamTagger/SpamTagger-Plus/issues/" target="_blank">Support provided by Community</a></p>
+  </div>
 </div>
 
 </div>

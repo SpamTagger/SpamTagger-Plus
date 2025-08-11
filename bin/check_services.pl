@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -107,7 +107,7 @@ sub checkHTTP {
   $service = $params->{'service'};
   my $checkURL=$updates_config->param('service-check.'.$service.'URL');
   my $license='xxxx-xxxx-xxxx-xxxx';
-  my $agent='MailCleaner host/0.1 ';
+  my $agent='SpamTagger host/0.1 ';
 
   my $ua = LWP::UserAgent->new;
   $ua->timeout($timeout);

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -67,8 +67,8 @@ sub create {
       my $socket = $conf->getOption('VARDIR')."/run/mysql_slave/mysqld.sock";
       
       $dsn = "DBI:mysql:database=st_config;host=localhost;mysql_socket=$socket";
-      $dbuser = 'mailcleaner';
-      $dbpass = $conf->getOption('MYMAILCLEANERPWD');
+      $dbuser = 'spamtagger';
+      $dbpass = $conf->getOption('MYSPAMTAGGERPWD');
       $dbtable = 'mysql_auth';
       $loginfield = 'username';
       $passfield = 'password';

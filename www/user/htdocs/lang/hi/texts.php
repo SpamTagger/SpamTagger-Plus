@@ -84,14 +84,14 @@ $txt['NEWSLETTERSSHORTHELP'] = "यहां आप अपने समाचा
 $txt['NEWSLETTERSTOPICTITLE'] = "समाचार पत्र";
 $txt['NEWSLETTERSTOPIC'] = "समाचार पत्र";
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "समाचार पत्र";
-$txt['CONFSENDANALYSE'] = "एक फ़िल्टर समायोजन अनुरोध MailCleaner विश्लेषण केंद्र को भेजा जाएगा; इसमें उस संदेश की एक प्रति शामिल है जिसे त्रुटिपूर्ण रूप से अवरुद्ध किया गया था।";
+$txt['CONFSENDANALYSE'] = "एक फ़िल्टर समायोजन अनुरोध SpamTagger विश्लेषण केंद्र को भेजा जाएगा; इसमें उस संदेश की एक प्रति शामिल है जिसे त्रुटिपूर्ण रूप से अवरुद्ध किया गया था।";
 //old
 $txt['ASKREASON'] = "फ़िल्टरिंग नियम प्रदर्शित करें";
 //old

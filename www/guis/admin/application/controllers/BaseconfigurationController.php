@@ -1,7 +1,7 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
  *                2017 Mentor Reka <reka.mentor@gmail.com>
@@ -30,7 +30,7 @@ class BaseconfigurationController extends Zend_Controller_Action
 
 //	var_dump($this->view->serverUrl().$this->view->baseUrl()); die();
 
-	$conf = MailCleaner_Config::getInstance();
+	$conf = SpamTagger_Config::getInstance();
         if (file_exists($conf->getOption('VARDIR').'/run/configurator/dis_conf_interface.enable')) {
 	    $wizard = Zend_Navigation_Page::factory(array(
     		'label' => 'Wizard',
@@ -83,8 +83,8 @@ class BaseconfigurationController extends Zend_Controller_Action
             if ($form->isValid($request->getPost())) {
             	try {
 			// Enable/disable the configurator
-       	                require_once('MailCleaner/Config.php');
-                        $config = new MailCleaner_Config();
+       	                require_once('SpamTagger/Config.php');
+                        $config = new SpamTagger_Config();
 			$enable_configurator=$this->getRequest()->getParam('enable_configurator');
 			$disable_configurator=$enable_configurator == "true" ? "false" : "true";
 			$tmp_file=$config->getOption('VARDIR')."/run/configurator/dis_conf_interface.enable";
@@ -342,7 +342,7 @@ class BaseconfigurationController extends Zend_Controller_Action
 	$mgrhostid = new Default_Model_HostIdManager();
         $mgrhostid->load();
 
-        $sysconf = MailCleaner_Config::getInstance();
+        $sysconf = SpamTagger_Config::getInstance();
 	$registered = 0;
         if ($sysconf->getOption('REGISTERED') > 0 ) {
           $registered = $sysconf->getOption('REGISTERED');

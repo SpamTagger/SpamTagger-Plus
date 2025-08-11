@@ -10,7 +10,7 @@ SSLSessionCache dbm:__VARDIR__/run/ssl.cache
 SSLSessionCacheTimeout 300
 SSLCompression off
 <VirtualHost *:4242>
-    AssignUserId mailcleaner mailcleaner
+    AssignUserId spamtagger spamtagger
 
     DocumentRoot "__SRCDIR__/www/configurator"
     ErrorLog __VARDIR__/log/apache/error_configurator.log

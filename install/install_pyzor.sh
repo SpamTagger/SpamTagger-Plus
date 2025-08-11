@@ -16,7 +16,7 @@ tar -xvjf pyzor.tar.bz2
 cd pyzor-0.4.0
 python setup.py build 2>&1
 python setup.py install 2>&1
-#su mailcleaner -c "pyzor discover" 2>&1
+#su spamtagger -c "pyzor discover" 2>&1
 
 cd $BACK
 rm -rf $SRCDIR/install/src/pyzor-0.4.0

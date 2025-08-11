@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   Root password change page of MailCleaner "Configurator" wizard
+#   Root password change page of SpamTagger "Configurator" wizard
 #
 -->
 <?php
@@ -45,7 +45,7 @@ if ('rootpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 	    if (isset($_POST['submit_rootpass'])) {
   	      if (!empty($_POST['newpass']) && !empty($_POST['confnewpass'])) {
 	        if ($_POST['newpass'] == $_POST['confnewpass']) {
-		  $cmdrp = "sudo /usr/mailcleaner/bin/setpassword root ".$_POST['newpass'];
+		  $cmdrp = "sudo /usr/spamtagger/bin/setpassword root ".$_POST['newpass'];
 		  $cmdrp = escapeshellcmd($cmdrp);
 		  $cmdrp = str_replace('!', '\!', $cmdrp);
 	          exec($cmdrp, $outputrp, $retrp);

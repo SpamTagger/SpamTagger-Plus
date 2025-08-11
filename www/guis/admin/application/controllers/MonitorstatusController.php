@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  *
  * controller for status pages
  */
@@ -40,7 +40,7 @@ class MonitorstatusController extends Zend_Controller_Action
 
 		$view->pieLink = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('todaypie', 'monitorstatus', NULL, array());
 		$view->columns = $this->_columns;
-		$config = new MailCleaner_Config();
+		$config = new SpamTagger_Config();
 		$view->quarantinedir = $config->getOption('VARDIR')."/spam";
     	$view->initial_loading = 1;
 	    $request = $this->getRequest();
@@ -268,7 +268,7 @@ class MonitorstatusController extends Zend_Controller_Action
 		$view->graphBaseLink = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('graph', 'monitorreporting', NULL, array());
     	$view->slave = $slave;
 		$view->columns = $this->_columns;
-		$config = new MailCleaner_Config();
+		$config = new SpamTagger_Config();
 		$view->quarantinedir = $config->getOption('VARDIR')."/spam";
     	$view->initial_loading = 0;
 

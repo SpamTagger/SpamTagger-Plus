@@ -28,4 +28,4 @@ cd $BACK
 #rm -rf $SRCDIR/install/src/razor-agents-sdk-2.03
 rm -rf $SRCDIR/install/src/razor-agents-2.82
 
-#su mailcleaner -c "/usr/bin/razor-admin -discover"
+#su spamtagger -c "/usr/bin/razor-admin -discover"

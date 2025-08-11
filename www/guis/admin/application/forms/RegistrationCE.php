@@ -1,7 +1,7 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Mentor Reka
  * @copyright (C) 2017 Mentor Reka <reka.mentor@gmail.com>
  * Registration CE form
@@ -28,9 +28,9 @@ class Default_Form_RegistrationCE extends ZendX_JQuery_Form
 	   $this->setMethod('post');
            $this->setAttrib('id', 'registration_form_ce');
 
-            $sysconf = MailCleaner_Config::getInstance();
+            $sysconf = SpamTagger_Config::getInstance();
 	    require_once ('helpers/DM_Custom.php');
-	    $db = DM_Custom :: getInstance('127.0.0.1', '3306', 'mailcleaner', $sysconf->getOption('MYMAILCLEANERPWD'), 'st_community');
+	    $db = DM_Custom :: getInstance('127.0.0.1', '3306', 'spamtagger', $sysconf->getOption('MYSPAMTAGGERPWD'), 'st_community');
 
 	    $query = "SELECT * from registration LIMIT 1";
 	    $res = $db->getHash($query);

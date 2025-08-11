@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * controller for general settings
  */
@@ -28,7 +28,7 @@ class GeneralsettingsController extends Zend_Controller_Action
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Company', 'id' => 'company', 'action' => 'company', 'controller' => 'generalsettings')));
 
 	// Autoconfiguration is available only for EE edition
-        $sysconf = MailCleaner_Config::getInstance();
+        $sysconf = SpamTagger_Config::getInstance();
         if ($sysconf->getOption('REGISTERED') == 1) {
 		$this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Auto-configuration', 'id' => 'autoconfiguration', 'action' => 'autoconfiguration', 'controller' => 'generalsettings')));
         }

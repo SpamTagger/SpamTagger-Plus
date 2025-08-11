@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * SNMP service settings form
  */
@@ -46,7 +46,7 @@ class Default_Form_Snmpd extends ZendX_JQuery_Form
 	    require_once('Validate/HostList.php');
 		$allowed_ip = new Zend_Form_Element_Textarea('allowed_ip', array(
 		      'label'    =>  $t->_('Allowed IP/ranges')." :",
-                      'title' => $t->_("IP/ranges allowed to send SNMP requests to the MailCleaner server"),
+                      'title' => $t->_("IP/ranges allowed to send SNMP requests to the SpamTagger server"),
 		      'required'   => false,
 		      'rows' => 5,
 		      'cols' => 30,

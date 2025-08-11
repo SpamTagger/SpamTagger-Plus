@@ -62,8 +62,8 @@ __FI__
 __INCLUDE__ stage1/log_selector
 
 message_logs = true
-exim_user = mailcleaner
-exim_group = mailcleaner
+exim_user = spamtagger
+exim_group = spamtagger
 log_file_path = __IF_USE_SYSLOGENABLED__ VARDIR/log/exim_stage1/%slog
 pid_file_path = VARDIR/run/exim_stage1.pid
 spool_directory = VARDIR/spool/exim_stage1
@@ -134,7 +134,7 @@ __ELSE__ MASKRELAY
 __FI__
          by $smtp_active_hostname stage1 \
          ${if def:received_protocol {with ${received_protocol}}} \n\t\
-         (Exim MailCleaner) \n\t\
+         (Exim SpamTagger) \n\t\
          id ${message_id} ${if def:received_for {\n\tfor <$received_for>}} ${if def:sender_address {\n\tfrom <$sender_address>}}"
 
 domainlist local_domains =
@@ -349,23 +349,23 @@ __FI__
   __INCLUDE__ stage1/remove_headers
 __IF__ __LISTS_PER_DOMAIN__
   warn    condition    = ${if eq{$acl_m1}{true}{yes}{no}}
-          add_header    = X-MailCleaner-White-IP-DOM: WhIPDom
+          add_header    = X-SpamTagger-White-IP-DOM: WhIPDom
 __FI__
   warn    hosts         = <; +trusted_hosts
-          add_header    = X-MailCleaner-TrustedIPs: Ok
+          add_header    = X-SpamTagger-TrustedIPs: Ok
   warn    hosts         = <; +html_ctrl_hosts
-          add_header    = X-MailCleaner-HTML-WL: Ok
+          add_header    = X-SpamTagger-HTML-WL: Ok
   warn    spf           = pass
-          add_header    = :after_received:X-MailCleaner-SPF: $spf_result
+          add_header    = :after_received:X-SpamTagger-SPF: $spf_result
           set acl_m_checkspf = $spf_result
   warn    !spf          = pass
           !hosts        = <; +relay_from_hosts ; NOSPFDMARCHOSTS
           !authenticated = *
-          add_header    = :after_received:X-MailCleaner-SPF: $spf_result
+          add_header    = :after_received:X-SpamTagger-SPF: $spf_result
   warn    !spf          = pass
           hosts         = NOSPFDMARCHOSTS
-          remove_header = X-MailCleaner-SPF
-          add_header    = :after_received:X-MailCleaner-SPF: whitelisted (was $spf_result)
+          remove_header = X-SpamTagger-SPF
+          add_header    = :after_received:X-SpamTagger-SPF: whitelisted (was $spf_result)
   deny    message       = This domain does not accept unsigned bounces.
           senders       = :
           domains       = +domains_to_check_batv
@@ -398,7 +398,7 @@ __FI__
           logwrite      = DEBUG - refused, bad BATV signature - smtp:refused,smtp:refused:refused_badbatv
  __FI__
 
-  accept  local_parts   = mailcleaner_address_list
+  accept  local_parts   = SpamTagger_address_list
           domains       = +domains_to_addlistcallout
           message       = accepting and processing address list message
           condition     = ${if exists{ADDRESSESDIR/${domain_data}.posters} {yes}{no} }
@@ -461,7 +461,7 @@ __FI__
 
   warn    condition     = ${if and{{def:sender_host_address}{!def:sender_host_name}}{yes}{no}}
           !authenticated = *
-          add_header    = X-MailCleaner-RDNS: invalid reverse DNS for $sender_host_address
+          add_header    = X-SpamTagger-RDNS: invalid reverse DNS for $sender_host_address
           logwrite      = Invalid reverse DNS for $sender_host_address (port $received_port)
 
 __IF__ REJECTBADRDNS
@@ -960,8 +960,8 @@ acl_check_data:
 
 __IF__ USETLS
   warn	  !encrypted = *
-          remove_header = X-MailCleaner-TLS-Client-Certificate
-          add_header = X-MailCleaner-TLS-Client-Certificate: not encrypted
+          remove_header = X-SpamTagger-TLS-Client-Certificate
+          add_header = X-SpamTagger-TLS-Client-Certificate: not encrypted
  __IF__ DEBUG
           logwrite = Message not encrypted with TLS.
  __FI__
@@ -969,8 +969,8 @@ __IF__ USETLS
   warn	  encrypted = *
           !verify = certificate
           condition = ${if def:tls_in_peerdn {yes}{no}}
-          remove_header = X-MailCleaner-TLS-Client-Certificate
-          add_header = X-MailCleaner-TLS-Client-Certificate: invalid (${tls_peerdn})
+          remove_header = X-SpamTagger-TLS-Client-Certificate
+          add_header = X-SpamTagger-TLS-Client-Certificate: invalid (${tls_peerdn})
  __IF__ DEBUG
           logwrite = Invalid TLS client certificate presented (${tls_peerdn}).
  __FI__
@@ -978,16 +978,16 @@ __IF__ USETLS
   warn	  encrypted = *
           !verify = certificate
           condition = ${if def:tls_in_peerdn {no}{yes}}
-          remove_header = X-MailCleaner-TLS-Client-Certificate
-          add_header = X-MailCleaner-TLS-Client-Certificate: none
+          remove_header = X-SpamTagger-TLS-Client-Certificate
+          add_header = X-SpamTagger-TLS-Client-Certificate: none
  __IF__ DEBUG
           logwrite = No TLS client certificate presented.
  __FI__
 
   warn	  encrypted = *
 	  verify = certificate
-          remove_header = X-MailCleaner-TLS-Client-Certificate
-          add_header = X-MailCleaner-TLS-Client-Certificate: valid
+          remove_header = X-SpamTagger-TLS-Client-Certificate
+          add_header = X-SpamTagger-TLS-Client-Certificate: valid
 __FI__
 
   warn    set acl_m_linelength_limit = 998
@@ -1001,7 +1001,7 @@ __ELSE__ ALLOW_LONG
 __FI__
 
 # FULLWHITELIST
-  accept  remove_header = X-MailCleaner-FullWhitelist
+  accept  remove_header = X-SpamTagger-FullWhitelist
           remove_header = X-Newsl
           hosts         = ${if exists {VARDIR/spool/spamtagger/full_whitelisted_hosts.list}\
                                {+full_whitelisted_hosts}\
@@ -1034,7 +1034,7 @@ __FI__
   warn    dmarc_status   = quarantine
           !authenticated = *
           !hosts         = NOSPFDMARCHOSTS
-          add_header     = X-MailCleaner-DMARC: quarantine
+          add_header     = X-SpamTagger-DMARC: quarantine
           log_message    = Message from $dmarc_used_domain failed sender's DMARC policy, should quarantine.
 
 __IF__ REJECTDMARC
@@ -1060,15 +1060,15 @@ __ELSE__ REJECTDMARC
   warn    dmarc_status   = reject
           !authenticated = *
           !hosts         = NOSPFDMARCHOSTS
-          add_header     = X-MailCleaner-DMARC: reject
+          add_header     = X-SpamTagger-DMARC: reject
           log_message    = Message from $dmarc_used_domain failed sender's DMARC policy, should reject.
 __FI__
 
   warn    !hosts        = <; +relay_from_hosts
           !authenticated = *
-          add_header = :after_received:X-MailCleaner-recipients: $recipients
-          add_header = :after_received:X-MailCleaner-sender_address: $sender_address
-          add_header = :after_received:X-MailCleaner-return_path: $return_path
+          add_header = :after_received:X-SpamTagger-recipients: $recipients
+          add_header = :after_received:X-SpamTagger-sender_address: $sender_address
+          add_header = :after_received:X-SpamTagger-return_path: $return_path
 
   accept  set acl_c8    = smtp:accepted
           set acl_c9    = STATSADD
@@ -1081,8 +1081,6 @@ __FI__
 #               Specifies how addresses are handled                  #
 ######################################################################
 begin routers
-
-.include_if_exists SRCDIR/etc/exim/st_binary/st_router
 
 # FULLWHITELIST
 full_whitelist:
@@ -1104,7 +1102,7 @@ full_whitelist:
                    }\
                }
   senders    = +full_whitelisted_senders
-  headers_add = X-MailCleaner-FullWhitelist: fully whitelisted
+  headers_add = X-SpamTagger-FullWhitelist: fully whitelisted
 
 batv_redirect:
   driver = redirect
@@ -1125,7 +1123,7 @@ bypass_router:
   domains = +relay_to_domains
   local_parts = ${if exists{BYPASSDIR/${domain_data}} {nwildlsearch;BYPASSDIR/${domain_data}} {} }
   self = send
-  headers_add = X-MailCleaner: bypassed
+  headers_add = X-SpamTagger: bypassed
   route_list = * 127.0.0.1 byname
   no_verify
 
@@ -1147,7 +1145,7 @@ callout_router:
 
 address_list_router:
   driver = accept
-  local_parts = mailcleaner_address_list
+  local_parts = spamtagger_address_list
   domains = +domains_to_addlistcallout
   condition = ${if exists{ADDRESSESDIR/${domain_data}.posters} {yes}{no} }
   transport = address_list_transport
@@ -1157,7 +1155,7 @@ copyto_route:
   driver = redirect
   check_ancestor
   qualify_preserve_domain
-  headers_add = X-MailCleaner-CopyTo: this is a message copy (original sender: ${sender_address})
+  headers_add = X-SpamTagger-CopyTo: this is a message copy (original sender: ${sender_address})
   data = ${if and{ \
                {!eq {$sender_address}{}} \
                {or {\
@@ -1176,7 +1174,7 @@ __IF__ USEARCHIVER
 archiver_route:
   debug_print = "R: archiver_route for $domain"
   driver = manualroute
-  condition = ${if def:header_MailCleaner-CopyTo:{0}{1}}
+  condition = ${if def:header_SpamTagger-CopyTo:{0}{1}}
   senders = ${if and{ \
                  {!eq {$sender_address}{}} \
                  {or {\
@@ -1198,7 +1196,7 @@ toenginefilter_forward:
   driver = accept
   transport = to_engine
   domains = +relay_to_domains
-  headers_remove = X-MailCleaner:X-MailCleaner-Forced
+  headers_remove = X-SpamTagger:X-SpamTagger-Forced
   condition = ${if exists{VARDIR/spool/tmp/spamtagger/exim_nostage2}{yes}{no}}
   no_verify
 
@@ -1209,13 +1207,13 @@ filter_forward:
   #domains = ! +local_domains  ->  to filter outgoing smtp traffic too; otherwise it goes out by next router (dnslookup)
   self = send
   route_list = * 127.0.0.1 byname
-  headers_remove = X-MailCleaner:X-MailCleaner-Forced
+  headers_remove = X-SpamTagger:X-SpamTagger-Forced
 __INCLUDE__ stage1/filter_forward
 
 dnslookup_freeze:
   driver = redirect
   senders = FROZENSENDERS
-  user = mailcleaner
+  user = spamtagger
   allow_filter
   allow_freeze
   data = "#Exim filter \n freeze"
@@ -1241,8 +1239,6 @@ __INCLUDE__ stage1/routers
 #                      TRANSPORTS CONFIGURATION                      #
 ######################################################################
 begin transports
-
-.include_if_exists SRCDIR/etc/exim/st_binary/st_transport
 
 # FULLWHITELIST
 bypass_full_whitelist:
@@ -1290,8 +1286,8 @@ __FI__
 
 to_engine:
   driver = appendfile
-  user = mailcleaner
-  group = mailcleaner
+  user = spamtagger
+  group = spamtagger
   mode = 640
   mailstore_format
   create_directory = true
@@ -1409,8 +1405,8 @@ __FI__
 address_list_transport:
   driver = pipe
   command = SRCDIR/etc/exim/address_list.pl ${domain} ${sender_address} ${local_part}@${domain}
-  user = mailcleaner
-  group = mailcleaner
+  user = spamtagger
+  group = spamtagger
   timeout = 10m
   log_output = true
 

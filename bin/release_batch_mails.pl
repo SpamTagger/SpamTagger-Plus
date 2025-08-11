@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
-#   Copyright (C) 2019 John Mertz <john.mertz@mailcleaner.net>
+#   SpamTagger Plus - Open Source Spam Filtering
+#   Copyright (C) 2019 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -143,8 +143,8 @@ if ( $SRCDIR eq '' ) {
   $SRCDIR="/usr/spamtagger";
 }
 
-my $MYMAILCLEANERPWD=`grep '^MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3`;
-chomp $MYMAILCLEANERPWD;
+my $MYSPAMTAGGERPWD=`grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3`;
+chomp $MYSPAMTAGGERPWD;
 
 my $SOCKET="$VARDIR/run/mysql_slave/mysqld.sock";
 my $COMMAND="/opt/mysql5/bin/mysql";
@@ -181,7 +181,7 @@ if (defined $args{M_score}) {
 $QUERY =~ s/^(.*) AND/$1;/;
 print "\nSearch Query:\n" . $QUERY . "\n\n";
 
-my $results = `echo \"$QUERY\" | $COMMAND -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -N st_spool`;
+my $results = `echo \"$QUERY\" | $COMMAND -S $SOCKET -uspamtagger -p$MYSPAMTAGGERPWD -N st_spool`;
 unless ($results) {
     die "No quarantined items found using this criteria.\n";
 }
@@ -243,7 +243,7 @@ foreach (@messages) {
     my $UPDATE="UPDATE spam SET forced = '1' WHERE exim_id = '$_->{exim_id}';";
     print "\n$SRCDIR/bin/force_message.pl $_->{exim_id} $_->{to_user}";
     `$SRCDIR/bin/force_message.pl $_->{exim_id} $_->{to_user}`;
-    `echo \"$UPDATE\" | $COMMAND -S $SOCKET -umailcleaner -p$MYMAILCLEANERPWD -N st_spool`;
+    `echo \"$UPDATE\" | $COMMAND -S $SOCKET -uspamtagger -p$MYSPAMTAGGERPWD -N st_spool`;
 }
 printf "\nFinished\n";
 

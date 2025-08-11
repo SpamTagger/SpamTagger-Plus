@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2023 John Mertz <git@john.me.tz>
 #
@@ -39,7 +39,7 @@ if ($0 =~ m/(\S*)\/\S+.pl$/) {
   unshift (@INC, $path);
 }
 require ConfigTemplate;
-require MCDnsLists;
+require STDnsLists;
 require GetDNS;
 require DB;
 
@@ -50,8 +50,8 @@ my $include_debug = 0;
 
 my $trusted_configs = '/opt/exim4/etc/trusted_configs';
 
-my $uid = getpwnam( 'mailcleaner' );
-my $gid = getgrnam( 'mailcleaner' );
+my $uid = getpwnam( 'spamtagger' );
+my $gid = getgrnam( 'spamtagger' );
 
 my $lasterror = "";
 my $eximid = shift;
@@ -254,7 +254,7 @@ sub dump_exim_file
   	$stockme = "";
   }
 
-  $sys_conf{'__DBPASSWD__'} = $conf->getOption('MYMAILCLEANERPWD');
+  $sys_conf{'__DBPASSWD__'} = $conf->getOption('MYSPAMTAGGERPWD');
   $exim_conf{'__IF_STOCK__'} = $stockme;
 
 
@@ -509,8 +509,8 @@ sub get_system_config
     return unless %row;
 
  	$sconfig{'__PRIMARY_HOSTNAME__'} = $row{'hostname'};
-    if ($conf->getOption('MCHOSTNAME')) {
-         $sconfig{'__PRIMARY_HOSTNAME__'} = $conf->getOption('MCHOSTNAME');
+    if ($conf->getOption('STHOSTNAME')) {
+         $sconfig{'__PRIMARY_HOSTNAME__'} = $conf->getOption('STHOSTNAME');
     }
     $sconfig{'__QUALIFY_DOMAIN__'} = `/bin/hostname --fqdn`;
     if ($conf->getOption('DEFAULTDOMAIN') ne '') {
@@ -838,7 +838,7 @@ sub get_exim_config{
           $bsrblsstring = $row{'bs_rbls'};
         }
 
-        my $dnslists = new MCDnsLists(\&log_dns, 1);
+        my $dnslists = new STDnsLists(\&log_dns, 1);
         $dnslists->loadRBLs( $conf->getOption('SRCDIR')."/etc/rbls", $rblsstring, 'IPRBL',
                                 '', '',
                                 '' , 'dump_exim');
@@ -854,7 +854,7 @@ sub get_exim_config{
         }
         $rbl_exim_string =~ s/^\s*:\s*//;
 
-        my $bsdnslists = new MCDnsLists(\&log_dns, 1);
+        my $bsdnslists = new STDnsLists(\&log_dns, 1);
         $bsdnslists->loadRBLs( $conf->getOption('SRCDIR')."/etc/rbls", $bsrblsstring, 'BSRBL',
                                 '', '',
                                 '' , 'dump_exim');
@@ -916,7 +916,7 @@ sub get_exim_config{
           $cmd = "cat ".$conf->getOption('SRCDIR')."/etc/edition.def";
           my $edition = `$cmd`;
           chomp($edition);
-          $config{'__SMTP_BANNER__'} = '$smtp_active_hostname ESMTP MailCleaner ('.$edition.$version.') $tod_full';
+          $config{'__SMTP_BANNER__'} = '$smtp_active_hostname ESMTP SpamTagger Plus ('.$edition.$version.') $tod_full';
         }
 
         $config{'host_reject'} = $row{'host_reject'};
@@ -1080,7 +1080,7 @@ sub print_ip_domain_rule {
 		$smtp_rule = <<"END";
 warn    hosts         = <; $sender_list
         domains       = <; $domain
-	add_header    = X-MailCleaner-Black-IP-DOM: quarantine
+	add_header    = X-SpamTagger-Black-IP-DOM: quarantine
 
 END
 	} elsif ($type eq 'black-ip-dom') {

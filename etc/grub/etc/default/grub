@@ -3,7 +3,7 @@
 
 GRUB_DEFAULT=1
 GRUB_TIMEOUT=5
-GRUB_DISTRIBUTOR=MailCleaner
+GRUB_DISTRIBUTOR=SpamTagger
 GRUB_CMDLINE_LINUX_DEFAULT="video=uvesafb:1024x768-32 splash=verbose,fadein,theme:default quiet CONSOLE=tty1"
 GRUB_CMDLINE_LINUX=""
 

@@ -1,17 +1,17 @@
-Subject: Raport kwarantanny MailCleaner
+Subject: Raport kwarantanny SpamTagger
 Cześć,
 
-To jest raport Mailcleaner z ostatnich ??NBDAYS dnia/dni.
+To jest raport SpamTagger z ostatnich ??NBDAYS dnia/dni.
 
 Na adres: ??ADDRESS
 
-Poniższe podsumowanie zawiera listę wszystkich wiadomości, które zostały zablokowane przez Mailcleaner.
+Poniższe podsumowanie zawiera listę wszystkich wiadomości, które zostały zablokowane przez SpamTagger.
 
 Jeśli jedna z tych wiadomości nie powinna zostać zablokowana, możesz wymusić jej dostarczone przez kliknięcie w link „Dostarcz:”.
 
 Wymienione wiadomości zostaną skasowane za ??SPAMNBDAYS dni.
 
-Jeśli chcesz dostosować ustawienia MailCleaner lub zobaczyć kwarantannę w czasie rzeczywistym, odwiedź interfejs użytkownika pod adresem:
+Jeśli chcesz dostosować ustawienia SpamTagger lub zobaczyć kwarantannę w czasie rzeczywistym, odwiedź interfejs użytkownika pod adresem:
 
 ??WEBBASEURL?d=??DIGEST_ID&amp;p=u
 
@@ -30,8 +30,8 @@ Message ID: ??ID
 ??END_LIST
 
 ------------------------------------------------------
-To jest automatyczna wiadomość wysłana przez MailCleaner.
+To jest automatyczna wiadomość wysłana przez SpamTagger.
 Proszę nie odpowiadać.
-Więcej informacji: ??MAILCLEANERURL
+Więcej informacji: ??SPAMTAGGERURL
 
 ??SUMSIGNATURE

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Reka Mentor <reka.mentor@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#   This script will send anonymous statistics only for registered MailCleaners
+#   This script will send anonymous statistics only for registered SpamTaggers
 #   who have checked the "I accept to send anonymous statistics" on the "Register as a Community Edition" form
 #   in Configuration > Base system > Registration
 #
@@ -44,7 +44,7 @@ export http_proxy=$HTTPPROXY
 
 REGISTERED=$(grep 'REGISTERED' $CONFFILE | cut -d ' ' -f3)
 
-# For unregistered MailCleaner there is no stats to send
+# For unregistered SpamTagger there is no stats to send
 if [ "$REGISTERED" != "2" ]; then
   exit 0
 fi
@@ -64,7 +64,7 @@ if [ "$ACCEPT_SEND_STATISTICS" != "1" ]; then
 fi
 
 # Basic URL
-URL="http://reselleradmin.mailcleaner.net/community/stats.php?"
+URL="http://reselleradmin.spamtagger.org/community/stats.php?"
 STATS=$($SRCDIR/bin/get_stats.pl _global -1 +0)
 if [ -z "$STATS" ]; then
   # No stats for last day ..

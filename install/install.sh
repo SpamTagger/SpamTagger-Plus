@@ -14,13 +14,13 @@ if [ "$VARDIR" = "" ]; then
 fi
 
 export ACTUALUPDATE="2014120101"
-export MCVERSION="Enterprise Edition 2014"
+export STVERSION="Enterprise Edition 2014"
 
 ###############################################
-### creating mailcleaner, mysql and clamav user
-if [ "$(grep 'mailcleaner' /etc/passwd)" = "" ]; then
-  groupadd mailcleaner 2>&1 >>$LOGFILE
-  useradd -d $VARDIR -s /bin/bash -g mailcleaner mailcleaner 2>&1 >>$LOGFILE
+### creating spamtagger, mysql and clamav user
+if [ "$(grep 'spamtagger' /etc/passwd)" = "" ]; then
+  groupadd spamtagger 2>&1 >>$LOGFILE
+  useradd -d $VARDIR -s /bin/bash -g spamtagger spamtagger 2>&1 >>$LOGFILE
 fi
 if [ "$(grep 'mysql' /etc/passwd)" = "" ]; then
   groupadd mysql 2>&1 >>$LOGFILE
@@ -35,7 +35,7 @@ fi
 ### check or create spool dirs
 #echo ""
 echo -n " - Checking/creating spool directories...              "
-./MC_create_vars.sh 2>&1 >>$LOGFILE
+./ST_create_vars.sh 2>&1 >>$LOGFILE
 echo "[done]"
 
 ###############################################
@@ -45,7 +45,7 @@ if [ ! -d $VARDIR/.ssh ]; then
 fi
 
 ssh-keygen -q -t rsa -f $VARDIR/.ssh/id_rsa -N ""
-chown -R mailcleaner:mailcleaner $VARDIR/.ssh
+chown -R spamtagger:spamtagger $VARDIR/.ssh
 
 if [ "$ISMASTER" = "Y" ]; then
   MASTERHOST=127.0.0.1
@@ -106,10 +106,10 @@ echo "[done]"
 ### creating databases
 
 echo -n " - Creating databases...                               "
-MYMAILCLEANERPWD=$(pwgen -1)
-echo "MYMAILCLEANERPWD = $MYMAILCLEANERPWD" >>$CONFFILE
-export MYMAILCLEANERPWD
-./MC_prepare_dbs.sh 2>&1 >>$LOGFILE
+MYSPAMTAGGERPWD=$(pwgen -1)
+echo "MYSPAMTAGGERPWD = $MYSPAMTAGGERPWD" >>$CONFFILE
+export MYSPAMTAGGERPWD
+./ST_prepare_dbs.sh 2>&1 >>$LOGFILE
 
 ## recreate my_slave.cnf
 #$SRCDIR/bin/dump_mysql_config.pl 2>&1 >> $LOGFILE
@@ -177,9 +177,9 @@ if [ -f $STPACKFILE ]; then
 fi
 if [ -d $STPACKDIR ]; then
   cp $STPACKDIR/wordlist.db $VARDIR/spool/bogofilter/database/ 2>&1 >>$LOGFILE
-  chown -R mailcleaner:mailcleaner $VARDIR/spool/bogofilter/ 2>&1 >>$LOGFILE
+  chown -R spamtagger:spamtagger $VARDIR/spool/bogofilter/ 2>&1 >>$LOGFILE
   cp $STPACKDIR/bayes_toks $VARDIR/spool/spamassassin/ 2>&1 >>$LOGFILE
-  chown -R mailcleaner:mailcleaner $VARDIR/spool/spamassassin/ 2>&1 >>$LOGFILE
+  chown -R spamtagger:spamtagger $VARDIR/spool/spamassassin/ 2>&1 >>$LOGFILE
   cp -a $STPACKDIR/clamspam/* $VARDIR/spool/clamspam/ 2>&1 >>$LOGFILE
   chown -R clamav:clamav $VARDIR/spool/clamspam 2>&1 >>$LOGFILE
 
@@ -225,7 +225,7 @@ echo "[done]"
 ###############################################
 ### correcting some rights
 
-chown -R mailcleaner $SRCDIR/etc 2>&1 >/dev/null
+chown -R spamtagger $SRCDIR/etc 2>&1 >/dev/null
 
 ## remove locate database auto update
 if [ -f /etc/cron.daily/find ]; then
@@ -253,10 +253,10 @@ CERT=$(sed -n "${CF},${CT}p;${CT}q" $CERTFILE)
 QUERY="USE st_config; UPDATE httpd_config SET tls_certificate_data='${CERT}', tls_certificate_key='${KEY}';"
 echo "$QUERY" | $SRCDIR/bin/st_mysql -m 2>&1 >>$LOGFILE
 
-echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP MailCleaner ($MCVERSION) \$tod_full';" | $SRCDIR/bin/st_mysql -m st_config 2>&1 >>$LOGFILE
+echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP SpamTagger Plus ($STVERSION) \$tod_full';" | $SRCDIR/bin/st_mysql -m st_config 2>&1 >>$LOGFILE
 
 ###############################################
-### installing mailcleaner cron job
+### installing spamtagger cron job
 
 echo -n " - Installing scheduled jobs...                        "
 echo "0,15,30,45 * * * *  $SRCDIR/scripts/cron/spamtagger_cron.pl > /dev/null" >>/var/spool/cron/crontabs/root
@@ -266,7 +266,7 @@ crontab /var/spool/cron/crontabs/root 2>&1 >>$LOGFILE
 
 echo "[done]"
 ###############################################
-### starting and installing mailcleaner service
+### starting and installing spamtagger service
 echo -n " - Starting services...                                "
 if [ ! -d $SRCDIR/etc/firewall ]; then
   mkdir $SRCDIR/etc/firewall 2>&1 >>$LOGFILE
@@ -274,7 +274,7 @@ fi
 $SRCDIR/bin/dump_firewall.pl 2>&1 >>$LOGFILE
 ln -s $SRCDIR/etc/init.d/spamtagger /etc/init.d/ 2>&1 >/dev/null
 /etc/init.d/spamtagger stop 2>&1 >>$LOGFILE
-update-rc.d mailcleaner defaults 2>&1 >>$LOGFILE
+update-rc.d spamtagger defaults 2>&1 >>$LOGFILE
 /etc/init.d/spamtagger start 2>&1 >>$LOGFILE
 sleep 5
 $SRCDIR/etc/init.d/apache restart 2>&1 >>$LOGFILE

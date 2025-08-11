@@ -29,21 +29,21 @@ sub getTaggedSubject {
   my $email = Email::create($user);
   my $tag = $email->getPref('spam_tag', '{Spam?}');
   
-  $subject =~ s/{MC_SPAM}/$tag/;
+  $subject =~ s/{ST_SPAM}/$tag/;
   return "Subject: ".$subject;
 }
 
 sub getPlainSubject {
   my $subject = Exim::expand_string('$header_subject');
   
-  $subject =~ s/{MC_SPAM}//;
+  $subject =~ s/{ST_SPAM}//;
   return "Subject: ".$subject;
 }
 
 sub getNoNewsTagSubject {
   my $subject = Exim::expand_string('$rh_subject');
   
-  $subject =~ s/{MC_NEWS}//;
+  $subject =~ s/{ST_NEWS}//;
   return "Subject:".$subject;
 }
 
@@ -57,7 +57,7 @@ sub isBlacklisted {
 
   my $email = Email::create($user);
   my $blacklisted = ($email->hasInWhiteWarnList('blacklist', $sender) || $email->hasInWhiteWarnList('blacklist', $sender_body));
-  my $header_status = Exim::expand_string('$header_X-MailCleaner-Status'); 
+  my $header_status = Exim::expand_string('$header_X-SpamTagger-Status'); 
   my $blacklist_hash = getBlacklistedFlag($local_part, $domain_part);
 
   if ($header_status =~ m/\Q$blacklist_hash/ && $blacklisted) {

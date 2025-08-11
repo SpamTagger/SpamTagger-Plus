@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   DB password change page of MailCleaner "Configurator" wizard
+#   DB password change page of SpamTagger "Configurator" wizard
 #
 -->
 <?php
@@ -24,7 +24,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
   die ('Try again later.');
 ?>
 	<h2 class="text-center">Step: <?php echo $validStep['title'] ?></h2>
-	<p>This password will be set for mysql root and mailcleaner account.</p>
+	<p>This password will be set for mysql root and spamtagger account.</p>
 	<p class="text-danger">Please change this password only before setting a cluster. Otherwise, unset your cluster and reset it after this change.</p>
         <form class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF']."?step=".$_GET['step']; ?>" method="post">
 	  <div class="form-group">
@@ -49,7 +49,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
             <div class="col-md-offset-5 col-md-4">
             <?php
         if (isset($_POST['autofill_dbpass'])) {
-          echo '<script type="text/javascript">document.getElementById("autofill_dbpass").value="'.'MCPassw0rd'.'";</script>';
+          echo '<script type="text/javascript">document.getElementById("autofill_dbpass").value="'.'STPassw0rd'.'";</script>';
          }
          if (isset($_POST['submit_dbpass'])) {
   	      if (!empty($_POST['oldpassdb']) && !empty($_POST['newpassdb']) && !empty($_POST['confnewpassdb'])) {
@@ -58,7 +58,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 		$master = getDb('', 'root', $_POST['oldpassdb']);
 		$slave = getDb('', 'root', $_POST['oldpassdb'], false);
                 if($master) {
-		      $users = array("'mailcleaner'@'%'", "'root'@'127.0.0.1'", "'root'@'::1'", "'root'@'mailcleaner'", "'root'@'localhost'");
+		      $users = array("'spamtagger'@'%'", "'root'@'127.0.0.1'", "'root'@'::1'", "'root'@'spamtagger'", "'root'@'localhost'");
 		     
 		      $sql = "SET PASSWORD FOR ".$users[0]." = PASSWORD(:newpassdb)";
 		      $sth = $master->prepare($sql);
@@ -114,14 +114,14 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 
                 ($retdb1 == 0) ? $retdb1 = "<span class='text-success'>Master instance Database root@localhost password changed</span>" : $retdb1 = "<span class='text-danger'>Failed to change Master instance Database root@localhost password</span>";
                 ($retdb2 == 0) ? $retdb2 = "<span class='text-success'>Slave instance Database root@localhost password changed</span>" : $retdb2 = "<span class='text-danger'>Failed to change Slave instance Database root@localhost password</span>";
-                ($retdb3 == 0) ? $retdb3 = "<span class='text-success'>Master instance Database mailcleaner@% password changed</span>" : $retdb3 = "<span class='text-danger'>Failed to change Master instance Database mailcleaner@% password</span>";
-                ($retdb4 == 0) ? $retdb4 = "<span class='text-success'>Slave instance Database mailcleaner@% password changed</span>" : $retdb4 = "<span class='text-danger'>Failed to change Slave instance Database mailcleaner@% password</span>";
+                ($retdb3 == 0) ? $retdb3 = "<span class='text-success'>Master instance Database spamtagger@% password changed</span>" : $retdb3 = "<span class='text-danger'>Failed to change Master instance Database spamtagger@% password</span>";
+                ($retdb4 == 0) ? $retdb4 = "<span class='text-success'>Slave instance Database spamtagger@% password changed</span>" : $retdb4 = "<span class='text-danger'>Failed to change Slave instance Database spamtagger@% password</span>";
                 ($retdb5 == 0) ? $retdb5 = "<span class='text-success'>Master instance Database root@127.0.0.1 password changed</span>" : $retdb5 = "<span class='text-danger'>Failed to change Master instance Database root@127.0.0.1 password</span>";
                 ($retdb6 == 0) ? $retdb6 = "<span class='text-success'>Master instance Database root@::1 password changed</span>" : $retdb6 = "<span class='text-danger'>Failed to change Master instance Database root@::1 password</span>";
-                ($retdb7 == 0) ? $retdb7 = "<span class='text-success'>Master instance Database root@mailcleaner password changed</span>" : $retdb7 = "<span class='text-danger'>Failed to change Master instance Database root@mailcleaner password</span>";
+                ($retdb7 == 0) ? $retdb7 = "<span class='text-success'>Master instance Database root@spamtagger password changed</span>" : $retdb7 = "<span class='text-danger'>Failed to change Master instance Database root@spamtagger password</span>";
                 ($retdb8 == 0) ? $retdb8 = "<span class='text-success'>Slave instance Database root@127.0.0.1 password changed</span>" : $retdb8 = "<span class='text-danger'>Failed to change Slave instance Database root@127.0.0.1 password</span>";
                 ($retdb9 == 0) ? $retdb9 = "<span class='text-success'>Slave instance Database root@::1 password changed</span>" : $retdb9 = "<span class='text-danger'>Failed to change Slave instance Database root@::1 password</span>";
-                ($retdb10 == 0) ? $retdb10 = "<span class='text-success'>Slave instance Database root@mailcleaner password changed</span>" : $retdb10 = "<span class='text-danger'>Failed to change Slave instance Database root@mailcleaner password</span>";
+                ($retdb10 == 0) ? $retdb10 = "<span class='text-success'>Slave instance Database root@spamtagger password changed</span>" : $retdb10 = "<span class='text-danger'>Failed to change Slave instance Database root@spamtagger password</span>";
                 ($retdbconf == 0) ? $retdbconf = "<span class='text-success'>Master and Slave instance Database passwords changed in configuration</span>" : $retdbconf = "<span class='text-danger'>Failed to change Master and Slave instance Database password in conf</span>";
                 ($retdbreplic == 0) ? $retdbreplic = "<span class='text-success'>Mysql Replication password changed</span>" : $retdbreplic = "<span class='text-danger'>Failed to change Mysql Replication password</span>";
                 ($retdbmaster == 0) ? $retdbmaster = "<span class='text-success'>Mysql password changed in table master on instance master</span>" : $retdbmaster = "<span class='text-danger'>Failed to change Mysql password in table master on instance master</span>";

@@ -1,11 +1,11 @@
-Subject: Mailcleaner Quarantaenenbericht
+Subject: SpamTagger Quarantaenenbericht
 Guten Tag,
 
-Dies ist der Bericht von MailCleaner f=FCr die letzten ??NBDAYS Tage.
+Dies ist der Bericht von SpamTagger f=FCr die letzten ??NBDAYS Tage.
 
 F=FCr die Adresse: ??ADDRESS
 
-Diese Meldung informiert Sie =FCber E-Mails, die von MailCleaner gesperrt wurden.
+Diese Meldung informiert Sie =FCber E-Mails, die von SpamTagger gesperrt wurden.
 Wenn Sie meinen, dass eines dieser E-Mails kein Spam ist, k=F6nnen Sie es befreien, 
 indem Sie auf Link klicken "Befreien:".
 
@@ -14,7 +14,7 @@ Es ist daher wichtig, die gew=F6nschte E-Mails vor Ablauf dieser Frist zu befrei
 
 Wenn Sie die Einstellungen der Berichte =E4ndern, die aktuellen Stand der Quarant=E4ne 
 einsehen oder eine Support-Anfrage erstellen m=F6chten, gehen Sie bitte auf die 
-MailCleaner Web-Schnittstelle unter der Adresse:
+SpamTagger Web-Schnittstelle unter der Adresse:
 
 ??WEBBASEURL
 
@@ -35,9 +35,9 @@ Meldung ID: ??ID
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D
-Diese Meldung wurde von MailCleaner automatisch erstellt. Beantworten Sie es bitte nicht. 
+Diese Meldung wurde von SpamTagger automatisch erstellt. Beantworten Sie es bitte nicht. 
 F=FCr weitere Informationen
 
-??MAILCLEANERURL
+??SPAMTAGGERURL
 
 ??SUMSIGNATURE

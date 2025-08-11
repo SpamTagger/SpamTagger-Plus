@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2021 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -48,8 +48,8 @@ sub config
 		'logfile'	=> $class->{'conf'}->getOption('VARDIR').'/log/mailscanner/spamd.log',
 		'socket'	=> $class->{'conf'}->getOption('VARDIR').'/run/spamassassin.sock',
 		'children'	=> 21,
-		'user'		=> 'mailcleaner',
-		'group'		=> 'mailcleaner',
+		'user'		=> 'spamtagger',
+		'group'		=> 'spamtagger',
 		'siteconfig'	=> $class->{'conf'}->getOption('SRCDIR').'/share/spamassassin',
 		'daemonize'	=> 'yes',
 		'forks'		=> 0,

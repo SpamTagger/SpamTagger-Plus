@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
@@ -31,15 +31,15 @@ require module::Network;
 require module::Hostname;
 require module::Keyboard;
 #require module::Timezone;
-#require module::MCInstaller;
+#require module::STInstaller;
 require module::RootPassword;
 require DialogFactory;
 
 my $d = DialogFactory::get('InLine');
 my $dlg = $d->getListDialog();
 
-#my @basemenu = ('Keyboard configuration', 'Set root password', 'Hostname setting', 'Network configuration', 'Timezone configuration', 'MailCleaner (re)installation', 'Exit');
-my @basemenu = ('Keyboard configuration', 'Set root password (Optionnal: Connect to the web interface to access the configurator)', 'Hostname setting',  'Network configuration (Optionnal: You could do this with the MailCleaner Web Interface)', 'Exit');
+#my @basemenu = ('Keyboard configuration', 'Set root password', 'Hostname setting', 'Network configuration', 'Timezone configuration', 'SpamTagger (re)installation', 'Exit');
+my @basemenu = ('Keyboard configuration', 'Set root password (Optionnal: Connect to the web interface to access the configurator)', 'Hostname setting',  'Network configuration (Optionnal: You could do this with the SpamTagger Web Interface)', 'Exit');
 my $currentstep = 1;
 
 while (doMenu()) {
@@ -47,19 +47,19 @@ while (doMenu()) {
 
 #$dlg->clear();
 
-#my $stinstall = module::MCInstaller::get();
-#if (! $stinstall->isMCInstalled() ) {
+#my $stinstall = module::STInstaller::get();
+#if (! $stinstall->isSTInstalled() ) {
 #  $stinstall->do();
 #}
 
-system("$path/../../install/MC_rotate_host_keys.sh") if (defined($path));
+system("$path/../../install/ST_rotate_host_keys.sh") if (defined($path));
 	
 $dlg->clear();
 exit 0;
 
 sub doMenu {
 
-  $dlg->build('MailCleaner: base system configuration', \@basemenu, $currentstep, 1);
+  $dlg->build('SpamTagger: base system configuration', \@basemenu, $currentstep, 1);
  
   my $res = $dlg->display();
   return 0 if $res eq 'Exit';
@@ -82,7 +82,7 @@ sub doMenu {
     $currentstep = 4;
   }
 
-  if ($res eq 'Network configuration (Optionnal: You could do this with the MailCleaner Web Interface)') {
+  if ($res eq 'Network configuration (Optionnal: You could do this with the SpamTagger Web Interface)') {
     my $net = module::Network::get();
     $net->do();
     $currentstep = 4;
@@ -94,9 +94,9 @@ sub doMenu {
 #    $currentstep = 5;
 #  }
 
-#  if ($res eq 'MailCleaner (re)installation') {
+#  if ($res eq 'SpamTagger (re)installation') {
 #     $dlg->clear();
-#     my $stinstall = module::MCInstaller::get();
+#     my $stinstall = module::STInstaller::get();
 #     $stinstall->do();
 #     $currentstep = 5;
 #   }

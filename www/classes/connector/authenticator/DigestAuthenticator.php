@@ -1,15 +1,15 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
 /**
  * This is the DigestAuthenticator class
  * This will take care of authenticate using previously sent digest ID
- * @package mailcleaner
+ * @package SpamTagger Plus
  */
 class DigestAuthenticator extends AuthManager {
     

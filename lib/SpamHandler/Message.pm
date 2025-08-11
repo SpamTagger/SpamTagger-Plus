@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
@@ -224,7 +224,7 @@ sub process {
                     if ( $delivery_type == 1 ) {
                         $status .= ": want tag";
                         $this->{fullheaders} =~
-                            s/(.*Subject:\s+)(\{(MC_SPAM|MC_HIGHSPAM)\})?(.*)/$1\{MC_SPAM\}$4/i;
+                            s/(.*Subject:\s+)(\{(ST_SPAM|ST_HIGHSPAM)\})?(.*)/$1\{ST_SPAM\}$4/i;
                         my $tag = $email->getPref( 'spam_tag', '{Spam?}' );
                         $this->manageTagMode($tag);
                     } elsif ( $warnlisted ) {
@@ -371,7 +371,7 @@ sub process {
                 if ( $delivery_type == 1 ) {
                     $status .= ": want tag";
                     $this->{fullheaders} =~
-                        s/(.*Subject:\s+)(\{(MC_SPAM|MC_HIGHSPAM)\})?(.*)/$1\{MC_SPAM\}$4/i;
+                        s/(.*Subject:\s+)(\{(ST_SPAM|ST_HIGHSPAM)\})?(.*)/$1\{ST_SPAM\}$4/i;
                     my $tag = $email->getPref( 'spam_tag', '{Spam?}' );
                     $this->manageTagMode($tag);
                 } elsif ( $warnlisted ) {
@@ -415,7 +415,7 @@ sub process {
             unless ($this->{decisive_module}{action} == 'negative') {
                 $this->{decisive_module}{module} = undef;
             }
-            $this->{fullheaders} =~ s/Subject:\s+\{(MC_SPAM|MC_HIGHSPAM)\}/Subject:/i;
+            $this->{fullheaders} =~ s/Subject:\s+\{(ST_SPAM|ST_HIGHSPAM)\}/Subject:/i;
             $this->sendMeAnyway();
         }
     }
@@ -534,7 +534,7 @@ sub loadMsgFile() {
     close BODY;
 
     ## check if message is a bounce
-    if ( defined( $this->{headers}{'x-mailcleaner-bounce'} ) ) {
+    if ( defined( $this->{headers}{'x-spamtagger-bounce'} ) ) {
         $this->{bounce} = 1;
     }
     ## check for standard (but untrusted) headers
@@ -560,7 +560,7 @@ sub loadScores {
     my $this = shift;
     my $line;
 
-    if ( !defined( $this->{headers}{'x-mailcleaner-spamcheck'} ) ) {
+    if ( !defined( $this->{headers}{'x-spamtagger-spamcheck'} ) ) {
         %{$this->{decisive_module}} = (
             'module' => 'NOHEADER',
             'position' => 0,
@@ -573,13 +573,13 @@ sub loadScores {
         return 0;
     }
 
-    if ( defined( $this->{headers}{'x-mailcleaner-status'} ) ) {
-        if ( $this->{headers}{'x-mailcleaner-status'} =~ /Blacklisted/ ) {
+    if ( defined( $this->{headers}{'x-spamtagger-status'} ) ) {
+        if ( $this->{headers}{'x-spamtagger-status'} =~ /Blacklisted/ ) {
             $this->{prefilters} .= ", Blacklist";
         }
     }
 
-    $line = $this->{headers}{'x-mailcleaner-spamcheck'};
+    $line = $this->{headers}{'x-spamtagger-spamcheck'};
     $this->{daemon}->doLog(
         $this->{batchid} . ": " . $this->{id} . " Processing spamcheck header: " . $line,
         'spamhandler', 'info'
@@ -703,12 +703,12 @@ sub manageUncheckeable {
     my $this   = shift;
     my $status = shift;
 
-    ## modify the X-MailCleaner-SpamCheck header
+    ## modify the X-SpamTagger-SpamCheck header
     $this->{fullheaders} =~
-        s/X-MailCleaner-SpamCheck: [^\n]+(\r?\n\s+[^\n]+)*/X-MailCleaner-SpamCheck: cannot be checked against spam ($status)/mi;
+        s/X-SpamTagger-SpamCheck: [^\n]+(\r?\n\s+[^\n]+)*/X-SpamTagger-SpamCheck: cannot be checked against spam ($status)/mi;
 
     ## remove the spam tag
-    $this->{fullheaders} =~ s/Subject:\s+\{(MC_SPAM|MC_HIGHSPAM)\}/Subject:/i;
+    $this->{fullheaders} =~ s/Subject:\s+\{(ST_SPAM|ST_HIGHSPAM)\}/Subject:/i;
 
     $this->sendMeAnyway();
     return 1;
@@ -730,12 +730,12 @@ sub manageWhitelist {
         $str = "newslisted by " . $level{$newslevel};
     }
 
-    ## modify the X-MailCleaner-SpamCheck header
+    ## modify the X-SpamTagger-SpamCheck header
     $this->{fullheaders} =~
-        s/X-MailCleaner-SpamCheck: ([^,]*),/X-MailCleaner-SpamCheck: not spam, $str,/i;
+        s/X-SpamTagger-SpamCheck: ([^,]*),/X-SpamTagger-SpamCheck: not spam, $str,/i;
 
     ## remove the spam tag
-    $this->{fullheaders} =~ s/Subject:\s+\{(MC_SPAM|MC_HIGHSPAM)\}/Subject:/i;
+    $this->{fullheaders} =~ s/Subject:\s+\{(ST_SPAM|ST_HIGHSPAM)\}/Subject:/i;
 
     $this->sendMeAnyway();
     return 1;
@@ -749,11 +749,11 @@ sub manageBlacklist {
     my $str   = "blacklisted by " . $level{$blacklevel};
 
     $this->{fullheaders} =~
-        s/(.*Subject:\s+)(\{(MC_SPAM|MC_HIGHSPAM)\})?(.*)/$1\{MC_SPAM\}$4/i;
+        s/(.*Subject:\s+)(\{(ST_SPAM|ST_HIGHSPAM)\})?(.*)/$1\{ST_SPAM\}$4/i;
     
-    ## modify the X-MailCleaner-SpamCheck header
+    ## modify the X-SpamTagger-SpamCheck header
     $this->{fullheaders} =~
-        s/X-MailCleaner-SpamCheck: ([^,]*),/X-MailCleaner-SpamCheck: spam, $str,/i;
+        s/X-SpamTagger-SpamCheck: ([^,]*),/X-SpamTagger-SpamCheck: spam, $str,/i;
     
     return 1;
 }
@@ -764,7 +764,7 @@ sub manageTagMode {
 
     ## change the spam tag
     $this->{fullheaders} =~
-        s/Subject:\s+\{(MC_SPAM|MC_HIGHSPAM)\}/Subject:$tag /i;
+        s/Subject:\s+\{(ST_SPAM|ST_HIGHSPAM)\}/Subject:$tag /i;
 
     $this->sendMeAnyway();
     return 1;
@@ -937,9 +937,9 @@ sub quarantine {
     my $config = ReadConfig::getInstance();
 
     ## remove the spam tag
-    $this->{fullheaders} =~ s/Subject:\s+\{(MC_SPAM|MC_HIGHSPAM)\}/Subject:/i;
+    $this->{fullheaders} =~ s/Subject:\s+\{(ST_SPAM|ST_HIGHSPAM)\}/Subject:/i;
     if ( $this->{headers}{subject} ) {
-        $this->{headers}{subject} =~ s/^\S*\{(MC_SPAM|MC_HIGHSPAM)\}//i;
+        $this->{headers}{subject} =~ s/^\S*\{(ST_SPAM|ST_HIGHSPAM)\}//i;
     }
     else {
         $this->{headers}{subject} = "";

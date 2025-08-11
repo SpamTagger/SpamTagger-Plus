@@ -1,4 +1,4 @@
-This is a message from Mailcleaner
+This is a message from SpamTagger
 ----------------------------------
 The original e-mail attachment "$filename"
 is on the list of unacceptable attachments for this site and has been
@@ -9,4 +9,4 @@ $report
 Note to Administrator: $hostname in $datenumber/$id
 
 ----------- 
-Mailcleaner
+SpamTagger

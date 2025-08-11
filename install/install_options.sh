@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -18,13 +18,17 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This script will install MailCleaner options.
+#   This script will install SpamTagger options.
 #   Usage:
 #           install_options.sh
 #
 #   If you have any question regarding the installation, please take a look at:
-#   https://support.mailcleaner.net/boards/3/topics/62-installation-of-mailcleaner-options
 #
+
+# TODO: Disabled during transition to spamtagger. Try to get some of this back when we have the means to do so.
+echo "Options are not yet supported by SpamTagger."
+exit
+
 VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
@@ -33,7 +37,7 @@ SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
-MCVERSION=$(cat /usr/spamtagger/etc/spamtagger/version.def | cut -c1-4)
+STVERSION=$(cat /usr/spamtagger/etc/spamtagger/version.def | cut -c1-4)
 LOGFILE=/tmp/st_install_options.log
 DOWNLOADSERVER="mailcleanerdl.alinto.net"
 
@@ -45,7 +49,7 @@ FONT_GREEN=$(tput setaf 2)
 
 function usage() {
   printf "Usage: install_options.sh [OPTION]... :\n"
-  printf "Installer of MailCleaner filtering and analysis options\n"
+  printf "Installer of SpamTagger filtering and analysis options\n"
   printf "\t--messagesniffer : install MessageSniffer\n"
   printf "\t--spamhaus : install SpamHaus\n"
   printf "\t--kaspersky : install Kaspersky\n"
@@ -54,11 +58,11 @@ function usage() {
   printf "Exit status:\n"
   printf "\t0  if OK,\n"
   printf "\t1  if minor problems (e.g., wrong licenses, error during install) \n"
-  printf "${FONT_BOLD}Notes: ${FONT_RESET} for any issues, please contact our sales dept if you're a Community Edition or open a ticket on our online support: https://support.mailcleaner.net \n"
+  printf "${FONT_BOLD}Notes: ${FONT_RESET} for any issues, please contact our sales dept if you're a Community Edition or open a ticket on our online support: https://support.spamtagger.org \n"
 }
 
 function messagesniffer() {
-  if [ "$MCVERSION" -lt "2016" ]; then
+  if [ "$STVERSION" -lt "2016" ]; then
     printf "You can't install MessageSniffer option in smaller version than 2016.xx \n"
     exit 1
   fi
@@ -73,7 +77,7 @@ function messagesniffer() {
   fi
 
   if dpkg-query -s st-messagesniffer | grep "Status: install ok installed"; then
-    echo "MessageSniffer already installed. Please contact our support: https://support.mailcleaner.net"
+    echo "MessageSniffer already installed. Please contact our support: https://support.spamtagger.org"
   else
     apt-get update &>>$LOGFILE
     env PATH=$PATH:/usr/sbin:/sbin apt-get install --yes --force-yes st-messagesniffer &>>$LOGFILE
@@ -92,7 +96,7 @@ function messagesniffer() {
 }
 
 function spamhaus() {
-  if [ "$MCVERSION" -lt "2018" ]; then
+  if [ "$STVERSION" -lt "2018" ]; then
     printf "You can't install SpamHaus option in smaller version than 2018.xx \n"
     exit 1
   fi
@@ -356,7 +360,7 @@ function eset() {
 
   SUCCESS=$(/opt/eset/efs/sbin/lic --status | grep 'Status:' | cut -d' ' -f2)
   if [[ $SUCCESS != "Activated" ]]; then
-    printf "License activation failed. Run again with correct License. Contact MailCleaner sales if you do not yet have a license.\n" | tee &>>$LOGFILE
+    printf "License activation failed. Run again with correct License. Contact SpamTagger sales if you do not yet have a license.\n" | tee &>>$LOGFILE
     exit 1
   fi
 
@@ -412,7 +416,7 @@ function kaspersky() {
     echo "EXEC: Kaspersky updated" &>>$LOGFILE
   else
     $KASPERSKYUPDATER/bin/keepup2date8.sh --licinfo --simplelic
-    printf "Error during the update of Kaspersky databases. \n Notes for MailCleaner support: %s"
+    printf "Error during the update of Kaspersky databases. \n Notes for SpamTagger support: %s"
   fi
   $KASPERSKYUPDATER/bin/keepup2date8.sh --licinfo --simplelic | sed -n '8p' &>>$LOGFILE
   printf "${FONT_BOLD}${FONT_RED}IMPORTANT: ${FONT_RESET}"

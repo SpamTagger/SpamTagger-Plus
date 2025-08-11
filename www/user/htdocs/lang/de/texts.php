@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html MailCleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
 ### newsl
 $txt['NEWSLETTERMODULE'] = "Newsletter";
@@ -147,7 +147,7 @@ $txt['HIDEFORCED'] = "Bereits freigegebene Meldungen ausblenden";
 $txt['FORCESPAM'] = "Meldung freigeben";
 // old
 $txt['ASKREASON'] = "Filterregeln anzeigen";
-$txt['CONFSENDANALYSE'] = "Ein Antrag auf Filteranpassung wird an das MailCleaner Analysis Center gesendet; er enthält eine Kopie der Nachricht, die fälschlicherweise blockiert wurde.</br>Hinweis: Eine Filteranpassung ist nicht dasselbe wie eine Nachricht zu Weißen oder Schwarzen Liste verschieben.";
+$txt['CONFSENDANALYSE'] = "Ein Antrag auf Filteranpassung wird an das SpamTagger Analysis Center gesendet; er enthält eine Kopie der Nachricht, die fälschlicherweise blockiert wurde.</br>Hinweis: Eine Filteranpassung ist nicht dasselbe wie eine Nachricht zu Weißen oder Schwarzen Liste verschieben.";
 $txt['AREYOUSURE'] = "<span class=\"Frage\">W&uuml;nschen Sie wirklich die Analyse der Meldung und dass entsprechende Filterungsanpassungen angewendet werden ?</span>";
 $txt['ASKANALYSE'] = "Filteranpassung anfordern";
 $txt['PAGE'] = "Seite";
@@ -195,12 +195,12 @@ $txt['ID'] = "Erkennung";
 /*
  * logout page
  */
-$txt['LOGOUTTEXT'] = "<p>Ihre MailCleaner Session ist beendet.</p><p>Wenn Sie erneut anmelden m&ouml;chten, bitte tippen Sie Folgendes:</p>";
+$txt['LOGOUTTEXT'] = "<p>Ihre SpamTagger Session ist beendet.</p><p>Wenn Sie erneut anmelden m&ouml;chten, bitte tippen Sie Folgendes:</p>";
 /*
  * parameters page
  */
 // old
-$txt['PARAMTITLE'] = "Pers&ouml;nliche Einstellungen von MailCleaner";
+$txt['PARAMTITLE'] = "Pers&ouml;nliche Einstellungen von SpamTagger";
 // old
 $txt['USERPARAM'] = "Benutzereinstellungen";
 // old
@@ -282,11 +282,11 @@ $txt['REMADDRESSALT'] = "Adresse l&ouml;schen";
 // old
 $txt['ADDADDRESSALT'] = "Adresse beif&uuml;gen";
 $txt['BADADDRESSFORMAT'] = "Eingegebene Adresse ung&uuml;ltig. Bitte geben Sie die Adresse nochmal ein.";
-$txt['NOTFILTEREDDOMAIN'] = "Dieses Domain ist vom MailCleaner nicht filtriert. Demzufolge kann die Adresse nicht zugef&uuml;gt werden.";
-$txt['ALIASALREADYREGISTERD'] = "Adresse bereits registriert! Diese Adresse wird nicht zugef&uuml;gt, denn sie ist bereits von MailCleaner gepr&uuml;ft.";
+$txt['NOTFILTEREDDOMAIN'] = "Dieses Domain ist vom SpamTagger nicht filtriert. Demzufolge kann die Adresse nicht zugef&uuml;gt werden.";
+$txt['ALIASALREADYREGISTERD'] = "Adresse bereits registriert! Diese Adresse wird nicht zugef&uuml;gt, denn sie ist bereits von SpamTagger gepr&uuml;ft.";
 $txt['ALIASALREADYPENDING'] = "Eine Anfrage f&uuml;r diese Adresse ist bereits vorhanden.";
 $txt['ALIASPENDING'] = "An diese Adresse wurde eine Bestätigung gesendet.<br/> Aus Sicherheitsgründen wird die Adresse nur dann hinzugefügt, wenn Sie die Anfrage innerhalb von 24 Stunden bestätigen.";
-$txt['ALIASREQUESTSUBJECT'] = "[MailCleaner] Anfrage um Adresse/Alias beizuf&uuml;gen";
+$txt['ALIASREQUESTSUBJECT'] = "[SpamTagger] Anfrage um Adresse/Alias beizuf&uuml;gen";
 $txt['ALIASERRORSENDIG'] = "Die Anfrage konnte aufgrund eines internen Fehlers nicht gesendet werden. Bitte versuchen Sie es später noch einmal.";
 $txt['ALIASNOTPENDING'] = "F&uuml;r das Zuf&uuml;gen dieser Adresse wurde keine Anfrage gemacht.";
 $txt['ALIASADDED'] = "Adresse wurde erfolgreich zugef&uuml;gt.";
@@ -296,7 +296,7 @@ $txt['REMALIASTITLE'] = "R&uuml;cknahme der Adresse/Alias";
 // old
 $txt['REMALIASCONFIRM'] = "R&uuml;cknahme der Adresse __PARAM__ best&auml;tigen ?";
 $txt['ALIASREMOVED'] = "Adresse __PARAM__ zur&uuml;ckgezogen.";
-$txt['CANNOTREMOVEMAINADD'] = "Die Adresse __PARAM__ ist die Hauptadresse dieses MailCleaner Kontos, die nicht zur&uuml;ckgezogen werden kann.";
+$txt['CANNOTREMOVEMAINADD'] = "Die Adresse __PARAM__ ist die Hauptadresse dieses SpamTagger Kontos, die nicht zur&uuml;ckgezogen werden kann.";
 /*
  * statistics page
  */
@@ -328,9 +328,9 @@ $txt['FROMDATETODATE'] = "Von __PARAM1__.__PARAM2__.__PARAM3__ bis __PARAM4__.__
 /*
  * some errors messages
  */
-$txt['BADARGS'] = "Interner Fehler des MailCleaners (__PARAM__). Wenden Sie sich an Ihrer E-Mail-Administrator.";
+$txt['BADARGS'] = "Interner Fehler des SpamTaggers (__PARAM__). Wenden Sie sich an Ihrer E-Mail-Administrator.";
 $txt['INCORRECTMSGID'] = "Die gew&uuml;nschte Aktion kann nicht ausgef&uuml;hrt werden, weil die Meldungserkennung falsch ist.";
-$txt['NOSUCHADDR'] = "Die angegebene Adresse ist von MailCleaner nicht gepr&uuml;ft.";
+$txt['NOSUCHADDR'] = "Die angegebene Adresse ist von SpamTagger nicht gepr&uuml;ft.";
 $txt['ERRORSENDING'] = "Fehler beim Absenden der Nachricht aufgetreten. Bitte versuchen Sie es noch einmal. Wenn der Fehler wiederum eintritt, wenden Sie sich an Ihren E-Mail-Administrator.";
 $txt['MSGFORCED'] = "Meldung wurde freigegeben.<br/>Sie wird in wenigen Augenblicken in Ihren Postfach eingeworfen.";
 $txt['MSGFILENOTFOUND'] = "Die gew&uuml;nschte Aktion kann nicht ausgef&uuml;hrt werden, weil die vorbemerkte Meldung in der Quarant&auml;ne nicht mehr vorhanden ist.";
@@ -421,8 +421,8 @@ $txt['WAITINGCONFIRMATION'] = "Warten auf Bestätigung";
 /*
  * addresses settings (new)
  */
-$txt['ADDPARAMSHORTHELP'] = "Der Filterungsmodus von MailCleaner ist f&uuml;r jede Ihrer Adressen oder Aliases m&ouml;glich. F&uuml;r eine genaue Beschreibung der verschiedenen Filterungsmodus, wenden Sie sich an das Benutzerhandbuch(verf&uuml;gbar im Abschnitt <a href=\"help.php\">\"Hilfe\"</a>).";
-$txt['ADDPARAMSHORTHELP'] = "Der Filterungsmodus von MailCleaner ist f&uuml;r jede Ihrer Adressen oder Aliases m&ouml;glich. F&uuml;r eine genaue Beschreibung der verschiedenen Filterungsmodus, wenden Sie sich an das Benutzerhandbuch(verf&uuml;gbar im Abschnitt <a href=\"help.php\">„Hilfe“</a>).";
+$txt['ADDPARAMSHORTHELP'] = "Der Filterungsmodus von SpamTagger ist f&uuml;r jede Ihrer Adressen oder Aliases m&ouml;glich. F&uuml;r eine genaue Beschreibung der verschiedenen Filterungsmodus, wenden Sie sich an das Benutzerhandbuch(verf&uuml;gbar im Abschnitt <a href=\"help.php\">\"Hilfe\"</a>).";
+$txt['ADDPARAMSHORTHELP'] = "Der Filterungsmodus von SpamTagger ist f&uuml;r jede Ihrer Adressen oder Aliases m&ouml;glich. F&uuml;r eine genaue Beschreibung der verschiedenen Filterungsmodus, wenden Sie sich an das Benutzerhandbuch(verf&uuml;gbar im Abschnitt <a href=\"help.php\">„Hilfe“</a>).";
 $txt['FOREACHSPAMDO'] = "Für jede als Spam erkannte Nachricht:";
 $txt['FOREACHNEWSLETTERDO'] = "Für jede Nachricht, die als Newsletter erkannt wurde:";
 $txt['KEEPMESSAGEINQUARANTINE'] = "Zur&uuml;ckhalten der Meldung in Quarant&auml;ne";
@@ -484,7 +484,7 @@ $txt['RECORDALREADYEXISTS'] = "Diese Adresse ist bereits in der Liste vorhanden.
 /*
  * logout (new)
  */
-$txt['SESSIONTERMINATED'] = "Ihre MailCleaner Session ist beendet.";
+$txt['SESSIONTERMINATED'] = "Ihre SpamTagger Session ist beendet.";
 $txt['BEENLOGGEDOUT'] = "Sie k&ouml;nnen sich wieder einloggen an die folgende Adresse: <a href=\"__PARAM__\" >__PARAM__</a>";
 /*
  * Newsletters release

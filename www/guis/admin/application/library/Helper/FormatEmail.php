@@ -1,14 +1,14 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  * 
  * Setup base view variables
  */
 
-class MailCleaner_View_Helper_FormatEmail extends Zend_View_Helper_Abstract
+class SpamTagger_View_Helper_FormatEmail extends Zend_View_Helper_Abstract
 {
 	
 	protected $_params = array(

@@ -12,7 +12,7 @@ else
   echo " 2) unpack mailscanner archive (the one in perl-tar)"
   echo " 3) copy it to /opt/MailScanner"
   echo " 4) apply MailScanner.patch to /opt/MailScanner"
-  echo " 5) cp MailcleanerPrefs.pm and MailWatch.pm in new mailscanner, and apply MailWatch.patch"
+  echo " 5) cp SpamTaggerPrefs.pm and MailWatch.pm in new mailscanner, and apply MailWatch.patch"
   echo " 6) /root/compare_ms_configs/compare.pl and compare_language.pl"
   echo " ..bye bye..."
   exit
@@ -57,7 +57,7 @@ else
   perl -pi -e "s/\/opt\/MailScanner/$SD\/mailscanner/g" $SRCDIR/mailscanner/bin/MailScanner
   perl -pi -e "s/SCANNERSCONF=\S+/SCANNERSCONF=$SD\/etc\/mailscanner\/virus.scanners.conf/g" $SRCDIR/mailscanner/bin/update_virus_scanners
 
-  cp $SRCDIR/install/src/MailScanner_Custom/MailcleanerPrefs.pm $SRCDIR/mailscanner/lib/MailScanner/CustomFunctions/
+  cp $SRCDIR/install/src/MailScanner_Custom/SpamTaggerPrefs.pm $SRCDIR/mailscanner/lib/MailScanner/CustomFunctions/
   cp $SRCDIR/install/src/MailScanner_Custom/clamav-wrapper $SRCDIR/mailscanner/lib/
   cp $SRCDIR/install/src/MailScanner_Custom/etrust-wrapper $SRCDIR/mailscanner/lib/
   cp $SRCDIR/install/src/MailScanner_Custom/etrust-autoupdate $SRCDIR/mailscanner/lib/

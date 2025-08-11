@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
          
 /**
@@ -32,7 +32,7 @@ function getStatus($sid, $params) {
 }
 
 /**
- * return the actual messages count of each mailcleaner spool
+ * return the actual messages count of each SpamTagger spool
  * @param  $sid  string  soap session id
  * @return       array   spools counts as array (key is spool name, value is message count)
  */

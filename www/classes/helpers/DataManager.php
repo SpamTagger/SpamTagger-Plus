@@ -1,9 +1,9 @@
 <?
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2006, Olivier Diserens
+ * @copyright 2025, SpamTagger
  */
  
 /**
@@ -32,8 +32,8 @@ class DataManager {
   private $db_config = array(
                         'HOST' => 'localhost',
                         'PORT' => '3306',
-                        'USER' => 'mailcleaner',
-                        'MYMAILCLEANERPWD' => '',
+                        'USER' => 'spamtagger',
+                        'MYSPAMTAGGERPWD' => '',
                         'PASSWORD' => '',
                         'SOCKET' => '',
                         'DATABASE' => 'st_config',
@@ -149,7 +149,7 @@ class DataManager {
   private function connect() {
     if (! isset($this->db_handle) or DB::isError($this->db_handle)) {
         if ($this->getOption('SOCKET') != "") {
-          $dsn = "mysql://".$this->getOption('USER').":".$this->getOption('MYMAILCLEANERPWD').
+          $dsn = "mysql://".$this->getOption('USER').":".$this->getOption('MYSPAMTAGGERPWD').
                 "@unix(".$this->getOption('SOCKET').")/".$this->getOption('DATABASE');
         } else {
           $dsn = "mysql://".$this->getOption('USER').":".$this->getOption('PASSWORD').

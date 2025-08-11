@@ -1,5 +1,5 @@
 <!--
-#   Mailcleaner - SMTP Antivirus/Antispam Gateway
+#   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   Admin password change page of MailCleaner "Configurator" wizard
+#   Admin password change page of SpamTagger "Configurator" wizard
 #
 -->
 <?php
@@ -24,7 +24,7 @@ if ('adminpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
   die ('Try again later.');
 ?>
 	<h2 class="text-center">Step: <?php echo $validStep['title'] ?></h2>
-	<p>This password will be the admin account password used to access the MailCleaner admin web interface.</p>
+	<p>This password will be the admin account password used to access the SpamTagger admin web interface.</p>
         <form class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF']."?step=".$_GET['step']; ?>" method="post">
 	  <div class="form-group">
 	    <label class="col-md-5 control-label" for="newpassaw">New Password :</label>
@@ -47,10 +47,10 @@ if ('adminpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                 if ($_POST['newpassaw'] == $_POST['confnewpassaw']) {
                     $saltaw = '$6$rounds=1000$'.dechex(rand(0,15)).dechex(rand(0,15)).'$';
                     $cryptedaw = crypt($_POST['newpassaw'], $saltaw);
-		    $mymcpass = shell_exec("grep 'MYMAILCLEANERPWD' /etc/spamtagger.conf | cut -d ' ' -f3");
+		    $mymcpass = shell_exec("grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3");
 
 		    require_once('db_functions.php');
-		    if($db = getDb('st_config', 'mailcleaner', trim($mymcpass))) {
+		    if($db = getDb('st_config', 'spamtagger', trim($mymcpass))) {
 			$sth = $db->prepare("UPDATE administrator SET password=:mcpass WHERE username='admin'");
 			$retaw = $sth->execute(array(':mcpass' => $cryptedaw)) == true ? 0 : 1;
 		    } else {

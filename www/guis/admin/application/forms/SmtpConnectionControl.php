@@ -1,9 +1,9 @@
 <?php
 /**
- * @license http://www.mailcleaner.net/open/licence_en.html Mailcleaner Public License
- * @package mailcleaner
+ * @license https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @package SpamTagger Plus
  * @author Olivier Diserens
- * @copyright 2009, Olivier Diserens
+ * @copyright 2025, SpamTagger
  *
  * SMTP connection control form
  */
@@ -33,7 +33,7 @@ class Default_Form_SmtpConnectionControl extends ZendX_JQuery_Form
         require_once 'Validate/IpList.php';
         $allowconnect = new Zend_Form_Element_Textarea('smtp_conn_access', array(
             'label' => $t->_('Allow connection from hosts') . " :",
-            'title' => $t->_("List of servers/IP/ranges which are allowed to send emails to this MailCleaner server"),
+            'title' => $t->_("List of servers/IP/ranges which are allowed to send emails to this SpamTagger server"),
             'required' => false,
             'rows' => 5,
             'cols' => 30,
@@ -45,7 +45,7 @@ class Default_Form_SmtpConnectionControl extends ZendX_JQuery_Form
         require_once 'Validate/EmailList.php';
         $allowrelay = new Zend_Form_Element_Textarea('relay_from_hosts', array(
             'label' => $t->_('Allow external relaying for these hosts') . " :",
-            'title' => $t->_("List of servers/IP/ranges which can use this MailCleaner as an external relay"),
+            'title' => $t->_("List of servers/IP/ranges which can use this SpamTagger as an external relay"),
             'required' => false,
             'rows' => 5,
             'cols' => 30,
@@ -75,7 +75,7 @@ class Default_Form_SmtpConnectionControl extends ZendX_JQuery_Form
         require_once 'Validate/DomainList.php';
         $relay_refused_to_domains = new Zend_Form_Element_Textarea('relay_refused_to_domains', array(
             'label' => $t->_('Reject relaying to these external domains') . " :",
-            'title' => $t->_("List of servers/IP/ranges which are not allowed to connect to this MailCleaner as an external relay"),
+            'title' => $t->_("List of servers/IP/ranges which are not allowed to connect to this SpamTagger as an external relay"),
             'required' => false,
             'rows' => 5,
             'cols' => 30,
