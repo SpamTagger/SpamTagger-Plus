@@ -33,12 +33,6 @@ if [ "$SRCDIR" = "" ]; then
   fi
 fi
 
-ISSQUEEZE=$(grep ' squeeze ' /etc/apt/sources.list)
-VERSIONFILE='VERSIONS.squeeze'
-if [ "$ISSQUEEZE" = "" ]; then
-  VERSIONFILE='VERSIONS.lenny'
-fi
-
 ## export some environment variables
 export DB_FILE_INCLUDE=/usr/db/include
 export DB_FILE_LIB=/usr/db/lib
@@ -51,18 +45,6 @@ export PERL5LIB=$PERL5LIB:/usr/rrdtools/lib/perl/
 ldconfig 2>&1 >/dev/null
 
 cd $SRCDIR/install/src/perl
-
-ISLENNY=$(grep ' lenny ' /etc/apt/sources.list)
-if [ "$ISLENNY" = "" ]; then
-  VERSIONFILE='VERSIONS.squeeze'
-fi
-
-## clean old DBD::MySQL
-for i in 5.8.4 5.8.8 5.10.0 5.10.1; do
-  rm -rf /usr/local/lib/perl/$i/DBD/mysql* 2>&1 >/dev/null
-  rm -rf /usr/local/lib/perl/$i/Bundle/DBD/mysql.pm 2>&1 >/dev/null
-  rm -rf /usr/local/lib/perl/$i/auto/DBD/mysql 2>&1 >/dev/null
-done
 
 for line in $(cat $VERSIONFILE); do
   module=$(echo $line | cut -d'=' -f1)
@@ -90,8 +72,6 @@ for line in $(cat $VERSIONFILE); do
   echo "********"
   echo "done"
   echo "********" 2>&1
-  # echo "press return to continue.."
-  # read
 done
 
 ## patch RRD OO modules

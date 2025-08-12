@@ -1,0 +1,3 @@
+[submodule "www/vendor/Zend"]
+	path = www/vendor/Zend
+	url = https://github.com/Shardj/zf1-future

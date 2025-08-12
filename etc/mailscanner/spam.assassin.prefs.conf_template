@@ -89,7 +89,3 @@ score    ST_DMARC_QUARANTINE   50.0
 __FI__
 
 envelope_sender_header X-SpamTagger-From
-
-ifplugin FuzzyOcr
-focr_global_wordlist __SRCDIR__/share/spamassassin/FuzzyOcr.words
-endif
