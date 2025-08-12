@@ -55,8 +55,6 @@ dump_prefilter_files() or fatal_error("CANNOTDUMPPREFILTERS", $lasterror);
 dump_virus_file() or fatal_error("CANNOTDUMPVIRUSFILE", $lasterror);
 dump_filename_config() or fatal_error("NOFILENAMECONFIGURATIONFOUND", "no record found for filenames");
 dump_filetype_config() or fatal_error("NOFILETYPECONFIGURATIONFOUND", "no record found for filetypes");
-dump_Oscar_config();
-dump_FuzzyOcr_config();
 dump_saplugins_conf();
 dump_dnsblacklists_conf();
 
@@ -264,7 +262,6 @@ sub get_sa_config
   $config{'__SPF_TIMEOUT__'} = $row{'spf_timeout'};
   $config{'__USE_DKIM__'} = $row{'use_dkim'};
   $config{'__DKIM_TIMEOUT__'} = $row{'dkim_timeout'};
-  $config{'__USE_FUZZYOCR__'} = $row{'use_fuzzyocr'};
   $config{'__USE_IMAGEINFO__'} = $row{'use_imageinfo'};
   $config{'__USE_PDFINFO__'} = $row{'use_pdfinfo'};
   $config{'__USE_BOTNET__'} = $row{'use_botnet'};
@@ -465,24 +462,6 @@ sub dump_virus_file
 }
 
 #############################
-sub dump_Oscar_config
-{
-  my $template = ConfigTemplate::create(
-                          'etc/mailscanner/OscarOcr.cf_template', 
-                          'share/spamassassin/OscarOcr.cf');  
-  return $template->dump();
-}
-
-#############################
-sub dump_FuzzyOcr_config
-{
-  my $template = ConfigTemplate::create(
-                          'etc/mailscanner/FuzzyOcr.cf_template', 
-                          'share/spamassassin/FuzzyOcr.cf');  
-  return $template->dump();
-}
-
-#############################
 sub dump_saplugins_conf
 {
   my $template = ConfigTemplate::create(
@@ -497,8 +476,6 @@ sub dump_saplugins_conf
           '__IF_DKIM__' => getModuleStatus('__USE_DKIM__'),
           '__IF_URIDNSBL__' => getModuleStatus('__USE_RBLS__'),
           '__IF_SPF__' => getModuleStatus('__USE_SPF__'),
-          '__IF_FUZZYOCR__' => getModuleStatus('__USE_FUZZYOCR__'),
-          '__IF_OSCAR__' => getModuleStatus('__USE_FUZZYOCR__'),
           '__IF_PDFINFO__' => getModuleStatus('__USE_PDFINFO__'),
           '__IF_BOTNET__' => getModuleStatus('__USE_BOTNET__'),
         );
