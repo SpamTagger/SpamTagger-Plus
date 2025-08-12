@@ -153,7 +153,7 @@ ServerSignature On
 
 AddType application/x-httpd-php .php
 php_flag session.auto_start on
-php_value include_path ".:/opt/php5/lib/php:__SRCDIR__/www/classes:__SRCDIR__/www/includes:__SRCDIR__/www/framework"
+php_value include_path ".:/opt/php5/lib/php:__SRCDIR__/www/classes:__SRCDIR__/www/includes:__SRCDIR__/www/framework/:__SRCDIR__/www/vendor/Zend/library/"
 php_admin_flag safe_mode off
 php_value arg_separator.input "&;"
 php_value short_open_tag On
