@@ -1,4 +1,8 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
+
+use v5.40;
+use warnings;
+use utf8;
 
 if ($0 =~ m/(\S*)\/get_bayes_stats\.pl$/) {
   my $path = $1."/../lib";
@@ -8,7 +12,6 @@ print "0|0";
 exit;
 
 require ReadConfig;
-use strict;
 
 my $givenmode = shift;
 my $mode = "";

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -22,11 +22,14 @@
 #
 #   Requires : libconfig-simple-perl, libxml-simple-perl, libstring-random-perl
 
+use v5.40;
+use warnings;
+use utf8;
+
 # TODO: teporarily disable for spamtagger transition
 echo "Feature not currently supported by SpamTagger"
 exit
 
-use strict;
 if ($0 =~ m/(\S*)\/\S+.pl$/) {
   my $path = $1."/../lib";
   unshift (@INC, $path);

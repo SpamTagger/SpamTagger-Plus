@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -26,7 +26,6 @@
 #   where msg_id is the message id
 #   and destination is the email address of the original recipient
 
-use strict;
 use DBI();
 use Net::SMTP;
 require MIME::Lite;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -20,10 +20,12 @@
 ##  DummyDaemon:
 ##    Provides a barebone and useless implementation of a socket base multithreaded daemon, 
 ##    relying on SockTDaemon. Can be used as a started for more useful daemons.
-##
-#
 
 package DummyDaemon;
+
+use v5.40;
+use warnings;
+use utf8;
 
 use threads;
 use threads::shared;
@@ -33,7 +35,6 @@ use Time::HiRes qw(gettimeofday tv_interval);
 require ReadConfig;
 require DB;
 use Digest::MD5 qw(md5_hex);
-use strict;
 use Data::Dumper;
 use Date::Calc qw(Add_Delta_Days Today);
 

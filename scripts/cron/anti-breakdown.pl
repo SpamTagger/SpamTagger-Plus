@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2015-2018 Pascal Rolle <rolle@spamtagger.org>
@@ -20,13 +20,15 @@
 #
 #
 #   This is the anti-breakdown script. To be run every 15 minutes
-#
+
+use v5.40;
+use warnings;
+use utf8;
 
 # TODO: teporarily disable for spamtagger transition
 echo "Feature not currently supported by SpamTagger"
 exit
 
-use strict;
 push(@INC, '/usr/spamtagger/lib/');
 use Net::DNS;
 use Net::Ping;

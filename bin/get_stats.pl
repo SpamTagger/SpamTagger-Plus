@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -23,7 +23,10 @@
 #   Usage:
 #       get_stats.pl domain|user|_global begindate enddate [-v]
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 if ($0 =~ m/(\S*)\/get_stats\.pl$/) {
      my $path = $1."/../lib";
      unshift (@INC, $path);

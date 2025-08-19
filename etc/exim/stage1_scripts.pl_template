@@ -1,5 +1,9 @@
+#!/usr/bin/env perl
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 use lib "__SRCDIR__/lib";
 use SMTPAuthenticator;
 use SMTPCalloutConnector;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -16,10 +16,12 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#
 
 package StatsDaemon;
+
+use v5.40;
+use warnings;
+use utf8;
 
 use threads;
 use threads::shared;
@@ -29,7 +31,6 @@ use Time::HiRes qw(gettimeofday tv_interval);
 require ReadConfig;
 require DB;
 use Digest::MD5 qw(md5_hex);
-use strict;
 use Data::Dumper;
 use Date::Calc qw(Add_Delta_Days Today);
 use Devel::Size qw(size total_size);

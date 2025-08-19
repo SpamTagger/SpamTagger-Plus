@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -19,11 +19,14 @@
 #
 #
 #   This module will just read the configuration file
-#
 
-package          ReadConfig;
-require          Exporter;
-use strict;
+package ReadConfig;
+
+use v5.40;
+use warnings;
+use utf8;
+
+require Exporter;
 
 our @ISA        = qw(Exporter);
 our @EXPORT     = qw(getInstance new getOption);

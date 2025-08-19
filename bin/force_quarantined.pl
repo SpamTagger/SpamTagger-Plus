@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -28,7 +28,10 @@
 #   The whole string (date/msg_id) will be included in the warning text file
 #   attached to the original messagein place of the quarantined content.
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 use File::Copy;
 
 my %config = readConfig("/etc/spamtagger.conf");

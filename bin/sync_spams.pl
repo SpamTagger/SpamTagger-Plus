@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -25,8 +25,10 @@
 #             -D: output debug information
 #   synchronize slave spam quarantine database with master
 
+use v5.40;
+use warnings;
+use utf8;
 
-use strict;
 use Net::SMTP;
 use DBI();
 

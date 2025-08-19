@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -I../lib/
+#!/usr/bin/env perl -I../lib/
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -23,7 +23,10 @@
 #   Usage:
 #           dump_domains.pl 
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 if ($0 =~ m/(\S*)\/dump_archiving\.pl$/) {
   my $path = $1."/../lib";
   unshift (@INC, $path);

@@ -1,7 +1,10 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
+
+use v5.40;
+use warnings;
+use utf8;
 
 use Date::Calc( Today, Delta_Days, Localtime, Time_to_Date );
-use strict;
 use String::ShellQuote qw( shell_quote );
 use File::stat;
 use DBI();

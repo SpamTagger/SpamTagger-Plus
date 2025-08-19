@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -22,10 +22,13 @@
 #
 
 package          ConfigTemplate;
+
+use v5.40;
+use warnings;
+use utf8;
+
 require          Exporter;
 require          ReadConfig;
-
-use strict;
 
 our @ISA        = qw(Exporter);
 our @EXPORT     = qw(create dumpFile);

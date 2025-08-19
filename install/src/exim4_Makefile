@@ -707,7 +707,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
 # CHGRP_COMMAND=/usr/bin/chgrp
 # MV_COMMAND=/bin/mv
 # RM_COMMAND=/bin/rm
-# PERL_COMMAND=/usr/bin/perl
+# PERL_COMMAND=/usr/bin/env perl
 
 
 #------------------------------------------------------------------------------

@@ -1,4 +1,8 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
+
+use v5.40;
+use warnings;
+use utf8;
 
 # Configure source path and enable library
 our $SRCDIR;
@@ -7,10 +11,6 @@ BEGIN {
 }
 use lib "$SRCDIR/lib";
 require DB;
-
-# Necessary configuration items
-use strict;
-use warnings;
 
 my $dryrun = 0;
 if (defined($ARGV[0])) {

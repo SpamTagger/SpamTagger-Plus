@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -39,7 +39,10 @@
 #   -L: output percent of clean messages
 #   -d: output number of filtered domains
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 if ($0 =~ m/(\S*)\/\S+.pl$/) {
   my $path = $1."/../lib";
   unshift (@INC, $path);

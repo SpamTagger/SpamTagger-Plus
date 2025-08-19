@@ -1,9 +1,12 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
+
+use v5.40;
+use warnings;
+use utf8;
 
 ## pushed format must be
 ## address(,user)
 
-use strict;
 use lib "__SRCDIR__/lib";
 use Net::SMTP;
 require ReadConfig;

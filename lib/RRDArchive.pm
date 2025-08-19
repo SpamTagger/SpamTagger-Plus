@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -21,14 +21,18 @@
 #   This module will just read the configuration file
 #
 
-package          RRDArchive;
-require          Exporter;
+package RRDArchive;
+
+use v5.40;
+use warnings;
+use utf8;
+
+require Exporter;
 use ReadConfig;
 use SNMP;
 use Net::SNMP;
 use RRDTool::OO;
 use File::Path;
-use strict;
 use Scalar::Util qw(looks_like_number);
 
 #use Log::Log4perl qw(:easy);

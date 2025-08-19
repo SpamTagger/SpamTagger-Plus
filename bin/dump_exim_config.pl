@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -30,8 +30,10 @@
 #   4 for the outgoing mta
 #   if no stage id is given, the three configuration files will be dumped
 
+use v5.40;
+use warnings;
+use utf8;
 
-use strict;
 use File::Copy;
 use File::Path;
 if ($0 =~ m/(\S*)\/\S+.pl$/) {

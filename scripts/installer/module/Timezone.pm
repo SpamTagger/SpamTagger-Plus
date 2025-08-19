@@ -21,7 +21,6 @@
 package module::Timezone;
 
 use v5.40;
-use strict;
 use warnings;
 use utf8;
 

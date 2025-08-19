@@ -1,9 +1,12 @@
+#!/usr/bin/env perl
 ## largely inspired and copied from Julian Field's work for the SpamAssassin cache in SA.pm
 
 package MailScanner::SpamCache;
 
-use strict 'vars';
-use strict 'refs';
+use v5.40;
+use warnings;
+use utf8;
+
 no  strict 'subs'; # Allow bare words for parameter %'s
 #use English; # Needed for $PERL_VERSION to work in all versions of Perl
 
