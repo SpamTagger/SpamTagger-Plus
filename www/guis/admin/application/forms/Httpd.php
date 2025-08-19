@@ -3,26 +3,26 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
 {
 	protected $_httpd;
 	protected $_firewallrule;
-	
+
 	public $_urlsheme = 'http';
-	
+
 	public function __construct($httpd, $fw) {
 		$this->_httpd = $httpd;
 		$this->_firewallrule = $fw;
 		parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-    	
+
 		$this->setMethod('post');
-	           
+
 		$this->setAttrib('id', 'httpd_form');
-	    
+
 		$baseurl = new  Zend_Form_Element_Text('servername', array(
 	        'label'    => $t->_('Base URL')." :",
                 'title' => $t->_("Base URL to access this we interface"),
@@ -30,7 +30,7 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
 		    'required' => true));
 	    $baseurl->setValue($this->_httpd->getParam('servername'));
 	    $this->addElement($baseurl);
-	    
+
 	    require_once('Validate/HostList.php');
 		$allowed_ip = new Zend_Form_Element_Textarea('allowed_ip', array(
 		      'label'    =>  $t->_('Allowed IP/ranges')." :",
@@ -42,7 +42,7 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
 	    $allowed_ip->addValidator(new Validate_HostList());
 		$allowed_ip->setValue($this->_firewallrule->getParam('allowed_ip'));
 		$this->addElement($allowed_ip);
-	    
+
 		$sslenable = new Zend_Form_Element_Checkbox('use_ssl', array(
 	        'label'   => $t->_('Enable SSL (HTTPS)'). " :",
             'uncheckedValue' => "0",
@@ -52,7 +52,7 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
             $sslenable->setChecked(true);
 	    }
 	    $this->addElement($sslenable);
-	    
+
 	    $httpslisten = new  Zend_Form_Element_Text('https_port', array(
 	        'label'    => $t->_('HTTPS port')." :",
 		    'required' => false,
@@ -61,7 +61,7 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
 	    $httpslisten->setValue($this->_httpd->getParam('https_port'));
         $httpslisten->addValidator(new Zend_Validate_Int());
 	    $this->addElement($httpslisten);
-	    
+
 	    $httplisten = new  Zend_Form_Element_Text('http_port', array(
 	        'label'    => $t->_('HTTP port')." :",
 		    'required' => true,
@@ -70,7 +70,7 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
 	    $httplisten->setValue($this->_httpd->getParam('http_port'));
         $httplisten->addValidator(new Zend_Validate_Int());
 	    $this->addElement($httplisten);
-	   
+
         $restrictions = Zend_Registry::get('restrictions');
 
 	    $sslcert = new Zend_Form_Element_Textarea('tls_certificate_data', array(
@@ -87,7 +87,7 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
             require_once('Validate/PKICertificate.php');
             $sslcert->addValidator(new Validate_PKICertificate());
         }
-		
+
 		$sslkey = new Zend_Form_Element_Textarea('tls_certificate_key', array(
 		      'label'    =>  $t->_('Encoded SSL private key')." :",
 		      'required'   => false,
@@ -118,20 +118,20 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
             require_once('Validate/PKICertificate.php');
             $sslchain->addValidator(new Validate_PKICertificate());
         }
-	    
+
 		if ($this->_httpd->getParam('use_ssl') == 'true') {
 			$this->_urlsheme = 'https';
 		}
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
 		$this->addElement($submit);
-		
+
 	}
 
 	public function setParams($request, $httpd, $fwrule) {
 		$t = Zend_Registry::get('translate');
         $restrictions = Zend_Registry::get('restrictions');
-		
+
 		$httpd->setParam('use_ssl', $request->getParam('use_ssl'));
 		$httpd->setParam('servername', $request->getParam('servername'));
 		$fwrule->setParam('allowed_ip', $request->getParam('allowed_ip'));
@@ -162,15 +162,15 @@ class Default_Form_Httpd extends ZendX_JQuery_Form
                         throw new Exception($t->_('Certificate and key does not match'));
                     }
                 }
-		
+
 		$httpd->save();
 		$fwrule->save();
-			
+
 	    if ($httpd->getParam('use_ssl') == 'true') {
 			$this->_urlsheme = 'https';
 		} else {
 			$this->_urlsheme = 'http';
 		}
 	}
-	
+
 }

@@ -1,16 +1,16 @@
-<?    
+<?
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
  /**
  * include log, system config and session objects
  */
 require_once('variables.php');
-require_once('system/SystemConfig.php');        
+require_once('system/SystemConfig.php');
 require_once('user/User.php');
 require_once('view/Language.php');
 

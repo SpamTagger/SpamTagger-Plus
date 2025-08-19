@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for user management
  */
 
@@ -49,7 +49,7 @@ class ManageuserController extends Zend_Controller_Action
 				$view->$p = $v;
 			}
 		}
-		
+
 		/*$t = Zend_Registry::get('translate');
 		if ($params['search'] == $t->_('Search data')) {
 			$params['search'] = '';
@@ -85,11 +85,11 @@ class ManageuserController extends Zend_Controller_Action
     	                                  'username' => $view->search,
     	                                  'domain' => $view->domain));
 		}
-			
+
 		require_once('Tools/SearchPagination.php');
 		Tools_SearchPagination::paginateElements($elements, 12, $view->page, $view);
-			
-			
+
+
 		$view->editurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('edit', 'manageuser');
 		#    	if ($view->type == 'email') {
 		#         $view->editurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('editemail', 'manageuser');
@@ -135,12 +135,12 @@ class ManageuserController extends Zend_Controller_Action
 		$view->username = $user->getParam('username');
 		$username = $view->username;
 		$view->userobject = $user;
-		
+
 		if ($request->isXmlHttpRequest()) {
 			$layout->disableLayout();
 			$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 		}
-			
+
 		$panel = 'interfacesettings';
 		$panelformclass = 'Default_Form_Manage_UserInterfacesettings';
 		if ($request->getParam('panel') && array_key_exists($request->getParam('panel'), $user->getConfigPanels())) {
@@ -149,10 +149,10 @@ class ManageuserController extends Zend_Controller_Action
 		}
 		$view->previouspanel = $user->getPreviousPanel($panel);
 		$view->nextpanel = $user->getNextPanel($panel);
-			
+
 		$panelform = new $panelformclass($user, $request->getParam('domain'));
 		$params = $this->getRequest()->getParams();
-			
+
 		$params = array();
 		foreach (array('page', 'search', 'type') as $p) {
 			$params[$p] = $this->getRequest()->getParam($p);
@@ -165,11 +165,11 @@ class ManageuserController extends Zend_Controller_Action
 		$view->panel = $panel;
 		$view->form = $panelform;
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('edituser', 'manageuser', NULL, $params);
-			
+
 		$view->removeurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('removeuser', 'manageuser', NULL,
 		array('domain' => $user->getDomainObject()->getParam('name'),
     	                                'user' => $username));
-			
+
 		$view->removeurl .= '/search/'.$view->search.'/page/'.$view->page;
 
 		$message = '';
@@ -204,8 +204,8 @@ class ManageuserController extends Zend_Controller_Action
 				}
 			}
 		}
-			
-			
+
+
 		$flashmessages = $this->_helper->getHelper('FlashMessenger')->getMessages();
 		if (isset($flashmessages[0])) {
 			$message = $flashmessages[0];
@@ -258,7 +258,7 @@ class ManageuserController extends Zend_Controller_Action
 		$view->username = $view->address;
 		$view->elementdatafield = 'address';
 		$view->domain = $email->getDomain();
-			
+
 		if ($request->isXmlHttpRequest()) {
 			$layout->disableLayout();
 			$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
@@ -272,10 +272,10 @@ class ManageuserController extends Zend_Controller_Action
 		}
 		$view->previouspanel = $email->getPreviousPanel($panel);
 		$view->nextpanel = $email->getNextPanel($panel);
-			
+
 		$panelform = new $panelformclass($email);
 		$params = $this->getRequest()->getParams();
-			
+
 		$params = array();
 		foreach (array('page', 'search', 'type') as $p) {
 			$params[$p] = $this->getRequest()->getParam($p);
@@ -287,14 +287,14 @@ class ManageuserController extends Zend_Controller_Action
 		$view->panel = $panel;
 		$view->form = $panelform;
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('editemail', 'manageuser', NULL, $params);
-			
+
 		$view->removeurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('removeemail', 'manageuser', NULL, $params);
 
 		$view->email = $email;
         if (preg_match('/(\S+)\@/', $params['search'], $matches)) {
             $params['search'] = $matches[1];
         }
-		
+
         $spamparams = $params;
         unset($spamparams['page']);
 		unset($spamparams['type']);
@@ -303,7 +303,7 @@ class ManageuserController extends Zend_Controller_Action
 			$spamparams['search'] = $matches[1];
 		}
 		$urls['spamquarantine'] = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'managespamquarantine', NULL, $spamparams);
-		
+
 		$userparams = $params;
 		$userparams['type'] = 'email';
 		if ($email->getLinkedUser()) {
@@ -312,12 +312,12 @@ class ManageuserController extends Zend_Controller_Action
 		}
 		unset($userparams['address']);
 		$urls['usersettings'] = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('edit', 'manageuser', NULL, $userparams);
-		
+
 		$guiparams = $params;
 		unset($guiparams['search']);
 		unset($guiparams['type']);
 		$urls['usergui'] = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('autologuser', 'manageuser', NULL, $guiparams);
-		
+
 		$view->urls = $urls;
 		$view->linkedusername = $email->getLinkedUser();
 		$message = '';
@@ -328,11 +328,11 @@ class ManageuserController extends Zend_Controller_Action
 					$email->save();
 
 					$message = 'OK data saved';
-					
+
 					ManageuserController::getSearchParams($request, $view);
 					ManageuserController::searchUserOrEmails($request, $view);
 					$view->address = $email->getParam('address');
-					
+
 					$email = new Default_Model_Email();
 					$email->find($view->address);
 					$view->emailobject = $email;
@@ -340,7 +340,7 @@ class ManageuserController extends Zend_Controller_Action
 					$panelform->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('editemail', 'manageuser', NULL, $params));
 					$panelform->setAttrib('id', 'emailedit_form');
 					$view->form = $panelform;
-				
+
 					if ($panel == 'archiving' || $panel == 'addresssettings') {
 						$slave = new Default_Model_Slave();
 						$soapparams = array('what' => 'archiving');
@@ -368,7 +368,7 @@ class ManageuserController extends Zend_Controller_Action
 	public function removeuserAction() {
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
-			
+
 		$request = $this->getRequest();
 		$user = new Default_Model_User();
 		$user->find($request->getParam('user'), $request->getParam('domain'));
@@ -393,11 +393,11 @@ class ManageuserController extends Zend_Controller_Action
 		$view->message = $message;
 		return;
 	}
-	
+
 	public function removeemailAction() {
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
-			
+
 		$request = $this->getRequest();
 		$email = new Default_Model_Email();
 		$email->find($request->getParam('email'));
@@ -412,7 +412,7 @@ class ManageuserController extends Zend_Controller_Action
 			unset($params['action']);
 			unset($params['module']);
 			$params['removed'] = '1';
-            
+
 			$flashmessages = $this->_helper->getHelper('FlashMessenger')->addMessage('OK preferences removed');
 			$url = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('edit', 'manageuser', NULL, $params);
 			$this->_helper->getHelper('Redirector')->gotoSimple('editemail', null, null, $params);
@@ -429,9 +429,9 @@ class ManageuserController extends Zend_Controller_Action
 		$view=$layout->getView();
 		$layout->disableLayout();
 		$request = $this->getRequest();
-			
+
 		if ($request->getParam('user') && $request->getParam('domain')) {
-				
+
 			$admin = Zend_Registry::get('user');
 			if ($admin->canManageDomain($request->getParam('domain'))) {
 				// to do: check domain

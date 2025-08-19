@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * PreRBLs form
  */
 
@@ -12,40 +12,40 @@ class Default_Form_AntiSpam_PreRBLs extends Default_Form_AntiSpam_Default
 {
 	protected $_viewscript = 'forms/antispam/PreRBLsForm.phtml';
 	public $_rbl_checks = array();
-	
+
 	public function getViewScriptFile() {
 		return $this->_viewscript;
 	}
-	
+
 	public function __construct($module) {
 		parent::__construct($module);
 	}
-	
+
 	public function init() {
 		parent::init();
-		
+
 		$as = new Default_Model_Antispam_PreRBLs();
 		$as->find(1);
-		
+
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-		
+
     	$rbllist = new Default_Model_DnsLists();
 		$rbllist->load();
-		
+
     	$spam_list_to_be_spam = new Zend_Form_Element_Select('spamhits', array(
             'label'      => $t->_('List hits to be spam')." :",
             'title'    => $t->_("Number of RBLs (below) to meet to be considered as spam by this module"),
             'required'   => false,
             'filters'    => array('StringTrim')));
-        
+
         for ($i = 1; $i <= count($rbllist->getRBLs('IPRBL BSRBL DNSRBL')); $i++) {
         	$spam_list_to_be_spam->addMultiOption($i, $i);
         }
         $spam_list_to_be_spam->setValue($as->getParam('spamhits'));
         $this->addElement($spam_list_to_be_spam);
-        
+
 		foreach ($rbllist->getRBLs('IPRBL BSRBL DNSRBL') as $rbl) {
 			$userbl = new Zend_Form_Element_Checkbox('use_rbl_'.$rbl['name'], array(
 			         'label' => $rbl['dnsname'],
@@ -58,7 +58,7 @@ class Default_Form_AntiSpam_PreRBLs extends Default_Form_AntiSpam_Default
 	        $this->addElement($userbl);
 	        $this->_rbl_checks[] = $userbl;
 		}
-		
+
 		$avoidgoodspf = new Zend_Form_Element_Checkbox('avoidgoodspf', array(
 			        'label'   => $t->_('Avoid checking for good SPF'). " :",
 				'title' => $t->_('Bypass good SPF check'),
@@ -82,13 +82,13 @@ class Default_Form_AntiSpam_PreRBLs extends Default_Form_AntiSpam_Default
                 $avoidhosts->setValue($hoststoavoid);
                 $this->addElement($avoidhosts);
 	}
-	
+
 	public function setParams($request, $module) {
 		parent::setParams($request, $module);
-		
+
 		$as = new Default_Model_Antispam_PreRBLs();
 		$as->find(1);
-		
+
 		$rbllist = new Default_Model_DnsLists();
 		$rbllist->load();
 		$rblstr = '';
@@ -107,5 +107,5 @@ class Default_Form_AntiSpam_PreRBLs extends Default_Form_AntiSpam_Default
                 $as->setParam('avoidhosts', $hoststoavoid);
 		$as->save();
 	}
-	
+
 }

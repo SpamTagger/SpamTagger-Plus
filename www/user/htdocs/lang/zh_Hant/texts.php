@@ -13,7 +13,7 @@ $txt['NEWSLETTERSSHORTHELP'] = "您可以從這裡管理您的電子報。";
 $txt['NEWSLETTERSALLOW'] = "寄送";
 $txt['NEWSLETTERACCEPT'] = "接受此電子報";
 $txt['SPAM_WHITELIST_DISABLED'] = "本網域尚未啟用此清單（請與您的管理員連繫）。";
-/* 
+/*
  * generic buttons
  */
 $txt['SUBMIT'] = "提交";
@@ -432,7 +432,7 @@ $txt['KEEPBOUNCESINQUARANTINE'] = "保留錯誤訊息";
 $txt['PARAMETERSSAVED'] = "您的設置已保存。";
 $txt['NOTSAVED'] = "無法保存您的設置。";
 $txt['INVALIDSUMMARYTO'] = "為報告提供的電子郵件地址無效";
-/* 
+/*
  * quarantine  (new)
  */
 $txt['CONFIGQUARSHORTHELP'] = "可以自訂隔離顯示 (天數和行數) 以滿足您的需要和習慣。";
@@ -456,7 +456,7 @@ $txt['REMOVEAWARNENTRYSHORTHELP'] = "選擇要從清單中修改的位址或addr
 $txt['REMTHEENTRY'] = "刪除選定內容";
 $txt['DISABLETHEENTRY'] = "禁用/啟用選擇";
 $txt['WHITELISTSHORTHELP'] = "白名單中包含的受信任寄件者位址將不會發生任何隔離保留. <br/> 警告: 此功能應作為臨時解決方案使用, 因為它降低了整體保護。
-                                  有關白色清單用法的詳細資訊, 請檢查手冊 (在 <a href=\"help.php\"> \"説明\" </a> 部分中提供)。 
+                                  有關白色清單用法的詳細資訊, 請檢查手冊 (在 <a href=\"help.php\"> \"説明\" </a> 部分中提供)。
 ";
 $txt['BLACKLISTSHORTHELP'] = "黑名單中包含已列出的寄件者位址.。
                                   有關黑色清單用法的詳細資訊, 請檢查手冊 (在 <a href=\"help.php\"> \"説明\" </a> 部分中提供)。

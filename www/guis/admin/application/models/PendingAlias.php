@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Pending alias request
  */
 
@@ -17,15 +17,15 @@ class Default_Model_PendingAlias
 	  'alias' => '',
 	  'user' => 0,
     );
-    
+
 	protected $_mapper;
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		$ret = null;
 		if (array_key_exists($param, $this->_values)) {
@@ -36,18 +36,18 @@ class Default_Model_PendingAlias
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
-		
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-		
+
     public function setMapper($mapper)
     {
         $this->_mapper = $mapper;
@@ -67,19 +67,19 @@ class Default_Model_PendingAlias
         $this->getMapper()->find($address, $this);
         return $this;
     }
-        
+
     public function fetchAll($params = NULL) {
     	return $this->getMapper()->fetchAll($params);
     }
-      
+
     public function save()
-    {	
+    {
         return $this->getMapper()->save($this);
     }
-    
+
     public function delete()
     {
     	return $this->getMapper()->delete($this);
     }
-    
+
 }

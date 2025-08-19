@@ -18,7 +18,7 @@
 # Rules contributed by Alex Broens <alexb@uribl.com>
 # Requires: PDFInfo.pm plugin
 # License: None
-# Description: This plugin/ruleset combination will help you alleviate the new 
+# Description: This plugin/ruleset combination will help you alleviate the new
 #              PDF based stock spam which began to appear mid-June, 2007.
 #
 #
@@ -30,7 +30,7 @@
 #   0.4 - added new fuzzy for encrypted pdf image spams.
 #       - added rule to check for encryption
 #   0.3 - added rules based on the new pdf_match_details() function
-#       - added additional fuzzy md5 rules 
+#       - added additional fuzzy md5 rules
 #       - disabled static md5 rules as they are no longer hitting.
 #   0.2 - added static md5 to hit full page stock spam.
 #   0.1 - initial ruleset.
@@ -74,13 +74,13 @@
 # or you can write a regex to match dynamic file names.
 # body          MY_TEST_PDF             eval:pdf_name_regex('/^(?:my|your)test\.pdf$/')
 
-# you can make it case insensitive by using modifiers 
+# you can make it case insensitive by using modifiers
 # body          PDF_IMGXXXXX            eval:pdf_name_regex('/^IMG\D+\.\.PDF$/i')
 
-# you can do exact image size matches 
+# you can do exact image size matches
 # body          PDF_DEMS_150_400        eval:pdf_image_size_exact(150,400)
 
-# you can do image to text, or image to html ratios 
+# you can do image to text, or image to html ratios
 # rawbody       PDF_TO_HTML_RATIO       eval:pdf_image_to_text_ratio(0.000, 0.015)
 # body          PDF_TO_TEXT_RATIO       eval:pdf_image_to_text_ratio(0.000, 0.008)
 
@@ -117,8 +117,8 @@
 # body          GMD_TITLE_WORD_DOC1     eval:pdf_match_details('title','/^Microsoft Word \- Document1$/)
 # body          GMD_CREATED_JULY07      eval:pdf_match_details('created','/^200707/')
 # body          GMD_MODIFIED_JULY07     eval:pdf_match_details('modified','/^200707/')
- 
-####################################### 
+
+#######################################
 # DISABLED RULES, ENABLE IF YOU WANT
 #######################################
 
@@ -158,7 +158,7 @@ ifplugin Mail::SpamAssassin::Plugin::PDFInfo
 # thin horizontal, common stox.
 body            GMD_PDF_HORIZ           eval:pdf_image_size_range(100, 450, 240, 800)
 describe        GMD_PDF_HORIZ           Contains pdf 100-240 (high) x 450-800 (wide)
-score           GMD_PDF_HORIZ           0.25    
+score           GMD_PDF_HORIZ           0.25
 # counts        GMD_PDF_HORIZ           135s/0h of 6132 corpus (4555s/1577h AxB-MANUAL) 07/11/07
 # counts        GMD_PDF_HORIZ           278s/0h of 34051 corpus (33259s/792h AxB2-TRAPS) 07/13/07
 
@@ -278,18 +278,18 @@ score           GMD_AUTHOR_COLET        4.50
 # from full page pdf stock spammer.
 body            GMD_AUTHOR_MOBILE       eval:pdf_match_details('author','/^mobile$/')
 describe        GMD_AUTHOR_MOBILE       PDF author was 'mobile'
-score           GMD_AUTHOR_MOBILE       2.75    
+score           GMD_AUTHOR_MOBILE       2.75
 # counts        GMD_AUTHOR_MOBILE       2s/0h of 6132 corpus (555s/1577h AxB-MANUAL) 07/11/07
 # counts        GMD_AUTHOR_MOBILE       55s/0h of 10767 corpus (9986s/781h AxB2-TRAPS) 07/11/07
 
-# txt only stock spam 
+# txt only stock spam
 body            GMD_AUTHOR_OOO          eval:pdf_match_details('author','/^openofficeuser$/')
 describe        GMD_AUTHOR_OOO          PDF author was 'openofficeuser'
 score           GMD_AUTHOR_OOO          1.75
 # counts        GMD_AUTHOR_OOO          1s/0h of 10767 corpus (9986s/781h AxB2-TRAPS) 07/11/07
 # counts        GMD_AUTHOR_OOO          118s/0h of 6132 corpus (555s/1577h AxB-MANUAL) 07/11/07
 
-# txt only stock spam 
+# txt only stock spam
 body            GMD_AUTHOR_HPADMIN      eval:pdf_match_details('author','/^HP_Administrator/')
 describe        GMD_AUTHOR_HPADMIN      PDF author was 'HP_Administrator'
 score           GMD_AUTHOR_HPADMIN      0.25

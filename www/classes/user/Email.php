@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
  /**
   * Email use Domain and User objects
   * It inherits from the PrefHandler storage possibilities
@@ -14,14 +14,14 @@ require_once("helpers/PrefHandler.php");
 require_once("domain/Domain.php");
 require_once("user/User.php");
 
-/** 
+/**
  * Email preferences and management
  * This class is mainly a wrapper to the email object preferences
- * 
+ *
  * @package SpamTagger Plus
  */
 class Email extends PrefHandler {
-        
+
   /**
   * Email preferences
   * @var array
@@ -44,13 +44,13 @@ class Email extends PrefHandler {
                        'gui_mask_forced' => '0',
                        'gui_graph_type' => 'bar',
                        'gui_group_quarantines' => '0',
-                       
+
                        'allow_newsletters' => ''
 	                  );
-   
+
   /**
    * Email datas and relations
-   */                   
+   */
    private $infos_ = array(
                        'address' =>  '',
                        'user'    =>  '',
@@ -92,7 +92,7 @@ public function getDomain() {
   if (! preg_match('/(\S+)@(\S+)/', $this->getPref('address'), $tmp)) {
     return "";
   }
-  return $tmp[2];     
+  return $tmp[2];
 }
 
 /**
@@ -104,7 +104,7 @@ public function load($ad) {
   global $log_;
   $log_->log('-- BEGIN loading email: '.$ad, PEAR_LOG_INFO);
   global $sysconf_;
-  
+
   // check address format and find domain of address
   $a = strtolower($ad);
   $tmp = array();
@@ -113,12 +113,12 @@ public function load($ad) {
   }
   $address = $a;
   $domain_name = $tmp[2];
-  
+
   // check admin right on users domain
   if (isset($admin_) && !$admin_->canManageDomain($domain_name)) {
         return false;
   }
-  
+
   // first set domain preferences as default values
   $d = new Domain();
   if (in_array($domain_name, $sysconf_->getFilteredDomains())) {
@@ -131,15 +131,15 @@ public function load($ad) {
       $this->setPref($pref, $d->getPref($pref));
     }
   }
-  
+
   $this->setPref('address', $a);
   $this->setPref('domain', $tmp[2]);
-  
+
   // then load the address' preferences if exists
   $where_clause = "e.pref=p.id AND e.address='".$this->getPref('address')."'";
   if ($this->loadPrefs('e.address as e_id, p.id as pid, e.address as address, e.is_main as is_main, e.user as uid, ', $where_clause, true)) {
    }
-  
+
   $log_->log('-- END loading email: '.$this->getPref('address'), PEAR_LOG_INFO);
   return true;
 }
@@ -196,9 +196,9 @@ public function delete() {
   if (isset($admin_) && !$admin_->canManageDomain($this->getDomain())) {
     return "NOTALLOWED";
   }
-  
+
   $ret = $this->deletePrefs(null);
-  
+
   $log_->log('-- END deleting email: '.$this->getPref('address'), PEAR_LOG_INFO);
   $res = $sysconf_->dumpConfiguration('wwlist', $this->getPref('address'));
   return $ret;
@@ -290,7 +290,7 @@ public function html_SumFreqRadio() {
  */
 public function html_QuarBouncesCheckbox() {
     $ret = "<input type=\"checkbox\" name=\"quarantine_bounces\" value=\"1\"";
-    if ($this->getPref('quarantine_bounces') > 0) { $ret .= " checked"; } 
+    if ($this->getPref('quarantine_bounces') > 0) { $ret .= " checked"; }
     $ret .= " />";
     return $ret;
 }

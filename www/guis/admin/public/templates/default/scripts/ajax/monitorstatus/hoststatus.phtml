@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -6,16 +6,16 @@
  * @copyright 2025, SpamTagger
  */
 ?>
-<?php 
+<?php
   $loadtext = 'Loading';
   if (!$this->initial_loading) {
      $status = $this->slave->getStatusValues();
   $loadtext = 'Refreshing';
   }
-  
+
 ?>
 <table class="hoststatustable hoststatus_<?echo $this->slave->getId();?>">
-   
+
   <tr class="hoststatushead">
    <td colspan="<?php echo count($this->columns)?>">
    <p></p>
@@ -36,7 +36,7 @@
   <tr class="hoststatuscolumnhead">
    <?php foreach ($this->more_content as $cname => $c) {?>
       <td class="c_<?php echo $cname?> c_title">
-          <?php 
+          <?php
             echo $this->t->_($cname);
             if ($cname == 'stats') {
           	  echo " &ndash; ".$this->t->_($this->stats_type."_title");
@@ -47,7 +47,7 @@
         <?php echo $this->t->_('status');?> <?php if (0) { ?>(<span class="version" ><?php echo $this->t->_('version');?>: <?php echo $this->slave->getHostVersion();?>, <?php echo $this->t->_('level'); ?>: <?php echo $this->slave->getHostPatchLevel();?>)</span><?php } ?>
       </td>
    </tr>
-   
+
    <tr class="statusvaluesrow">
     <td class="c_stats" >
         <div class="hostpiegraphbox"><img class="hostpiegraph" src="<?php echo $this->pielink?>/gs/150" alt="statspie" /></div>
@@ -65,51 +65,51 @@
     <td class='hoststatsbullet hostsumrow'>&nbsp;</td>
     <td class="hoststatstablevalue hostsumrow"><?php echo (int)$this->stats_total?></td>
   </tr>
- 
+
  </table>
- 
+
         </div>
     </td>
-   
+
     <td class="c_load" ><br />
         <span class="statusdescr"><?php echo $this->t->_('Last 5m')?>:</span><span class="statusvalue"><?php echo $status['loadavg05']?></span><br />
         <span class="statusdescr"><?php echo $this->t->_('Last 10m')?>:</span><span class="statusvalue"><?php echo $status['loadavg10']?></span><br />
         <span class="statusdescr"><?php echo $this->t->_('Last 15m')?>:</span><span class="statusvalue"><?php echo $status['loadavg15']?></span>
    </td>
-   
-    <td class="c_disks" ><br /> <?php foreach ($status['disksusage'] as $disk) {?> 
+
+    <td class="c_disks" ><br /> <?php foreach ($status['disksusage'] as $disk) {?>
             <span class='statusdescr'>
                <?php if ($disk['mount'] == '/') { echo $this->t->_('System'); }
                 else if ($disk['mount'] == '/var') { echo $this->t->_('Data'); }
                 else if ($disk['mount'] == $this->quarantinedir) { echo $this->t->_('Spams'); }
-                else { echo $disk['mount'];} ?> : 
+                else { echo $disk['mount'];} ?> :
             </span>
             <span class='statusvalue'><?php echo $disk['puse']."%"?></span>
             <span class="statusvalue diskusagebar">
-                 <span class="diskused" style="width: <?php echo ceil($disk['puse'] / 2);?>px;background-image:url(<?php 
+                 <span class="diskused" style="width: <?php echo ceil($disk['puse'] / 2);?>px;background-image:url(<?php
                       echo $this->images_path."/";
-                      if ($disk['puse'] < 60) { 
-                         echo "clean.png"; 
-                      } else if ($disk['puse'] < 90) { 
-                         echo 'spam.png'; 
+                      if ($disk['puse'] < 60) {
+                         echo "clean.png";
+                      } else if ($disk['puse'] < 90) {
+                         echo 'spam.png';
                       } else { echo 'virus.png'; }?>)">
                   </span>
               </span>
             <br />
          <?php }?>
     </td>
-    
-    
+
+
     <td class="c_memory" ><br />
      <?php $memusage =  round((100 / $status['memoryusage']['memtotal']) * ($status['memoryusage']['memused'] - $status['memoryusage']['memcached']))?>
      <?php if (isset($status['memoryusage']['swaptotal']) && $status['memoryusage']['swaptotal'] != 0) { $swapusage =  sprintf('%.2d', (100 / $status['memoryusage']['swaptotal']) * ($status['memoryusage']['swapused'])); } ?>
-         
+
        <span class='statusdescr'><?php echo $this->t->_('Physical memory')?>: </span>
        <span class='statusvalue'><?php echo $memusage."%"?></span>
        <span class="statusvalue diskusagebar">
           <span class="diskused" style="width: <?php echo ceil($memusage / 2);?>px;background-image:url(<?php
              echo $this->images_path."/";
-                      if ($memusage <= 60) { 
+                      if ($memusage <= 60) {
                          echo 'clean.png'; }
                          elseif ($memusage <= 90) {
                          	echo 'spam.png';
@@ -123,7 +123,7 @@
        <span class="statusvalue diskusagebar">
           <span class="diskused" style="width: <?php echo ceil($swapusage / 2);?>px;background-image:url(<?php
              echo $this->images_path."/";
-                      if ($swapusage < 10) { 
+                      if ($swapusage < 10) {
                          echo "spam.png";
                       } else { echo 'virus.png'; }?>)">
              </span>
@@ -131,7 +131,7 @@
        <?php } ?>
 
     </td>
-    
+
     <td class="c_spools" ><br />
        <span class='statusdescr'><?php echo $this->t->_('Incoming')?>: </span>
        <span class='statusvalue<?php if ($status['spools'][1] > 10000) { echo " criticalvalue"; } else if ($status['spools'][1] > 1000) { echo " warningvalue"; }?>'>
@@ -156,33 +156,33 @@
   <span class='versionstatus'><?php echo $this->slave->getHostVersion();?></span>
 </span>
 
-     <?php $processes = array('exim_stage1' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')), 
-                              'exim_stage2' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')), 
-                              'exim_stage4' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')), 
-                              'apache' => array('advanced' => 0, 'actions' => array('restart')), 
-                              'mailscanner'=> array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')), 
-                              'mysql_master' => array('advanced' => 0, 'actions' => array('restart')), 
-                              'mysql_slave' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')), 
-                              'snmpd' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')), 
-                              'greylistd' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')), 
-                              'cron' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')), 
-                              'preftdaemon' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')), 
-                              'spamd' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')), 
-                              'clamd' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')), 
-                              'clamspamd' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')), 
-                              'spamhandler' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')), 
+     <?php $processes = array('exim_stage1' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
+                              'exim_stage2' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
+                              'exim_stage4' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
+                              'apache' => array('advanced' => 0, 'actions' => array('restart')),
+                              'mailscanner'=> array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
+                              'mysql_master' => array('advanced' => 0, 'actions' => array('restart')),
+                              'mysql_slave' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
+                              'snmpd' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
+                              'greylistd' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
+                              'cron' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')),
+                              'preftdaemon' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')),
+                              'spamd' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')),
+                              'clamd' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')),
+                              'clamspamd' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')),
+                              'spamhandler' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')),
                               'newsld' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')),
                               'firewall' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart'))); ?>
      <?php foreach ($processes as $p => $option) {?>
      <span class="procrow<?php if ($option['advanced']) { echo " procadvanced";}?>">
        <span class='statusdescr'><?php echo $this->t->_('process_'.$p)?> : </span>
-       
+
        <span class='statusvalue stopstartvalue'>
          <?php foreach ($option['actions'] as $a) {?>
            <a href="javascript:stopstart('<?php echo $a?>',<?php echo $this->slave->getId()?>,'<?php echo $p?>');"><img class="<?php echo $a?>button" src="<?php echo $this->images_path?>/<?php echo $a?>.gif" alt="<?php echo $a?>" /></a>
          <?php }?>
        </span>
-       
+
         <?php echo $this->partial('ajax/monitorstatus/restartservice.phtml', array(
                          'status' => $status['processes'][$p],
                          'process' => $p,
@@ -196,8 +196,8 @@
      <?php }?>
     </td>
    </tr>
-  
-   
+
+
    <tr class="showmorerow">
      <?php foreach ($this->more_content as $type => $c) {?>
      <td>
@@ -208,13 +208,13 @@
          <a class="procadvanced" href="javascript:hideAdvancedProcs();"><?php echo $this->t->_('hide advanced...')?></a>
      </td>
    </tr>
-   
-   
-   <?php foreach ($this->more_content as $type => $c) { ?> 
+
+
+   <?php foreach ($this->more_content as $type => $c) { ?>
    <tr class="graphisrow <?php if ( !in_array($type, $this->more_to_show) ) { echo 'hidden '; }?> host_<?php echo $this->slave->getId();?>_graph_<?php echo $type; ?>">
       <td class="graprowresc">
          <p class="graprowrescp"><?php echo $this->t->_($type)?> : </p>
-        <?php ## graph type 
+        <?php ## graph type
          if (count($this->more_content[$type]['type']) > 1) { ?>
          <p>
            <?php $i=1; foreach ($this->more_content[$type]['type'] as $t) {?>
@@ -227,7 +227,7 @@
            <?php $i++; }?>
           </p>
         <?php }?>
-         
+
         <?php ## graph mode
          if (count($this->more_content[$type]['mode']) > 1) { ?>
          <p>
@@ -241,7 +241,7 @@
            <?php $i++; }?>
           </p>
         <?php } ?>
-        
+
         <?php ## graph period ?>
          <p>
            <?php $i=1; foreach ($this->periods as $p) {?>
@@ -253,7 +253,7 @@
              <?php if ($i < count($this->periods)) { ?> | <?php }?>
            <?php $i++; }?>
          </p>
-         
+
          <?php ## show/hide ?>
          <p>(<a href="javascript:hideGraph('host_<?php echo $this->slave->getId()?>_graph_<?php echo $type?>')";><?php echo $this->t->_('hide');?></a>)</p>
 
@@ -266,5 +266,5 @@
       </td>
    </tr>
    <?php }?>
-<?php }?>   
+<?php }?>
 </table>

@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * LoginDialog needs the authentication connectors
  */
@@ -47,12 +47,12 @@ private $domain_;
  * constructor, if defined, set the posted value and find out the other variables (f.e. domain)
  */
 public function __construct() {
-    
+
   // first, unset any Auth session, this ensure that user is really logged out
   unset($_SESSION['_authsession']);
   // get global objects instances
   $sysconf = SystemConfig :: getInstance();
-  
+
   // detect if credential are passed through an HTTP request (POST or GET)
   $encrypted_password = "";
   if (isset($_REQUEST['id'])) {
@@ -66,22 +66,22 @@ public function __construct() {
 
   // check if a username has been posted
   if (isset($_REQUEST['username'])) {
-	
+
     /** try to detect the domain for this username...
-	 * maybe given by POST or in username 
+	 * maybe given by POST or in username
      */
-    
-    // first get default domain 
+
+    // first get default domain
 	$domain = $sysconf->getPref('default_domain');
 	$this->username_ = $_REQUEST['username'];
 	$this->username_ = str_replace('\'', '\\\'', $this->username_); // avoid problems with ' in usernames..
-    
+
     // if we can find domain in login name given (such as login@domain)
     $ret = array();
     if (preg_match('/(.+)[@%](\S+)$/', $this->username_, $ret)) {
        $domain = $ret[2];
     }
-    
+
     // if the domain is explicitly set in the POST
     if (isset($_REQUEST['domain']) && in_array($_REQUEST['domain'], $sysconf->getFilteredDomains())) {
       $domain = $_REQUEST['domain'];
@@ -104,7 +104,7 @@ public function __construct() {
         }
         $_POST['password'] = $password;
     }
-    
+
     // then format username and create corresponding connector
     $this->username_ = $this->domain_->getFormatedLogin($this->username_);
     $_POST['username'] = $this->username_;
@@ -115,7 +115,7 @@ public function __construct() {
   	// check if we want to authenticate using digest ID
   	if (isset($_REQUEST['d']) && preg_match('/^[0-9a-f]{32}(?:[0-9a-f]{8})?$/i', $_REQUEST['d'])) {
   		$this->auth_ = AuthManager::getAuthenticator('digest');
-  	} else { 
+  	} else {
       // create AuthManager instance with default domain connector
       $this->domain_ = new Domain();
       $this->domain_->load($sysconf->getPref('default_domain'));
@@ -173,7 +173,7 @@ public function start()
         $user->setTmpPref($p, $this->auth_->getValue($p));
       }
     }
-    
+
     // if we have a stub user (i.e. digest mode) so we need to feed it with address preferences
     if ($this->auth_->getValue('stub_user') != "" && $this->auth_->getValue('stub_user') > 0) {
         $user->setStub(true);
@@ -251,7 +251,7 @@ public function hasDomainChooser() {
   if ($sysconf->getPref('want_domainchooser') == 1) {
      return true;
   }
-  return false; 
+  return false;
 }
 
 /**
@@ -282,14 +282,14 @@ public function printLanguageChooser($curr = null) {
 public function printStatus()
 {
   $ret = "";
-  if (!isset($this->auth_)) { 
+  if (!isset($this->auth_)) {
        return "";
   }
   $lang = Language::getInstance('user');
   if ($this->auth_->getStatus() == -3) {
     return 'BADLOGIN';
   } else if ($this->auth_->getStatus() == -2) {
-    return 'SESSIONEXPIRED';		
+    return 'SESSIONEXPIRED';
   }
   return "";
 }

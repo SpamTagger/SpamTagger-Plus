@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * IMAP user authentication settings form
  */
 
@@ -13,19 +13,19 @@ class Default_Form_Domain_UserAuthentication_Imap
 	protected $_domain;
 	protected $_settings = array(
                         "use_ssl" => false);
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 	}
-	
+
 	public function addForm($form) {
 		$name = new Zend_Form_Element_Hidden('connector');
 		$name->setValue('none');
 		$form->addElement($name);
-		
+
 		$t = Zend_Registry::get('translate');
-		
+
 		require_once('Validate/SMTPHostList.php');
 		$server = new  Zend_Form_Element_Text('authserver', array(
 	        'label'    => $t->_('Authentication server')." :",
@@ -34,22 +34,22 @@ class Default_Form_Domain_UserAuthentication_Imap
 	    $server->setValue($this->_domain->getPref('auth_server'));
         $server->addValidator(new Validate_SMTPHostList());
 	    $form->addElement($server);
-	    
+
 	    $this->_settings = $this->getParams();
-	    
+
 	    $imapusesslcheck = new Zend_Form_Element_Checkbox('imapusessl', array(
 	        'label'   => $t->_('Use SSL'). " :",
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));
-	              
+
 	    if ($this->_settings['use_ssl']) {
             $imapusesslcheck->setChecked(true);
 	    }
 	    $form->addElement($imapusesslcheck);
-	    
+
 	}
-	
+
 	public function setParams($request, $domain) {
 	   $array = array(
 	      'auth_server' => $request->getParam('authserver'),
@@ -57,7 +57,7 @@ class Default_Form_Domain_UserAuthentication_Imap
 	   );
 	   $this->setParamsFromArray($array, $domain);
 	}
-	
+
     public function setParamsFromArray($array, $domain) {
        $domain->setPref('auth_type', 'imap');
        $domain->setPref('auth_server', $array['auth_server']);
@@ -78,10 +78,10 @@ class Default_Form_Domain_UserAuthentication_Imap
        $params['auth_server'] = $this->_domain->getPref('auth_server');
        return $params;
     }
-    
+
     public function getParamsString($params) {
        $str = implode(':', array($params['use_ssl']));
        return $str;
     }
-	
+
 }

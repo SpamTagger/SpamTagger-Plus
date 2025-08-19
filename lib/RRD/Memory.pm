@@ -36,7 +36,7 @@ sub New {
   my $statfile = shift;
   $statfile = $statfile."/memory.rrd";
   my $reset = shift;
-  
+
   my %things = (
            used => ['GAUGE', 'LAST'],
            buffered => ['GAUGE', 'LAST'],
@@ -45,13 +45,13 @@ sub New {
            swapused => ['GAUGE', 'LAST']
          );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
-  
+
 
   my $this = {
   	 statfile => $statfile,
   	 rrd => $rrd
   };
-  
+
   return bless $this, "RRD::Memory";
 }
 
@@ -59,7 +59,7 @@ sub New {
 sub collect {
   my $this = shift;
   my $snmp = shift;
-  
+
   require Net::SNMP;
   require RRDTool::OO;
   my %things = (
@@ -70,7 +70,7 @@ sub collect {
         totalswap => '1.3.6.1.4.1.2021.4.3.0',
         freeswap => '1.3.6.1.4.1.2021.4.4.0'
         );
-  
+
   my %values;
   foreach my $thing (keys %things) {
     my $oid = $things{$thing};
@@ -81,7 +81,7 @@ sub collect {
     }
     $values{$thing} = $value;
   }
-    
+
   return $this->{rrd}->update(
         values => {
             used => $values{totalreal} - $values{freereal},
@@ -98,7 +98,7 @@ sub plot {
   my $dir = shift;
   my $period = shift;
   my $leg = shift;
-  
+
   my %things = (
         mused => ['area', 'EB9C48', '', 'Used', 'AVERAGE', '%10.2lf Mb', 'used,1024,/'],
         mbuffered => ['stack', '7648EB', '', 'Buffered', 'AVERAGE', '%10.2lf Mb', 'buffered,1024,/'],
@@ -107,7 +107,7 @@ sub plot {
         mswapused => ['line', 'FF0000', '', 'Swap used', 'AVERAGE', '%10.2lf Mb', 'swapused,1024,/']
    );
   my @order = ('mused', 'mfree','mcached', 'mbuffered', 'mswapused');
-  
+
   my $legend = "\t\t           Last\t      Average\t\t  Max\\n";
   return RRD::Generic::plot('memory', $dir, $period, $leg, 'Memory usage [Mb]', 0, 100, $this->{rrd}, \%things, \@order, $legend);
 }

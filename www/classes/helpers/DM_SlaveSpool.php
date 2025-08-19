@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a DataManager instance
  */
@@ -20,7 +20,7 @@ class DM_SlaveSpool extends DataManager {
 
     public function __construct() {
         parent :: __construct();
-        
+
         $socket = $this->getConfig('VARDIR')."/run/mysql_slave/mysqld.sock";
         $this->setOption('SOCKET', $socket);
         $this->setOption('DATABASE', 'st_spool');

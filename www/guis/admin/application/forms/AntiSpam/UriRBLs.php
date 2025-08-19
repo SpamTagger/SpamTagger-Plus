@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * UriRBLs form
  */
 
@@ -12,40 +12,40 @@ class Default_Form_AntiSpam_UriRBLs extends Default_Form_AntiSpam_Default
 {
 	protected $_viewscript = 'forms/antispam/UriRBLsForm.phtml';
 	public $_rbl_checks = array();
-	
+
 	public function getViewScriptFile() {
 		return $this->_viewscript;
 	}
-	
+
 	public function __construct($module) {
 		parent::__construct($module);
 	}
-	
+
 	public function init() {
 		parent::init();
-		
+
 		$as = new Default_Model_Antispam_UriRBLs();
 		$as->find(1);
-		
+
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-		
+
     	$rbllist = new Default_Model_DnsLists();
 		$rbllist->load();
-		
+
     	$spam_list_to_be_spam = new Zend_Form_Element_Select('listeduristobespam', array(
             'label'      => $t->_('URL hits to be spam')." :",
             'title'    => $t->_("Number of RBLs (below) to meet to be considered as spam by this module"),
             'required'   => false,
             'filters'    => array('StringTrim')));
-        
+
         for ($i = 1; $i <= count($rbllist->getRBLs('URIRBL')); $i++) {
         	$spam_list_to_be_spam->addMultiOption($i, $i);
         }
         $spam_list_to_be_spam->setValue($as->getParam('listeduristobespam'));
         $this->addElement($spam_list_to_be_spam);
-        
+
 		foreach ($rbllist->getRBLs('URIRBL') as $rbl) {
 			$userbl = new Zend_Form_Element_Checkbox('use_rbl_'.$rbl['name'], array(
 			         'label' => $rbl['dnsname'],
@@ -58,7 +58,7 @@ class Default_Form_AntiSpam_UriRBLs extends Default_Form_AntiSpam_Default
 	        $this->addElement($userbl);
 	        $this->_rbl_checks[] = $userbl;
 		}
-		
+
 		$resolve_shorteners = new Zend_Form_Element_Checkbox('resolve_shorteners', array(
             'label'   => $t->_('Resolve URL shorteners/redirects'). " :",
             'title'    => $t->_("If a URL shortener was used, expand the URL to analyze it"),
@@ -82,13 +82,13 @@ class Default_Form_AntiSpam_UriRBLs extends Default_Form_AntiSpam_Default
                 $this->addElement($avoidhosts);
 
 	}
-	
+
 	public function setParams($request, $module) {
 		parent::setParams($request, $module);
-		
+
 		$as = new Default_Model_Antispam_UriRBLs();
 		$as->find(1);
-		
+
 		$rbllist = new Default_Model_DnsLists();
 		$rbllist->load();
 		$rblstr = '';
@@ -107,5 +107,5 @@ class Default_Form_AntiSpam_UriRBLs extends Default_Form_AntiSpam_Default
                 $as->setParam('avoidhosts', $hoststoavoid);
 		$as->save();
 	}
-	
+
 }

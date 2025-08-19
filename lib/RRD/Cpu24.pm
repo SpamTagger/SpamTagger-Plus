@@ -36,7 +36,7 @@ sub New {
   my $statfile = shift;
   $statfile = $statfile."/cpu.rrd";
   my $reset = shift;
-  
+
   my %things = (
            idle => ['COUNTER', 'AVERAGE'],
            nice => ['COUNTER', 'AVERAGE'],
@@ -45,13 +45,13 @@ sub New {
  #          wait => ['COUNTER', 'AVERAGE'],
          );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
-  
+
 
   my $this = {
   	 statfile => $statfile,
   	 rrd => $rrd
   };
-  
+
   return bless $this, "RRD::Cpu24";
 }
 
@@ -59,7 +59,7 @@ sub New {
 sub collect {
   my $this = shift;
   my $snmp = shift;
-  
+
   my %things = (
         idle => '1.3.6.1.4.1.2021.11.53.0',
         nice => '1.3.6.1.4.1.2021.11.51.0',
@@ -67,7 +67,7 @@ sub collect {
         user => '1.3.6.1.4.1.2021.11.50.0',
  #       wait => '1.3.6.1.4.1.2021.11.54.0',
         );
-        
+
   return RRD::Generic::collect($this->{rrd}, $snmp, \%things);
 }
 
@@ -76,7 +76,7 @@ sub plot {
   my $dir = shift;
   my $period = shift;
   my $leg = shift;
-  
+
   my %things = (
         idle => ['stack', 'EEEEEE', 'EEEEEE', 'Idle', 'AVERAGE', '%10.2lf %%', ''],
         nice => ['stack', '48C3EB', '2B82C5', 'Nice', 'AVERAGE', '%10.2lf %%', ''],
@@ -86,7 +86,7 @@ sub plot {
    );
   #my @order = ('system', 'wait', 'user', 'nice', 'idle');
   my @order = ('system', 'user', 'nice', 'idle');
-  
+
   my $legend = "\t\t        Last\t  Average\t\t   Max\\n";
   return RRD::Generic::plot('cpu', $dir, $period, $leg, 'CPU usage [%]', 0, 100, $this->{rrd}, \%things, \@order, $legend);
 }

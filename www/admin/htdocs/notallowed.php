@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the page for not allowed accesses
  */
- 
+
 /**
  * require admin session and view
  */

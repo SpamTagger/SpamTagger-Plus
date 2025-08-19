@@ -10,8 +10,8 @@ mod_time = false;
 
 $(document).ready(function(){
   $(".timefield").click(function() { mod_time = true;});
-  
-  window.setInterval(updateDateTime, 1000);	
+
+  window.setInterval(updateDateTime, 1000);
 });
 
 function updateDateTime() {

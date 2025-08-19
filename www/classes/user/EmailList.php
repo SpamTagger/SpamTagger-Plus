@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is as list
  */
@@ -14,7 +14,7 @@ require_once('helpers/ListManager.php');
 /**
  * This will take car of fetching list of email addresses against registered addresses or against connector
  */
-class EmailList extends ListManager 
+class EmailList extends ListManager
 {
   /**
   * this is the local part of the address to be searched for
@@ -33,7 +33,7 @@ class EmailList extends ListManager
  * @param  $domain    string  domain in which email should be searched
  * @param  $remote    bool    if we must do the remote connector search (may take some time)
  * @return            bool    true on success, false on failure
- */ 
+ */
   public function search($local, $domain, $remote) {
     global $admin_;
     global $sysconf_;
@@ -50,12 +50,12 @@ class EmailList extends ListManager
 
     // first search for registered users
     $this->doRegisteredEmails();
-    
+
     // then, if wanted, search for remote addresses against the connector
     if ($remote) {
       $d = new Domain();
       $d->load($this->s_domain_part_);
-     
+
       $address_fetcher = AddressFetcher::getFetcher($d->getPref('address_fetcher'));
       $emails = $address_fetcher->searchEmails($this->s_local_part_, $d);
       foreach ($emails as $address => $value) {

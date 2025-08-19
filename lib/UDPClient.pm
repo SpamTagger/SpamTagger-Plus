@@ -36,36 +36,36 @@ sub new {
   my $this = {
          port => -1,
          timeout => 5,
-         
+
          socket => '',
   };
-  
+
   # add specific options of child object
   foreach my $sk (keys %spec_this) {
      $this->{$sk} = $spec_this{$sk};
-  } 
-  
+  }
+
   bless $this, $class;
   return $this;
 }
 
 sub connect {
   my $this = shift;
-  
+
   $this->{socket} = IO::Socket::INET->new(
    								  PeerAddr => '127.0.0.1',
    								  PeerPort => $this->{port},
    								  Proto     => 'udp',
    								  Timeout => $this->{timeout})
      or die "Couldn't be an udp server on port ".$this->{port}." : $@\n";
-  
+
   return 0;
 }
 
 sub query {
   my $this = shift;
   my $query = shift;
-  
+
   my $sent = 0;
   my $tries = 1;
   while ($tries < 2 && ! $sent) {
@@ -86,12 +86,12 @@ sub query {
       return '_NOSOCKET';
     }
   }
- 
+
   my $msg;
-    
+
   my $read_set = new IO::Select;
   $read_set->add($this->{socket});
-  
+
   my ($r_ready, $w_ready, $error) =  IO::Select->select($read_set, undef, undef, $this->{timeout});
   foreach my $sock (@$r_ready) {
     my $buf = <$sock>;
@@ -102,21 +102,21 @@ sub query {
       $read_set->remove($sock);
       return "_NOSERVER";
     }
-  }  
+  }
   return '_TIMEOUT';
 }
 
 sub ping {
   my $this = shift;
-  
+
   return 0 if ! $this->{socket};
-  
+
   return 0;
 }
 
 sub close {
   my $this = shift;
-  
+
   close($this->{socket});
   return 1;
 }

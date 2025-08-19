@@ -27,24 +27,24 @@ sub getTaggedSubject {
   my $domain_part = Exim::expand_string('$domain');
   my $subject = Exim::expand_string('$header_subject');
   my $user = $local_part."@".$domain_part;
-  
+
   my $email = Email::create($user);
   my $tag = $email->getPref('spam_tag', '{Spam?}');
-  
+
   $subject =~ s/{ST_SPAM}/$tag/;
   return "Subject: ".$subject;
 }
 
 sub getPlainSubject {
   my $subject = Exim::expand_string('$header_subject');
-  
+
   $subject =~ s/{ST_SPAM}//;
   return "Subject: ".$subject;
 }
 
 sub getNoNewsTagSubject {
   my $subject = Exim::expand_string('$rh_subject');
-  
+
   $subject =~ s/{ST_NEWS}//;
   return "Subject:".$subject;
 }
@@ -59,14 +59,13 @@ sub isBlacklisted {
 
   my $email = Email::create($user);
   my $blacklisted = ($email->hasInWhiteWarnList('blacklist', $sender) || $email->hasInWhiteWarnList('blacklist', $sender_body));
-  my $header_status = Exim::expand_string('$header_X-SpamTagger-Status'); 
+  my $header_status = Exim::expand_string('$header_X-SpamTagger-Status');
   my $blacklist_hash = getBlacklistedFlag($local_part, $domain_part);
 
   if ($header_status =~ m/\Q$blacklist_hash/ && $blacklisted) {
-	return 0;
-  } 
-  else {
-	return $blacklisted;
+	  return 0;
+  } else {
+	  return $blacklisted;
   }
 
 }
@@ -84,7 +83,7 @@ sub getBlacklistedFlag {
   # The blacklist works on MAIL FROM (SMTP) and FROM Body
   my $blacklisted = $email->hasInWhiteWarnList('blacklist', $sender_body);
   if ($blacklisted)  {
-     $sender = $sender_body; 
+     $sender = $sender_body;
   }
 
   my $conf = ReadConfig::getInstance();
@@ -98,9 +97,9 @@ sub quarantineBounce {
   my $local_part = shift;
   my $domain_part = shift;
   my $user = $local_part."@".$domain_part;
-  
+
   my $email = Email::create($user);
-  my $quarbounce = $email->getPref('quarantine_bounces', 0);  
+  my $quarbounce = $email->getPref('quarantine_bounces', 0);
 
   return $quarbounce;
 }

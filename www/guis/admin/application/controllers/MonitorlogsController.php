@@ -29,12 +29,12 @@ class MonitorlogsController extends Zend_Controller_Action
 			}
 		}
 		$params['fy'] = $todate['year'];
-		
+
 		$givendate = new Zend_Date(array('year' => $params['fy'], 'month' =>$params['fm'], 'day' => $params['fd']));
 		if ($givendate->compare(Zend_Date::now()) > 0) {
 			$params['fy'] = $todate['year'] - 1;
 		}
-		
+
 		$params['date'] = sprintf("%04d%02d%02d",$params['fy'],$params['fm'],$params['fd']);
 
 		return $params;
@@ -60,7 +60,7 @@ class MonitorlogsController extends Zend_Controller_Action
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
-			
+
 		$form    = new Default_Form_Logs($this->getSearchParams());
 		$form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'monitorlogs'));
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'monitorlogs', NULL, array());
@@ -75,7 +75,7 @@ class MonitorlogsController extends Zend_Controller_Action
 		$layout->disableLayout();
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'monitorlogs', NULL, array());
-			      
+
 		$request = $this->getRequest();
 
 		if ($request->getParam('load')) {
@@ -101,7 +101,7 @@ class MonitorlogsController extends Zend_Controller_Action
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
 		$layout->disableLayout();
-			
+
 		$request = $this->getRequest();
 		$file = '';
 		if ($request->getParam('f') != '') {
@@ -164,7 +164,7 @@ class MonitorlogsController extends Zend_Controller_Action
         $view->headScript()->appendFile($view->scripts_path.'/logview.js', 'text/javascript');
 		$view->headLink()->appendStylesheet($view->css_path.'/ie7.css', 'screen', 'lt IE 8');
 		$view->headLink()->appendStylesheet($view->css_path.'/ie8.css', 'screen', 'gt IE 7');
-        
+
         $request = $this->getRequest();
         $file = '';
 		if ($request->getParam('f') != '') {
@@ -177,15 +177,15 @@ class MonitorlogsController extends Zend_Controller_Action
 		}
         $view->lastline = 3000;
         $view->baseurl = $view->thisurl."f/".$file;
-		
+
         $file = $matches[2];
         $view->thisfile = $file;
         $slave_id = $matches[1];
-        $view->slaveid = $slave_id;           
+        $view->slaveid = $slave_id;
 
         $log = new Default_Model_Logfile();
         $log->loadByFileName($file);
-            
+
 		if ($request->isXmlHttpRequest()) {
 			$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 
@@ -260,17 +260,17 @@ class MonitorlogsController extends Zend_Controller_Action
             }
             $res['nextlog_link'] = $nextlog_link;
             #var_dump($res['nextlog_link']);
-            
+
 			$view->res = $res;
-			
+
 		} else {
 			$slave = new Default_Model_Slave();
             $slave->find($slave_id);
-            
+
             if ($request->getParam('s')) {
                $view->initial_search = $request->getParam('s');
             }
-            
+
             $t = Zend_Registry::get('translate');
             $view->headTitle($t->_('Log view')." - ".$slave_id." (".$slave->getHostname().") - ".$t->_($log->getParam('name')));
 		}

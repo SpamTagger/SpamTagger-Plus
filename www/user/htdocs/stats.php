@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the statistics page
  */
- 
+
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
   return 200;
 }
@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
 /**
  * require valid session
  */
-require_once("objects.php"); 
+require_once("objects.php");
 require_once("user/Statistics.php");
 require_once("view/Template.php");
 require_once("view/Form.php");
@@ -115,12 +115,12 @@ $replace = array(
     '__BEGIN_FILTER_FORM__' => $form->open(),
     '__END_FILTER_FORM__' => $form->close(),
     '__ADDRESS_SELECTOR__' => $form->select('a', $addresses, $select_wanted, "" ),
-    
+
     '__INPUT_PERIODRADIO__' => $form->radiojs('datetype', 'period', $datetype, 'javascript:useDateSearchType(\'period\');'),
     '__INPUT_DATERADIO__' => $form->radiojs('datetype', 'date', $datetype, 'javascript:useDateSearchType(\'date\');'),
     '__INPUT_PERIODSELECT__' => $form->input('period', 5, $period),
     '__DATESEARCHTYPE__' => $posted['datetype'],
-    
+
     '__INPUT_STARTDAY__' => $form->select('startday', $days, $startd['day'], ';'),
     '__INPUT_STARTMONTH__' => $form->select('startmonth', $months, $startd['month'], ';'),
     '__INPUT_STARTYEAR__' => $form->select('startyear', $years, $startd['year'], ';'),
@@ -139,7 +139,7 @@ function displayStatsList() {
   global $template_;
   global $wanted_stats_;
   global $global_stat;
-  
+
   $ret = "";
   foreach ($wanted_stats_ as $add => $stat) {
   	$ret .= $stat->getStatInTemplate($template_, 'STAT');
@@ -151,7 +151,7 @@ function displayGlobalStats() {
   global $template_;
   global $wanted_stats_;
   global $global_stat;
-  
+
   if (count($wanted_stats_) < 2) {
   	return "";
   }

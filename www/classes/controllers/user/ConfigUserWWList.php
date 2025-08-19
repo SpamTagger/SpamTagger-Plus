@@ -81,7 +81,7 @@ class ConfigUserWWList {
 
                     && !preg_match('/(.\*|\*.)/', $regex_cleaned) // Wildcard with any one other character; prevents just '*'
                 ) {
-                    $this->message_ = 'Add ' . $addposted['entry'] . ' failed (invalid sender)'; 
+                    $this->message_ = 'Add ' . $addposted['entry'] . ' failed (invalid sender)';
                 } else {
                     $sender = $addposted['entry'];
 

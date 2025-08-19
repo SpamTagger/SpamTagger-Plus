@@ -13,7 +13,7 @@ package Mail::SpamAssassin::Plugin::Botnet;
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program; if not, write to the Free Software 
+#   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #   The Author, John Rudd, can be reached via email at
@@ -102,7 +102,7 @@ sub parse_config {
          if (($key eq "botnet_pass_domains") && ($temp !~ /^\\(\.|A)/)) {
             $temp = '(\.|\A)' . $temp;
             }
-         
+
          if ($temp eq "") {
             # don't add empty terms
             next;
@@ -131,7 +131,7 @@ sub parse_config {
       }
    return 1;
    }
- 
+
 
 sub _botnet_get_relay {
    my ($self, $pms) = @_;
@@ -151,7 +151,7 @@ sub _botnet_get_relay {
    # if there are any trusted relays, AND $pass_trusted is set to
    # public, private, or any,  or $pass_auth is true, then check the
    # trusted relays for any pass conditions
-   if ( (defined($trusted[0]->{ip})) && 
+   if ( (defined($trusted[0]->{ip})) &&
         (($pass_auth) ||
          ($pass_trusted eq "any") ||
          ($pass_trusted eq "public") ||
@@ -273,7 +273,7 @@ sub _botnet_get_relay {
          }
       }
    }
- 
+
 
 sub botnet_nordns {
    my ($self, $pms) = @_;
@@ -287,7 +287,7 @@ sub botnet_nordns {
       Mail::SpamAssassin::Plugin::dbg("Botnet: NORDNS skipped");
       return 0;
       }
-   
+
    if ($hostname eq "") {
       # the IP address doesn't have a PTR record
       $pms->test_log("botnet_nordns,ip=$ip");
@@ -400,7 +400,7 @@ sub botnet_clientwords {
       return (0);
       }
    }
-   
+
 
 sub botnet_serverwords {
    my ($self, $pms) = @_;
@@ -748,7 +748,7 @@ sub check_dns {
             # max == -1 means "check all of the records"
             # $ip isn't in the first $max A records for $name
             return(0);
-            } 
+            }
          elsif (($type eq "A") && ($rr->type eq "A")) {
             if ($rr->address eq $ip) {
                # $name resolves back to this ip addr
@@ -802,7 +802,7 @@ sub check_ipinhostname {
    # combined decimal values (ex: 3rd octet * 256 + 4th octet)
    my ($name, $ip) = @_;
    my ($a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l, $m, $n);
-   
+
    unless ( (defined ($name)) && ($name ne "") ) { return 0; }
 
    unless ($ip =~ /^\d+\.\d+\.\d+\.\d+$/) { return 0; }
@@ -872,7 +872,7 @@ sub check_words {
 sub check_hostname {
    # check for an expression within the entire hostname
    my ($name, $regexp) = @_;
-   
+
    if (($name ne "") && ($regexp ne "") && ($name =~ /(?:$regexp)/i) ) {
       return (1);
       }
@@ -902,7 +902,7 @@ sub get_rdns {
       #   # just return the first one, even if it returns many
       #   $name = $answer[0]->ptrdname();
       #   }
-      
+
       # just return the first PTR record, even if it returns many
       foreach $rr (@answer) {
          if ($rr->type eq "PTR") {

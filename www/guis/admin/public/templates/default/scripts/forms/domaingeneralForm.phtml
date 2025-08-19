@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -45,19 +45,19 @@
                         echo "<td class='fvalue'><div><strong style='color:grey'>unchanged</strong></td></tr>";
                 }
          } ?>
-	
+
         <?php if ($this->domain->getParam('name') != '__global__') {?>
           <?php foreach (array('aliases') as $f) {?>
            <?php echo $this->InputRow($this->form->getElement($f),array('label_addclass'=>'flabeltextarea'));?>
           <?php }?>
           <tr><td colspan="2"><hr /></td></tr>
-        <?php }?>      
+        <?php }?>
           <?php foreach (array('systemsender', 'falseneg_to', 'falsepos_to') as $f) {?>
            <?php echo $this->InputRow($this->form->getElement($f));?>
           <?php }?>
-          
+
            <tr><td colspan="2"><hr /></td></tr>
-          
+
           <?php foreach (array('supportname', 'supportemail') as $f) {?>
            <?php echo $this->InputRow($this->form->getElement($f));?>
           <?php }?>

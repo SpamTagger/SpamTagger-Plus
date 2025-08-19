@@ -1,7 +1,7 @@
 <?php
 /**
  * SpamTagger
- * 
+ *
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @copyright 2025, SpamTagger
  */
@@ -21,7 +21,7 @@ class Default_Model_DbTable_UserPreference extends Zend_Db_Table_Abstract
      * @var array
      */
     protected $_dependentTables = array('user');
-        
+
     /**
      * Constructor
      */

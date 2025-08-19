@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the quarantines message content display
  */
- 
+
  /**
   * require admin session, view and content objects
   */
@@ -89,7 +89,7 @@ function format_size($s) {
     return sprintf("%.2d ".$lang_->print_txt('MB'), $s/(1000.0))." (".$s." ".$lang_->print_txt('BYTES').")";
   } elseif ($s > 1024) {
     return sprintf("%.2d ".$lang_->print_txt('KB'), $s/(1024.0))." (".$s." ".$lang_->print_txt('BYTES').")";
-  } 
+  }
   return $s." ".$lang_->print_txt('BYTES');
 }
 ?>

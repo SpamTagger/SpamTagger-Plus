@@ -46,6 +46,6 @@ CREATE TABLE antispam (
 );
 
 -- create default preferences set
-INSERT INTO antispam SET set_id=1; 
+INSERT INTO antispam SET set_id=1;
 
- 
+

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Quarantined dangerous content
  */
 
@@ -58,11 +58,11 @@ class Default_Model_QuarantinedContent
 				$data = preg_replace('/\=\?[^?]{3,15}\?.\?[^?]+\?\=/', $ddata, $data);
 		}
 
-		$ret = htmlentities($data, ENT_COMPAT, "UTF-8");	
+		$ret = htmlentities($data, ENT_COMPAT, "UTF-8");
 		if ($param == 'report') {
 			$ret = preg_replace('/,/', '<br />', $ret);
 		}
-		
+
 		if ($param == 'size' && is_numeric($ret)) {
 			if ($ret > 1000000000) {
 				$ret = ($ret / 1000000000)." ".$t->_('Gb');
@@ -73,7 +73,7 @@ class Default_Model_QuarantinedContent
 			} else {
 				$ret .= " ".$t->_('bytes');
 			}
-		} 
+		}
 		if (isset($split_fields[$param]) && (strlen($ret) > $split_fields[$param])) {
 			$ret = substr($ret, 0, $split_fields[$param]);
 			$ret .= '...';
@@ -183,9 +183,9 @@ class Default_Model_QuarantinedContent
 
 	static public function parseHeaders($str) {
 		$res = array();
-			
+
 		$lines = preg_split('/\n/', $str);
-			
+
 		$last_header="";
 		$matches = array();
 
@@ -195,7 +195,7 @@ class Default_Model_QuarantinedContent
 				$dline = @iconv_mime_decode($matches[1], ICONV_MIME_DECODE_STRICT, 'UTF-8');
 				$line = preg_replace('/\=\?[^?]{3,15}\?.\?[^?]+\?\=/', $dline, $line);
 			}
-                
+
 			if (strlen($line) > 78) {
 				$line = substr($line, 0, 78)."...";
 			}

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GEN=0
-	
+
 if [[ "$(sha256sum /etc/ssh/ssh_host_dsa_key | cut -d ' ' -f 1)" == "322ccaf54b5169334405c54c1e00edebfa0ca8b67c53603d3af523ae978c81f4" ]]; then
 	GEN=1
 	echo "Disabling default DSA key"

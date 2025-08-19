@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Email management form
  */
 
@@ -13,7 +13,7 @@ class Default_Form_Manage_EmailArchiving extends Zend_Form
 	public $_email;
 	protected $_panelname = 'archiving';
 	protected $_canArchive = false;
-	
+
 	public function __construct($email)
 	{
 	    $this->_email = $email;
@@ -26,13 +26,13 @@ class Default_Form_Manage_EmailArchiving extends Zend_Form
 
 	    parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		parent::init();
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
                 $restrictions = Zend_Registry::get('restrictions');
 
@@ -42,31 +42,31 @@ class Default_Form_Manage_EmailArchiving extends Zend_Form
             'filters'    => array('StringTrim')));
 	    ## TODO: add specific validator
 	    $panellist->addValidator(new Zend_Validate_Alnum());
-        
+
         foreach ($this->_email->getConfigPanels() as $panel => $panelname) {
         	$panellist->addMultiOption($panel, $panelname);
         }
         $panellist->setValue($this->_panelname);
         $this->addElement($panellist);
-        
+
         $panel = new Zend_Form_Element_Hidden('panel');
 		$panel->setValue($this->_panelname);
 		$this->addElement($panel);
 		$name = new Zend_Form_Element_Hidden('address');
 		$name->setValue($this->_email->getParam('address'));
 		$this->addElement($name);
-		
+
 		$archive_mail = new Zend_Form_Element_Checkbox('archive_mail', array(
 				            'label'   => $t->_('Archive messages'). " :",
 				            'uncheckedValue' => "0",
 				            'checkedValue' => "1"
 		));
-		
+
 		if ($this->_email->getPref('archive_mail')) {
 			$archive_mail->setChecked(true);
 		}
 		$this->addElement($archive_mail);
-		
+
 		$copyto_mail = new  Zend_Form_Element_Text('copyto_mail', array(
 				            'label'    => $t->_('Send a copy of all messages to')." :",
 				            'required' => false,
@@ -74,20 +74,20 @@ class Default_Form_Manage_EmailArchiving extends Zend_Form
 				            'filters'    => array('StringTrim')));
 		$copyto_mail->setValue($this->_email->getPref('copyto_mail'));
 		$copyto_mail->addValidator(new Zend_Validate_EmailAddress(Zend_Validate_Hostname::ALLOW_LOCAL));
-		$this->addElement($copyto_mail);		
+		$this->addElement($copyto_mail);
                 if ($restrictions->isRestricted('EmailArchiving', 'copyto')) {
                         $copyto_mail->setAttrib('disabled', 'disabled');
                 }
-		
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 				     'label'    => $t->_('Submit')));
 		$this->addElement($submit);
 	}
-	
+
 	public function setParams($request, $email) {
 
                 $restrictions = Zend_Registry::get('restrictions');
-		
+
 		if ($this->canArchive()) {
 			$email->setPref('archive_mail', $request->getParam('archive_mail'));
 		}
@@ -95,12 +95,12 @@ class Default_Form_Manage_EmailArchiving extends Zend_Form
                         throw new Exception('Access restricted');
                 }
 		$email->setPref('copyto_mail', $request->getParam('copyto_mail'));
-		
+
 		return true;
 	}
-	
+
 	public function canArchive() {
 		return $this->_canArchive;
 	}
-	
+
 }

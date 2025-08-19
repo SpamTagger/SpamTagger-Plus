@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Validate an e-mail address as it may appears in mail headers
  */
 
@@ -12,14 +12,14 @@ class Validate_EmailAddressField extends Zend_Validate_Abstract
 {
     const MSG_BADTEXTPART = 'invalidTextpart';
     const MSG_BADADDRESS = 'invalidAddress';
-    
+
     public $host;
 
     protected $_messageVariables = array(
         'text' => 'text',
         'address' => 'address'
     );
-    
+
     protected $_messageTemplates = array(
         self::MSG_BADTEXTPART => "'%text%' is not a valid informational text",
         self::MSG_BADADDRESS => "'%address%' is not a valid email address"
@@ -28,7 +28,7 @@ class Validate_EmailAddressField extends Zend_Validate_Abstract
     public function isValid($value)
     {
         $this->_setValue($value);
-        
+
         $validator = new Zend_Validate_EmailAddress(Zend_Validate_Hostname::ALLOW_LOCAL);
 
         if (preg_match('/^\s*\"?([a-zA-Z0-9\_\-\+\.\,\ ]+)\"?\s+\<(\S+)\>/', $value, $matches)) {

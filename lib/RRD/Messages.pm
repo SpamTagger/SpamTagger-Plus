@@ -37,14 +37,14 @@ our $VERSION    = 1.0;
 sub New {
   my $statfile = shift;
   $statfile = $statfile."/messages.rrd";
-  my $reset = shift;    
+  my $reset = shift;
 #    use Log::Log4perl qw(:easy);
 #    Log::Log4perl->easy_init({
-#        level    => $INFO, 
+#        level    => $INFO,
 #       category => 'rrdtool',
 #        layout   => '%m%n',
 #    });
-    
+
   my %things = (
            bytes => ['GAUGE', 'LAST'],
            msgs => ['GAUGE', 'LAST'],
@@ -59,13 +59,13 @@ sub New {
          );
 
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
-  
+
 
   my $this = {
   	 statfile => $statfile,
   	 rrd => $rrd
   };
-  
+
   return bless $this, "RRD::Messages";
 }
 
@@ -73,18 +73,18 @@ sub New {
 sub collect {
   my $this = shift;
   my $snmp = shift;
-  
+
   require Net::SNMP;
   require RRDTool::OO;
-  
+
   my $oid = '1.3.6.1.4.1.2021.8.1.101.10';
-  
+
   my $result = $snmp->get_request(-varbindlist => [$oid]);
   my $value = '0|0|0|0|0|0|0|0|0|0';
   if ($result) {
     $value = $result->{$oid};
   }
-  
+
   my @values = split('\|', $value);
   return $this->{rrd}->update(
         values => {
@@ -100,7 +100,7 @@ sub collect {
             pcleans => $values[9]
          }
   );
-  
+
 }
 
 sub plot {
@@ -116,7 +116,7 @@ sub plot {
         cleans => ['stack', '54EB48', '', 'Cleans', 'LAST', '%10.0lf', '']
    );
   my @order = ('msgs', 'viruses', 'contents', 'spams', 'cleans');
-  
+
   my $legend = "\t\t         Last\t Average\t\tMax\\n";
   RRD::Generic::plot('messages', $dir, $period, $leg, 'Messages stats', 0, 5, $this->{rrd}, \%things, \@order, $legend);
 
@@ -124,7 +124,7 @@ sub plot {
        pviruses => ['area', 'FF0000', '', 'Viruses', 'AVERAGE', '%10.2lf %%', ''],
        pcontents => ['stack', 'EB9C48', '', 'Content', 'AVERAGE', '%10.2lf %%', ''],
        pspams => ['stack', '6633FF', '', 'Spams', 'AVERAGE', '%10.2lf %%', ''],
-       pcleans => ['stack', 'EEEEEE', '', 'Cleans', 'AVERAGE', '%10.2lf %%', '']  
+       pcleans => ['stack', 'EEEEEE', '', 'Cleans', 'AVERAGE', '%10.2lf %%', '']
   );
   @order = ('pviruses', 'pcontents', 'pspams', 'pcleans');
   $legend = "\t\t           Last\t     Average\t\tMax\\n";

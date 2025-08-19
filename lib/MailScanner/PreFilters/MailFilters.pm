@@ -51,9 +51,9 @@ sub initialise {
   } else {
     MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
   }
-  
+
   $MFInterface = new MailFilters::SpamCureClientInterface();
-  $MFInterface->Initialize($MailFilters::conf{'serial'}, $MailFilters::conf{'server_host'}, $MailFilters::conf{'server_port'});    
+  $MFInterface->Initialize($MailFilters::conf{'serial'}, $MailFilters::conf{'server_host'}, $MailFilters::conf{'server_port'});
 
   if ($MailFilters::conf{'pos_decisive'} && ($MailFilters::conf{'decisive_field'} eq 'pos_decisive' || $MailFilters::conf{'decisive_field'} eq 'both')) {
     $MailFilters::conf{'pos_text'} = 'position : '.$MailFilters::conf{'position'}.', spam decisive';
@@ -95,16 +95,16 @@ sub Checks {
     foreach my $line (@WholeMessage) {
       $msg .= $line;
   }
-   
+
   my $tags = '';
   my $result = $MFInterface->ScanSMTPBuffer($msg, $tags);
-   
+
   if ($result <= 0)  {
     	MailScanner::Log::InfoLog("$MODULE returned an error (".$result.")");
         $global::MS->{mta}->AddHeaderToOriginal($message, $MailFilters::conf{'header'}, 'returned an error ('.$result.')');
         return 0;
   }
-     
+
   if ($result == 2) {
       MailScanner::Log::InfoLog("$MODULE result is spam (".$result.") for ".$message->{id});
       if ($MailFilters::conf{'putSpamHeader'}) {
@@ -119,9 +119,9 @@ sub Checks {
         }
         return 0;
     }
-    
-  return 0;    
-  
+
+  return 0;
+
 }
 
 sub dispose {

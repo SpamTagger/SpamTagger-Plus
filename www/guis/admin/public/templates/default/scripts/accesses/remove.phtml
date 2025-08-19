@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -14,7 +14,7 @@
     <ul id="domainnavoptions">
       <li class="domainoptiontop" onclick="javascript:loadurl('<?php echo $this->addurl?>')"><span><a href="<?php echo $this->addurl?>"><?php echo $this->t->_('New administrator');?></a></span><img src="<?php echo $this->images_path?>/domainaddbutton.png" alt="add" /></li>
     </ul>
- 
+
     <div id="searchpanel">
       <form id="searchform" action="">
         <p id="searchlabel"><?php echo $this->t->_('Administrator specific settings')?></p>
@@ -32,16 +32,16 @@
                          'username' => $this->username,
                          'searchurl' => $this->searchurl,
                          't' => $this->t,
-)); ?>   
+)); ?>
     </div>
   </div>
- 
- 
+
+
   <div id="domaincontentpanel">
     <div id="adminconfigpanel" class="domainconfigpanel">
-  
+
      <h1><img class="importantimg" src="<?php echo $this->images_path?>/warning.png" alt="warning" /><?php echo $this->t->_('Removing administrator')?>
-          <span class="removedomainlink"><a href="<?php echo $this->backurl?>"><?php echo $this->t->_('Back...')?></a></span> 
+          <span class="removedomainlink"><a href="<?php echo $this->backurl?>"><?php echo $this->t->_('Back...')?></a></span>
      </h1>
     <div id="domainalertcontent">
     <h3><?php echo $this->t->_('Username');?> : <strong><?php echo $this->admin->getParam('username')?></strong>
@@ -49,8 +49,8 @@
     <p><?php echo $this->t->_('You are about to remove an administrator');?></p>
     <div class="removedomain" id="removedomainonly"><a href="<?php echo $this->removeurldomain;?>"><?php echo $this->t->_('Remove administrator');?></a></div>
     </div>
-    
+
    </div>
-   
+
  </div>
 </div>

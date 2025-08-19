@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  */
 ?>
-<div class="hoststatusbloc"> 
+<div class="hoststatusbloc">
 <?php foreach ($this->slaves as $slave) {?>
 <div class="hostbloc" id='hostbloc_<?echo $slave->getId();?>'>
  <?php  echo $this->partial('ajax/monitorstatus/hoststatus.phtml', array(

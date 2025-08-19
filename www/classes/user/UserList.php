@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is as list
  */
@@ -49,12 +49,12 @@ public function search($username, $domain, $remote) {
 
   // first search for registered users
   $this->doRegisteredUsers();
-  
+
   // then, if wanted, search for remote users against the connector
   if ($remote) {
      $d = new Domain();
      $d->load($this->s_domain_);
-     
+
      $address_fetcher = AddressFetcher::getFetcher($d->getPref('address_fetcher'));
      $users = $address_fetcher->searchUsers($this->s_username_, $d);
      foreach ($users as $username => $value) {

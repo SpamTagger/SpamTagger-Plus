@@ -1,10 +1,10 @@
 Subject: Bericht von SpamTagger
 Sehr geehrte Kundin, sehr geehrter Kunde
 
-Hiermit erhalten Sie den Bericht von SpamTagger.org f=FCr die ??NBDAYS letzten 
+Hiermit erhalten Sie den Bericht von SpamTagger.org f=FCr die ??NBDAYS letzten
 Tage.
 
-Diese Nachricht informiert Sie =FCber die E-Mails, die von SpamTagger.org 
+Diese Nachricht informiert Sie =FCber die E-Mails, die von SpamTagger.org
 blockiert wurden.
 Sollten Sie der Meinung sein, dass es sich bei dem ein oder anderen E-Mail
 nicht um eine Spam-Mitteilung handelt, geben Sie es frei, indem Sie auf den
@@ -16,7 +16,7 @@ freigegeben werden.
 
 Falls Sie die Einstellungen der Berichte =E4ndern, den aktuellen Stand der
 Quarantane einsehen oder den Support kontaktieren m=F6chten, begeben Sie sich
-auf die Homepage von SpamTagger unter der Adresse: 
+auf die Homepage von SpamTagger unter der Adresse:
 
 ??WEBBASEURL?d=??DIGEST_ID&amp;p=u
 

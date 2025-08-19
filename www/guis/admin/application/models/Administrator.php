@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Administrator
  */
 
@@ -25,30 +25,30 @@ class Default_Model_Administrator
 	  'can_view_stats' => 0,
 	  'allow_subdomains' => 0
 	);
-	
+
 	protected $_roles = array(
 	  array('name' => 'administrator', 'rights' => array('all_domains', 'can_configure', 'can_manage_domains', 'can_manage_users')),
 	  array('name' => 'manager', 'rights' => array('can_manage_domains', 'can_manage_users')),
 	  array('name' => 'hotline', 'rights' => array('can_manage_users'))
 	);
-	
+
 	protected $_mapper;
-	
+
 	public function setUsername($username) {
 	   $this->_username = $username;
-	   $this->setParam('username', $username);	
+	   $this->setParam('username', $username);
 	}
-	
+
 	public function getUsername() {
 		return $this->_username;
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		$ret = null;
 		if (array_key_exists($param, $this->_values)) {
@@ -59,11 +59,11 @@ class Default_Model_Administrator
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
-	
+
 	public function getRights() {
 		$ret = array();
 		foreach ($this->_rights as $r => $v) {
@@ -72,20 +72,20 @@ class Default_Model_Administrator
 		}
 		return $ret;
 	}
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setDomains($domains) {
 		$this->_domains = preg_split('/[,\s]+/',$domains);
 		sort($this->_domains);
 		$this->setParam('domains', implode(' ', $this->_domains));
 	}
-	
+
 	public function setRight($right, $value) {
 		if ($right == 'all_domains' && $value) {
 			$this->setDomains('*');
@@ -106,11 +106,11 @@ class Default_Model_Administrator
 		}
 		return 0;
 	}
-	
+
 	public function getDomainsArray() {
 		return $this->_domains;
 	}
-	
+
 	public function canManageDomain($domain) {
 		if (in_array('*', $this->_domains)) {
 			return 1;
@@ -125,11 +125,11 @@ class Default_Model_Administrator
 		}
 		return 0;
 	}
-	
+
 	public function getRoles() {
 		return $this->_roles;
 	}
-	
+
 	public function getUserType() {
 		foreach ($this->_roles as $role) {
 			$notrole = 0;
@@ -145,7 +145,7 @@ class Default_Model_Administrator
 		}
 		return 'none';
 	}
-    
+
 	public function setUserType($r) {
 	  if ($r == 'administrator') {
 	  	$this->setParam('domains', '*');
@@ -160,9 +160,9 @@ class Default_Model_Administrator
 	  	 		}
 	  	 	}
 	  	 }
-	  }	
+	  }
 	}
-	
+
     public function setMapper($mapper)
     {
         $this->_mapper = $mapper;
@@ -182,11 +182,11 @@ class Default_Model_Administrator
         $this->getMapper()->find($username, $this);
         return $this;
     }
-    
+
     public function fetchAllName($params = NULL) {
     	return $this->getMapper()->fetchAllName($params);
     }
-    
+
     public function setPassword($password) {
     	if ($password == '') {
     		return;
@@ -196,9 +196,9 @@ class Default_Model_Administrator
         $crypted = crypt($password, '$6$rounds=1000$'.dechex(rand(0,15)).dechex(rand(0,15)).'$');
         $this->setParam('password', $crypted);
     }
-    
+
     public function save()
-    {	
+    {
     	if ($this->_values['password'] == '') {
     		unset($this->_values['password']);
     	}
@@ -213,7 +213,7 @@ class Default_Model_Administrator
     	}
         return $this->getMapper()->save($this);
     }
-    
+
     public function delete()
     {
     	$t = Zend_Registry::get('translate');
@@ -221,11 +221,11 @@ class Default_Model_Administrator
     		throw new Exception($t->_('Cannot remove admin user'));
     	}
     	if ($this->getParam('username') == Zend_Registry::get('user')->getParam('username')) {
-    		throw new Exception($t->_('Cannot commit suicide')); 
+    		throw new Exception($t->_('Cannot commit suicide'));
     	}
     	return $this->getMapper()->delete($this);
     }
-   
+
     public function checkAuthentication($givenusername, $givenpassword) {
         // deprecated call, gui interface authentication through controller
         return false;

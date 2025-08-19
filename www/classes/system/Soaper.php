@@ -54,11 +54,11 @@ public function authenticateAdmin() {
   if (!isset($admin_) || (! $admin_ instanceof Administrator)) {
     return 'NOADMINAVAILABLEFORSOAP';
   }
-  
+
   if (! $this->client_ instanceof SoapClient) {
     return 'LOSTSOAPCLIENT';
   }
-  
+
   try {
     return $this->client_->setAuthenticated($admin_->getPref('username'), 'admin', $_SERVER['REMOTE_ADDR']);
   } catch (Exception $e) {
@@ -84,18 +84,18 @@ public function getSessionUser($sid) {
  * execute a soap query
  * @param  $function  string  soap function name
  * @param  $params    array   function parameters
- * @return            mixed   function return values  
+ * @return            mixed   function return values
  */
 public function query($query, $params) {
    $sid = $this->authenticateAdmin();
    if (preg_match('/^[A-Z]+$/', $sid)) {
      return $sid;
    }
-   
+
    if (! $this->client_ instanceof SoapClient) {
     return 'LOSTSOAPCLIENT';
    }
-    
+
    // do the call
    try {
      return $this->client_->$query($sid);
@@ -114,7 +114,7 @@ public function queryParam($query, $params) {
     return 'LOSTSOAPCLIENT';
   }
   try {
-    
+
   switch (count($params)) {
     case 1:
       return $this->client_->$query($params[0]);
@@ -140,7 +140,7 @@ public function checkSession($sid) {
     return false;
   }
   try {
-    return $this->client_->checkAuthenticated($sid, 'admin'); 
+    return $this->client_->checkAuthenticated($sid, 'admin');
   }catch (Exception $e) {}
 }
 }

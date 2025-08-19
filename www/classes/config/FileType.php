@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
  require_once('helpers/PrefHandler.php');
- 
+
 /**
  * This class handle a file type rule
  */
@@ -61,7 +61,7 @@ public function save() {
   if ($this->getPref('description') == "") {
     $this->setPref('description', '-');
   }
-  
+
   return $this->savePrefs('', '', '');
 }
 

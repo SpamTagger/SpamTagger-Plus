@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Domain preferences mapper
  */
 
 class Default_Model_DomainPrefMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_DomainPrefMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_DomainPref $conf)
     {
         $result = $this->getDbTable()->find($id);
@@ -40,7 +40,7 @@ class Default_Model_DomainPrefMapper
             return;
         }
         $row = $result->current();
-        
+
         $conf->setId($id);
         foreach ($conf->getAvailableParams() as $key) {
         	$conf->setParam($key, $row->$key);
@@ -49,7 +49,7 @@ class Default_Model_DomainPrefMapper
            $conf->setParam('auth_type', 'local');
         }
     }
-    
+
     public function save(Default_Model_DomainPref $conf, $global = false) {
        $data = $conf->getParamArray();
        $res = '';
@@ -65,10 +65,10 @@ class Default_Model_DomainPrefMapper
         }
         return $res;
     }
-    
+
     public function delete(Default_Model_DomainPref $prefs) {
     	$where = $this->getDbTable()->getAdapter()->quoteInto('id = ?', $prefs->getId());
     	return $this->getDbTable()->delete($where);
     }
-    
+
 }

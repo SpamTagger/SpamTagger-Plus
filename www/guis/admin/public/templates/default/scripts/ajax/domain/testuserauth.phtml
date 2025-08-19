@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -11,7 +11,7 @@
 
 <tr>
   <td class="flabel"><?php echo $this->t->_('result')?> : </td>
-  <td class="fvalue<?php 
+  <td class="fvalue<?php
     if ($this->data['status'] == 'OK') { echo ' passedtest'; } elseif ($this->data['status'] == 'NOK') { echo ' failedtest'; }?>">
     <?php echo $this->data['message']?>
   </td>

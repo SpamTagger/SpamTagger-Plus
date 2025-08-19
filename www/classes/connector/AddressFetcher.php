@@ -5,15 +5,15 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class is the mother of the different address fetcher.
  * These are used to the email addresses bounded to a specific user
  * @package SpamTagger Plus
  */
 abstract class AddressFetcher {
-    
+
   /**
   * List of available fetchers with corresponding description and classes
   * @var array
@@ -26,27 +26,27 @@ abstract class AddressFetcher {
                                      'mysql' => array('sql lookup', 'SQLLookup'),
                                      'local' => array('local', 'SQLLookup')
                                      );
-                                     
+
   /**
    * internal type of fetcher
    * @var  string
    */
    private $type_ = 'local';
-   
+
    /**
     * list of addresses
     * @var array
     */
    private $addresses_ = array();
-   
+
    /**
     * constructor
     * @param  $type  string  internal fetcher type
-    */         
+    */
    public function __construct($type) {
         $this->type_ = $type;
    }
-   
+
    /**
    * AddressFetcher factory
    */
@@ -62,7 +62,7 @@ abstract class AddressFetcher {
     }
     return null;
   }
-  
+
   /**
   * Main fetcher method
   * @param  $login_given  string  this is the username of the user
@@ -70,8 +70,8 @@ abstract class AddressFetcher {
   * @return               array   array of email addresses (keys are addresses, value is 1 for main, 0 otherwise)
   */
  abstract public function fetch($username, $domain);
- 
- 
+
+
  /**
   * get the internal formatter type
   * @return  string  internal formatter type
@@ -79,7 +79,7 @@ abstract class AddressFetcher {
   public function getType() {
     return $this->type_;
   }
-  
+
   /**
    * add an address to the list
    * @param  $address  string  address to add
@@ -91,7 +91,7 @@ abstract class AddressFetcher {
      $address = utf8_decode($address);
      $this->addresses_[$address] = $main;
    }
-   
+
    /**
     * get the addresses list
     * @return  array  address list
@@ -100,7 +100,7 @@ abstract class AddressFetcher {
         // fetch already registered addresses
         return $this->addresses_;
     }
-    
+
     /**
      * get the list of available address fetchers
      * return  array  list of available fetchers
@@ -112,7 +112,7 @@ abstract class AddressFetcher {
         }
         return $ret;
      }
-     
+
      /**
       * return if the list of address is static or if it can be externally modified
       * @return  bool  true if list can be modified, false if not
@@ -122,7 +122,7 @@ abstract class AddressFetcher {
       }
 
       public function isExhaustive() {
-         return !$this->canModifyList(); 
+         return !$this->canModifyList();
       }
 }
 ?>

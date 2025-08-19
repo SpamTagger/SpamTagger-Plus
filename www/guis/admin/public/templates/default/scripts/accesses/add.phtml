@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -14,7 +14,7 @@
     <ul id="domainnavoptions">
       <li class="domainoptiontop newdomain newdomainselected" onclick="javascript:loadurl('<?php echo $this->addurl?>')"><span><a href="<?php echo $this->addurl?>"><?php echo $this->t->_('New administrator');?></a></span><img src="<?php echo $this->images_path?>/domainaddbuttonselected.png" alt="add" /></li>
     </ul>
- 
+
     <div id="searchpanel">
       <form id="searchform" action="">
         <p id="searchlabel"><?php echo $this->t->_('Administrator specific settings')?></p>
@@ -32,22 +32,22 @@
                          'username' => $this->username,
                          'searchurl' => $this->searchurl,
                          't' => $this->t,
-)); ?>   
+)); ?>
     </div>
   </div>
- 
+
   <div id="domaincontentpanel">
     <div id="adminconfigpanel" class="domainconfigpanel">
-<?php echo $this->partial('layouts/message.phtml', array('message' => $this->message, 't' => $this->t)); ?> 
+<?php echo $this->partial('layouts/message.phtml', array('message' => $this->message, 't' => $this->t)); ?>
  <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction()?>" id="<?php echo $this->form->getId()?>">
 <?php echo $this->InputRow($this->form->getElement('username'),array('field_only'=>true,'nobox'=>true));?>
     <h1 class="adddomaincontentpaneltitle"><?php echo $this->t->_('Administrator name');?> : <?php echo $this->InputRow($this->form->getElement('newusername'), array('field_only'=>true,'nobox'=>true)); ?></h1>
-  
+
      <?php echo $this->partial('forms/admineditForm.phtml', array('form' => $this->form,'t' => $this->t, 'message' => $this->message, 'admin' => $this->admin, 'images_path' => $this->images_path)); ?>
 
  </form>
- 
+
     </div>
   </div>
- 
+
 </div>

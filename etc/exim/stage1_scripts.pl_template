@@ -62,8 +62,8 @@ sub external_callout_verify {
     return external_callout_build_return(0, $connector->lastMessage());
   }
 
-  if ($connector->lastMessage() ne '') { 
-    Exim::log_write("External callout last message for recipient $rcpt: ".$connector->lastMessage()); 
+  if ($connector->lastMessage() ne '') {
+    Exim::log_write("External callout last message for recipient $rcpt: ".$connector->lastMessage());
   }
   return external_callout_build_return(1, $connector->lastMessage());
 }
@@ -71,10 +71,10 @@ sub external_callout_verify {
 sub external_callout_build_return {
   my $result = shift;
   my $message = shift;
-  
+
   my $str = 'result='.$result;
   $str .= ' message="'.$message.'"';
-  
+
   return $str;
 }
 
@@ -114,10 +114,10 @@ __FI__
   if (
 __IF__ DISABLE_IPV6
 __ELSE__
-    ( $IP =~ /:/ && WhIPs6->find($IP) ) || 
+    ( $IP =~ /:/ && WhIPs6->find($IP) ) ||
 __FI__
     ( $IP !~ /:/ && $WhIPs->find($IP) ) ) {
-    Exim::log_write("IP $IP is whitelisted for $domain (SMTP)"); 
+    Exim::log_write("IP $IP is whitelisted for $domain (SMTP)");
     return 'true';
   }
   return 'false';
@@ -159,10 +159,10 @@ __FI__
   if (
 __IF__ DISABLE_IPV6
 __ELSE__
-    ( $IP =~ /:/ && WhIPs6->find($IP) ) || 
+    ( $IP =~ /:/ && WhIPs6->find($IP) ) ||
 __FI__
     ( $IP !~ /:/ && $WhIPs->find($IP) ) ) {
-    Exim::log_write("IP $IP is whitelisted for $domain (SpamC)"); 
+    Exim::log_write("IP $IP is whitelisted for $domain (SpamC)");
     return 'true';
   }
   return 'false';

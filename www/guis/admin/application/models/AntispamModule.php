@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Antispam generic module configuration
  */
 
@@ -25,30 +25,30 @@ class Default_Model_AntispamModule
        'putSpamHeader' => 0,
        'visible' => 1
      );
-	
+
 	protected $_mapper;
 	protected $_original_position;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -56,7 +56,7 @@ class Default_Model_AntispamModule
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -81,25 +81,25 @@ class Default_Model_AntispamModule
         $this->_original_position = $this->getParam('position');
         return $this;
     }
-    
-    public function findByName($name) 
+
+    public function findByName($name)
     {
     	$this->getMapper()->findByName($name, $this);
         $this->_original_position = $this->getParam('position');
     	return $this;
     }
-    
+
     public function fetchAll($query = NULL)
     {
     	return $this->getMapper()->fetchAll($query);
     }
-   
+
     public function saveNewPosition($position) {
     	$this->setParam('position', $position);
     	$this->_original_position = $position;
     	$this->save();
     }
-   
+
     public function save()
     {
     	if ($this->getParam('position') != $this->_original_position) {
@@ -117,7 +117,7 @@ class Default_Model_AntispamModule
     	}
         return $this->getMapper()->save($this);
     }
-    
+
     public function isDecisive() {
     	return $this->getParam('neg_decisive') || $this->getParam('pos_decisive');
     }

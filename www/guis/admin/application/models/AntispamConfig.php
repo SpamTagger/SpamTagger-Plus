@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Antispam configuration
  */
 
@@ -41,29 +41,29 @@ class Default_Model_AntispamConfig
        'dkim_timeout' => 5,
        'dmarc_follow_quarantine_policy' => 1,
      );
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -71,7 +71,7 @@ class Default_Model_AntispamConfig
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -95,12 +95,12 @@ class Default_Model_AntispamConfig
         $this->getMapper()->find($id, $this);
         return $this;
     }
-   
+
     public function save()
     {
         return $this->getMapper()->save($this);
     }
-    
+
     public function useRBL($rbl) {
     	return preg_match('/\b'.$rbl.'\b/', $this->getParam('sa_rbls'));
     }

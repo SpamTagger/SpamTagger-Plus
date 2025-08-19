@@ -30,7 +30,7 @@ $(document).ready(function(){
 		   $("#reloadnetworkform").submit();
 	   }
 	 );
-	 
+
 	 $("#zone").change(function(event){
 		 $("#subzoneset").html($("#subzonesetwaiting").html());
 		 statusrequest = $.ajax({
@@ -44,9 +44,9 @@ $(document).ready(function(){
 	        	  $("#subzoneset").html('jserror');
 	          }
 			});
-	    
+
 	 });
-	 
+
 	 $("#usentp").click(function(event){
 		 if ($("#usentp").is(':checked')) {
            $("#ntpserver").removeAttr('disabled');
@@ -56,19 +56,19 @@ $(document).ready(function(){
 		   $("#saveandsync").val('Save')
 		 }
 	 });
-	 
+
 /*	 $("#saveandsync").mousedown(function(event) {
 		$("#saveandsynccontainer").html(loadingimg);
 		$("#dateandtimeform").submit();
 	 });
 */
-	 
+
 	 $("#use_syslog").click(function(event) {
 		 setSyslogField();
 	 });
-	 
+
 	 $(".unchecked").attr('checked', false);
-	 
+
 	 $(".listhoverable").hover(
 	  function(event) {
 		 showToolTip(event);
@@ -79,17 +79,17 @@ $(document).ready(function(){
 	 );
 
     setSyslogField();
-    
+
     $('#archiving_type').change(function(event) {
     	setArchiverFields();
     });
     setArchiverFields();
-    
+
     $("#role").change( function(event) {
     	setRoleFields();
     });
     setRoleFields();
-    
+
     setIPhandlers();
 });
 
@@ -110,7 +110,7 @@ function hideToolTip() {
 }
 function showToolTip(e) {
 	elem = $("#tooltip");
-	
+
 	var offsety = 0;
     var posx = 0;
     var posy = 0;
@@ -125,13 +125,13 @@ function showToolTip(e) {
 	   }
 
      text = $(e.target).parent().next().html();
-	  
+
 	 elem.innerHTML = text;
 	 rExp = /&[a-z]+;/gi;
 	 textcpt = text.replace(rExp, '_');
 	 sl = textcpt.length * 6;
 	 offsety = 5;
-	  
+
 	 elem.css({top: posy + 10 +"px", left: posx + offsety +"px"})
 	 elem.html(text);
      elem.show();
@@ -156,24 +156,24 @@ function showFieldError(e, st) {
 	}
 
     text = st;
-		   
+
 	elem.innerHTML = text;
 	rExp = /&[a-z]+;/gi;
 	textcpt = text.replace(rExp, '_');
 	sl = textcpt.length * 6;
 	offsety = 5;
-		   
+
 	elem.style.top = posy +"px";
 	elem.style.left = posx + offsety +"px";
 	elem.innerHTML = text;
-	
+
 	$("#tooltip").addClass('ferrortooltip');
 	$("#tooltip").show();
 }
 function hideFieldError() {
 	var elem = document.getElementById('tooltip');
 	if (! elem) { return; }
-	
+
 	$("#tooltip").removeClass('ferrortooltip');
 	$("#tooltip").hide();
 }
@@ -217,5 +217,5 @@ function setIPv6Fields() {
 		}
 	} else {
 		$('.ipv6configs').show();
-	}	
+	}
 }

@@ -26,7 +26,7 @@ var resize_timeout;
 var searchtext_timeout;
 
 $(document).ready(function(){
-	
+
 	initial_window_width = $(window).width();
 	initial_window_height = $(window).height();
 	initial_logpanel_width = $("#logviewpanel").width();
@@ -35,11 +35,11 @@ $(document).ready(function(){
 	//text_lineheight = $("#logviewpanel").css('line-height');
 	//log_text_padding = $("#logviewpanel").css('padding');
 
-	
+
 	if ($("#logviewpanel").html()) {
 		loadText();
 	}
-	
+
 	$(window).resize(function() {
 		if (resize_timeout) {
 			clearTimeout(resize_timeout);
@@ -50,7 +50,7 @@ $(document).ready(function(){
 		// set a timeout to avoid reloading data while being actually resizing. Just wait it's done.
 		resize_timeout = setTimeout('loadText()', 200);
 	});
-	
+
 	initEventHandlers();
 });
 
@@ -72,7 +72,7 @@ function loadText() {
     	   last_element = 'search';
 	   }
    }
-   
+
    data = {
 	   fl:  fromline,
 	   tl:  toline,
@@ -83,7 +83,7 @@ function loadText() {
 	   maxlines: maxlines,
 	   maxchars: maxchars
    };
-   
+
    loadtextrequest = $.ajax({
 	  	  type: "GET",
 	  	  url: baseurl,
@@ -118,7 +118,7 @@ function initEventHandlers() {
     	searchtext_timeout = setTimeout('loadText()', 1000);
     	last_element = 'search';
 	});
-	
+
     $("#loglinefrom_value").keyup(function(event) {
     	if (searchtext_timeout) {
     		clearTimeout(searchtext_timeout);
@@ -127,7 +127,7 @@ function initEventHandlers() {
     	searchtext_timeout = setTimeout('loadText()', 1000);
     	last_element = 'linefrom';
 	});
-    
+
     $("#logpercent_value").keyup(function(event) {
     	if (searchtext_timeout) {
     		clearTimeout(searchtext_timeout);
@@ -136,7 +136,7 @@ function initEventHandlers() {
     	searchtext_timeout = setTimeout('loadText()', 1000);
     	last_element = 'linepercent';
 	});
-    
+
     $("#logviewnavig").height($("#logviewpanel").height());
     $("#loglines").height($("#logviewpanel").height()+12);
     $("#logtext").height($("#logviewpanel").height()+12);

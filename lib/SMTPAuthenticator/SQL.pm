@@ -35,7 +35,7 @@ sub create {
    my $server = shift;
    my $port = shift;
    my $params = shift;
-   
+
    my $usessl = 0;
    my $database_type = 'mysql';
    my $database = '';
@@ -46,7 +46,7 @@ sub create {
    my $passfield  = '',
    my $crypt_type = 'crypt';
    my $dsn = '';
-                             
+
    my @fields = split /:/, $params;
    if ($fields[0] && $fields[0] =~ /^[01]$/) { $usessl = $fields[0]; }
    if ($fields[1]) { $database_type = $fields[1]; }
@@ -57,18 +57,18 @@ sub create {
    if ($fields[6]) { $loginfield = $fields[6]; }
    if ($fields[7]) { $passfield = $fields[7]; }
    if ($fields[10]) { $crypt_type = $fields[10]; }
-      
+
    if ($port < 1 ) {
      $port = 3306;
    }
-   
+
    $dsn = "DBI:$database_type:database=$database;host=$server:$port";
-   
+
    if ($server eq 'local') {
       require ReadConfig;
       my $conf = ReadConfig::getInstance();
       my $socket = $conf->getOption('VARDIR')."/run/mysql_slave/mysqld.sock";
-      
+
       $dsn = "DBI:mysql:database=st_config;host=localhost;mysql_socket=$socket";
       $dbuser = 'spamtagger';
       $dbpass = $conf->getOption('MYSPAMTAGGERPWD');
@@ -76,7 +76,7 @@ sub create {
       $loginfield = 'username';
       $passfield = 'password';
    }
-   
+
    my $this = {
            error_text => "",
            error_code => -1,
@@ -93,7 +93,7 @@ sub create {
            crypt_type => $crypt_type,
            dsn => $dsn
          };
-         
+
   bless $this, "SMTPAuthenticator::SQL";
   return $this;
 }
@@ -102,7 +102,7 @@ sub authenticate {
   my $this = shift;
   my $username = shift;
   my $password = shift;
- 
+
   my $dbh = DBI->connect($this->{dsn}, $this->{dbuser}, $this->{dbpass}, {RaiseError => 0, PrintError => 0});
   if (! $dbh ) {
 	$this->{'error_code'} = 1;
@@ -118,7 +118,7 @@ sub authenticate {
     $domain = $2;
   }
   my $query = "SELECT ".$this->{passfield}." AS pass FROM ".$this->{dbtable}." WHERE ".$this->{loginfield}."='".$username."' AND domain='".$domain."'";
-  
+
   my $sth = $dbh->prepare($query);
   if (!$sth) {
 	$this->{'error_code'} = 2;
@@ -142,10 +142,10 @@ sub authenticate {
       return 1;
     }
   }
-   
+
   $this->{'error_code'} = 3;
-  $this->{'error_text'} = "Bad username or password ($username)"; 
-  
+  $this->{'error_text'} = "Bad username or password ($username)";
+
   $sth->finish();
   if ($dbh) { $dbh->disconnect()};
   return 0;

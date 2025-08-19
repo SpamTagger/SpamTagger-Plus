@@ -6,11 +6,11 @@
  * @copyright 2025, SpamTagger
  */
 
-class STSoap_Test 
+class STSoap_Test
 {
 	static public function Test_getResponse($question) {
-		
+
 		return $question. " is answered!";
 	}
-	
+
 }

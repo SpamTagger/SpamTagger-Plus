@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Administrator
  */
 
@@ -15,32 +15,32 @@ class Default_Model_InformationalMessage
 	protected $_slaves = array();
 	protected $_toshow = false;
 	protected $_link = array();
-	
+
 	public function getTitle() {
 		$t = Zend_Registry::get('translate');
 		return $t->_($this->_title);
 	}
-	
+
 	public function getDescription() {
 		$t = Zend_Registry::get('translate');
 		return $t->_($this->_description);
 	}
-	
+
 	public function fetchAll() {
 		return array();
 	}
-	
+
 	public function shouldShow() {
 		return $this->_toshow;
 	}
-	
+
 	public function getLink() {
                 if (isset($this->_link['controller'])) {
 		  return $this->_link;
                 }
                 return null;
 	}
-	
+
 	public function getSlavesList() {
 		return implode(', ',$this->_slaves);
 	}

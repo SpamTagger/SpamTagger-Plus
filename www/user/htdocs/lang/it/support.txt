@@ -56,7 +56,7 @@ Questa opzione farà sì che SpamTagger metta in quarantena i messaggi di rimbal
 Scegli e personalizza il messaggio che appare nel campo dell'oggetto dello spam con tag. Questo è irrilevante se hai scelto la modalità di consegna in quarantena.
 </li>
 <li><h3>Frequenza di segnalazione: </h3>
-Scegli la frequenza con cui ricevere i riepiloghi della quarantena. A questo intervallo, riceverai un'e-mail con molto spam rilevato e archiviato in quarantena. 
+Scegli la frequenza con cui ricevere i riepiloghi della quarantena. A questo intervallo, riceverai un'e-mail con molto spam rilevato e archiviato in quarantena.
 </li>
  </ul>
  </li>

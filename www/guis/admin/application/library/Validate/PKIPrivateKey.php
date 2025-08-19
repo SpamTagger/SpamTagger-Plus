@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Validate a list of email addresses
  */
 
@@ -19,7 +19,7 @@ class Validate_PKIPrivateKey extends Zend_Validate_Abstract
     public function isValid($value)
     {
         $this->_setValue($value);
-        
+
         $pki = new Default_Model_PKI();
         $pki->setPrivateKey($value);
         if ($pki->checkPrivateKey()) {

@@ -47,7 +47,7 @@ while (my $opt = shift) {
   }
   if ($opt !~ /^-/) {
     push(@filter, $opt);
-  }  
+  }
 }
 
 if ($start !~ /^\d{8}$/ || $stop !~ /^\d{8}$/) {
@@ -177,7 +177,7 @@ if (@messages > 0) {
     }
     print FULLOG "\n";
     if ($stage2_ids{$msg_o{'nid'}}) {
-      foreach my $line (split /\n/, $stage2_ids{$msg_o{'nid'}}) { 
+      foreach my $line (split /\n/, $stage2_ids{$msg_o{'nid'}}) {
         print FULLOG $msg_o{'nid'}.'|' if ($batchwithlog);
         print FULLOG $line;
         print FULLOG "\n";
@@ -252,7 +252,7 @@ sub populateIDs {
   my $cmd = "/opt/exim4/bin/exigrep '$what' ".$conf->getOption('VARDIR')."/log/$file";
   print " -> searching $file... \n" if !$batch;
   my $result = '';
-  if  ( -f $conf->getOption('VARDIR')."/log/$file") { 
+  if  ( -f $conf->getOption('VARDIR')."/log/$file") {
      $result = `$cmd`;
   }
   my @lines = split /\n/, $result, $MAXRESULTS;
@@ -270,14 +270,14 @@ sub populateIDs {
       my $id = $4;
       my $nid = '';
       if ($line =~ /250 OK id=([^\s"]{16,24})/ && $line !~ /T=remote_smtp/) {
-        $nid = $1; 
+        $nid = $1;
         $internal_messages{$nid} = 1;
-      } 
+      }
       if ($last{id} eq $id) {
         if ( ! ($nid eq '') ) {
           $last{nid} = $nid;
         }
-      } else { 
+      } else {
         if (! ($last{id} eq '') ) {
           push @nf_messages, {%last};
         }
@@ -294,13 +294,13 @@ sub populateIDs {
         my $id = $fakeids++;
         $last{id} = $id;
         $last{nid} = $id;
-        $store->{$last{id}} .= $line."\n";    
+        $store->{$last{id}} .= $line."\n";
     }
   }
   if (! ($last{id} eq '') ) {
     push @nf_messages, {%last};
   }
-   
+
 }
 
 sub searchInFile {
@@ -362,7 +362,7 @@ sub searchMailScanner {
     print "Warning, cannot open file: $file !\n";
     return;
   }
- 
+
   while (<$fh>) {
     if (/\b(\S{6}-\S{6,11}-\S{2,4})\b/) {
       if (defined($internal_messages{$1}) ) {
@@ -377,7 +377,7 @@ sub searchMailScanner {
 sub searchSpamHandler {
   my $file = shift;
   my $store = shift;
-	
+
   my $fh;
   my $ffile = $file;
   return if ! -f $file;
@@ -405,7 +405,7 @@ sub searchSpamHandler {
 sub printBatchResult {
   my $msg = shift;
   my %msg_o = %{$msg};
- 
+
   my $_datein = '';
   my $_dateout = '';
   my $_outhost = '';
@@ -484,7 +484,7 @@ sub printBatchResult {
 	$_outhost = $2;
 	$_relayed = 1;
 	$_tos = $1;
-    } 
+    }
     if ($_senderhostname =~ /^\((\S*)\)/) {
         $_senderhostname = $1.'/U';
     }
@@ -501,9 +501,9 @@ sub printBatchResult {
   if ($_accepted == 1 && $_senderhostip eq '') {
     $_accepted = 2;
   }
-  
+
   print $_datein."|".$config->getOption('HOSTID')."|".$_senderhostname."|".$_senderhostip."|".$_accepted."|".$_relayed."|".$_inreport."|".$msg_o{'id'}."|".$_from."|".$_tos."|".$msg_o{'nid'};
-  
+
   # $_spam will be 0 for ham, 1 for spam, 2 for newsletter and 3 for spam and newsletter
   my $_spam = 0;
   my $_spamreport = '';
@@ -525,7 +525,7 @@ sub printBatchResult {
   	}
 	if ($line =~ m/to\ \S+\ is\ (not spam|spam).*Newsl \(score=([^,]*), required=([^,]*)/) {
 		if ( int($2) >= int($3) ) {
-		
+
 			if ($_spam eq 1) {
   			     $_spam = 3;
 			} else {
@@ -553,17 +553,17 @@ sub printBatchResult {
   	if ($line =~ m/(Saved entire message to|Saved infected)/ ) {
   		$_content = 'Quarantined';
   	}
-  	
+
   	if ($line =~ m/::INFECTED:: (\S+) :: .\/\S+\/(\S+)/ ) {
   		$_contentreport = "Virus found: ".$1." in file ".$2;
   		$_content = 'Deleted';
   	}
   }
-  
+
   print "|".$_spam."|".$_spamreport."|".$_content."|".$_contentreport;
 
   if (!$_relayed) {
-  	($_dateout, $_delivered, $_outreport, $_outmessage, $_outhost) = processStage4Logs($msg_o{'nid'});    
+  	($_dateout, $_delivered, $_outreport, $_outmessage, $_outhost) = processStage4Logs($msg_o{'nid'});
   }
   print "|".$_dateout."|".$_delivered."|".$_outreport."|".$_outmessage."|".$_outhost;
   print "\n";
@@ -573,14 +573,14 @@ sub processStage4Logs {
   my $id = shift;
   my $spamquarantined = 0;
   my $spamtagged = 0;
-  
+
   my $dateout;
   my $delivered;
   my $outreport;
   my $outhost;
   my $outmessage;
   my $outdateset = 0;
-  
+
   foreach my $line (split '\n', $stage4_ids{$id}) {
     if ($line =~ m/^(\d{4}-\d\d-\d\d\ \d\d:\d\d:\d\d)\ \S+\ (==|=>|->) (.*)/ ) {
         next if $line =~ /T=stockme/;
@@ -598,8 +598,8 @@ sub processStage4Logs {
                 if ($rest =~ m/H=(\S+\s+(\[\S+\])?)/) {
                    $outhost = $1;
                 }
-        } 
-       
+        }
+
     }
     if ($line =~ m/^(\d{4}-\d\d-\d\d\ \d\d:\d\d:\d\d)\ \S+ (\S+\ \[\S+\])\ (.*)/ ){
         $outhost = $2;
@@ -607,11 +607,11 @@ sub processStage4Logs {
     }
     if ($line =~ /T=spam_store/) {
        $spamquarantined = 1;
-       $outreport = 'Quarantined'; 
+       $outreport = 'Quarantined';
     }
     if ($line =~ /R=filter_checktag/) {
        $spamtagged = 1;
-       $outreport = 'Tagged';  
+       $outreport = 'Tagged';
     }
     if ($line =~ m/^(\d{4}-\d\d-\d\d\ \d\d:\d\d:\d\d)\ \S+\ Completed/ ) {
         $delivered = 1;
@@ -786,9 +786,9 @@ sub getDateFromLog {
         $m = $months{$fm};
      }
      $d = sprintf("%.2d", $fd);
-     if ("$y$m$d" > $today_str) { 
+     if ("$y$m$d" > $today_str) {
          $y = $y-1;
-     } 
+     }
      return ('year' => $y, 'month' => $m, 'day' => $d);
   }
 

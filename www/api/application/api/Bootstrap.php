@@ -44,7 +44,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	{
 		require_once('SpamTagger/Config.php');
 		$stconfig = SpamTagger_Config::getInstance();
-			
+
 		$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
                               'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
@@ -52,7 +52,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                               'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_config'
                               ));
-                               
+
                               Zend_Registry::set('writedb', $writeConfigDb);
 	}
 
@@ -62,7 +62,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 if ($config->getOption('ISMASTER') != 'Y' ) {
                    Zend_Registry::get('response')->setResponse(404, 'API is only available on master host');
                 }
-                
+
 		function netMatch ($CIDR,$IP) {
 			if (!preg_match('/\//', $CIDR)) {
 				return $CIDR == $IP;
@@ -137,7 +137,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$view->doctype('XHTML11');
 		$view->headTitle('SpamTagger API');
 		$view->headTitle()->setSeparator(' - ');
-			
+
 		return $layout;
 	}
 

@@ -5,8 +5,8 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
-/* 
+
+/*
  * generic buttons
  */
 $txt['SUBMIT']                  = "OK";
@@ -220,14 +220,14 @@ $txt['CHOOSELANGUAGE']          = "Choisissez la langue de navigation";
 /*
  * aliases (new)
  */
-$txt['ADDLISTSHORTHELP']        = "Vous pouvez lier d'autres adresses ou alias &agrave; votre compte SpamTagger principal.<br /> 
+$txt['ADDLISTSHORTHELP']        = "Vous pouvez lier d'autres adresses ou alias &agrave; votre compte SpamTagger principal.<br />
                                    Vous pourrez ainsi acc&eacute;der directement &agrave; toutes vos adresses en vous connectant une seule fois.";
 $txt['ADDANADDRESS']            = "Lier une adresse";
 $txt['ADDTHEADDRESS']           = "&lt; Lier l'adresse";
 $txt['ADDANADDRESSSHORTHELP']   = "Entrez l'adresse que vous souhaitez lier &agrave; votre compte";
 $txt['REMANADDRESS']            = "D&eacute;lier une adresse";
 $txt['REMTHEADDRESS']           = "D&eacute;lier les adresses s&eacute;lectionn&eacute;es";
-$txt['REMANADDRESSSHORTHELP']   = "S&eacute;lectionner la (ou les) adresse(s) que vous souhaitez d&eacute;lier de ce compte 
+$txt['REMANADDRESSSHORTHELP']   = "S&eacute;lectionner la (ou les) adresse(s) que vous souhaitez d&eacute;lier de ce compte
                                    SpamTagger.";
 $txt['WAITINGCONFIRMATION']     = "en attente de confirmation";
 
@@ -246,9 +246,9 @@ $txt['PLAINTEXT']               = "Texte brut";
 $txt['HTML']                    = "Formatt&eacute; (HTML)";
 $txt['KEEPBOUNCESINQUARANTINE'] = "Retenir syst&eacute;matiquement les messages d'erreur";
 
-$txt['PARAMETERSSAVED']         = "Les param&egrave;tres ont bien &eacute;t&eacute; enregistr&eacute;s"; 
+$txt['PARAMETERSSAVED']         = "Les param&egrave;tres ont bien &eacute;t&eacute; enregistr&eacute;s";
 
-/* 
+/*
  * quarantine  (new)
  */
 $txt['CONFIGQUARSHORTHELP']     = "Ajustez le param&egrave;tres d'affichage de votre quarantaine selon vos habitudes.";
@@ -260,8 +260,8 @@ $txt['DEFAULTADDRESDISPPLAYED'] = "Addresse affich&eacute;e par d&eacute;faut";
 /*
  * wwlists (new)
  */
-$txt['WARNLISTSHORTHELP']       = "La liste d'avertissement permet d'ajouter les adresses de certains de vos correspondants 
-                                   pour lesquels un message d'avertissement vous est transmit imm&eacute;diatement en cas de 
+$txt['WARNLISTSHORTHELP']       = "La liste d'avertissement permet d'ajouter les adresses de certains de vos correspondants
+                                   pour lesquels un message d'avertissement vous est transmit imm&eacute;diatement en cas de
                                    message d&eacute;tect&eacute; &agrave; tord comme un spam. (Nettement moins dangereux que
                                    les listes blanches)";
 $txt['WARNLISTFORADDRESS']      = "Liste d'avertissement pour l'adresse";
@@ -273,10 +273,10 @@ $txt['REMOVEANENTRYSHORTHELP']  = "S&eacute;lectionnez la (ou les) entr&eacute;e
 $txt['REMTHEENTRY']             = "Supprimer";
 $txt['DISABLETHEENTRY']         = "D&eacute;sactiver/R&eacute;activer";
 
-$txt['WHITELISTSHORTHELP']      = "La liste blanche ou \"WhiteList\" permet d'ajouter les adresses de certains de vos correspondants 
+$txt['WHITELISTSHORTHELP']      = "La liste blanche ou \"WhiteList\" permet d'ajouter les adresses de certains de vos correspondants
                                    pour lesquels aucun blocage ne sera opp&eacute;r&eacute;.<br />
-                                   Aujourd'hui les spammeurs sont capables d'adresser un spam &agrave; un destinataire en se 
-                                   faisant passer pour une personne connue de ce dernier. 
+                                   Aujourd'hui les spammeurs sont capables d'adresser un spam &agrave; un destinataire en se
+                                   faisant passer pour une personne connue de ce dernier.
                                    L'utilisation de la liste blanche est donc fortement d&eacute;conseill&eacute;.
                                    Pr&eacute;f&eacute;rez plut&ocirc;t la list d'avertissement.";
 $txt['WHITELISTSHORTHELP']      = "La liste noir ou \"BlackList\" permet d'ajouter les addresses que vous souhaitez bloquer.";
@@ -284,7 +284,7 @@ $txt['WHITELISTFORADDRESS']     = "Liste blanche pour l'adresse";
 $txt['BLACKLISTFORADDRESS']     = "Liste blanche pour l'adresse";
 $txt['ADDAWHITEENTRY']          = "Ajouter une adresse &agrave; la liste blanche";
 $txt['WHITELISTENTRYTOADD']     = "Entrez l'adresse que vous souhaitez ajouter &agrave; la liste blanche";
-$txt['RECORDALREADYEXISTS']     = "Cette entr&eacute;e existe d&eacute;j&agrave;";          
+$txt['RECORDALREADYEXISTS']     = "Cette entr&eacute;e existe d&eacute;j&agrave;";
 
 /*
  * logout (new)

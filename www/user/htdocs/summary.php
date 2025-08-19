@@ -4,9 +4,9 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the page sending the summary
- */ 
+ */
 
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
   return 200;
@@ -29,7 +29,7 @@ $posted = $form->getResult();
 
 // get quarantine object
 $quarantine = new SpamQuarantine();
-$quarantine->setSettings($posted);  
+$quarantine->setSettings($posted);
 
 // create view
 $template_ = new Template('summary.tmpl');

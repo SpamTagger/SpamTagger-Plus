@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the dynamic statistics display
  */
- 
+
  /**
   * require admin session and view
   */
@@ -37,29 +37,29 @@ $gcounts = array('msgs' => 0, 'spams' => 0, 'viruses' => 0, 'users' => 0);
 $form_ = new Form('search', 'post', $_SERVER['PHP_SELF']);
 $posted = $form_->getResult();
 if (!isset($posted['start'])) {
-  $posted['start'] = `date +%Y%m%d`;  
+  $posted['start'] = `date +%Y%m%d`;
 }
 if (!isset($posted['stop'])) {
-  $posted['stop'] = `date +%Y%m%d`;  
+  $posted['stop'] = `date +%Y%m%d`;
 }
 if (isset($posted['domain']) && isset($posted['start']) && isset($posted['stop'])) {
-    
+
   // get and check each slaves
   $slaves = $sysconf_->getSlaves();
-  foreach ($slaves as $slave) { 
+  foreach ($slaves as $slave) {
     if (!$slave->isAvailable()) {
       $gstatus = 0;
       continue;
     }
 
     // get counts
-    $counts = $slave->getStats($posted['domain'], $posted['start'], $posted['stop']); 
+    $counts = $slave->getStats($posted['domain'], $posted['start'], $posted['stop']);
     $gcounts['msgs'] += $counts->msg;
     $gcounts['spams'] += $counts->spam;
     $gcounts['viruses'] += $counts->virus;
     $gcounts['users'] += $counts->user;
   }
-  
+
   $d = new Domain();
   $d->load($posted['domain']);
 }

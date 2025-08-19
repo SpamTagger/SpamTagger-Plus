@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * User/Email preferences mapper
  */
 
 class Default_Model_UserPrefMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_UserPrefMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_UserPref $conf)
     {
         $result = $this->getDbTable()->find($id);
@@ -40,13 +40,13 @@ class Default_Model_UserPrefMapper
             return;
         }
         $row = $result->current();
-        
+
         $conf->setId($id);
         foreach ($conf->getAvailableParams() as $key) {
         	$conf->setParam($key, $row->$key);
         }
     }
-    
+
     public function save(Default_Model_UserPref $conf) {
        $data = $conf->getParamArray();
        $res = '';
@@ -59,10 +59,10 @@ class Default_Model_UserPrefMapper
         }
         return $res;
     }
-    
+
     public function delete(Default_Model_UserPref $prefs) {
     	$where = $this->getDbTable()->getAdapter()->quoteInto('id = ?', $prefs->getId());
     	return $this->getDbTable()->delete($where);
     }
-    
+
 }

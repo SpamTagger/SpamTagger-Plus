@@ -21,7 +21,7 @@
 #   This script will dump the domains configuration
 #
 #   Usage:
-#           collect_rrd_stats.pl 
+#           collect_rrd_stats.pl
 
 use v5.40;
 use warnings;
@@ -56,7 +56,7 @@ $conf->getOption('SRCDIR');
 
 # get stats to plot
 my @stats = ('cpu', 'load', 'network', 'memory', 'disks', 'messages', 'spools');
- 
+
 # get hosts to query
 my $slave_db = DB::connect('slave', 'st_config');
 my @hosts = $slave_db->getListOfHash("SELECT id, hostname FROM slave");
@@ -94,7 +94,7 @@ foreach my $collection (@collections_list) {
 	foreach my $element (@elements) {
 		$c->addElement($element);
 	}
-	
+
 	$c->collect(\%dynamic_oids);
 }
 

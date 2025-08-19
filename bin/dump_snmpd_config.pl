@@ -127,14 +127,14 @@ sub dump_snmpd_file
 
 	close TEMPLATE;
 	close TARGET;
-	
+
 	return 1;
 }
 
 #############################
 sub get_snmpd_config{
 	my %config;
-	
+
 	my $sth = $dbh->prepare("SELECT allowed_ip, community, disks FROM snmpd_config");
 	$sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
 

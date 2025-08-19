@@ -88,7 +88,7 @@ foreach my $s_h (@slavesarray) {
        print "$res\n";
        next;
     }
-    #print "  slave $sid - done!\n"; 
+    #print "  slave $sid - done!\n";
 
 
     my $updatequery = "UPDATE spam_$l SET in_master='1' WHERE in_master='0' AND ( date_in < '$date' OR ( date_in = '$date' AND time_in < '$time') )";

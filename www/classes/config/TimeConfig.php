@@ -5,30 +5,30 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * This is the class takes care of the system time configuration
  */
-class TimeConfig 
+class TimeConfig
 {
   /**
    * whether we use ntp servers of local time
    * @var  boolean
    */
   private $use_ntp_ = false;
-  
+
   /**
    * ntp servers list
    * @var  array
    */
   private $servers_ = array();
-  
+
   /**
    * ntp config file
    * @var  string
    */
   private $ntp_conf_file_ = "/etc/ntp.conf";
-  
+
   /**
    * actual date
    * @var  array
@@ -46,7 +46,7 @@ class TimeConfig
    * ntp config file template
    * @var string
    */
-  private $ntp_conf_template_ = 
+  private $ntp_conf_template_ =
 "
 driftfile /var/lib/ntp/ntp.drift
 statsdir /var/log/ntpstats/
@@ -118,14 +118,14 @@ private function setUseNTP($use) {
 /**
  * add a ntp server to be used
  * @param  $server  string  server name or ip to be used
- * @return          boolean 
+ * @return          boolean
  */
 private function addServer($server) {
   if (!is_string($server)) {
     return false;
   }
   $this->servers_[$server] = true;
-  return true;   
+  return true;
 }
 
 /**
@@ -152,7 +152,7 @@ private function setServers($list) {
      $se = trim($s);
      $this->addServer($se);
   }
-  return true;    
+  return true;
 }
 
 /**
@@ -162,7 +162,7 @@ private function setServers($list) {
 public function getServers() {
   $ret = "";
   foreach($this->servers_ as $server => $active) {
-    $ret .= $server.", ";  
+    $ret .= $server.", ";
   }
   $ret = rtrim($ret);
   $ret = rtrim($ret, '\,');
@@ -177,7 +177,7 @@ public function getServers() {
 public function save() {
   $res_a = array();
   $res = "";
-  
+
   $sudocmd = "/usr/bin/sudo";
     if (file_exists("/usr/sudo/bin/sudo")) {
       $sudocmd = "/usr/sudo/bin/sudo";
@@ -193,8 +193,8 @@ public function save() {
     $template = preg_replace('/\_\_SERVERS\_\_/', $servers, $this->ntp_conf_template_);
 
     $file = fopen($this->getConfigFilePath(), 'w');
-    if (!$file) { 
-      return "CANNOTOPENNTPFILE"; 
+    if (!$file) {
+      return "CANNOTOPENNTPFILE";
     }
     if (fwrite($file, $template) === FALSE) {
       return "CANNOTWRITENTPFILE";

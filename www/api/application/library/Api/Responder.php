@@ -39,21 +39,21 @@ class Api_Responder
 		}
 		return true;
 	}
-	
+
 	public function hasResponse() {
 		if ($this->_response['status_code'] > 0 ) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public function getResponse() {
 		return $this->_response;
 	}
-	
+
     public function getXMLResponse() {
         $xml = new DOMDocument('1.0', 'utf-8');
-        
+
         $response_el = $xml->appendChild(new domelement('response'));
         $response_el->setAttribute('code', $this->_response['status_code']);
         $response_el->setAttribute('name', $this->_response['status_name']);

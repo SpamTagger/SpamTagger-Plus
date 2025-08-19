@@ -181,56 +181,56 @@ $txt['LOGOUTTEXT'] = "<p>Your SpamTagger session ended.</p><p>If you would like 
 /*
  * parameters page
  */
-$txt['PARAMTITLE'] = "Personal SpamTagger settings"; 
-$txt['USERPARAM'] = "User settings"; 
+$txt['PARAMTITLE'] = "Personal SpamTagger settings";
+$txt['USERPARAM'] = "User settings";
 $txt['ADDRESSPARAM'] = "Address settings";
-$txt['LANGUAGE'] = "Language"; 
-$txt['ADDRESS'] = "Address"; 
-$txt['ADDRALIASTITLE'] = "Address group"; 
-$txt['FILTERACTIONTITLE'] = "Spam processing mode"; 
-$txt['SUMMARYPARAMSTITLE'] = "Quarantine report settings"; 
-$txt['ADDRESSESLISTTITLE'] = "Personal address group: (__PARAM__ address(es))"; 
-$txt['APPLYALLADDRESSES'] = "Apply changes to all addresses"; 
-$txt['MAIN'] = "main"; 
-$txt['SPAMACTION'] = "Spam processing mode"; 
+$txt['LANGUAGE'] = "Language";
+$txt['ADDRESS'] = "Address";
+$txt['ADDRALIASTITLE'] = "Address group";
+$txt['FILTERACTIONTITLE'] = "Spam processing mode";
+$txt['SUMMARYPARAMSTITLE'] = "Quarantine report settings";
+$txt['ADDRESSESLISTTITLE'] = "Personal address group: (__PARAM__ address(es))";
+$txt['APPLYALLADDRESSES'] = "Apply changes to all addresses";
+$txt['MAIN'] = "main";
+$txt['SPAMACTION'] = "Spam processing mode";
 $txt['PUTINQUARANTINE'] = "quarantine";
-$txt['TAGSUBJECT'] = "tag"; 
-$txt['QUARBOUNCES'] = "Systematically quarantine e-mail delivery error messages"; 
-$txt['DROP'] = "drop"; 
+$txt['TAGSUBJECT'] = "tag";
+$txt['QUARBOUNCES'] = "Systematically quarantine e-mail delivery error messages";
+$txt['DROP'] = "drop";
 $txt['SUBJECTTAG'] = "Tag keyword";
-$txt['SUMMARYFREQ'] = "Report delivery frequency"; 
+$txt['SUMMARYFREQ'] = "Report delivery frequency";
 $txt['DAILY'] = "Daily";
 $txt['WEEKLY'] = "Weekly";
 $txt['MONTHLY'] = "Monthly";
 $txt['NOSUMMARY'] = "No report";
-$txt['SUMMARYTYPE'] = "Report format"; 
+$txt['SUMMARYTYPE'] = "Report format";
 $txt['USEDEFAULT'] = "use default";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "plaintext";
-$txt['EDITWHITELIST'] = "edit whitelist"; 
-$txt['EDITWARNLIST'] = "edit warnlist"; 
-$txt['EDITNEWSLIST'] = "edit newslist"; 
+$txt['EDITWHITELIST'] = "edit whitelist";
+$txt['EDITWARNLIST'] = "edit warnlist";
+$txt['EDITNEWSLIST'] = "edit newslist";
 /*
  * wwlist management
  */
-$txt['SENDER'] = "Sender"; 
-$txt['COMMENT'] = "Comment"; 
-$txt['ACTIONS'] = "Action"; 
-$txt['ACTIVE'] = "active"; 
-$txt['INNACTIVE'] = "inactive"; 
-$txt['WWENTRY'] = "Entry"; 
-$txt['CONFIRMWWENTRYDELETE'] = "Are you sure you want to permanently delete this entry?"; 
-$txt['WHITELISTFOR'] = "Whitelist for __PARAM__"; 
-$txt['WARNLISTFOR'] = "Warnlist for __PARAM__"; 
-$txt['NEWSLISTFOR'] = "Newslist for __PARAM__"; 
-$txt['STATUS'] = "Status"; 
+$txt['SENDER'] = "Sender";
+$txt['COMMENT'] = "Comment";
+$txt['ACTIONS'] = "Action";
+$txt['ACTIVE'] = "active";
+$txt['INNACTIVE'] = "inactive";
+$txt['WWENTRY'] = "Entry";
+$txt['CONFIRMWWENTRYDELETE'] = "Are you sure you want to permanently delete this entry?";
+$txt['WHITELISTFOR'] = "Whitelist for __PARAM__";
+$txt['WARNLISTFOR'] = "Warnlist for __PARAM__";
+$txt['NEWSLISTFOR'] = "Newslist for __PARAM__";
+$txt['STATUS'] = "Status";
 /*
  * alias stuff
  */
-$txt['ADDALIASTITLE'] = "Add an address"; 
-$txt['ADDALIASFORM'] = "Address"; 
-$txt['REMADDRESSALT'] = "remove an address"; 
-$txt['ADDADDRESSALT'] = "add an address"; 
+$txt['ADDALIASTITLE'] = "Add an address";
+$txt['ADDALIASFORM'] = "Address";
+$txt['REMADDRESSALT'] = "remove an address";
+$txt['ADDADDRESSALT'] = "add an address";
 $txt['BADADDRESSFORMAT'] = "The given address is invalid. Please try again.";
 $txt['NOTFILTEREDDOMAIN'] = "This domain is not filtered by SpamTagger. The address could not be added.";
 $txt['ALIASALREADYREGISTERD'] = "This address is already used by a SpamTagger account. It could not be added.";
@@ -241,7 +241,7 @@ $txt['ALIASERRORSENDIG'] = "The request could not be sent because of an internal
 $txt['ALIASNOTPENDING'] = "No request is currently pending for this address.";
 $txt['ALIASADDED'] = "The address has been added.";
 $txt['ALIASREQUESTREMOVED'] = "The request has been canceled.";
-$txt['REMALIASTITLE'] = "Address removal"; 
+$txt['REMALIASTITLE'] = "Address removal";
 $txt['REMALIASCONFIRM'] = "Are you sure you want to remove the address: __PARAM__?";
 $txt['ALIASREMOVED'] = "The address __PARAM__ has been removed.";
 $txt['CANNOTREMOVEMAINADD'] = "The address__PARAM__ is the main address. It cannot be removed.";
@@ -280,17 +280,17 @@ $txt['MSGFILENOTFOUND'] = "The requested action could not be completed because t
 /*
  * support page (deprecated)
  */
-$txt['COMPANY'] = "Company"; 
-$txt['NAME'] = "Name"; 
-$txt['FIRSTNAME'] = "Firstname"; 
-$txt['EMAIL'] = "E-mail"; 
-$txt['YOURPHONENUMBER'] = "Phone number"; 
-$txt['WHATCANWEDO'] = "What can we do for you?"; 
-$txt['NEEDEDFIELDS'] = "Required fields"; 
-$txt['SUPPORT'] = "Support"; 
-$txt['SUPFORMSENT'] = "Your message has been sent."; 
-$txt['CANNOTSENDSUPFORM'] = "Your message could not be sent. Please try again later."; 
-$txt['BADFORMFIELDS'] = "Some fields are incorrect. Please check your input."; 
+$txt['COMPANY'] = "Company";
+$txt['NAME'] = "Name";
+$txt['FIRSTNAME'] = "Firstname";
+$txt['EMAIL'] = "E-mail";
+$txt['YOURPHONENUMBER'] = "Phone number";
+$txt['WHATCANWEDO'] = "What can we do for you?";
+$txt['NEEDEDFIELDS'] = "Required fields";
+$txt['SUPPORT'] = "Support";
+$txt['SUPFORMSENT'] = "Your message has been sent.";
+$txt['CANNOTSENDSUPFORM'] = "Your message could not be sent. Please try again later.";
+$txt['BADFORMFIELDS'] = "Some fields are incorrect. Please check your input.";
 /*
  * help page (new)
  */
@@ -388,7 +388,7 @@ $txt['TODAY'] = "Today";
  * wwlists (new)
  */
 $txt['WARNLISTSHORTHELP'] = "The warnlist contains trusted sender addresses for which you want to be notified by e-mail whenever a message happens to be detected as spam. You can then immediatly release the message in case of a filtering error.<br />
-\t\t\t\t\t\t\t\t   Warning: This functionality should be used as a temporary solution as it decreases the overall protection. 
+\t\t\t\t\t\t\t\t   Warning: This functionality should be used as a temporary solution as it decreases the overall protection.
 \t\t\t\t\t\t\t\t   Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on warn list usage. ";
 $txt['WARNLISTFORADDRESS'] = "Warnlist for the address";
 $txt['ADDAWARNENTRY'] = "Add an address to the list";
@@ -400,7 +400,7 @@ $txt['REMTHEENTRY'] = "Remove selection";
 $txt['DISABLETHEENTRY'] = "Disable/enable selection";
 $txt['WHITELISTSHORTHELP'] = "The whitelist contains trusted sender addresses for which no quarantine retention will ever occur.<br />
                                    Warning: This functionality should be used as a temporary solution, as it decreases the overall protection.
-                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on whitelist usage. 
+                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on whitelist usage.
 ";
 $txt['BLACKLISTSHORTHELP'] = "The blacklist contains blacklisted sender addresses.
                                   Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on black list usage.

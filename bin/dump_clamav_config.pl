@@ -104,7 +104,7 @@ sub dump_file
 		if ($config{'HTTPPROXY'} =~ m/http\:\/\/(\S+)\:(\d+)/) {
 			$proxy_server = $1;
 			$proxy_port = $2;
-		} 
+		}
 	}
 
 	while(<TEMPLATE>) {
@@ -126,7 +126,7 @@ sub dump_file
 
 	close TEMPLATE;
 	close TARGET;
-	
+
 	return 1;
 }
 

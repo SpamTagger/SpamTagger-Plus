@@ -9,15 +9,15 @@
 
 class Default_Form_RegistrationCE extends ZendX_JQuery_Form
 {
-	
+
 	protected $_registrationmgr;
-	
+
 	public function __construct($mgr) {
 		$this->_registrationmgr = $mgr;
 		parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 
@@ -97,7 +97,7 @@ class Default_Form_RegistrationCE extends ZendX_JQuery_Form
 		    'filters'    => array('StringTrim'),
 	    ));
 
-	   $countries = array( 
+	   $countries = array(
 			"Afghanistan",
 			"Albania",
 			"Algeria",

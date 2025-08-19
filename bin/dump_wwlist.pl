@@ -20,7 +20,7 @@
 #   This script will dump the whitelist and warnlists for the system/domain/user
 #
 #   Usage:
-#           dump_wwlists.pl [domain|user] 
+#           dump_wwlists.pl [domain|user]
 
 use v5.40;
 use warnings;
@@ -68,15 +68,15 @@ exit 0;
 sub dumpWWFiles {
   my $to = shift;
   my $filepath = shift;
-  
+
   my @types = ('warn', 'white');
-  
+
   foreach my $type (@types) {
     ## get list
-    my @list = $slave_db->getList("SELECT sender FROM wwlists WHERE 
-                                               status=1 AND type='".$type."' 
+    my @list = $slave_db->getList("SELECT sender FROM wwlists WHERE
+                                               status=1 AND type='".$type."'
                                                AND recipient='".$to."'");
-                                               
+
     # first remove file if exists
     my $file = $filepath."/".$type.".list";
     if ( -f $file) {
@@ -87,19 +87,19 @@ sub dumpWWFiles {
     if (!@list) {
        next;
     }
-  
+
     # create directory if needed
     createDirs($filepath);
-   
+
     # and write the file down
     if ( !open(WWFILE, ">$file") ) {
       return 0;
     }
-  
+
     foreach my $entry (@list) {
       print WWFILE "$entry\n";
     }
- 
+
     close WWFILE;
     chown 'spamtagger', $file;
   }
@@ -111,7 +111,7 @@ sub dumpWWFiles {
 
 sub createDirs() {
   my $path = shift;
-  
+
   my $cmd = "mkdir -p $path";
   my $res = `$cmd`;
   chown chown $uid, $gid, $path;

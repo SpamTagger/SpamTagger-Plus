@@ -4,14 +4,14 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the help page
  */
- 
+
 /**
  * require valid session
  */
-require_once("objects.php"); 
+require_once("objects.php");
 require_once("view/Template.php");
 require_once("view/Form.php");
 global $sysconf_;
@@ -52,7 +52,7 @@ if (file_exists($templatehelpfile)) {
 $replace = array(
     "__PRINT_USERNAME__" => $user_->getName(),
     "__LINK_LOGOUT__" => '/logout.php',
-    
+
     "__MENULIST__" => getMenuList(),
     "__THISTOPIC__" => $topic,
     "__HELP_TOPIC__" => $lang_->print_txt(strtoupper($topic)."TOPICTITLE"),
@@ -64,11 +64,11 @@ $template_->output($replace);
 
 
 function getMenuList() {
-  global $template_;	
+  global $template_;
   global $topics;
   global $lang_;
   global $topiclist;
-  
+
   $ret = "";
   $i = 1;
   foreach (preg_split('/,/', $topiclist) as $topic) {
@@ -87,7 +87,7 @@ function getHelpContent($carray) {
   global $user_;
   global $template_;
   global $lang_;
-  
+
   $ret = "";
   foreach ($carray as $top) {
 	if ($top == 'USERMANUAL') {
@@ -98,7 +98,7 @@ function getHelpContent($carray) {
   	  $ret .= $htxt[$top];
         }
   }
-  
+
   ## replace tags
   require_once('config/HTTPDConfig.php');
   $httpd = new HTTPDConfig();
@@ -108,7 +108,7 @@ function getHelpContent($carray) {
   	$url = "https://";
   }
   $url .= $httpd->getPref('servername');
-  
+
   $domain = $user_->getDomain();
   $spamaddress = $domain->getPref('support_email');
   if ($spamaddress == "") { $spamaddress = $sysconf_->getPref('analyse_to'); }
@@ -120,7 +120,7 @@ function getHelpContent($carray) {
   $nospamaddress = 'nospam@spamtagger.org';
   $supportaddress = 'support@spamtagger.org';
   $salesaddress = 'sales@spamtagger.org';
-  
+
   $ret = preg_replace('/__SPAM_EMAIL__/', "<a href=\"mailto:$spamaddress\">$spamaddress</a>", $ret);
   $ret = preg_replace('/__NOSPAM_EMAIL__/', "<a href=\"mailto:$spamaddress\">$spamaddress</a>", $ret);
   $ret = preg_replace('/__SUPPORT_EMAIL__/', "<a href=\"mailto:$supportaddress\">$supportaddress</a>", $ret);
@@ -150,7 +150,7 @@ function getHelpContent($carray) {
     $ret = preg_replace("/__MANUAL_".$helpt."_LINK__/", 'http://cdn.spamtagger.org/downloads/documentations/'.$lang_->getLanguage(), $ret);
 
   }
-  
+
   $ou2003name = 'SpamTagger_outlook2003.zip';
   $ou2007name = 'SpamTagger_outlook2007.zip';
   $ou2003relpath = '/plugins/'.$lang_->getLanguage().'/'.$ou2003name;
@@ -165,7 +165,7 @@ function getHelpContent($carray) {
   if (file_exists($ou2007abspath)) {
     $ou2007size = filesize($ou2007abspath);
   }
-  
+
   $ret = preg_replace("/__PLUGIN_OU2003_LINK__/", $ou2003relpath, $ret);
   $ret = preg_replace("/__PLUGIN_OU2007_LINK__/", $ou2007relpath, $ret);
   $ret = preg_replace("/__PLUGIN_OU2003_NAME__/", $ou2003name, $ret);
@@ -176,7 +176,7 @@ function getHelpContent($carray) {
   $ret = preg_replace('/__LINKHELP_(\S+)__(.*)__LINK__/', "<a href=\"".'http://cdn.spamtagger.org/downloads/documentations/'.$lang_->getLanguage()."\">\\2</a>", $ret);
   #$ret = preg_replace('/__LINKHELP_(\S+)__(.*)__LINK__/', "<a href=\"".$_SERVER['PHP_SELF']."?t=\\1\">\\2</a>", $ret);
   $ret = preg_replace('/__ANCHOR_(\S+)__(.*)__ANCHOR__/', "<a id=\"\\1\">\\2</a>", $ret);
-  return $ret; 
+  return $ret;
 }
 
 function format_size($s) {
@@ -188,7 +188,7 @@ function format_size($s) {
     $ret = sprintf("%.2f ".$lang_->print_txt('MB'), $s/(1000.0*1000.0));
   } elseif ($s > 1000) {
     $ret = sprintf("%.2f ".$lang_->print_txt('KB'), $s/(1000.0));
-  } else { 
+  } else {
     $ret = $s." ".$lang_->print_txt('BYTES');
   }
   return $ret;

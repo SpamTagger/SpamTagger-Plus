@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Admin settings form
  */
 
@@ -12,33 +12,33 @@ class Default_Form_AdminEdit extends ZendX_JQuery_Form
 {
 
 	public $_admin;
-	
+
 	public function __construct($admin) {
 		$this->_admin = $admin;
 		parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-    	
+
 		$this->setMethod('post');
-	           
+
 		$this->setAttrib('id', 'admin_edit');
-		        
+
 		$newusername = new  Zend_Form_Element_Text('newusername', array(
 		    'required' => false));
 		require_once('Validate/AdminName.php');
 		$newusername->addValidator(new Validate_AdminName());
 	    $this->addElement($newusername);
-	    
+
 		$username = new Zend_Form_Element_Hidden('username');
 		$username->setValue($this->_admin->getParam('username'));
 		$this->addElement($username);
-		
+
 	    $password = new  Zend_Form_Element_Password('password', array(
 	        'label'    => $t->_('Password')." :",
 	        'renderPassword' => true,
@@ -47,7 +47,7 @@ class Default_Form_AdminEdit extends ZendX_JQuery_Form
 	        $password->setValue('_keeppassword1_');
 	    }
 	    $this->addElement($password);
-	    
+
 	    $confirm = new  Zend_Form_Element_Password('confirm', array(
 	        'label'    => $t->_('Confirm')." :",
 	        'renderPassword' => true,
@@ -56,18 +56,18 @@ class Default_Form_AdminEdit extends ZendX_JQuery_Form
 	        $confirm->setValue('_keeppassword2_');
 	    }
 	    $this->addElement($confirm);
-	    
+
 	    $roleselect = new Zend_Form_Element_Select('role', array(
             'label'      => $t->_('Role')." :",
             'required'   => false,
             'filters'    => array('StringTrim')));
-        
+
         foreach ($this->_admin->getRoles() as $r) {
         	$roleselect->addMultiOption($r['name'], $t->_($r['name']));
         }
         $roleselect->setValue($this->_admin->getUserType());
         $this->addElement($roleselect);
-        
+
         require_once('Validate/DomainList.php');
         $domains = new Zend_Form_Element_Textarea('domains', array(
 		      'label'    =>  $t->_('Manage Domains')." :",
@@ -78,7 +78,7 @@ class Default_Form_AdminEdit extends ZendX_JQuery_Form
 	    $domains->addValidator(new Validate_DomainList());
 		$domains->setValue( implode("\n", $this->_admin->getDomainsArray() ));
 		$this->addElement($domains);
-        
+
 		$allowsubdomains = new Zend_Form_Element_Checkbox('allow_subdomains', array(
 			        'label'   => $t->_('Allow access to subdomains'). " :",
 		            'uncheckedValue' => "0",
@@ -88,17 +88,17 @@ class Default_Form_AdminEdit extends ZendX_JQuery_Form
 			$allowsubdomains->setChecked(true);
 		}
 		$this->addElement($allowsubdomains);
-		
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
 		$this->addElement($submit);
-		
+
 	}
 
 	public function setParams($request, $admin) {
-		
+
 		$t = Zend_Registry::get('translate');
-		
+
 		if ($request->getParam('password') == '') {
 			throw new Exception($t->_('Please provide a password'));
 		}

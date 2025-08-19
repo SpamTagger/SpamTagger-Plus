@@ -181,4 +181,3 @@ elsif ($mode eq "L") { print($percentclean); }
 elsif ($mode eq "d") { print($domain_count); }
 
 exit 0;
-

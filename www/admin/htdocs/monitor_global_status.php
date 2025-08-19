@@ -4,15 +4,15 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller page for the status page
  */
- 
+
 /**
  * require admin session and Slave stuff
  */
 require_once("variables.php");
-require_once("admin_objects.php"); 
+require_once("admin_objects.php");
 require_once("view/Template.php");
 require_once("system/Slave.php");
 require_once("view/Documentor.php");
@@ -65,7 +65,7 @@ function drawHostList($t) {
   $restarter_height = $t->getDefaultValue('RESTARTERHEIGHT');
   $needrestart = $t->getDefaultValue('NEEDRESTART');
 
-  $images['ASC'] = $t->getDefaultValue('ASC_IMG'); 
+  $images['ASC'] = $t->getDefaultValue('ASC_IMG');
   $images['DESC'] = $t->getDefaultValue('DESC_IMG');
   $images['VIRUS'] = $t->getDefaultValue('VIRUS_IMG');
   $images['NAME'] = $t->getDefaultValue('NAME_IMG');
@@ -74,7 +74,7 @@ function drawHostList($t) {
 
   $colors['OK'] = $t->getDefaultValue('COLOR_OK');
   $colors['CRITICAL'] = $t->getDefaultValue('COLOR_CRITICAL');
-  $colors['INACTIVE'] = $t->getDefaultValue('COLOR_INACTIVE'); 
+  $colors['INACTIVE'] = $t->getDefaultValue('COLOR_INACTIVE');
   $colors['SPAMS'] = $t->getDefaultValue('COLOR_SPAMS');
   $colors['VIRUSES'] = $t->getDefaultValue('COLOR_VIRUSES');
   $colors['CONTENT'] = $t->getDefaultValue('COLOR_CONTENT');
@@ -88,13 +88,13 @@ function drawHostList($t) {
   $i = 0;
   foreach( $slaves_ as $slave ) {
     $retsoap = $slave->isAvailable();
-    
+
     if ($retsoap == "OK") {
       if ($i++ % 2) {
         $tmp = preg_replace("/__COLOR1__(\S{7})__COLOR2__(\S{7})/", "$1", $t->getTemplate('HOSTLIST'));
       } else {
         $tmp = preg_replace("/__COLOR1__(\S{7})__COLOR2__(\S{7})/", "$2", $t->getTemplate('HOSTLIST'));
-      } 
+      }
       $tmp = str_replace('__HOSTID__', $slave->getPref('id'), $tmp);
       $tmp = str_replace('__HOST__', $slave->getPref('hostname'), $tmp);
       $tmp = str_replace('__PROCESSES__', $slave->showProcesses($t->getTemplate('PROCESSESOPEN'), $colors, $needrestart, $restarter_height, $restarter_width), $tmp);

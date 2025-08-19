@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for smtp settings
  */
 
@@ -22,9 +22,9 @@ class SmtpController extends Zend_Controller_Action
     	$view->selectedMenu = 'Configuration';
     	$main_menus = Zend_Registry::get('main_menu')->findOneBy('id', 'subconfig_SMTP')->class = 'submenuelselected';
     	$view->selectedSubMenu = 'SMTP';
-    	
+
     	$this->config_menu = new Zend_Navigation();
-    	
+
     	$this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'SMTP checks', 'id' => 'smtpchecks', 'action' => 'smtpchecks', 'controller' => 'smtp')));
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Connection control', 'id' => 'connectioncontrol', 'action' => 'connectioncontrol', 'controller' => 'smtp')));
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Resources control', 'id' => 'resourcescontrol', 'action' => 'resourcescontrol', 'controller' => 'smtp')));
@@ -32,18 +32,18 @@ class SmtpController extends Zend_Controller_Action
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Greylisting', 'id' => 'greylisting', 'action' => 'greylisting', 'controller' => 'smtp')));
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'DKIM', 'id' => 'dkim', 'action' => 'dkim', 'controller' => 'smtp')));
         $view->config_menu = $this->config_menu;
-        
+
         $view->headScript()->appendFile($view->scripts_path.'/baseconfig.js', 'text/javascript');
         $view->headScript()->appendFile($view->scripts_path.'/tooltip.js', 'text/javascript');
         $view->headScript()->appendFile($view->scripts_path.'/smtpconfig.js', 'text/javascript');
         $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
-    	
+
     }
-    
+
     public function indexAction() {
-  	
+
     }
-    
+
     public function smtpchecksAction() {
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'smtpchecks')->class = 'generalconfigmenuselected';
@@ -51,14 +51,14 @@ class SmtpController extends Zend_Controller_Action
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'smtpchecks')->label;
     	$request = $this->getRequest();
-    	
+
     	$mta = new Default_Model_MtaConfig();
     	$mta->find(1);
-    	
+
     	$form    = new Default_Form_SmtpChecks($mta);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('smtpchecks', 'smtp'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
             	$form->setParams($this->getRequest(), $mta);
@@ -74,11 +74,11 @@ class SmtpController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
-    	$view->message = $message;    	
+    	$view->message = $message;
     }
-    
+
     public function connectioncontrolAction() {
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'connectioncontrol')->class = 'generalconfigmenuselected';
@@ -86,18 +86,18 @@ class SmtpController extends Zend_Controller_Action
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'connectioncontrol')->label;
     	$request = $this->getRequest();
-    	
+
     	$mta = new Default_Model_MtaConfig();
     	$mta->find(1);
-    	
+
     	$form    = new Default_Form_SmtpConnectionControl($mta);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('connectioncontrol', 'smtp'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
             	$form->setParams($this->getRequest(), $mta);
-            	
+
             	try {
             	  $mta->save();
             	  $message = 'OK data saved';
@@ -110,11 +110,11 @@ class SmtpController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
     	$view->message = $message;
     }
-    
+
     public function tlsAction() {
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'tls')->class = 'generalconfigmenuselected';
@@ -122,26 +122,26 @@ class SmtpController extends Zend_Controller_Action
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'tls')->label;
     	$request = $this->getRequest();
-    	
+
      	$mta = new Default_Model_MtaConfig();
     	$mta->find(1);
     	$mta2 = new Default_Model_MtaConfig();
     	$mta2->find(2);
     	$mta4 = new Default_Model_MtaConfig();
     	$mta4->find(4);
-    	
+
         if ($mta->getParam('use_incoming_tls') < 1) {
     		$view->ssl_display_class = 'hidden';
     	}
-    	
+
     	$form    = new Default_Form_SmtpTls($mta);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('tls', 'smtp'));
-        
+
         $cert = new Default_Model_PKI();
         $cert->setCertificate($mta->getParam('tls_certificate_data'));
         $certdata = $cert->getCertificateData();
         $message = '';
-        
+
         if ($request->isPost()) {
         	$cert->setCertificate($request->getParam('tls_certificate_data'));
         	$certdata = $cert->getCertificateData();
@@ -173,12 +173,12 @@ class SmtpController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
     	$view->message = $message;
         $view->certdata = $certdata;
     }
-    
+
     public function resourcescontrolAction() {
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'resourcescontrol')->class = 'generalconfigmenuselected';
@@ -186,14 +186,14 @@ class SmtpController extends Zend_Controller_Action
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'resourcescontrol')->label;
     	$request = $this->getRequest();
-    	
+
      	$mta = new Default_Model_MtaConfig();
     	$mta->find(1);
     	$mta2 = new Default_Model_MtaConfig();
     	$mta2->find(2);
     	$mta4 = new Default_Model_MtaConfig();
     	$mta4->find(4);
-    	
+
     	$view->rate_display_class = array();
     	foreach (array('rate', 'trusted_rate') as $rtype ) {
     		$view->rate_display_class[$rtype] = 'none';
@@ -201,11 +201,11 @@ class SmtpController extends Zend_Controller_Action
         		$view->rate_display_class[$rtype] = 'hidden';
     	    }
     	}
- 
+
     	$form    = new Default_Form_SmtpResourcesControl($mta);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('resourcescontrol', 'smtp'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
             	$form->setParams($this->getRequest(), $mta);
@@ -239,11 +239,11 @@ class SmtpController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
     	$view->message = $message;
     }
-    
+
     public function greylistingAction() {
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'greylisting')->class = 'generalconfigmenuselected';
@@ -251,14 +251,14 @@ class SmtpController extends Zend_Controller_Action
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'greylisting')->label;
     	$request = $this->getRequest();
-    	
+
     	$greylist = new Default_Model_GreylistConfig();
     	$greylist->find(1);
-    	
+
     	$form    = new Default_Form_SmtpGreylisting($greylist);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('greylisting', 'smtp'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
             	$form->setParams($request, $greylist);
@@ -274,12 +274,12 @@ class SmtpController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
     	$view->message = $message;
     }
-    
-    
+
+
     public function dkimAction() {
         $t = Zend_Registry::get('translate');
         $this->config_menu->findOneBy('id', 'dkim')->class = 'generalconfigmenuselected';
@@ -287,14 +287,14 @@ class SmtpController extends Zend_Controller_Action
         $view=$layout->getView();
         $view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'dkim')->label;
         $request = $this->getRequest();
-        
+
         $mta = new Default_Model_MtaConfig();
         $mta->find(1);
-       
+
         $form    = new Default_Form_SmtpDkim($mta);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('dkim', 'smtp'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
                 try {
@@ -310,17 +310,17 @@ class SmtpController extends Zend_Controller_Action
                 $message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
         $view->message = $message;
     }
-    
+
     public function clearcalloutAction() {
     	$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
     	$layout->disableLayout();
         $view->addScriptPath(Zend_Registry::get('ajax_script_path'));
-    	
+
         $slave = new Default_Model_Slave();
         $slave->sendSoapToAll('Service_clearCalloutCache');
         $view->message = 'OK';

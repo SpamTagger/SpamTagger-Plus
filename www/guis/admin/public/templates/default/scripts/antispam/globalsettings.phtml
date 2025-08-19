@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -23,7 +23,7 @@
  <li class="submenutitle"><?php echo $this->t->_('Anti-Spam modules'); ?></li>
    <?php foreach ($this->modules as $module) {?>
       <?php if ($module->getParam('visible') != 0) {?>
-         <li onclick="javascript:goTo('<?php echo $this->url(array('controller'=>'antispam','action'=>'editmodule','prefilter' => $module->getParam('name')))?>');" 
+         <li onclick="javascript:goTo('<?php echo $this->url(array('controller'=>'antispam','action'=>'editmodule','prefilter' => $module->getParam('name')))?>');"
 	        class="void<?php if ($module->getParam('active') < 1) { ?> disabledsubmenuitem<?php }?>">
 		       <a href="<?php echo $this->url(array('controller'=>'antispam','action'=>'editmodule','prefilter' => $module->getParam('name')))?>">
 		                <?php echo  $module->getParam('position')?> - <?php echo $module->getParam('name');?>
@@ -33,10 +33,10 @@
    <?php }?>
  </ul>
 </div>
-    
- <div id="generalconfigcontent">   
+
+ <div id="generalconfigcontent">
     <div class="configpanel">
-     <?php echo $this->partial('forms/antispamglobalsettingsForm.phtml', array('form' => $this->form,'t' => $this->t, 'message' => $this->message, 'images_path' => $this->images_path)); ?> 
+     <?php echo $this->partial('forms/antispamglobalsettingsForm.phtml', array('form' => $this->form,'t' => $this->t, 'message' => $this->message, 'images_path' => $this->images_path)); ?>
    </div>
  </div>
 </div>

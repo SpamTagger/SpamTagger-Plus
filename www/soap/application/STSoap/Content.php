@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  */
 
-class STSoap_Content 
+class STSoap_Content
 {
 
 	static public $_fieldstosend = array(
@@ -19,14 +19,14 @@ class STSoap_Content
    * @return array
    */
 	static public function Content_fetchAll($params, $limit=0) {
-		
+
 		if (isset($params['id']) && !preg_match('/^([a-z,A-Z,0-9]{6}-[a-z,A-Z,0-9]{6,11}-[a-z,A-Z,0-9]{2,4})$/', $params['id'], $matches)) {
 			unset($params['id']);
 		}
-		
+
 		require_once('SpamTagger/Config.php');
     	$stconfig = SpamTagger_Config::getInstance();
-    	
+
     	require_once('Zend/Db/Adapter/Pdo/Mysql.php');
     	$contentDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
@@ -54,7 +54,7 @@ class STSoap_Content
                 $query->where('id = ?', $params['reference']);
         	}
         }
-        
+
 	    if (isset($params['domain']) && $params['domain'] != '') {
         	$query->where('to_domain = ?', $params['domain']);
         }
@@ -67,27 +67,27 @@ class STSoap_Content
 	    if (isset($params['subject']) && $params['subject'] != '') {
         	$query->where('subject LIKE ?', '%'.$params['subject'].'%');
         }
-        
-        if (isset($params['td']) && isset($params['td']) && isset($params['tm']) && isset($params['tm']) 
+
+        if (isset($params['td']) && isset($params['td']) && isset($params['tm']) && isset($params['tm'])
 		  && isset($params['fd']) && isset($params['fd']) && isset($params['fm']) && isset($params['fm'])
 		   ) {
-        
+
             $today = getDate();
             $params['fy'] = $today['year'];
             $params['ty'] = $today['year'];
             if ($params['tm'] < $params['fm']) {
         	    $params['fy']--;
             }
-        
+
          	$query->where("date >= DATE(?)", $params['fy']."-".$params['fm']."-".$params['fd']);
 			$query->where("date <= DATE(?)", $params['ty']."-".$params['tm']."-".$params['td']);
 	    }
 
         $query->where('quarantined=1');
-             
+
         echo $query;
         $result = $query->query()->fetchAll();
-        
+
         $elements = array();
         if ($limit && count($result) > $limit) {
         	return array('error' => 'LIMITREACHED');
@@ -102,16 +102,16 @@ class STSoap_Content
         		#	$elements[$c['id']]['subject'] = utf8_encode($matches[1]);
         		#}
         	#}
-   
+
         }
-        
+
         return $elements;
 	}
 
-	
+
    /**
     * This function will fetch information on quarantined content
-    * 
+    *
     * @param  array  params
     * @return array
     */
@@ -126,7 +126,7 @@ class STSoap_Content
 		$id = $matches[2];
 		require_once('SpamTagger/Config.php');
     	$stconfig = SpamTagger_Config::getInstance();
-    	
+
     	require_once('Zend/Db/Adapter/Pdo/Mysql.php');
     	$contentDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
@@ -137,7 +137,7 @@ class STSoap_Content
                              ));
         $query = $contentDb->select();
         $query->from('maillog');
-        
+
         $query->where('id = ?', $id);
         $result = $query->query()->fetch();
         if (!$result) {
@@ -152,14 +152,14 @@ class STSoap_Content
             #	   $ret['subject'] = utf8_encode($matches[1]);
             #}
         #}
-        	
+
         $ret['status'] = 1;
         return $ret;
 	}
-	
+
    /**
     * This function will release a quarantined message
-    * 
+    *
     * @param  array  params
     * @return array
     */
@@ -168,7 +168,7 @@ class STSoap_Content
 		if (isset($params['id'])) {
             $id = $params['id'];
 		}
-		
+
 		require_once('SpamTagger/Config.php');
 		$stconfig = SpamTagger_Config::getInstance();
 		$cmd = $stconfig->getOption('SRCDIR')."/bin/force_quarantined.pl ".$id;

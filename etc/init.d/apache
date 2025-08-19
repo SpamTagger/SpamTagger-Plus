@@ -302,7 +302,7 @@ for ARG in $@ $ARGS; do
 start      - start httpd
 startssl   - start httpd with SSL enabled
 stop       - stop httpd
-restart    - restart httpd if running by sending a SIGHUP or start if 
+restart    - restart httpd if running by sending a SIGHUP or start if
              not running
 fullstatus - dump a full status screen; requires lynx and mod_status enabled
 status     - dump a short status screen; requires lynx and mod_status enabled

@@ -27,7 +27,7 @@ while (<LOGFILE>) {
     my $hour = 0;
     if (/\w+\s+\d+\s+(\d+):\d+:\d+/) {
       $hour = $1;
-    } 
+    }
     my @fields = split / /,$_;
     foreach my $field (@fields) {
      if ($field =~ m/\((\w+):(\d+\.?\d*)s\)/) {
@@ -67,7 +67,7 @@ print "-------------------------------------------------------------------------
 print "Hourly stats: \n";
 my @h = sort keys %hourly_counts;
 foreach my $hour (@h) {
-  printHourly($hour, 'Prefilters'); 
+  printHourly($hour, 'Prefilters');
 }
 
 sub printStat {
@@ -91,7 +91,7 @@ sub printHourly {
   if (defined($hourly_counts{$h}{$var}) && $hourly_counts{$h}{$var} > 0) {
    $av = (int(($hourly_sums{$h}{$var}/$hourly_counts{$h}{$var})*10000)/10000);
   }
-  print $h.": ".$hourly_counts{$h}{$var}." => ".$av."s \n"; 
+  print $h.": ".$hourly_counts{$h}{$var}." => ".$av."s \n";
 }
 
 sub hashValueAscendingNum {

@@ -14,7 +14,7 @@ $(document).ready(function(){
         loading();
         event.preventDefault();
       });
-	
+
 	$("a.menubutton").click(function(event){
 		abortStatus();
 		//event.preventDefault();
@@ -27,7 +27,7 @@ function loading() {
             $("#statuspanel").html("not running on slave");
 		return;
 	}
-	
+
 	$("#statuspanel").html(loadinghtml);
 	statusrequest = $.ajax({
 		  type: "GET",

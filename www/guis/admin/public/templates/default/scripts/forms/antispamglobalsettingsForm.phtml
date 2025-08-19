@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -21,12 +21,12 @@
 		<hr />
 		</td>
 	</tr>
-	
+
 	<?php echo $this->InputRow($this->form->getElement('enable_whitelists'));?>
 	<?php $hiddenornot = '';  if (!$this->form->_whitelistenabled) { $hiddenornot = ' hidden'; }?>
     <?php echo $this->InputRow($this->form->getElement('tag_mode_bypass_whitelist'),array('row_class'=>'whitelist_options'.$hiddenornot));?>
     <?php echo $this->InputRow($this->form->getElement('whitelist_both_from'),array('row_class'=>'whitelist_options'.$hiddenornot));?>
-	
+
 	<tr id="whitelist_list"
 		class="listinform<?php if (!$this->form->_whitelistenabled) { ?> hidden<?php }?>">
 		<td colspan="2">
@@ -120,7 +120,7 @@
         </div>
 		</td>
 	</tr>
-	
+
 
 
 
@@ -223,7 +223,7 @@
 
 
 
-	
+
     <?php echo $this->SubmitRow($this->form->getElement('submit'));?>
 
 </table>

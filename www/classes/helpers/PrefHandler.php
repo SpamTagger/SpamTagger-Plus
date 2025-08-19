@@ -3,13 +3,13 @@
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  */
- 
- /** 
+
+ /**
  * Preference Set Handler (store/create/delete)
  * This class takes care of loading/storing/deleting a set of preference
  * to or from a database table.
  * It can manage multiple table with simple constrains (id reference)
- * 
+ *
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
@@ -59,11 +59,11 @@ class PrefHandler
   /**
    * keep if loaded or not
    * @var  boolean
-   */ 
+   */
   private $loaded_ = false;
-  
+
   private function __construct() {}
-  
+
   /**
    * Add a preference set
    * Used to add a preference set (an array). Multiple set can be added.
@@ -79,7 +79,7 @@ class PrefHandler
     }
     return true;
   }
-  
+
   /**
    * Set a relation between to preferences set
    * Used to set a relation between to preferences set. This is useful if you have one field of
@@ -95,7 +95,7 @@ class PrefHandler
     }
     return true;
   }
-  
+
   /**
    * Set a preference value
    * Set a preference value. Will control that the preference exists.
@@ -112,7 +112,7 @@ class PrefHandler
     }
     return false;
   }
-  
+
   /**
    * Get a preference value
    * Get the preference value
@@ -131,9 +131,9 @@ class PrefHandler
           return $table[$pref];
         }
     }
-    return null;   
+    return null;
   }
-  
+
   /**
    * Set the tables where we want to use another field than id
    * @param $tables array  array of table (keys are table name, values are id field)
@@ -144,7 +144,7 @@ class PrefHandler
        $this->id_fields_ = $tables;
     }
    }
-  
+
   /**
    * Get the last database query executed
    * Get the last database query executed, mainly for debug purpose
@@ -153,11 +153,11 @@ class PrefHandler
    public function getLastQuery() {
      return $this->last_query_;
    }
-   
+
   /**
    * Get the id of a record
    * @param $table_name  string  name of the table of the record
-   * @return             numeric id of the record 
+   * @return             numeric id of the record
    */
    public function getRecordId($table_name) {
     if (isset($this->record_ids_[$this->tables_shortcuts_[$table_name]])) {
@@ -165,7 +165,7 @@ class PrefHandler
     }
     return 0;
    }
-   
+
   /**
    * Load preferences from database
    * Load preferences values from the database
@@ -174,10 +174,10 @@ class PrefHandler
    * @return                    bool   false on failure, true on success
    */
   protected function loadPrefs($additional_fields, $where_clause, $use_id) {
-    
+
     $query = "SELECT ";
     $this->use_ids_ = $use_id;
-    
+
     if (is_string($additional_fields)) {
         $query .= $additional_fields." ";
     }
@@ -191,7 +191,7 @@ class PrefHandler
                 $query .= $this->tables_shortcuts_[$table_name].".".$this->id_fields_[$table_name]." as ".$this->tables_shortcuts_[$table_name]."_id, ";
               }
             }
-        }  
+        }
         foreach ($table as $pref => $val) {
             if ($this->tables_shortcuts_[$table_name] != "") {
                 $query .= $this->tables_shortcuts_[$table_name].".";
@@ -201,18 +201,18 @@ class PrefHandler
     }
     $query = rtrim($query);
     $query = rtrim($query, '\,');
-    
+
     $query .= " FROM ";
-    foreach ($this->pref_tables_ as $table_name => $table) { 
+    foreach ($this->pref_tables_ as $table_name => $table) {
       $query .= $table_name." ";
       if ($this->tables_shortcuts_[$table_name] != "") {
         $query .= $this->tables_shortcuts_[$table_name];
       }
       $query .= ", ";
-    } 
+    }
     $query = rtrim($query);
     $query = rtrim($query, '\,');
-    
+
     if (is_string($where_clause) && $where_clause != "") {
         $query .= " WHERE ".$where_clause;
     }
@@ -234,7 +234,7 @@ class PrefHandler
     $this->loaded_ = true;
     return true;
   }
-  
+
   /**
    * Return if preferences set should be updated or created
    * Check if one of the preferences set doesn't already exists in database. If yes, then
@@ -256,7 +256,7 @@ class PrefHandler
     }
     return true;
   }
-  
+
   /**
    * Return if object already exists in database or not
    * @return  bool   true if already present, false if not
@@ -264,7 +264,7 @@ class PrefHandler
   public function isRegistered() {
     return $this->shouldUpdate();
   }
-  
+
   /**
    * Save the preferences to the database
    * Save the preferences to the database. Taking care of relations and to create record if
@@ -340,7 +340,7 @@ class PrefHandler
     }
     return $retok;
   }
-  
+
   /**
    * Get the SQL query part for all the preferences
    * For a preferences set, get the SQL string that will set the values for each preference
@@ -358,7 +358,7 @@ class PrefHandler
     $ret = rtrim($ret, '\,');
     return $ret;
   }
-  
+
   /**
    * Get the table name for a given table shortcut
    * Will return the table name associated to the given table shortcut
@@ -368,7 +368,7 @@ class PrefHandler
   private function getTableNameFromShortcut($shortcut) {
     return array_search($shortcut, $this->tables_shortcuts_);
   }
-  
+
   /**
    * Delete a preference set
    * Will delete the database record of the preferences set
@@ -398,7 +398,7 @@ class PrefHandler
     }
     return 'OKDELETED';
   }
-  
+
   /**
    * return if the preferences have been correctly loaded
    * @return   boolean  true if loaded, false if not

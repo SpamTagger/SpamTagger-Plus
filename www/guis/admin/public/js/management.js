@@ -8,7 +8,7 @@
 var isauthexhaustive = 0;
 
 $(document).ready(function(){
-	
+
 	$("#type").change(function(event){
 	  if ($("#type").val() == 'email') {
 	    $("#usersearchlabel").hide();
@@ -19,7 +19,7 @@ $(document).ready(function(){
       }
 	  loadsearch(1);
     });
-	
+
 	$("#domain").change(function(event) {
 		url = baseurl+'/domain/isauthexhaustive/name/'+$("#domain").val();
 		loadIsExhaustive(url);
@@ -43,29 +43,29 @@ $(document).ready(function(){
 		showhideadd();
 		loadsearch(1);
 	}, 500));
-	
+
 	$("#searchform").submit(function(event) {
 		return false;
 	});
-	
+
 	$("#search").attr('autocomplete', 'off');
-	
+
 	$("#userpanel").change(function(event) {
 		loadUserPanel($("#userpanel").val());
 	});
-	
+
 	$("#emailpanel").change(function(event) {
 		loadUserPanel($("#emailpanel").val());
 	});
-	
+
 	$(".listelement").click(function(event){
 	   activateEnableButton();
 	});
-	
+
 	$("#delivery_type").change(function(event) {
 		showHideSpamTag();
 	});
-	
+
 	url = baseurl+'/domain/isauthexhaustive/name/'+$("#domain").val();
     loadIsExhaustive(url);
 	activateEnableButton();

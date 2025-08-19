@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -41,7 +41,7 @@
      <h1>Add a filename expression to block</h1>
 
      <table>
-       
+
        <tr>
          <td><?php echo $this->t->_('Filename expression')?> : </td>
          <?php echo $this->InputRow($this->listform->getElement('addelement'),array('field_only'=>true,'label_addclass'=>'fieldpanel')); ?>
@@ -51,15 +51,15 @@
          <td class="fieldpanel"><img src="<?php echo $this->images_path?>/attention.png" class="vertimg" alt="" /><?php echo $this->InputRow($this->listform->getElement('addcomment'),array('field_only'=>true,'nobox'=>true)); ?></td>
        </tr>
      </table>
-     <p class="submitlist"><?php echo $this->SubmitRow($this->listform->getElement('add'),array('field_only'=>true,'nobox'=>true));?></p>  
-  </div> 
+     <p class="submitlist"><?php echo $this->SubmitRow($this->listform->getElement('add'),array('field_only'=>true,'nobox'=>true));?></p>
+  </div>
     <div class="sublistelement editremelement">
      <h1>Disable, enable or removed blocked filename</h1>
        <p class="submitlist"><?php echo $this->SubmitRow($this->listform->getElement('disable'),array('field_only'=>true,'nobox'=>true));?></p>
        <p class="submitlist"><?php echo $this->SubmitRow($this->listform->getElement('remove'),array('field_only'=>true,'nobox'=>true));?></p>
    </div>
    </form>
- 
- 
+
+
  </div>
 </div>

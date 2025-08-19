@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this mainly use the PEAR DB package
  */
@@ -24,7 +24,7 @@ class DataManager {
    * @var  DB
    */
   protected $db_handle;
-  
+
   /**
    * default connection options
    * @param  array
@@ -46,25 +46,25 @@ class DataManager {
                         'VARDIR' => '/var/spamtagger',
                         'SRCDIR' => '/usr/spamtagger'
                        );
-               
+
   /**
    * maintain the last error encountered
    * @var string
-   */        
+   */
   private $last_error_ = "";
-  
+
   /**
    * constructor
    */
   public function __construct() {
     $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_);
-    
+
     foreach ($baseconf as $option => $value) {
         $this->setOption($option, $value);
         $this->setConfig($option, $value);
     }
   }
-  
+
   /**
    * set an database setting options
    * @param  $option  string  option name
@@ -121,7 +121,7 @@ class DataManager {
   public function getLastError() {
     return $this->last_error_;
   }
-  
+
   /**
    * get the base configuration options set in the configuration file
    * @param  $file  string  configuration file path
@@ -130,10 +130,10 @@ class DataManager {
   static public function getFileConfig($file) {
     $val = array ();
     $ret = array ();
-    
+
     $lines = file($file);
     if (!$lines) { return; }
-    
+
     foreach ($lines as $line_num => $line) {
         if (preg_match('/^([A-Z0-9]+)\s+=\s+(\S+)/', $line, $val)) {
             $ret[$val[1]] = $val[2];
@@ -141,7 +141,7 @@ class DataManager {
     }
     return $ret;
   }
-  
+
   /**
    * connect to the database chosen
    * @return  boolean  true on success, false on failure
@@ -154,7 +154,7 @@ class DataManager {
         } else {
           $dsn = "mysql://".$this->getOption('USER').":".$this->getOption('PASSWORD').
                 "@".$this->getOption('HOST').":".$this->getOption('PORT')."/".$this->getOption('DATABASE');
-        }        
+        }
         $options = array(
                     'persistent' => true,
                     'debug' => 0
@@ -174,7 +174,7 @@ class DataManager {
     // ERROR MSG
     $this->last_error_ = "no db handle";
     return false;
-  } 
+  }
 
  /**
   * execute a query to the database
@@ -186,27 +186,27 @@ class DataManager {
     if ($log_) {
       $log_->log("executing query: $query", PEAR_LOG_DEBUG);
     }
-    if (!$this->connect()) { 
+    if (!$this->connect()) {
         // ERROR MSG
 	//echo "lost connection...";
 	$this->last_error_ = "lost connection...";
-        return null; 
+        return null;
     }
     $res =& $this->db_handle->query($query);
-        
-    if (DB::isError($res)) { 
+
+    if (DB::isError($res)) {
         if ($res->getCode()==-5) {
          return "RECORDALREADYEXISTS";
         }
         // ERROR MSG
         // echo "missed query ($query)<br/>";
         echo $res->getMessage()." (".$res->getCode().")";
-	return null; 
+	return null;
     }
-      
+
     return $res;
  }
- 
+
  /**
   * execute a query and return the results in a hash (used for single row queries)
   * @param  $query  string  query to execute
@@ -220,12 +220,12 @@ class DataManager {
     $row =& $res->fetchRow(DB_FETCHMODE_ASSOC);
     $ret = array();
     if (isset($row)) {
-        $ret = $row;   
+        $ret = $row;
     }
     $res->free();
     return $ret;
  }
- 
+
  /**
   * execute a query and return the results as a simple list (used for id list queries for example)
   * @param  $query  string  query to execute
@@ -240,7 +240,7 @@ class DataManager {
       $res->free();
       return $res_a;
  }
- 
+
  /**
   * execute a query and return the results as an list of hash tables
   * @param  $query  string  query to execute
@@ -248,7 +248,7 @@ class DataManager {
   */
  public function getListOfHash($query) {
      if (!$this->connect()) { return null; }
-     
+
      $res =& $this->db_handle->query($query);
      if (DB::isError($res)) { return null; }
 
@@ -259,7 +259,7 @@ class DataManager {
      $res->free();
      return $res_a;
    }
-   
+
  /**
   * execute a single query without result (such as insert, delete, etc..)
   * @param  $query  string  query to execute
@@ -267,7 +267,7 @@ class DataManager {
   */
  public function doExecute($query) {
      if (!$this->connect()) { return false; }
-     
+
      $res = $this->execute($query);
      if ($res == "RECORDALREADYEXISTS") {
         $this->last_error_ = $res;
@@ -276,7 +276,7 @@ class DataManager {
      if (DB::isError($res)) { return false; }
      return true;
  }
- 
+
  /**
   * sanitize a value through the database functions
   * @param  $value  string  value to be sanitized
@@ -284,13 +284,13 @@ class DataManager {
   */
  public function sanitize($value) {
     if (!$this->connect()) { return false; }
-    return $this->db_handle->escapeSimple($value);	
+    return $this->db_handle->escapeSimple($value);
  }
 /*
    public function getSimpleValue($query) {
      $ret = "";
      if (!$this->db_handle) { return $ret; }
- 
+
      $res =& $this->db_handle->query($query);
      if (DB::isError($res)) { return $ret; }
      $ret = "";
@@ -306,7 +306,7 @@ class DataManager {
   public function executeSimple($query) {
      $ret = "";
      if (!$this->db_handle) { return $ret; }
-     
+
      $res =& $this->db_handle->query($query);
      if (DB::isError($res)) { return "FAILED"; }
      return $ret;

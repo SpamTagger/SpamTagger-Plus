@@ -5,31 +5,31 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * requires Net_SMTP
  */
 require_once("Net/SMTP.php");
- 
+
 /**
  * This is the IMAPAuthenticator class
  * This will take care of authenticate user against an IMAPserver
  * @package SpamTagger Plus
  */
 class SMTPAuthenticator extends AuthManager {
-    
-    
+
+
     /**
      * values to be fetched from authentication
      * @var array
      */
     private $values_ = array();
-    
+
     protected $exhaustive_ = false;
-    
+
     private $server_;
     private $status_ = 0;
-    
+
     /**
      * create the authenticator
      */
@@ -38,26 +38,26 @@ class SMTPAuthenticator extends AuthManager {
        if (! $settings instanceof SimpleServerSettings) {
             return false;
         }
-        
+
         $this->server_ = new Net_SMTP($settings->getSetting('server'));
         if (!$this->server_) {
         	return false;
         }
         return true;
     }
-    
+
     /**
      * overridden from AuthManager
      */
     public function start() {}
-    
+
     /**
      * overridden from AuthManager
      */
     public function getStatus() {
     	return $this->status_;
     }
-    
+
     /**
      * overridden from Authmanager
      */
@@ -77,7 +77,7 @@ class SMTPAuthenticator extends AuthManager {
        $this->server_->disconnect();
        return true;
     }
-    
+
     /**
      * overridden from Authmanager
      */

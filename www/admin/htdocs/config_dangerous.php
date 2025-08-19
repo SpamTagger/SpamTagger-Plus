@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the dangerous content configuration page
  */
- 
+
  /**
   * require admin session, view and dangerous content objects
   */

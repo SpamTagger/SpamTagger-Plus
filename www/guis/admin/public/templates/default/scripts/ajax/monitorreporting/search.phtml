@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -33,18 +33,18 @@
    </td>
  <?php }?>
  </tr>
- 
+
  <tr>
   <td rowspan="4" class="graphpanel">
    <div class="bargraph" onclick="javascript:showPie();">
    <p><?php echo $e->getValue('msgs')?> <?php echo $this->t->_('received messages')?></p>
    <div class="bar">
-     <div class="virus" style="width: <?php echo $e->getBarWidth('viruses', 300)?>px;"></div> 
+     <div class="virus" style="width: <?php echo $e->getBarWidth('viruses', 300)?>px;"></div>
      <div class="spam" style="width: <?php echo $e->getBarWidth('spams', 300)?>px;"></div>
      <div class="clean" style="width: <?php echo $e->getBarWidth('cleans', 300)?>px;"></div>
    </div>
    <p><?php echo $this->t->_('From')?> <?php echo $this->fromdate?> <?php echo $this->t->_('to')?> <?php echo $this->todate?></p>
-   
+
    </div>
 
   </td>

@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller page that will display the mrtg graphics
  */
- 
+
 /**
  * requires admin, session and view
  */
@@ -101,18 +101,18 @@ function drawHosts($template, $posted) {
   if ($posted['host'] == "all") {
     $hosts = $sysconf_->getSlavesName();
   }
- 
+
   $ret = "";
   $matches = array();
-  foreach ($hosts as $key => $val) { 
+  foreach ($hosts as $key => $val) {
     $t = $template->getTemplate('HOST');
     if (preg_match('/\_\_LANG\_([A-Z0-9]+)\_\_/', $t, $matches)) {
         $t = preg_replace('/\_\_LANG\_([A-Z0-9]+)\_\_/', $lang_->print_txt($matches[1]), $t);
     }
     $t = str_replace("__HOSTNAME__", $key, $t);
-    $t = str_replace("__STAT__", drawStat($template, $posted, $val), $t); 
+    $t = str_replace("__STAT__", drawStat($template, $posted, $val), $t);
     $ret .= $t;
-  } 
+  }
   return $ret;
 }
 

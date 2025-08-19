@@ -23,7 +23,7 @@ private $type_ = "";
 /**
  * load ww entries from database
  * @return  boolean  true on success, false on failure
- */ 
+ */
 public function Load($address, $type) {
   $this->address_ = $address;
   $this->type_ = $type;
@@ -34,14 +34,14 @@ public function reload() {
   if ($this->type_ == "" || $this->address_ == "") {
   	return false;
   }
-  
+
   require_once('helpers/DM_MasterConfig.php');
   $db_masterconf = DM_MasterConfig :: getInstance();
-  
+
   if ($this->address_ == '0') {
     $this->address_ = '';
   }
- 
+
   $query = "SELECT id FROM wwlists WHERE ";
   if ($this->type_ == 'white') {
 	$query = $query."type='white'";
@@ -82,7 +82,7 @@ public function setEntryToEdit($id, $f) {
 	  	$e->setToBeEdited();
         $e->setFormularAndList($f, $this);
         return true;
-	  }	
+	  }
 	}
     return false;
 }
@@ -91,7 +91,7 @@ public function getEntry($id) {
 	foreach ($this->elements_ as $e) {
       if ($e->getPref('id') == $id) {
         return $e;
-      } 
+      }
     }
     return null;
 }
@@ -100,7 +100,7 @@ public function getEntryByPref($pref, $value) {
 	foreach ($this->elements_ as $e) {
       if ($e->getPref($pref) == $value) {
         return $e;
-      } 
+      }
     }
     return null;
 }

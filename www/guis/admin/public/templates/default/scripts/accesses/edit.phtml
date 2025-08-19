@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -14,7 +14,7 @@
     <ul id="domainnavoptions">
       <li class="domainoptiontop" onclick="javascript:loadurl('<?php echo $this->addurl?>')"><span><a href="<?php echo $this->addurl?>"><?php echo $this->t->_('New administrator');?></a></span><img src="<?php echo $this->images_path?>/domainaddbutton.png" alt="add" /></li>
     </ul>
- 
+
     <div id="searchpanel">
       <form id="searchform" action="">
         <p id="searchlabel"><?php echo $this->t->_('Administrator specific settings')?></p>
@@ -32,18 +32,18 @@
                          'username' => $this->username,
                          'searchurl' => $this->searchurl,
                          't' => $this->t,
-)); ?>   
+)); ?>
     </div>
   </div>
- 
+
   <div id="domaincontentpanel">
     <div id="adminconfigpanel" class="domainconfigpanel">
- 
+
  <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction()?>" id="<?php echo $this->form->getId()?>">
 
 <?php echo $this->InputRow($this->form->getElement('username'),array('field_only'=>true,'nobox'=>true));?>
     <h1 id="domaincontentpaneltitle"><?php echo $this->admin->getParam('username');?>
-    <?php if ($this->admin->getParam('username') != 'admin') {?> 
+    <?php if ($this->admin->getParam('username') != 'admin') {?>
    <div class="removedomain removedomaintitle"><a href="<?php echo $this->removeurl;?>"><?php echo $this->t->_('Remove from SpamTagger');?></a></div>
     <?php }?>
     </h1>
@@ -51,8 +51,8 @@
      <?php echo $this->partial('forms/admineditForm.phtml', array('form' => $this->form,'t' => $this->t, 'message' => $this->message, 'admin' => $this->admin, 'images_path' => $this->images_path)); ?>
 
  </form>
- 
+
     </div>
   </div>
- 
+
 </div>

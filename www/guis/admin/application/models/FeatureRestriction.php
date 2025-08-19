@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Administrator
  */
 
@@ -19,13 +19,13 @@ class Default_Model_FeatureRestriction
     );
 	protected $_restrictions = null;
 	protected $_mapper;
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		$ret = null;
 		if (array_key_exists($param, $this->_values)) {
@@ -36,15 +36,15 @@ class Default_Model_FeatureRestriction
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
-		
+
 	public function getId() {
 		return $this->_id;
 	}
-		
+
     public function setMapper($mapper)
     {
         $this->_mapper = $mapper;
@@ -58,18 +58,18 @@ class Default_Model_FeatureRestriction
         }
         return $this->_mapper;
     }
-    
+
     public function load($params = NULL) {
     	$this->_restrictions = $this->getMapper()->fetchAll($params);
     	return true;
     }
-    
+
     public function isRestricted($section, $feature) {
     	if (!$this->_restrictions) {
     		$this->load();
     	}
     	if (isset($this->_restrictions[$section][$feature]) && $this->_restrictions[$section][$feature]['restricted']) {
-    		
+
     		## check level
     		if ($this->_restrictions[$section][$feature]['target'] == 'administrator') {
      		    return true;

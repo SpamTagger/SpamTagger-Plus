@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
@@ -25,7 +25,7 @@ class PreRBLs extends PreFilter {
                         'highspamhits' => 2,
                         'lists' => ""
 	                 );
-                     
+
     private $dnslists_ = array();
     private $form_;
 
@@ -46,7 +46,7 @@ public function addSpecPrefs() {
 }
 
 public function getSpecificTMPL() {
-  return "prefilters/PreRBLs.tmpl";  
+  return "prefilters/PreRBLs.tmpl";
 }
 
 public function getSpeciticReplace($template, $form) {
@@ -65,7 +65,7 @@ public function getSpeciticReplace($template, $form) {
     $t = preg_replace('/__FORM_ENABLELIST__/', $form->checkbox('enable_'.$l->getPref('name'), 1, $l->isEnabled($this->getPref('lists')), '', 1), $t);
     $tlist .= $t;
   }
-    
+
   $countlist = array();
   for ($i = 0; $i <= count($this->dnslists_); $i++) {
   	$countlist[$i] = $i;
@@ -74,7 +74,7 @@ public function getSpeciticReplace($template, $form) {
          "__FORM_HITSTOBESPAM__" => $form->select('spamhits', $countlist, $this->getPref('spamhits'), ';'),
          "__DNSLIST_LIST__" => $tlist
         );
-  
+
   return $ret;
 }
 

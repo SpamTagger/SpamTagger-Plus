@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
@@ -40,11 +40,11 @@ class AntiVirus extends PrefHandler {
 	                'notices_to' => 'root',
                     'usetnefcontent' => 'no'
                   );
-  
+
   /**
    * scanners list
    * @var array
-   */                
+   */
   private $scanners_ = array();
 
 /**
@@ -64,7 +64,7 @@ private function addScanner($scanner) {
     $this->scanners_[$scanner->getPref('name')] = $scanner;
     return true;
   }
-  return false;   
+  return false;
 }
 
 /**
@@ -87,11 +87,11 @@ public function load() {
   if (! $this->loadPrefs('', '', false)) {
     return false;
   }
-  
+
   $db_slaveconf = DM_SlaveConfig :: getInstance();
   $query = "SELECT name FROM scanner";
   $list = $db_slaveconf->getList($query);
-  
+
   foreach($list as $scanner_name) {
       $s = new Scanner;
       if ($s->load($scanner_name)) {
@@ -121,7 +121,7 @@ public function setScannerPref($s, $p, $v) {
  * @return    string  'OKSAVED' on success, error message on failure
  */
 public function save() {
-    
+
   $sysconf_ = SystemConfig::getInstance();
   $sysconf_->setProcessToBeRestarted('ENGINE');
   if (!preg_match('/^(no|add|replace)$/', $this->getPref('usetnefcontent'))) {
@@ -130,7 +130,7 @@ public function save() {
   if (! $this->savePrefs('', '', '')) {
     return false;
   }
-  
+
   foreach($this->scanners_ as $scanner) {
     $retok = $scanner->save();
   }
@@ -156,7 +156,7 @@ public function drawScanners($t, $f) {
      $ret .= $template;
    }
    return $ret;
-} 
+}
 
 }
 ?>

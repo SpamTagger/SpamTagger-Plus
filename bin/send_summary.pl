@@ -410,7 +410,7 @@ sub getQuarantineTemplate {
           } elsif (length($s_local) > $totallen/2) {
             if (length($s_local) > $totallen-length($s_domain)) {
               $s_local = substr($s_local, 0, $totallen-length($s_domain))."...";
-            } 
+            }
           } elsif (length($s_domain) > $totallen-length($s_local)) {
             $s_domain = substr($s_domain, 0, $totallen-length($s_local))."...";
           }

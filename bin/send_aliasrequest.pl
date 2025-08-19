@@ -83,7 +83,7 @@ if ( $sys->getPref('use_ssl') =~ /true/i ) {
   $http = "https://";
 }
 my $baseurl = $http.$sys->getPref('servername');
-  
+
 my %replace = (
   '__ALIAS__' => $alias,
   '__USER__' => $username,

@@ -22,6 +22,6 @@ CREATE TABLE antivirus (
 );
 
 -- create default preferences set
-INSERT INTO antivirus SET set_id=1; 
+INSERT INTO antivirus SET set_id=1;
 
- 
+

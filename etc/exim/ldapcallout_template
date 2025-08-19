@@ -1,4 +1,4 @@
-${lookup ldap 
+${lookup ldap
   {user="__AD_BINDDN__"
   pass="__AD_PASS__"
   ldap://__AD_SERVERS__/__AD_BASEDN__

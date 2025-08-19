@@ -60,7 +60,7 @@ sub initialise {
       MailScanner::Log::WarnLog("$MODULE bogofilter database not found (".$database.") ! Disabling $MODULE");
     }
   } else {
-    MailScanner::Log::WarnLog("$MODULE bogofilter config file (".$NiceBayes::conf{'configFile'}." could not be found ! Disabling $MODULE");    
+    MailScanner::Log::WarnLog("$MODULE bogofilter config file (".$NiceBayes::conf{'configFile'}." could not be found ! Disabling $MODULE");
   }
 
   $NiceBayes::conf{'command'} =~ s/__CONFIGFILE__/$NiceBayes::conf{'configFile'}/g;
@@ -133,7 +133,7 @@ sub Checks {
   my $ret = -5;
   my $res = "";
 
-  $t->run(sub {  
+  $t->run(sub {
     use IPC::Run3;
     my $out;
     my $err;
@@ -154,7 +154,7 @@ sub Checks {
    $ret = 1;
    if ($1 eq "Spam") {
      $ret = 2;
-   } 
+   }
    $score = int($2*10000) / 100;
   }
 

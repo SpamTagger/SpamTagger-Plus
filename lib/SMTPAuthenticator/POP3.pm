@@ -36,12 +36,12 @@ sub create {
    my $server = shift;
    my $port = shift;
    my $params = shift;
-   
+
    my $use_ssl = 0;
    if ($params =~ /^[01]$/) {
      $use_ssl = $params;
    }
-   
+
    if ($port < 1 ) {
      $port = 110;
    }
@@ -52,7 +52,7 @@ sub create {
            port => $port,
            use_ssl => $use_ssl
          };
-         
+
   bless $this, "SMTPAuthenticator::POP3";
   return $this;
 }
@@ -67,11 +67,11 @@ sub authenticate {
                                PORT     => $this->{port},
                                USESSL   => $this->{use_ssl},
                              );
-  
+
   $pop->User( $username );
-  $pop->Pass( $password );                
+  $pop->Pass( $password );
   my $code = $pop->Connect();
-  
+
   if ($code > 0) {
     $this->{'error_code'} = 0;
     $this->{'error_text'} = "";

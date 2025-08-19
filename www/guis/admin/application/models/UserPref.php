@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * User/Email preferences
  */
 
@@ -31,35 +31,35 @@ class Default_Model_UserPref
         'bypass_filtering' => 0,
         'allow_newsletters' => '0',
     );
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function copy($prefs) {
 		foreach ($this->_values as $key => $value) {
 			$this->setParam($key, $prefs->getParam($key));
 		}
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -67,7 +67,7 @@ class Default_Model_UserPref
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -94,16 +94,16 @@ class Default_Model_UserPref
         $this->getMapper()->find($id, $this);
         return $this;
     }
-   
+
     public function save()
     {
         return $this->getMapper()->save($this);
     }
-    
+
     public function delete() {
     	return $this->getmapper()->delete($this);
     }
-    
+
     public function setDefaultDomainPref($domain) {
     	foreach ($this->_values as $pref => $value) {
     		if ($domain->getPref($pref)) {

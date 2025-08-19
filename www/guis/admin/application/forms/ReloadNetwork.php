@@ -4,20 +4,20 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Network reload form
  */
 
 class Default_Form_ReloadNetwork extends Zend_Form
 {
-	
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 		$this->setAttrib('id', 'reloadnetworkform');
-		
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Reload network now'),
 		     'id'       => 'reloadnetbutton'));
@@ -26,7 +26,7 @@ class Default_Form_ReloadNetwork extends Zend_Form
                 if ($restrictions->isRestricted('NetworkInterface', 'reloadnetnow')) {
 			$submit->setAttrib('disabled', 'disabled');
 		}
-		
+
 	}
 
 }

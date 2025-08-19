@@ -4,17 +4,17 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the logout page
  */
- 
+
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
   return 200;
 }
 
 /**
  * require session
- */ 
+ */
 require_once("objects.php");
 require_once("view/LoginDialog.php");
 require_once("view/Template.php");

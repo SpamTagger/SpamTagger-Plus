@@ -57,7 +57,7 @@ img {
   border-spacing: 0px;
   border-collapse: collapse;
   border-bottom: 1px solid  #D4D3D2;
-  border-right: 1px solid  #D4D3D2;	
+  border-right: 1px solid  #D4D3D2;
   color: #000000;
 }
 
@@ -67,7 +67,7 @@ img {
   background-image:none;
 	background-color: #F5F5F5;
   overflow: hidden;
-  white-space: nowrap; 
+  white-space: nowrap;
   text-align: left;
   margin: 0px;
   padding: 0px;
@@ -99,11 +99,11 @@ img {
   line-height: 48px;
   background-image:none;
 	background-color: #F5F5F5;
-  white-space: nowrap; 
+  white-space: nowrap;
   text-align: left;
   font-weight: bold;
   color: #000000;
-  font-size: 12px;	
+  font-size: 12px;
 }
 
 .stattable td {
@@ -149,7 +149,7 @@ img {
    background-image:url(../images/spam.png);
 }
 
-.clean {   
+.clean {
    float: left;
    height: 11px;
    background-image:url(../images/clean.png);

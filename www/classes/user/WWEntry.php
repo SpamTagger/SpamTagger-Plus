@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * This is the class is mainly a data wrapper for the WWEntry objects
  */
@@ -24,16 +24,16 @@ class WWEntry extends PrefHandler {
                       'status'          => 0,
                       'comments'       => '',
                       );
-         
+
 /**
  * test if the entry should be edited
  * @var bool
- */  
-private $setEdition_ = false;   
+ */
+private $setEdition_ = false;
 
 private $edit_formular_ = null;
 private $list_ = null;
-                     
+
 /**
  * constructor
  */
@@ -47,7 +47,7 @@ public function __construct() {
  */
 public function load($id) {
   $this->addPrefSet('wwlists', 'l', $this->datas_);
-  
+
   if (!$this->loadPrefs('', "id=$id", true)) {
     return false;
   }
@@ -69,12 +69,12 @@ public function setFormularAndList($f, $l) {
  */
 public function getElementTemplate($template, $selected, $n) {
    global $lang_;
-   
+
    $t = str_replace('__ID__', $this->getPref('id'), $template);
    if ($n % 2) {
-     $t= str_replace('__ALTROWSTYLE__', 'dataTableContent', $t); 
+     $t= str_replace('__ALTROWSTYLE__', 'dataTableContent', $t);
    } else {
-     $t= str_replace('__ALTROWSTYLE__', 'dataTableRow', $t); 
+     $t= str_replace('__ALTROWSTYLE__', 'dataTableRow', $t);
    }
    $t = str_replace('__FLATSENDER__', $this->getPref('sender'), $t);
    if (! $this->setEdition_) {
@@ -117,14 +117,14 @@ public function save() {
     if (! $this->getPref('recipient')) {
         $this->setPref('recipient', '');
     }
-    
+
     if (!$this->authorized()) {
       return "NOTAUTHORIZED";
     }
 
     $this->setPref('sender', strtolower($this->getPref('sender')));
     $this->setPref('recipient', strtolower($this->getPref('recipient')));
-    
+
     $ret = $this->savePrefs(null, null, '');
     if (!$ret) {
         return $this->getLastError();
@@ -145,11 +145,11 @@ public function save() {
    */
   public function delete() {
     global $sysconf_;
-    
+
     if (!$this->authorized()) {
       return "NOTAUTHORIZED";
     }
-    
+
     $ret = $this->deletePrefs(null);
     if (!$ret) {
         return $ret;
@@ -167,7 +167,7 @@ public function save() {
  * set to be edited
  */
 public function setToBeEdited() {
-  $this->setEdition_ = true; 	
+  $this->setEdition_ = true;
 }
 
 public function disable() {
@@ -187,7 +187,7 @@ public function enable() {
  private function authorized() {
   global $admin_;
   global $user_;
-    
+
   if (isset($admin_) && $admin_ instanceof Administrator) {
     // ok if can manage all domains
     if ($admin_->canManageDomain('*')) {
@@ -203,7 +203,7 @@ public function enable() {
     // ok if address belongs to user
     if ($user_->hasAddress($this->getPref('recipient'))) {
     	return true;
-    }  
+    }
   }
   return false;
 }

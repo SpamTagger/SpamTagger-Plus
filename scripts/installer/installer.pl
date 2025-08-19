@@ -54,14 +54,14 @@ while (doMenu()) {
 #}
 
 system("$path/../../install/ST_rotate_host_keys.sh") if (defined($path));
-	
+
 $dlg->clear();
 exit 0;
 
 sub doMenu {
 
   $dlg->build('SpamTagger: base system configuration', \@basemenu, $currentstep, 1);
- 
+
   my $res = $dlg->display();
   return 0 if $res eq 'Exit';
 
@@ -88,7 +88,7 @@ sub doMenu {
     $net->do();
     $currentstep = 4;
   }
- 
+
 # if ($res eq 'Timezone configuration') {
 #    my $tz = module::Timezone::get();
 #    $tz->do();

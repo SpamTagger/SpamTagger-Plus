@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -17,12 +17,12 @@
          <?php echo $this->InputRow($this->form->getElement('http_port'));?>
 
 		<tr><td colspan="2"><hr /></td></tr>
-          
+
         <?php echo $this->InputRow($this->form->getElement('use_ssl'));?>
-          
+
         <?php echo $this->InputRow($this->form->getElement('https_port'),array('row_class'=>'tls_row '.$this->ssl_display_class,'label_addclass'=>'flabeltextarea'));?>
         <?php
-           $certdata = ''; 
+           $certdata = '';
            if ($this->certdata['valid'] && !$this->certdata['expired']) {
              $certdata = '<div class="divnote tooltipped" id="http_tls_cert_infos"><img class="divnote" src="'.$this->images_path.'/ok_mini.png" alt="valid" />'.$this->t->_('certificate is valid').'</div>';
            } elseif ($this->certdata['expired'] && $this->certdata['valid']) {
@@ -34,10 +34,10 @@
         <?php echo $this->InputRow($this->form->getElement('tls_certificate_data'),array('row_class'=>'tls_row '.$this->ssl_display_class,'label_addclass'=>'flabeltextarea','post_field_text'=>$certdata));?>
         <?php echo $this->InputRow($this->form->getElement('tls_certificate_key'),array('row_class'=>'tls_row '.$this->ssl_display_class,'label_addclass'=>'flabeltextarea'));?>
         <?php echo $this->InputRow($this->form->getElement('tls_certificate_chain'),array('row_class'=>'tls_row '.$this->ssl_display_class,'label_addclass'=>'flabeltextarea'));?>
-          
-            
+
+
          <?php echo $this->SubmitRow($this->form->getElement('submit'));?>
-          
+
        </table>
      </fieldset>
  </form>

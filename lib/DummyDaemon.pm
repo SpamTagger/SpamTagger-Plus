@@ -18,7 +18,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 ##  DummyDaemon:
-##    Provides a barebone and useless implementation of a socket base multithreaded daemon, 
+##    Provides a barebone and useless implementation of a socket base multithreaded daemon,
 ##    relying on SockTDaemon. Can be used as a started for more useful daemons.
 
 package DummyDaemon;
@@ -63,7 +63,7 @@ sub new {
     foreach my $sk ( keys %myspec_this ) {
         $spec_this->{$sk} = $myspec_this{$sk};
     }
-    
+
     ## call parent class creation
     my $this = $class->SUPER::new($spec_this->{'name'}, undef, $spec_this );
     bless $this, 'DummyDaemon';
@@ -73,14 +73,14 @@ sub new {
 ### define specific hooks
 sub initThreadHook {
   my $this = shift;
-  
+
   $this->doLog('DummyDaemon thread initialization hook...', 'dummy');
   return;
 }
 
 sub exitThreadHook {
   my $this = shift;
-  
+
   $this->doLog('DummyDaemon thread exiting hook...', 'dummy');
   return;
 }
@@ -89,9 +89,9 @@ sub exitThreadHook {
 sub dataRead {
     my $this = shift;
     my $data = shift;
-    
+
     $this->doLog("Got a query: $data", 'dummy');
-    return 'OK';   
+    return 'OK';
 }
 
 1;

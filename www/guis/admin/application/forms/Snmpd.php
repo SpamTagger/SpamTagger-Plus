@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * SNMP service settings form
  */
 
@@ -12,26 +12,26 @@ class Default_Form_Snmpd extends ZendX_JQuery_Form
 {
 	protected $_snmpd;
 	protected $_firewallrule;
-	
+
 	public function __construct($_snmpd, $fw) {
 		$this->_snmpd = $_snmpd;
 		$this->_firewallrule = $fw;
 		parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-    	
+
 		$this->setMethod('post');
 
              $restrictions = Zend_Registry::get('restrictions');
-	           
+
 		$this->setAttrib('id', 'snmpd_form');
-	    
+
 		$community = new  Zend_Form_Element_Text('community', array(
 	        'label'    => $t->_('Read community')." :",
                 'title' => $t->_("SNMP community key for SNMP"),
@@ -42,7 +42,7 @@ class Default_Form_Snmpd extends ZendX_JQuery_Form
                         $community->setAttrib('disabled', 'disabled');
             }
 
-	    
+
 	    require_once('Validate/HostList.php');
 		$allowed_ip = new Zend_Form_Element_Textarea('allowed_ip', array(
 		      'label'    =>  $t->_('Allowed IP/ranges')." :",
@@ -58,14 +58,14 @@ class Default_Form_Snmpd extends ZendX_JQuery_Form
             if ($restrictions->isRestricted('ServicesSNMP', 'allowed_ip')) {
                         $allowed_ip->setAttrib('disabled', 'disabled');
             }
-	    
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
 		$this->addElement($submit);
              if ($restrictions->isRestricted('ServicesSNMP', 'submit')) {
                         $submit->setAttrib('disabled', 'disabled');
               }
-		
+
 	}
 
 	public function setParams($request, $snmpd, $fwrule) {
@@ -76,12 +76,12 @@ class Default_Form_Snmpd extends ZendX_JQuery_Form
                         throw new Exception('Access restricted');
                 }
 		$t = Zend_Registry::get('translate');
-		
+
 		$snmpd->setParam('community', $request->getParam('community'));
 		$snmpd->setParam('allowed_ip', $request->getParam('allowed_ip'));
 		$fwrule->setParam('allowed_ip', $request->getParam('allowed_ip'));
   		$snmpd->save();
 		$fwrule->save();
 	}
-	
+
 }

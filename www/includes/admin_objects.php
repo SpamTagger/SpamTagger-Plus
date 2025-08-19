@@ -8,8 +8,8 @@
 
 /**
  * include log, system config and session objects
- */ 
-require_once('Log.php');        
+ */
+require_once('Log.php');
 require_once('variables.php');
 require_once('system/SystemConfig.php');
 require_once('view/Language.php');
@@ -22,7 +22,7 @@ global $lang_;
 global $sysconf_;
 global $admin_;
 global $log_;
-    
+
 // set log and load SystemConfig singleton
 $log_->setIdent('admin');
 $sysconf_ = SystemConfig::getInstance();

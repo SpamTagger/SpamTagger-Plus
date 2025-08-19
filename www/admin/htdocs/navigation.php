@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the navigation page
  */
- 
+
 /**
  * require admin session and view
  */
@@ -65,7 +65,7 @@ function getRestartStatus() {
     $sysconf_->loadSlaves();
 
     if (isset($_SESSION['restart_manager_'])) {
-      foreach ($_SESSION['restart_manager_'] as $service => $status) { 
+      foreach ($_SESSION['restart_manager_'] as $service => $status) {
         if (count($_SESSION['restarted'][$service]) >= count($sysconf_->slaves_)) {
            unset($_SESSION['restart_manager_'][$service]);
            unset($_SESSION['restarted'][$service]);

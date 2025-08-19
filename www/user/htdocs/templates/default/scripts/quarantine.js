@@ -26,7 +26,7 @@
    if (st == 'vi') { text = vitext; }
    if (st == 'sa') { text = satext; }
    if (st == 'cl') { text = cltext; }
-   
+
    elem.innerHTML = text;
    rExp = /&[a-z]+;/gi;
    textcpt = text.replace(rExp, '_');
@@ -38,25 +38,25 @@
    } else {
       offsety = comm;
    }
-   
+
    elem.style.top = posy + 10 +"px";
    elem.style.left = posx + offsety +"px";
    elem.style.display = 'block';
    elem.style.visibility = 'visible';
    elem.innerHTML = text;
-}        
+}
 
 
 function highlightActionIcon(img_row, forced, img_ext) {
   var img1 = "r" + img_row;
   var img2 = "v" + img_row;
   var img3 = "a" + img_row;
-  
+
   var img_src1 = forced_icon + img_ext + ".png";
   if (forced < 1) {
     img_src1 = force_icon + img_ext + ".png";
   }
-  var img_src2 = info_icon + img_ext + ".png";  
+  var img_src2 = info_icon + img_ext + ".png";
   var img_src3 = analyse_icon + img_ext + ".png";
 
   var elem = document.getElementById(img1);

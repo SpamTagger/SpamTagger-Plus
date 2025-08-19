@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the force message page
  */
 
@@ -49,7 +49,7 @@ if ($ret != "OK") {
   // actually force the message
   $res = $soaper->queryParam('forceSpam', array($_GET['id'], $_GET['a']));
   $res = preg_replace('/^(\S*)\s.*/', '$1', $res);
-} 
+}
 
 // get the view objects
 $template_model = 'fm.tmpl';

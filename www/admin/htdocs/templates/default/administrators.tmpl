@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="Author" content="Olivier Diserens">
     <meta name="License" content="https://www.gnu.org/licenses/gpl-3.0.en.html">
-   
+
     <script language="javascript">
 
     function rowOverEffect(object) {
@@ -18,7 +18,7 @@
     }
 
      function delete_confirm(name) {
-       if (confirm("__LANG_ADMINISTRATOR__: "+ name + 
+       if (confirm("__LANG_ADMINISTRATOR__: "+ name +
              "\n__LANG_CONFIRMADMINDELETE__ ")) {
          str = "__REMOVE_FULLLINK__"+name;
          window.location.href=str;
@@ -49,14 +49,14 @@
 __TMPL_ADMINLIST_START__
 <tr class="__ROWSTYLE__" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" >
  <td class="dataTableContent" onclick="document.location.href='__SETTINGSTARGET__'">__ADMIN__</td>
- <td class="dataTableContent" align="right" width="20px" onclick="document.location.href='__SETTINGSTARGET__'"> 
+ <td class="dataTableContent" align="right" width="20px" onclick="document.location.href='__SETTINGSTARGET__'">
    <a href="__SETTINGSTARGET__"><img src="templates/default/images/pencil.gif" border="0"></a>&nbsp;
  </td>
- <td class="dataTableContent" align="right" width="20px">  
+ <td class="dataTableContent" align="right" width="20px">
    <a href="__REMTARGET__"><img src="templates/default/images/erase.gif" border="0"></a>&nbsp;
  </td>
 </tr>
-__TMPL_ADMINLIST_STOP__ 
+__TMPL_ADMINLIST_STOP__
 
 __ADMINLIST_DRAW__
 

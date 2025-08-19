@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Quarantined dangerous content mapper
  */
 
@@ -26,13 +26,13 @@ class Default_Model_QuarantinedContentMapper
 	}
 
 	public function fetchAll($params)
-	{	
+	{
 		$slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-		
+
         $entriesflat = array();
         $sortarray = array();
-        
+
         if (!isset($params['orderfield'])) {
         	$params['orderfield'] = 'to_address';
         } else {
@@ -51,7 +51,7 @@ class Default_Model_QuarantinedContentMapper
         		$sortarray[$r['id']] = $r[$params['orderfield']].''.$r['time'];
         	}
         }
-        
+
         if ($params['orderfield'] == 'date') {
         	if ($params['orderorder'] == 'asc') {
         		$params['orderorder'] = 'desc';
@@ -73,9 +73,9 @@ class Default_Model_QuarantinedContentMapper
         	}
         	$entries[] = $entry;
         }
-        
+
         $this->_nbelements = count($entries);
-        
+
 	    $mpp = 20;
 		if (isset($params['mpp']) && is_numeric($params['mpp'])) {
 			$mpp = $params['mpp'];
@@ -87,9 +87,9 @@ class Default_Model_QuarantinedContentMapper
 		if (isset($params['page']) && is_numeric($params['page']) && $params['page'] > 0 && $params['page'] <= $this->_pages ) {
 			$this->_page = $params['page'];
 		}
-		
+
 		$entriespage = array_slice($entries, ($this->_page - 1) * $mpp, $mpp);
-		
+
         return $entriespage;
 	}
 

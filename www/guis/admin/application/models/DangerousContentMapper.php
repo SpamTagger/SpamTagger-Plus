@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Dangerous content mapper
  */
 
 class Default_Model_DangerousContentMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_DangerousContentMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_DangerousContent $av)
     {
         $result = $this->getDbTable()->find($id);
@@ -45,7 +45,7 @@ class Default_Model_DangerousContentMapper
         	$av->setParam($key, $row[$key]);
         }
     }
-        
+
     public function save(Default_Model_DangerousContent $av) {
        $data = $av->getParamArray();
        $res = '';

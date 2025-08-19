@@ -4,9 +4,9 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the send to analyse page
- */   
+ */
 
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
   return 200;

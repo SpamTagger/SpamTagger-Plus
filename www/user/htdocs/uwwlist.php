@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the file type protection configuration page
  */
- 
+
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
   return 200;
 }
@@ -48,7 +48,7 @@ if ($aform->shouldSave()) {
   if ($address == "") {
     $address = 0;
   }
-  $type_get = $sposted['t'];  
+  $type_get = $sposted['t'];
 } else {
   $address = $_REQUEST['a'];
   $type_get = $_REQUEST['t'];
@@ -73,7 +73,7 @@ if ($mode == "badmode") {
 
 // check list type parameter
 $type = 'warn';
-if ($type_get=='1' || $type_get=='white') 
+if ($type_get=='1' || $type_get=='white')
 	$type = 'white';
 if($type_get == '3' || $type_get =='black')
 	$type = 'black';
@@ -86,9 +86,9 @@ if ($_GET['d'] && is_numeric($_GET['d'])) {
     if ($deleted == "OKDELETED") {
       $deleted_msg = $lang_->print_txt('DELETESUCCESSFULL');
     } else {
-      $deleted_msg = $lang_->print_txt('DELETEERROR')."(".$deleted.")";    
+      $deleted_msg = $lang_->print_txt('DELETEERROR')."(".$deleted.")";
     };
-  }      
+  }
 }
 
 // create add form
@@ -111,7 +111,7 @@ if ($aform->shouldSave()) {
   } else {
   	$addstatus = $lang_->print_txt("ADDEDERROR")." ($addstatus)";
   }
-}   
+}
 
 // load list
 $wwlist = new WWList();
@@ -132,7 +132,7 @@ if ($eform->shouldSave()) {
     $edited->setPref($k, $v);
   }
   $savestatus = $edited->save();
-  if ($savestatus == "OKSAVED") {  	
+  if ($savestatus == "OKSAVED") {
     $savestatus = $lang_->print_txt('SAVESUCCESSFULL');
   } else {
   	$savestatus = $lang_->print_txt('SAVEERROR'). " ($savestatus)";
@@ -171,7 +171,7 @@ $replace = array(
   "__EDIT_BASELINK__" => $_SERVER['PHP_SELF']."?a=".$address."&t=".$type_get,
   "__FORM_BEGIN_SEARCH__" => $sform->open().$sform->hidden('page', $wwlist->getPage()).$sform->hidden('t', $type).$sform->hidden('a', $address),
   "__FORM_CLOSE_SEARCH__" => $sform->close(),
-  
+
 );
 
 $template_->output($replace);

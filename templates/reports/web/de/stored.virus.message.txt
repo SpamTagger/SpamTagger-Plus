@@ -9,8 +9,8 @@ https://spamtagger.org/support/support-request.html
 Am $date meldete der Virenscanner folgendes:
 $report
 
-Hinweis an den Administrator: 
+Hinweis an den Administrator:
 Datei ist auf Rechner: $hostname im Verzeichnis $datenumber/$id
 
----------- 
+----------
 SpamTagger

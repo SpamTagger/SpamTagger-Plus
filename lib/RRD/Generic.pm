@@ -30,7 +30,7 @@ require RRDTool::OO;
 
 #use Log::Log4perl qw(:easy);
 #Log::Log4perl->easy_init({
-#        level    => $INFO, 
+#        level    => $INFO,
 #        category => 'rrdtool',
 #        layout   => '%m%n',
 #    });
@@ -44,7 +44,7 @@ sub create {
   my $things_a = shift;
   my %things = %$things_a;
   my $reset = shift;
-  
+
   my $rrdstep = 300;
   my $interval = int($rrdstep / 60);
   my $rows = 4000 / $interval;
@@ -57,14 +57,14 @@ sub create {
   	my @options;
   	## add data sources
   	foreach my $thing (keys %things) {
-  	  @options = (@options, data_source => { 
+  	  @options = (@options, data_source => {
   	  	                                   name => $thing,
   	                                       type => $things{$thing}[0]
   	                                       }
   	             );
   	}
   	# add day archives (average and max)
-  	@options = (@options, 
+  	@options = (@options,
   	               archive  => { rows      => $rows, # day
               					  cpoints   => 1,
                                  cfunc     => 'LAST',
@@ -76,7 +76,7 @@ sub create {
                    archive  => { rows      => $rows, # day
               					  cpoints   => 1,
                                  cfunc     => 'MAX',
-                               },            
+                               },
   	           );
   	 # add week, month and year archives
   	 my @times = (int(30/$interval), int(120/$interval), int(1440/$interval));
@@ -96,10 +96,10 @@ sub create {
                                    }
                   );
   	 }
-  	           
+
     $rrd->create(
               step        => $rrdstep,
-              @options         
+              @options
     )
   }
   return $rrd;
@@ -110,8 +110,8 @@ sub collect {
   my $snmp = shift;
   my $things_a = shift;
   my %things = %$things_a;
-  
-        
+
+
   #print "starting collect...\n";
   my %values;
   foreach my $thing (keys %things) {
@@ -119,7 +119,7 @@ sub collect {
     my $result = $snmp->get_request(-varbindlist => [$oid]);
     my $error = $snmp->error();
     my $value = 0;
-    if (defined($error) && ! $error eq "") { 
+    if (defined($error) && ! $error eq "") {
      print "Error found: $error\n";
     } else {
       if ($result && defined($result->{$oid})) {
@@ -147,7 +147,7 @@ sub plot {
   my $order_a = shift;
   my @order = @$order_a;
   my $legend = shift;
-  
+
   #print "starting plot...$dir / $type / $period / $leg\n";
   my $time = 24*3600;
   if ($period eq 'week') {
@@ -159,7 +159,7 @@ sub plot {
   } else {
     $period = 'day';
   }
-  
+
   my $image_name = $dir."/$type-$period.png";
   if ($leg) {
     $image_name = $dir."/$type-$period-full.png";
@@ -176,17 +176,17 @@ sub plot {
       units_exponent => 0
    );
    if ($leg) {
-     @options = (@options, 
+     @options = (@options,
       comment     => $legend
      );
    }
-      
+
    # alignement stuf
    my $max = 0;
    foreach my $n (keys %things)  {
      if ($max < length($n)) { $max = length($n) };
    }
-   
+
    # add graphs
    foreach my $thing (@order) {
    	 my $legend = $things{$thing}[3] ;
@@ -199,7 +199,7 @@ sub plot {
    	    	  dsname => $thing,
    	    	  name   => $thing,
    	    	  cfunc  => $things{$thing}[4],
-             legend => $legend 
+             legend => $legend
             },
           );
    	 } else {
@@ -224,9 +224,9 @@ sub plot {
             },
           );
    	 }
-         
+
        if ($leg) {
-           @options = (@options, 
+           @options = (@options,
              gprint => {
                 draw   => $thing,
                 cfunc  => "LAST",

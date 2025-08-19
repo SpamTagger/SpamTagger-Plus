@@ -4,7 +4,7 @@
          } elsif($p->{type} eq "stack") {
                # modified for backwards compatibility
              push @$options, "AREA$draw_attributes:STACK";
-+        } elsif ($p->{type} eq "none") { 
++        } elsif ($p->{type} eq "none") {
          } else {
              die "Invalid graph type: $p->{type}";
          }

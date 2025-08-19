@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 define(INTERFACE_FILE, "/etc/network/interfaces");
 
 /**
@@ -16,13 +16,13 @@ class Iface
   /**
    * interface settings
    */
-  private $props_ = array( 
+  private $props_ = array(
                        'if' => "",
                        'ip' => "0.0.0.0",
                        'netmask' => "255.255.255.0",
                        'gateway' => "0.0.0.0",
                        'netbase' => '0.0.0.0',
-                       'broadcast' => '0.0.0.0'     
+                       'broadcast' => '0.0.0.0'
                  );
 
   /**
@@ -32,7 +32,7 @@ class Iface
   function __construct($name) {
      $this->setProperty('if', $name);
   }
-  
+
   /**
    * set a preference
    * @param  $pref  string  preference name
@@ -46,7 +46,7 @@ class Iface
     }
     return false;
   }
-   
+
   /**
    * get a preference value
    * @param  $pref  string preference name
@@ -64,12 +64,12 @@ class Iface
    * @return  boolean  true on success, false on failure
    */
   public function load() {
-    
+
     $file = file(INTERFACE_FILE);
     if (!$file) {
       return false;
     }
-  
+
     $in_if = 0;
     $matches = array();
     foreach($file as $line) {
@@ -108,10 +108,10 @@ class Iface
    */
   private function calcBroadcast() {
     $netmask = escapeshellarg($this->getProperty('netmask'));
-    
+
     $cmd = "ipcalc -nb ".$this->ip_."/".$netmask." | grep Network: | cut -d' ' -f4 | cut -d'/' -f1";
     $this->setProperty('netbase', trim(`$cmd`));
-    
+
     $cmd = "ipcalc -nb ".$this->ip_."/".$this->netmask_." | grep Broadcast: | cut -d' ' -f2";
     $this->setProperty('broadcast', trim(`$cmd`));
     return true;

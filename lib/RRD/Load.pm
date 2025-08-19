@@ -36,18 +36,18 @@ sub New {
   my $statfile = shift;
   $statfile = $statfile."/load.rrd";
   my $reset = shift;
-  
+
   my %things = (
            load => ['GAUGE', 'AVERAGE']
          );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
-  
+
 
   my $this = {
   	 statfile => $statfile,
   	 rrd => $rrd
   };
-  
+
   return bless $this, "RRD::Load";
 }
 
@@ -55,11 +55,11 @@ sub New {
 sub collect {
   my $this = shift;
   my $snmp = shift;
-  
+
   my %things = (
         load => '1.3.6.1.4.1.2021.10.1.3.2'
         );
-        
+
   return RRD::Generic::collect($this->{rrd}, $snmp, \%things);
 }
 
@@ -68,12 +68,12 @@ sub plot {
   my $dir = shift;
   my $period = shift;
   my $leg = shift;
-  
+
   my %things = (
         load => ['area', 'EB9C48', 'BA3614', 'Load', 'AVERAGE', '%10.2lf', ''],
    );
   my @order = ('load');
-  
+
   my $legend = "\t\t     Last\t   Average\t\t  Max\\n";
   return RRD::Generic::plot('load', $dir, $period, $leg, 'System Load', 0, 0, $this->{rrd}, \%things, \@order, $legend);
 }

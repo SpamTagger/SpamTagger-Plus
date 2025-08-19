@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Interface login form
  */
 
@@ -13,9 +13,9 @@ class Default_Form_Login extends Zend_Form
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
-			
+
 		$usernameField = $this->createElement( 'text', 'username', array(
             'label'      => $t->_('Username')." :",
             'required'   => true,
@@ -58,7 +58,7 @@ class Default_Form_Login extends Zend_Form
                array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
            ));
 		$this->addElement($loginButton);
-		
+
 		$this->setDecorators(array(
                'FormElements',
                array('HtmlTag', array('tag' => 'table')),

@@ -42,7 +42,7 @@ our $VAR = "/var/spamtagger";
 # Define services with ownership UID, GID, init commands, and timestamp search patterns per file.
 # A handful of logs are incompatible with simple per-line searches, so they are excluded:
 =unimplemented
-	'freshclam.log' 
+	'freshclam.log'
 		starts with  '[%Y-%m-%d.* Starting ClamAV update...',
 		ends with  '[%Y-%m-%d.* Done.',
 	'st_counts-cleaner.log'
@@ -173,7 +173,7 @@ our $services = {
 sub usage {
 	print("$0 [--fast|--backup] <services>
 
---fast -f	
+--fast -f
 	Use a fast(er) algorithm to reindex logs at the cost of a lot of memory being used, and a
 	failure to correct more catastrophically broken logs. It can potentially load all available
 	logs of a specific type (eg. exim_stage1/mainlog*) into memory, uncompressed. It also does
@@ -212,7 +212,7 @@ sub fast_write {
 			chown($services->{$service}->{'uid'}, $services->{$service}->{'gid'}, $path.$suffix);
 			my $size = (stat("$path$suffix"))[7];
 		} else {
-			die("Failed to open ${path}${suffix}\n") 
+			die("Failed to open ${path}${suffix}\n")
 		}
 	} else {
 		print("No logs found for $path$suffix\n");
@@ -226,7 +226,7 @@ foreach my $arg (@ARGV) {
 	if ($arg eq '--fast' || $arg eq '-f') {
 		print("
 WARNING: Fast algorithm can potentially use a lot of memory. It loads all logs of a specific type
-(eg. exim_stage1/mainlog) into memory, uncompressed, only freeing memory each time a new day is 
+(eg. exim_stage1/mainlog) into memory, uncompressed, only freeing memory each time a new day is
 discovered. This could cause performance problems or crashes if you have more logs in a given day
 than available memory.\n\n");
 		$fast = 1;
@@ -437,7 +437,7 @@ foreach my $service (@services_to_index) {
 			} else {
 				close($oh);
 				chown($services->{$service}->{'uid'}, $services->{$service}->{'gid'}, "${tmp_dir}/${service}/${file}${output}");
-				
+
 				# If nothing was written, delete that day's file
 				my $size = (stat("${tmp_dir}/${service}/${file}${output}"))[7];
 				if ( ($output =~ m/\.0$/ && !$size) || ($output =~ m/\.gz$/ && $size == 20) ) {

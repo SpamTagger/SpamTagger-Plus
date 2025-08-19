@@ -9,19 +9,19 @@
 class STSoap_Services
 {
     public static $STATUS_LOG = array('syslog' => '/tmp/local_service_syslog.log');
-   
+
   /**
    * This function restart syslog services
    *
    * @return string
    */
 	static public function Services_restartSyslog() {
-		
+
 		require_once('SpamTagger/Config.php');
         $config = new SpamTagger_Config();
-        
+
 		$s = 'syslog';
-		
+
 		## restart syslog (or rsyslog)
 		$starter = '/etc/init.d/syslogd';
 		if (file_exists('/etc/init.d/rsyslog')) {
@@ -41,7 +41,7 @@ class STSoap_Services
 		`$cmd`;
 		return 'OK service restarted';
    }
-   
+
    /**
    * This function restart MTA (Exim) services
    *
@@ -52,7 +52,7 @@ class STSoap_Services
 	static public function Services_stopstartMTA($stages, $command, $outfile = NULL) {
 		require_once('SpamTagger/Config.php');
 		$config = new SpamTagger_Config();
-		
+
 		if (empty($stages)) {
 			$stages = array(1,2,4);
 		}
@@ -81,7 +81,7 @@ class STSoap_Services
 		}
 		return 'OK service(s) '.$status;
 	}
-   
+
   /**
    * This function get the actual service stop/start log
    *
@@ -90,7 +90,7 @@ class STSoap_Services
    */
 	static public function Services_getStarterLog($service) {
 		$logfile = STSoap_Services::$STATUS_LOG[$service];
-		
+
 		$res = "";
 		$logexprs = array();
 		require_once('SpamTagger/Config.php');
@@ -116,17 +116,17 @@ class STSoap_Services
 	    $res = preg_replace('/\.\.\.\s*<br \/>/', '... ', $res);
 		return $res;
 	}
-	
+
    /*
     * This function will set one process's status to be restarted
-    * 
+    *
     * @param  array  services
     * @return string
     */
 	static public function Service_setServiceToRestart($services) {
 		require_once('SpamTagger/Config.php');
 		$config = new SpamTagger_Config();
-		
+
 		foreach ($services as $service) {
           $restart_file = $config->getOption('VARDIR')."/run/".$service.".rn";
           if (!file_exists($restart_file)) {
@@ -137,15 +137,15 @@ class STSoap_Services
         }
 		return 'OK services to restart';
 	}
-	
+
 	/*
 	 * This function will silently stop/start/restart a service
-	 * 
+	 *
 	 * @param array params
 	 * @return array
 	 */
 	static public function Service_silentStopStart($params) {
-        $ret = array('status' => '', 'message' => '');		
+        $ret = array('status' => '', 'message' => '');
 
         $service = '';
         $action = 'start';
@@ -182,20 +182,20 @@ class STSoap_Services
         $ret['params'] = $params;
         return $ret;
 	}
-	
+
 	/*
      * This function will silently dump a config file
-     * 
+     *
      * @param array params
      * @return array
      */
     static public function Service_silentDump($params) {
-        $ret = array('status' => '', 'message' => '');      
-    
+        $ret = array('status' => '', 'message' => '');
+
         $cmd = "";
     	require_once('SpamTagger/Config.php');
         $config = new SpamTagger_Config();
-        if ($params['what'] == 'domains') {       
+        if ($params['what'] == 'domains') {
         if (isset($params['domain']) && $params['domain'] != "") {
                 $cmd = $config->getOption('SRCDIR')."/bin/dump_domains.pl ".escapeshellcmd($params['domain']);
             } else {
@@ -204,7 +204,7 @@ class STSoap_Services
         } elseif ($params['what'] == 'archiving') {
         	$cmd = $config->getOption('SRCDIR')."/bin/dump_archiving.pl";
         }
-         
+
         if ($cmd != '') {
         	$cmd .= " >/dev/null 2>&1 &";
             $res = `$cmd`;
@@ -215,22 +215,22 @@ class STSoap_Services
         }
         return $ret;
     }
-    
+
     /*
     * This function will clear the callout cache
     *
     * @param array params
     * @return array
     */
-    static public function Service_clearCalloutCache($params) {	
+    static public function Service_clearCalloutCache($params) {
     	$ret = array('status' => 'OK', 'message' => 'Cache cleared', 'debug' => '');
     	$cmd = "/bin/rm ";
-    	
+
     	require_once('SpamTagger/Config.php');
     	$config = new SpamTagger_Config();
     	$dir = $config->getOption('VARDIR')."/spool/exim_stage1/db";
     	$files = array($dir.'/callout', $dir.'/callout.lockfile');
-    	
+
     	foreach ($files as $file) {
          	if (file_exists($file) && is_file($file)) {
             	$cmd = "/bin/rm $file";

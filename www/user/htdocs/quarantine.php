@@ -8,11 +8,11 @@
  *		  2015-2017 Florian Billebault <florian.billebault@gmail.com>
  * This is the controller for the quarantine page
  */
- 
+
 /**
  * require valid session and quarantine objects
  */
-require_once("objects.php"); 
+require_once("objects.php");
 require_once("user/SpamQuarantine.php");
 require_once("view/Template.php");
 require_once("view/Form.php");
@@ -80,7 +80,7 @@ $pie_stats->addValue($quarantine->getStat('clean'), 'clean', array(0x54, 0xEB, 0
 
 $pie_stats->generate();
 
-// prepare replacements   
+// prepare replacements
 $nb_msgs_choice = array('2' => 2, '5' => 5, '10' => 10, '20' => 20, '50' => 50, '100' => 100);
 $user_addresses_ = $user_->getAddressesForSelect();
 $get_query = http_build_query(array('a' => $quarantine->getSearchAddress(), 'days' => $quarantine->getFilter('days'), 'mask_forced' => $quarantine->getFilter('mask_forced'), 'is_newsletter' => 1 ));
@@ -122,7 +122,7 @@ $replace = array(
     '__INCLUDE_JS_SCRIPTS__' => $quarantine->getJavascripts($form->getName()),
 	'__LANGP_QUARANTINETITLE__' => $lang_->print_txt_param('QUARANTINETITLE', $quarantine->getSearchAddress()),
     '__BEGIN_FILTER_FORM__' => $form->open().$form->hidden('a', $address).$form->hidden('page', $quarantine->getFilter('page')).$form->hidden('order', $quarantine->getOrderString()),
-    '__END_FILTER_FORM__' => $form->close(),//	
+    '__END_FILTER_FORM__' => $form->close(),//
 	'__SEND_SUMMARY_LINK__' => "summary.php?".$get_query,
 	'__PURGE_LINK__' => "purge.php?".$get_query,
 	'__PURGE_FUNC__' => "purge",

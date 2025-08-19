@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  * @abstract This is the email management controller page
  */
- 
+
 /**
  * requires admin session, and email stuff
  */
@@ -33,7 +33,7 @@ $remote_search_ = true;
 
 // check authorizations
 $admin_->checkPermissions(array('can_manage_users'));
-  
+
 // create email object and edition form
 $selected_address = new Email();
 $eform = new Form('email', 'post', $_SERVER['PHP_SELF']);
@@ -96,7 +96,7 @@ if (isset($eposted['m']) && $eposted['m'] == 'd') {
     $onedomain = 0;
   } else {
     $saved_msg = $lang_->print_txt('DELETEERROR')."(".$deleted.")";
-  }; 
+  };
 }
 
 // create and load email list
@@ -110,7 +110,7 @@ $documentor = new Documentor();
 if (preg_match('/\S+\@\S+/', $search_Address, $tmp)) {
   $template->setCondition('EMAILSELECTED', true);
 }
-if ($selected_address->isRegistered()) { 
+if ($selected_address->isRegistered()) {
   $template->setCondition('HASPREF', true);
 }
 $sep = $template->getDefaultValue('sep');
@@ -146,7 +146,7 @@ if ($antispam_->getPref('enable_blacklists') && ( $domain->getPref('enable_black
   $template->setCondition('SEELISTS', true);
 }
 
-// prepare options 
+// prepare options
 $delivery_types = array($lang_->print_txt('TAGMODE') => '1', $lang_->print_txt('QUARANTINEMODE') => '2', $lang_->print_txt('DROPMODE') => '3');
 $frequencies = array($lang_->print_txt('DAILY') => 1, $lang_->print_txt('WEEKLY') => 2,  $lang_->print_txt('MONTHLY') => 3, $lang_->print_txt('NONE') => 4);
 // prepare replacements

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -7,12 +7,12 @@
  */
 ?>
 <?php echo $this->doctype() ?>
-<html xmlns="http://www.w3.org/1999/xhtml"> 
-<head>  
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <?php echo $this->headTitle() ?>
   <?php echo $this->headLink() ?>
-  
+
   <?php echo $this->jQuery(); ?>
 
 
@@ -20,19 +20,19 @@
 //<![CDATA[
            var message = '';
            var thisurl = '<?php echo $this->baseurl?>';
-           
+
            var slave = '<?php echo $this->slave->getId() ?>';
            var spool = '<?php echo $this->spool ?>';
-           
+
            var limit = 25;
-           
+
            var loadingimg = '<img src="<?php echo $this->images_path;?>/loadingwhitebg.gif" alt="loading..." />';
 //]]>
 </script>
-  
+
   <?php echo $this->headScript() ?>
-  
-</head> 
+
+</head>
 <body>
 <div id="container">
 

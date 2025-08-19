@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Dangerous content
  */
 
@@ -28,29 +28,29 @@ class Default_Model_DangerousContent
        'allow_codebase' => 'no',
        'silent_codebase' => 'no'
      );
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -58,7 +58,7 @@ class Default_Model_DangerousContent
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -82,7 +82,7 @@ class Default_Model_DangerousContent
         $this->getMapper()->find($id, $this);
         return $this;
     }
-   
+
     public function save()
     {
         return $this->getMapper()->save($this);

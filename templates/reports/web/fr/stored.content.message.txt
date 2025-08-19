@@ -10,7 +10,7 @@ cartes de crédit.
 
 Pour votre sécurité, il a été remplacé par cet avertissement.
 
-Le courriel a été conservé sur la passerelle. Il peut donc vous être rendu sur demande. 
+Le courriel a été conservé sur la passerelle. Il peut donc vous être rendu sur demande.
 Pour ce faire, nous vous invitons à vous rendre sur le lien suivant :
 https://spamtagger.org/support/dangerous-content-release.html
 

@@ -2,7 +2,7 @@
 
 if (!empty($_POST)):
     echo json_encode($_POST['ns']);
-else: 
+else:
 
 require_once ' Default/Model/Newsletter.php';
 $newsletters = array();

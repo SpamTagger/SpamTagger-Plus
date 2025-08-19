@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  * @abstract This is the user management controller page
  */
- 
+
 /**
  * requires admin session, and user stuff
  */
@@ -27,7 +27,7 @@ global $admin_;
 
 /**
  * this flag enable remote search with ldap/sql connector
- */  
+ */
 $remote_search_ = true;
 
 // check authorizations
@@ -79,7 +79,7 @@ if ($uform->shouldSave()) {
     $saved_msg = $lang_->print_txt('SAVEERROR')." (".$saved.")";
   }
   $search_user->load($login);
-} 
+}
 
 // create search/filter form
 $sform = new Form('search', 'post', $_SERVER['PHP_SELF']);
@@ -105,22 +105,22 @@ $user_list = new UserList();
 $user_list->setForm($sform->getName());
 $user_list->search($search_username, $search_domain, $remote_search_);
 
-// create view  
+// create view
 $template_ = new Template('users.tmpl');
 $documentor = new Documentor();
 // get template defaults
 $sep = $template_->getDefaultValue('sep');
-if (isset($search_user) && $search_user->getPref('username') != "") { 
-  $template_->setCondition('USERSELECTED', true);    
+if (isset($search_user) && $search_user->getPref('username') != "") {
+  $template_->setCondition('USERSELECTED', true);
 }
-if (isset($search_user) && $search_user->canModifyAddressList()) { 
+if (isset($search_user) && $search_user->canModifyAddressList()) {
   $template_->setCondition('CANMODIFYADDRESSLIST', true);
 }
-if (isset($search_user) && $search_user->isLocalUser()) { 
+if (isset($search_user) && $search_user->isLocalUser()) {
   $template_->setCondition('LOCALUSER', true);
 }
 
-// if no user selected  
+// if no user selected
 if (!isset($search_user)) {
   $search_user = new User();
 }
@@ -170,7 +170,7 @@ $template_->output($replace);
  */
 function userStatus($user) {
   global $lang_;
-  
+
   if(!$user->isRegistered()) {
    return "<br/><font color=\"red\">".$lang_->print_txt('USERHASNOPREFS')."</font><br/>&nbsp;";
   }

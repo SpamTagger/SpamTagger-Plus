@@ -1,5 +1,5 @@
 .nav_primary {
-    font-family: Verdana, Arial, sans-serif; 
+    font-family: Verdana, Arial, sans-serif;
     font-style: normal;
     font-variant: normal;
     font-weight: normal;
@@ -31,8 +31,8 @@
     padding: 3px;
 }
 
-.nav_secondary_a:hover { 
+.nav_secondary_a:hover {
     color: #D03E43;
     text-decoration: none;
 }
- 
+

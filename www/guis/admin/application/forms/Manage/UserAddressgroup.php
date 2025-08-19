@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * User address group form
  */
 
@@ -14,7 +14,7 @@ class Default_Form_Manage_UserAddressgroup extends Default_Form_ElementList
 	protected $_domain;
 	protected $_panelname = 'addressgroup';
 	public $_addresses = array();
-	
+
 	public function __construct($user, $domain)
 	{
 	    $this->_user = $user;
@@ -23,17 +23,17 @@ class Default_Form_Manage_UserAddressgroup extends Default_Form_ElementList
 
 	    parent::__construct($this->_addresses, 'Default_Model_Email');
 	}
-	
+
 	public function setList($list) {
 	    $this->_addresses = $list;
 	    $this->init();
 	}
-	
+
 	public function init()
 	{
 	    parent::init();
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 
 		$this->setAttrib('id', 'user_form');
@@ -42,13 +42,13 @@ class Default_Form_Manage_UserAddressgroup extends Default_Form_ElementList
             'filters'    => array('StringTrim')));
 	    ## TODO: add specific validator
 	    $panellist->addValidator(new Zend_Validate_Alnum());
-        
+
         foreach ($this->_user->getConfigPanels() as $panel => $panelname) {
         	$panellist->addMultiOption($panel, $panelname);
         }
         $panellist->setValue($this->_panelname);
         $this->addElement($panellist);
-        
+
         $panel = new Zend_Form_Element_Hidden('panel');
 		$panel->setValue($this->_panelname);
 		$this->addElement($panel);
@@ -62,17 +62,17 @@ class Default_Form_Manage_UserAddressgroup extends Default_Form_ElementList
 		    $domain->setValue($this->_domain);
 		}
 		$this->addElement($domain);
-		
+
 		$this->getElement('add')->setLabel($t->_('< Add address to group'));
 		$this->getElement('disable')->setLabel($t->_('Activate pending request'));
 		$this->getElement('remove')->setLabel($t->_('Remove address from group'));
-		
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
-		$this->addElement($submit);	
-		
+		$this->addElement($submit);
+
 	}
-	
+
 	public function setParams($request, $domain) {
 		if ($request->getParam('add') != "") {
 		    $address = $request->getParam('addelement');
@@ -97,11 +97,11 @@ class Default_Form_Manage_UserAddressgroup extends Default_Form_ElementList
 		    if (!$d->getId()) {
 		        throw new Exception('this address cannot be filtered');
 		    }
-		    
+
 		    ## ok, create address
 		    $email = new Default_Model_Email();
 		    $email->find($address);
-		    
+
 		    ## check if already exists
 		    if ($email->getId()) {
 		        ## check it doesn't belong to someone else
@@ -117,7 +117,7 @@ class Default_Form_Manage_UserAddressgroup extends Default_Form_ElementList
 		    $email->setParam('user', $this->_user->getId());
 		    $email->save();
         }
-        
+
 	    if ($request->getParam($this->_prefix.'disable') != "") {
 	        foreach ($this->_list as $element) {
 	    	    if ($request->getParam('list_select_'.$element->getId())) {
@@ -125,8 +125,8 @@ class Default_Form_Manage_UserAddressgroup extends Default_Form_ElementList
 	    	        $element->setStatus();
 	    	        $element->save();
 	    	    }
-    	    }	        
-        } 
+    	    }
+        }
         if ($request->getParam('remove') != "") {
             foreach ($this->_list as $element) {
 	    	    if ($request->getParam('list_select_'.$element->getId())) {
@@ -135,7 +135,7 @@ class Default_Form_Manage_UserAddressgroup extends Default_Form_ElementList
 	    	    }
     	    }
         }
-        
+
 		return true;
 	}
 

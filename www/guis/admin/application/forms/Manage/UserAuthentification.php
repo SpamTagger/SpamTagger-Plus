@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * User authentification form
  */
 
@@ -28,7 +28,7 @@ class Default_Form_Manage_UserAuthentification extends Zend_Form
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 
 		$this->setAttrib('id', 'user_form');
@@ -64,7 +64,7 @@ class Default_Form_Manage_UserAuthentification extends Zend_Form
 		    'filters'    => array('StringTrim')));
 		$realname->setValue($this->_local->getParam('realname'));
 		$this->addElement($realname);
-	  
+
 		if ($this->_user->getDomainObject()->isFetcherLocal()) {
 			$address = new  Zend_Form_Element_Text('email', array(
             'label'   => $t->_('Email address')." :",
@@ -73,7 +73,7 @@ class Default_Form_Manage_UserAuthentification extends Zend_Form
 			$address->setValue($this->_local->getParam('email'));
 			$this->addElement($address);
 		}
-	  
+
 		$password = new  Zend_Form_Element_Password('password', array(
 	        'label'    => $t->_('Password')." :",
 	        'renderPassword' => true,
@@ -82,7 +82,7 @@ class Default_Form_Manage_UserAuthentification extends Zend_Form
 			$password->setValue('_keeppassword1_');
 		}
 		$this->addElement($password);
-	  
+
 		$confirm = new  Zend_Form_Element_Password('confirm', array(
 	        'label'    => $t->_('Confirm')." :",
 	        'renderPassword' => true,
@@ -112,7 +112,7 @@ class Default_Form_Manage_UserAuthentification extends Zend_Form
 				$local->setPassword($request->getParam('password'));
 			}
 		}
-		$local->save(); 
+		$local->save();
         if (preg_match('/^\s*$/', $request->getParam('password'))) {
              # generate and send password
             require_once("Pear/Text/Password.php");

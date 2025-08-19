@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the base system configuration page
  */
- 
+
  /**
   * require admin session, view and configurations objects
   */
@@ -106,7 +106,7 @@ if ($rform->shouldSave()) {
     $rootpassmsg = $rootpasssaved;
   }
 }
-  
+
 // create view
 $template_ = new Template('config_base.tmpl');
 $documentor = new Documentor();
@@ -178,7 +178,7 @@ function useNTPServer() {
       window.document.forms['".$tform->getName()."'].".$tform->getName()."_year.disabled=false;
       window.document.forms['".$tform->getName()."'].".$tform->getName()."_hour.disabled=false;
       window.document.forms['".$tform->getName()."'].".$tform->getName()."_minute.disabled=false;
-      window.document.forms['".$tform->getName()."'].".$tform->getName()."_second.disabled=false; 
+      window.document.forms['".$tform->getName()."'].".$tform->getName()."_second.disabled=false;
     }
 }";
   return $ret;

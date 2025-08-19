@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -11,21 +11,21 @@
        <?php echo $this->InputRow($this->form->getElement('panel'),array('field_only'=>true,'nobox'=>true));?>
        <?php echo $this->InputRow($this->form->getElement('name'),array('field_only'=>true,'nobox'=>true));?>
        <table class="ftable" id="domainfilteringtable">
-       
+
           <?php foreach (array('spamwall', 'contentwall', 'greylist', 'prevent_spoof', 'reject_capital_domain', 'require_incoming_tls', 'allow_newsletters') as $f) {?>
           <?php echo $this->InputRow($this->form->getElement($f));?>
           <?php }?>
-          
+
           <?php $wwlists = $this->form->wwlistsEnabled();?>
           <?php if (count($wwlists) > 0) {?>
           <tr>
             <td colspan="2"><hr /></td>
           </tr>
-               
+
           <?php foreach ($wwlists as $f) {
             $enable = 'enable_'.$f.'s';
             $enableset = '_'.$f.'enabled';
-            $list = '_'.$f; 
+            $list = '_'.$f;
           ?>
           <?php echo $this->InputRow($this->form->getElement($enable));?>
 
@@ -69,7 +69,7 @@
                 <p class="submitlist"><?php echo $this->SubmitRow($this->form->getElement($f.'_disable'),array('field_only'=>true,'nobox'=>true));?></p>
                 <p class="submitlist"><?php echo $this->SubmitRow($this->form->getElement($f.'_remove'),array('field_only'=>true,'nobox'=>true));?></p>
                 </div>
- 
+
                 </td>
           </tr>
           <?php }?>
@@ -79,7 +79,7 @@
           <?php }?>
 
           <?php }?>
-          
+
             <?php
             $list = '_newslist';
             ?>

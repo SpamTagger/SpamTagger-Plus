@@ -33,8 +33,8 @@ class SoapInterface
 		require_once('STSoap/Test.php');
 		return STSoap_Test::Test_getResponse($question);
 	}
-	
-	
+
+
   /**
    * *************
    * Status
@@ -42,14 +42,14 @@ class SoapInterface
    */
   /**
    * This function will gather status
-   * 
+   *
    * @param  array
    * @return array
    */
    static public function Status_getStatusValues($params) {
         return STSoap_Status::Status_getStatusValues($params);
    }
-   
+
   /**
    * This function simply answer with the question
    *
@@ -68,13 +68,13 @@ class SoapInterface
 	}
    /**
     * This function return the current hardware status
-    * 
+    *
     * @return array
     */
 	static public function Status_getHardwareHealth() {
 		return STSoap_Status::Status_getHardwareHealth();
 	}
-	
+
 	/**
 	* This function will return all informational messages of the host
 	*
@@ -83,7 +83,7 @@ class SoapInterface
 	static public function Status_getInformationalMessages($params) {
 		return STSoap_Status::Status_getInformationalMessages($params);
 	}
-	
+
 	/**
 	 * Config
 	 */
@@ -95,7 +95,7 @@ class SoapInterface
 	static public function Config_saveInterfaceConfig() {
 		return STSoap_Config::Config_saveInterfaceConfig();
 	}
-	
+
   /**
    * This function restart networking services
    *
@@ -104,7 +104,7 @@ class SoapInterface
    static public function Config_applyNetworkSettings() {
    	    return STSoap_Config::Config_applyNetworkSettings();
    }
-   
+
   /**
    * This function simply copy temporary resolv.conf file to system one
    *
@@ -113,7 +113,7 @@ class SoapInterface
 	static public function Config_saveDnsConfig() {
 		return STSoap_Config::Config_saveDnsConfig();
 	}
-	
+
   /**
    * This function set up the time zone
    *
@@ -123,7 +123,7 @@ class SoapInterface
 	static public function Config_saveTimeZone($zone) {
 		return STSoap_Config::Config_saveTimeZone($zone);
 	}
-	
+
   /**
    * This function apply the ntp config
    *
@@ -133,7 +133,7 @@ class SoapInterface
 	static public function Config_saveNTPConfig($sync = false) {
 		return STSoap_Config::Config_saveNTPConfig($sync);
 	}
-	
+
   /**
    * This function apply the provided time and date
    *
@@ -143,7 +143,7 @@ class SoapInterface
 	static public function Config_saveDateTime($string) {
         return STSoap_Config::Config_saveDateTime($string);
 	}
-	
+
  /**
    * This function will save some spamtagger config option
    *
@@ -153,7 +153,7 @@ class SoapInterface
 	static public function Config_saveSTConfigOption($options) {
 	    return STSoap_Config::Config_saveSTConfigOption($options);
 	}
-	
+
   /**
    * This function will save and validate registration number
    *
@@ -230,7 +230,7 @@ class SoapInterface
 	static public function Services_restartSyslog() {
 		return  STSoap_Services::Services_restartSyslog();
 	}
-	
+
   /**
    * This function restart MTA (Exim) services
    *
@@ -241,7 +241,7 @@ class SoapInterface
 	static public function Services_stopstartMTA($stages, $command) {
 		return  STSoap_Services::Services_stopstartMTA($stages, $command);
 	}
-	
+
   /**
    * This function return starter log
    *
@@ -251,27 +251,27 @@ class SoapInterface
 	static public function Services_getStarterLog($service) {
 		return  STSoap_Services::Services_getStarterLog($service);
 	}
-	
+
    /**
     * This function will set one process's status to be restarted
-    * 
+    *
     * @param  array  services
     * @return string
     */
 	static public function Service_setServiceToRestart($services) {
 	    return  STSoap_Services::Service_setServiceToRestart($services);
 	}
-	
+
    /**
     * This function will silently stop a service
-    * 
+    *
     * @param  array  params
     * @return array
     */
     static public function Service_silentStopStart($params) {
     	return  STSoap_Services::Service_silentStopStart($params);
     }
-    
+
     /**
     * This function will clear the callout cache
     *
@@ -291,47 +291,47 @@ class SoapInterface
     static public function Service_clearSMTPAutCache($params) {
     	return  STSoap_Services::Service_clearSMTPAutCache($params);
     }
-    
+
    /**
     * This function will silently dump a config file
-    * 
+    *
     * @param  array  params
     * @return array
     */
     static public function Service_silentDump($params) {
         return  STSoap_Services::Service_silentDump($params);
     }
-    
+
    /**
     * This function will search for quarantined content
-    * 
+    *
     * @param  array  params
     * @return array
     */
 	static public function Content_fetchAll($params, $limit=0) {
 	    return  STSoap_Content::Content_fetchAll($params, $limit);
 	}
-	
+
    /**
     * This function will fetch information on quarantined content
-    * 
+    *
     * @param  array  params
     * @return array
     */
 	static public function Content_find($params) {
 	    return  STSoap_Content::Content_find($params);
 	}
-	
+
    /**
     * This function will release a quarantined message
-    * 
+    *
     * @param  array  params
     * @return array
     */
 	static public function Content_release($params) {
-	    return  STSoap_Content::Content_release($params);		
+	    return  STSoap_Content::Content_release($params);
 	}
-	
+
    /**
     * This function will release a quarantined message
     *
@@ -351,7 +351,7 @@ class SoapInterface
 	static public function Logs_StartTrace($params) {
 		return STSoap_Logs::Logs_StartTrace($params);
 	}
-	
+
   /**
    * This function will fetch tracing results
    *
@@ -370,7 +370,7 @@ class SoapInterface
 	static public function Logs_AbortTrace($params) {
 	    return STSoap_Logs::Logs_AbortTrace($params);
 	}
-	
+
   /**
    * This function will start a stats gathering
    *
@@ -380,7 +380,7 @@ class SoapInterface
 	static public function Logs_StartGetStat($params) {
 		return STSoap_Stats::Logs_StartGetStat($params);
 	}
-	
+
   /**
    * This function will fetch stats results
    *
@@ -390,7 +390,7 @@ class SoapInterface
 	static public function Logs_GetStatsResult($params, $limit = 0) {
 		return STSoap_Stats::Logs_GetStatsResult($params, $limit);
 	}
-	
+
   /**
    * This function will stop a stats tracing
    *
@@ -400,7 +400,7 @@ class SoapInterface
 	static public function Logs_AbortStats($params) {
 		return STSoap_Stats::Logs_AbortStats($params);
 	}
-	
+
 	/**
 	 * This function will list logs files
 	 *
@@ -410,7 +410,7 @@ class SoapInterface
 	static public function Logs_FindLogFiles($params) {
 	    return STSoap_Logs::Logs_FindLogFiles($params);
 	}
-	
+
 	/**
 	 * This function will fetch log lines
 	 *
@@ -429,18 +429,18 @@ class SoapInterface
          */
         static public function Logs_ExtractLog($params) {
                 return STSoap_Logs::Logs_ExtractLog($params);
-        }	
+        }
 
 	/**
      * This function will fetch today's stats
-     * 
+     *
      * @param array $params
      * @return array
      */
     static public function Status_getTodayStats($params) {
     	return STSoap_Status::Status_getTodayStats($params);
     }
-    
+
     /**
      * This function will fetch messages in spool
      *
@@ -450,7 +450,7 @@ class SoapInterface
     static public function Status_getSpool($params) {
     	return STSoap_Status::Status_getSpool($params);
     }
-    
+
     /**
      * This function will delete messages in spool
      *
@@ -460,7 +460,7 @@ class SoapInterface
     static public function Status_spoolDelete($params) {
         return STSoap_Status::Status_spoolDelete($params);
     }
-    
+
     /**
      * This function will try to send messages in spool
      *

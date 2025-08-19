@@ -163,7 +163,7 @@ sub checkDNS {
   foreach my $server ($res->nameservers) {
     $res->nameservers($server);
     my $reply = $res->query($query, 'A');
-   
+
     if (!$reply || !$reply->answer) {
       $return{'status'} = 0;
       $return{'message'} = 'Error with DNS query '.$query.' on '.$server.' with message: No answer.';

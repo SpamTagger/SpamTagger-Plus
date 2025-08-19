@@ -4,44 +4,44 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the users interface settings
  */
- 
-/** 
+
+/**
  * user address parameters configuration page controller
- * 
+ *
  * @package SpamTagger Plus
  */
 class ConfigUserAddressParam {
- 
+
  private $form_;
- private $message_; 
+ private $message_;
  private $add_;
  private $data_ = array('delivery_type', 'spam_tag', 'quarantine_bounces', 'summary_type', 'summary_to', 'allow_newsletters');
- 
+
  public function __construct() {
     global $user_;
 
     $this->form_ = new Form('param', 'post', $_SERVER['PHP_SELF']."?t=addparam");
-    
+
     $mainadd = $user_->getMainAddress();
     $this->add_ = new Email();
     $this->add_->load($mainadd);
- }   
-    
+ }
+
  public function processInput() {
     global $lang_;
     global $user_;
-          
+
     $posted = $this->form_->getResult();
 
     if (isset($posted['address']) && $user_->hasAddress($posted['address'])) {
         $this->add_->load($posted['address']);
     }
-    
+
     if ($this->form_->shouldSave()) {
-     
+
      $this->message_ = 'NOTSAVED';
      $check = $this->checkParams($posted);
      if ($check != 'OK') {
@@ -63,7 +63,7 @@ class ConfigUserAddressParam {
             $add->save();
         }
      }
-     
+
      if ($posted['applytoall'] > 0) {
      	foreach ($user_->getAddresses() as $address => $ismain) {
      	  $add = new Email();
@@ -74,7 +74,7 @@ class ConfigUserAddressParam {
           }
      	}
      }
-          
+
     }
 }
 
@@ -113,15 +113,15 @@ private function setSummaryParam($object, $posted) {
    }
    if ($posted['summary_to_select'] == 'other' && isset($posted['summary_to'])) {
        $summary_to = $posted['summary_to'];
-   } 
+   }
    $object->setPref('summary_to', $summary_to);
    return true;
 }
- 
+
  public function addReplace($replace, $template) {
    global $lang_;
    global $user_;
-   
+
    $freqs[$lang_->print_txt('DAILY')] = 'daily_summary';
    $freqs[$lang_->print_txt('WEEKLY')] = 'weekly_summary';
    $freqs[$lang_->print_txt('MONTHLY')] = 'monthly_summary';
@@ -140,12 +140,12 @@ private function setSummaryParam($object, $posted) {
          }
    	 }
    }
-          
+
 
    $formats[$lang_->print_txt('PLAINTEXT')] = 'text';
    $formats[$lang_->print_txt('HTML')] = 'html';
    $formats[$lang_->print_txt('DIGEST')] = 'digest';
-            
+
    $replace['__BEGIN_PARAM_FORM__'] = $this->form_->open();
    $replace['__END_PARAM_FORM__'] = $this->form_->close();
 
@@ -159,15 +159,15 @@ private function setSummaryParam($object, $posted) {
            $selected_summary_to = 'other';
        }
    }
-   
+
    $replace['__ADDRESSSELECT__'] = $this->form_->select('address', $user_->getAddressesForSelect(), $this->add_->getPref('address'), '');
    $replace['__INPUT_RADIOQUARANTINE__'] = $this->form_->radiojs('delivery_type', '2', $this->add_->getPref('delivery_type'), 'javascript=enableSpamTag(2);');
    $replace['__INPUT_RADIOTAG__'] = $this->form_->radiojs('delivery_type', '1', $this->add_->getPref('delivery_type'), 'javascript=enableSpamTag(1);');
    $replace['__INPUT_RADIODROP__'] = $this->form_->radiojs('delivery_type', '3', $this->add_->getPref('delivery_type'), 'javascript=enableSpamTag(3);');
-   
+
    $replace['__INPUT_RADIONEWSLETTER_QUARANTINE__'] = $this->form_->radio('allow_newsletters', '0', $this->add_->getPref('allow_newsletters'));
    $replace['__INPUT_RADIONEWSLETTER_ALLOW__'] = $this->form_->radio('allow_newsletters',  '1', $this->add_->getPref('allow_newsletters'));
-      
+
    $replace['__DELIVERYTYPE__'] = $this->add_->getPref('delivery_type');
    $replace['__INPUT_TAG__'] = $this->form_->input('spam_tag', 10, $this->add_->getPref('spam_tag'));
    $replace['__INPUT_SELECTSUMMARYFREQ__'] = $this->form_->select('summaryfreq', $freqs, $sfreq, ';');
@@ -183,7 +183,7 @@ private function setSummaryParam($object, $posted) {
    $replace['__INPUT_CHECKBOXBQUARBOUNCES__'] = $this->form_->checkbox('quarantine_bounces', '1', $this->add_->getPref('quarantine_bounces'), '', 1);
    $replace['__MESSAGE__'] = $lang_->print_txt_param($this->message_, $this->add_->getPref('address'));
    return $replace;
- }   
-    
+ }
+
 }
 ?>

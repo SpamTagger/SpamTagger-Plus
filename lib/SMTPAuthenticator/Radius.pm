@@ -35,14 +35,14 @@ sub create {
    my $server = shift;
    my $port = shift;
    my $params = shift;
-   
+
    my $secret = '';
    my @fields = split /:/, $params;
    if ($fields[0]) {
      $secret = $fields[0];
    }
-   
-  
+
+
    if ($port < 1 ) {
      $port = 1645;
    }
@@ -53,7 +53,7 @@ sub create {
            port => $port,
            secret => $secret,
          };
-         
+
   bless $this, "SMTPAuthenticator::Radius";
   return $this;
 }
@@ -62,9 +62,9 @@ sub authenticate {
   my $this = shift;
   my $username = shift;
   my $password = shift;
- 
+
   my $r = new Authen::Radius(Host => $this->{server}.":".$this->{port}, Secret => $this->{secret});
-  
+
   if ($r) {
     if ( $r->check_pwd($username, $password) ) {
       $this->{'error_code'} = 0;
@@ -72,7 +72,7 @@ sub authenticate {
       return 1;
     }
   }
-  
+
   $this->{'error_code'} =  Authen::Radius::get_error;
   $this->{'error_text'} = Authen::Radius::strerror;
   return 0;

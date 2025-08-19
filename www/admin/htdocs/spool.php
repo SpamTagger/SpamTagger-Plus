@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller page that will display the spool
  */
 
@@ -32,7 +32,7 @@ if (!isset($_GET['s'])) {
   $error = "BADSPOOL (".$_GET['s'].")";
   die($error);
 }
-$spoolid = $_GET['s'];  
+$spoolid = $_GET['s'];
 
 if (!isset($_GET['sid']) || !preg_match('/^[a-z0-9]+$/', $_GET['sid'])) {
   $error = "BADSESSIONID (".$_GET['sid'].")";

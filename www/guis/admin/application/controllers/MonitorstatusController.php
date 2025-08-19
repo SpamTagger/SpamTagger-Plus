@@ -12,7 +12,7 @@ class MonitorstatusController extends Zend_Controller_Action
 {
 	protected $_columns = array('messages', 'load', 'disks', 'memory', 'spools', 'processes');
     protected $_statscachefile = '/tmp/host.stat.cache';
-    
+
 	public function init()
 	{
 		$layout = Zend_Layout::getMvcInstance();
@@ -29,7 +29,7 @@ class MonitorstatusController extends Zend_Controller_Action
 	}
 
 	public function indexAction() {
-			
+
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
 
@@ -70,7 +70,7 @@ class MonitorstatusController extends Zend_Controller_Action
 
 		$slave = new Default_Model_Slave();
 		$slave->find($request->getparam('s'));
-        
+
 		$reporting = new Default_Model_ReportingStats();
 		$what = array();
 		$what['stats'] = $reporting->getTodayStatElements($stats_type);
@@ -90,7 +90,7 @@ class MonitorstatusController extends Zend_Controller_Action
 		$view=$layout->getView();
 		$layout->disableLayout();
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
-			
+
 		$status = 0;
 		$slaveid = 0;
 		$process = '';
@@ -122,7 +122,7 @@ class MonitorstatusController extends Zend_Controller_Action
 		$view=$layout->getView();
 		$layout->disableLayout();
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
-			
+
 		$status = 0;
 		$slaveid = 0;
 		$process = '';
@@ -177,7 +177,7 @@ class MonitorstatusController extends Zend_Controller_Action
 			$spool = $request->getParam('spool');
 
 			$slave->find($slaveid);
-			
+
 			$params = array('limit' => $limit, 'offset' => $offset, 'spool' => $spool);
 			if ($request->isXmlHttpRequest()) {
 				$call_res = $slave->getSpool($spool, $params);
@@ -204,22 +204,22 @@ class MonitorstatusController extends Zend_Controller_Action
 		if ($page > 1) {
 			$view->prevoffset = ($page - 2)*$limit;
 		}
-		
+
 		$spools = array(1 => 'incoming', 2 => 'filtering', 4 => 'outgoing');
 		$t = Zend_Registry::get('translate');
         $view->headTitle($t->_('Spool view')." - ".$slave->getId()." (".$slave->getHostname().") - ".$t->_($spools[$spool]));
 	}
-	
+
 	public function spooldeleteAction() {
 		$layout = Zend_Layout::getMvcInstance();
         $view=$layout->getView();
         $layout->disableLayout();
-		
+
         $slave = new Default_Model_Slave();
         $spool=1;
         require_once('Validate/MessageID.php');
         $msgvalidator = new Validate_MessageID();
-        
+
         $request = $this->getRequest();
         if (is_numeric($request->getParam('slave')) && is_numeric($request->getParam('spool')) && $msgvalidator->isValid($request->getParam('msg'))) {
         	$slaveid = $request->getParam('slave');
@@ -229,17 +229,17 @@ class MonitorstatusController extends Zend_Controller_Action
             $res = $slave->deleteSpoolMessage($spool, $request->getParam('msg'));
         }
 	}
-	
+
 	public function spooltryAction() {
 		$layout = Zend_Layout::getMvcInstance();
         $view=$layout->getView();
         $layout->disableLayout();
-        
+
         $slave = new Default_Model_Slave();
         $spool=1;
         require_once('Validate/MessageID.php');
         $msgvalidator = new Validate_MessageID();
-        
+
         $request = $this->getRequest();
         if (is_numeric($request->getParam('slave')) && is_numeric($request->getParam('spool')) && $msgvalidator->isValid($request->getParam('msg')) ) {
         	$slaveid = $request->getParam('slave');
@@ -249,15 +249,15 @@ class MonitorstatusController extends Zend_Controller_Action
             $res = $slave->trySpoolMessage($spool, $request->getParam('msg'));
         }
 	}
-	
+
 	public function hoststatusAction() {
 		$layout = Zend_Layout::getMvcInstance();
         $view=$layout->getView();
         $layout->disableLayout();
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
-        
+
     	$request = $this->getRequest();
-    	
+
     	$slaveid = 1;
     	if (is_numeric($request->getParam('slave'))) {
     		$slaveid = $request->getParam('slave');
@@ -275,7 +275,7 @@ class MonitorstatusController extends Zend_Controller_Action
     	$reporting = new Default_Model_ReportingStats();
     	$salt = uniqid();
 		$view->salt = $salt;
-		
+
 		$morecontent = array(
                  'messages' => array('type' => array('global', 'sessions', 'accepted', 'refused', 'relayed'), 'selected_type' => 'global',
                                      'mode' => array('count', 'frequency'), 'selected_mode' => 'count'),
@@ -301,11 +301,11 @@ class MonitorstatusController extends Zend_Controller_Action
                $s_type = $matches[2];
                if (isset($morecontent[$s_col]) && in_array($s_type, $morecontent[$s_col]['type']))  {
                	  $morecontent[$s_col]['selected_type'] = $s_type;
-               }     		
+               }
         	}
         }
 		$stats_type = $morecontent['messages']['selected_type'];
-		
+
 		$modes = preg_split('/,/', $request->getParam('m'));
         foreach ($modes as $mode) {
         	if (preg_match('/^([a-z0-9]+)_([a-z0-9]+)/', $mode, $matches)) {
@@ -313,7 +313,7 @@ class MonitorstatusController extends Zend_Controller_Action
                $s_mode = $matches[2];
                if (isset($morecontent[$s_col]) && in_array($s_mode, $morecontent[$s_col]['mode']))  {
                	  $morecontent[$s_col]['selected_mode'] = $s_mode;
-               }     		
+               }
         	}
         }
 		$stats_mode = $morecontent['messages']['selected_mode'];
@@ -325,18 +325,18 @@ class MonitorstatusController extends Zend_Controller_Action
                $s_period = $matches[2];
                if (isset($morecontent[$s_col]) && in_array($s_period, $available_periods))  {
                	  $morecontent[$s_col]['selected_period'] = $s_period;
-               }     		
+               }
         	}
         }
 		$stats_period = $morecontent['messages']['selected_period'];
         $what = array();
 	    $what['stats'] = $reporting->getTodayStatElements($stats_type);
         $data = $reporting->getTodayValues($what, $slaveid, $stats_type);
-        
+
         $view->pielink = $view->baseurl.'/monitorstatus/todaypie/c/1/s/'.$slave->getId();
         $view->pielink .= '/t/'.$stats_type;
         $view->pielink .= '/r/'.uniqid();
-        
+
         $view->stats_type = $stats_type;
         $total = 0;
         foreach ($data as $d) {
@@ -344,18 +344,18 @@ class MonitorstatusController extends Zend_Controller_Action
         }
         $view->stats_total = $total;
     	$view->stats = $data;
-    	
+
     	$template = Zend_Registry::get('default_template');
     	include_once(APPLICATION_PATH . '/../public/templates/'.$template.'/css/pieColors.php');
     	$view->colors = $data_colors;
-    	
+
     	$graphfinder = new Default_Model_RRDGraphic();
     	$graphs = array();
     	foreach ($this->_columns as $gc) {
     		$graphs[$gc] = $graphfinder->fetchAll(array('family' => $gc));
     	}
     	$view->graphs = $graphs;
-    	
+
     	$view->more_content = $morecontent;
     	$view->more_to_show = preg_split('/,/', $request->getParam('mts'));
 	}

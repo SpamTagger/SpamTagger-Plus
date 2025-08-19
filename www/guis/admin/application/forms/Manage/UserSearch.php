@@ -4,25 +4,25 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * User/Email search form
  */
 
 class Default_Form_Manage_UserSearch extends Zend_Form
 {
     protected $_params;
-    
+
     public function __construct($params) {
         $this->_params = $params;
 		parent::__construct();
     }
-    
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
-			
+
 		$searchtypeField = new  Zend_Form_Element_Select('type', array(
 	        'label'    => $t->_('Search by')." :",
 		    'required' => false));
@@ -36,7 +36,7 @@ class Default_Form_Manage_UserSearch extends Zend_Form
 		    'required' => false));
 	    $username->setValue($this->_params['search']);
 	    $this->addElement($username);
-	    
+
 	    $domainField = new  Zend_Form_Element_Select('domain', array(
 		    'required' => false));
 	    $domain = new Default_Model_Domain();
@@ -47,7 +47,7 @@ class Default_Form_Manage_UserSearch extends Zend_Form
 	    }
 	    $domainField->setValue($this->_params['domain']);
 	    $this->addElement($domainField);
-	    
+
 	    $submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Edit or add >>'),
 	         'class' => 'useraddsubmit' ));

@@ -4,14 +4,14 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for a custom page
  */
 
 /**
  * require session
- */ 
-require_once("objects.php"); 
+ */
+require_once("objects.php");
 require_once("view/Template.php");
 
 $template = 1;

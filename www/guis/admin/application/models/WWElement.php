@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * White/Warn list element
  */
 
@@ -22,20 +22,20 @@ class Default_Model_WWElement
 
     protected $_mapper;
 
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		$ret = null;
 		if (array_key_exists($param, $this->_values)) {
@@ -46,7 +46,7 @@ class Default_Model_WWElement
 		}
 		return $ret;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -54,7 +54,7 @@ class Default_Model_WWElement
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -78,11 +78,11 @@ class Default_Model_WWElement
         $this->getMapper()->find($id, $this);
         return $this;
     }
-    
+
     public function fetchAll($destination, $type) {
     	return $this->getMapper()->fetchAll($destination, $type);
     }
-    
+
     public function fetchAllField($destination, $type, $field) {
     	return $this->getMapper()->fetchAllField($destination, $type, $field);
     }
@@ -91,46 +91,46 @@ class Default_Model_WWElement
     public function setBulkSender($domain, $senders, $type) {
     	return $this->getMapper()->setBulkSender($domain, $senders, $type);
     }
-    
+
     public function setSpamcOvercharge($domain, $comment, $type) {
     	return $this->getMapper()->setSpamcOvercharge($domain, $comment, $type);
     }
-    
+
     public function save()
     {
         return $this->getMapper()->save($this);
     }
-    
+
     public function delete()
     {
     	return $this->getMapper()->delete($this);
     }
-    
+
    public function getStatus() {
     	if ($this->getParam('status')) {
     		return 1;
     	}
     	return 0;
     }
-    
+
     public function setValue($value) {
     	$this->setParam('sender', $value);
     }
-    
+
     public function setComment($comment) {
     	if ($comment == '') {
     		$comment = "-";
     	}
     	$this->setParam('comments', $comment);
     }
-    
+
     public function getComment() {
     	if ($this->getParam('comments') != '-') {
           return $this->getParam('comments');
     	}
     	return '';
     }
-    
+
     public function disable() {
     	$this->setParam('status', 0);
     	$this->save();

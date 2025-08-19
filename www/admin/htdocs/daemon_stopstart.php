@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller page for the service stop/start status window
  */
 
 /**
  * require administrative access
- */   
+ */
 require_once('admin_objects.php');
 require_once("view/Template.php");
 
@@ -64,7 +64,7 @@ echo "&nbsp;";
 $template2_ = new Template('daemon_stopstart2.tmpl');
 $replace2 = array(
     '__LANG__' => $lang_->getLanguage(),
-    '__ACTION__' => doAction($host, $action, $daemon)     
+    '__ACTION__' => doAction($host, $action, $daemon)
     );
 
 $template2_->output($replace2);
@@ -126,7 +126,7 @@ function doAction($host, $action, $daemon) {
     default:
       $res = $soaper->queryParam('startService', array($sid, $daemon));
   }
- 
+
   if ($res->status == 'OK') {
     return "<font color=\"green\">".$lang_->print_txt('DONE').".</font>";
   }

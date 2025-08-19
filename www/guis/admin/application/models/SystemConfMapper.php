@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * System configuration mapper
  */
 
 class Default_Model_SystemConfMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_SystemConfMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_SystemConf $conf)
     {
         $result = $this->getDbTable()->find($id);
@@ -40,13 +40,13 @@ class Default_Model_SystemConfMapper
             return;
         }
         $row = $result->current();
-        
+
         $conf->setId($id);
         foreach ($conf->getAvailableParams() as $key) {
         	$conf->setParam($key, $row->$key);
         }
     }
-    
+
     public function save(Default_Model_SystemConf $conf) {
        $data = $conf->getParamArray();
        $res = '';
@@ -58,5 +58,5 @@ class Default_Model_SystemConfMapper
         }
         return $res;
     }
-    
+
 }

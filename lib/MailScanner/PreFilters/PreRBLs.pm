@@ -62,8 +62,8 @@ sub initialise {
   }
 
   $PreRBLs::dnslists = new STDnsLists(\&MailScanner::Log::WarnLog, $PreRBLs::conf{debug});
-  $PreRBLs::dnslists->loadRBLs( $PreRBLs::conf{rblsDefsPath}, $PreRBLs::conf{rbls}, 'IPRBL DNSRBL BSRBL', 
-                                $PreRBLs::conf{whitelistDomainsFile}, $PreRBLs::conf{TLDsFiles}, 
+  $PreRBLs::dnslists->loadRBLs( $PreRBLs::conf{rblsDefsPath}, $PreRBLs::conf{rbls}, 'IPRBL DNSRBL BSRBL',
+                                $PreRBLs::conf{whitelistDomainsFile}, $PreRBLs::conf{TLDsFiles},
                                 $PreRBLs::conf{localDomainsFile}, $MODULE);
 
   if (-f $PreRBLs::conf{domainsHostnamesMapFile}) {
@@ -98,13 +98,13 @@ sub Checks {
 
   my $senderdomain = $message->{fromdomain};
   my $senderip = $message->{clientip};
-  
+
   my $continue = 1;
   my $wholeheader = '';
   my $dnshitcount = 0;
   my $senderhostname = '';
- 
-  ## try to find sender hostname 
+
+  ## try to find sender hostname
   ## find out any previous SPF control
   foreach my $hl ($global::MS->{mta}->OriginalMsgHeaders($message)) {
     if ($senderhostname eq '' && $hl =~ m/^Received: from (\S+) \(\[$senderip\]/) {
@@ -115,10 +115,10 @@ sub Checks {
     	if ($1 eq 'pass' && $PreRBLs::conf{avoidgoodspf}) {
        	MailScanner::Log::InfoLog("$MODULE not checking against: $senderdomain because of good SPF record for ".$message->{id});
        	$continue = 0;
-      } 
+      }
       last; ## we can here because X-SpamTagger-SPF will always be after the Received fields.
     }
-  }	
+  }
 
   my $checkip = 1;
   my ($data, $hitcount, $header);
@@ -126,14 +126,14 @@ sub Checks {
   if ($continue) {
     if ($senderdomain ne '' && ! $PreRBLs::dnslists->isValidDomain($senderdomain, 1, 'PreRBLs domain validator')) {
         my $hostnameregex = $domainsHostnamesMapFile{$senderdomain};
-        if ($hostnameregex && 
+        if ($hostnameregex &&
             $hostnameregex ne '' &&
-            $senderhostname =~ m/$hostnameregex/  
+            $senderhostname =~ m/$hostnameregex/
            ) {
             MailScanner::Log::InfoLog("$MODULE not checking IPRBL on ".$message->{clientip}." because domain ".$senderdomain." is whitelisted and sender host ".$senderhostname." is from authorized domain for message ".$message->{id});
             $checkip = 0;
         }
-    } 
+    }
     ## check if in avoided hosts
     foreach my $avoidhost (split(/[\ ,\n]/, $PreRBLs::conf{avoidhosts})) {
       if ($avoidhost =~ m/^[\d\.\:\/]+$/) {
@@ -172,7 +172,7 @@ sub Checks {
       }
     }
   }
-  
+
   ## second check sender domain
   if ($continue && $PreRBLs::dnslists->isValidDomain($senderdomain, 1, 'PreRBLs domain validator')) {
     ($data, $hitcount, $header) = $PreRBLs::dnslists->check_dns($senderdomain, 'DNSRBL', "$MODULE (".$message->{id}.")", $PreRBLs::conf{spamhits});
@@ -198,11 +198,11 @@ sub Checks {
       $message->{isrblspam} = 1;
     }
   }
-  
+
   $wholeheader =~ s/^,+//;
   $wholeheader =~ s/,+$//;
   $wholeheader =~ s/,,+/,/;
-  
+
   if ($message->{isspam}) {
     MailScanner::Log::InfoLog("$MODULE result is spam ($wholeheader) for ".$message->{id});
     if ($PreRBLs::conf{'putSpamHeader'}) {

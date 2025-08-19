@@ -16,20 +16,20 @@ function showToolTip(el, e, fulltxt) {
         }
 	var xoffset = 5;
 	var yoffset = 0;
-	
+
 	var position = el.offset();
 	if (e) {
 		position['left'] = e.pageX;
 		position['top'] = e.pageY;
 	}
-	
+
 	$("#tooltip").html(txt);
 	var width = $("#tooltip").outerWidth();
 	var height = $("#tooltip").outerHeight();
-	
+
 	var fullwidth = $("#container").width();
 	var fullheight = $("#container").height();
-	
+
 	if (position['left'] + xoffset + width > fullwidth) {
 		position['left'] = position['left'] - width - xoffset;
 	} else {
@@ -46,7 +46,7 @@ function showToolTip(el, e, fulltxt) {
         if (position['top'] < 0) {
                 position['top'] = 0;
         }
-	
+
 	$("#tooltip").css(position);
 	$("#tooltip").show();
 }

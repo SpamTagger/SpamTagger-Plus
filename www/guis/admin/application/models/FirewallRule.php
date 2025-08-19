@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Firewall access
  */
 
@@ -18,29 +18,29 @@ class Default_Model_FirewallRule
         'allowed_ip' => '',
         'auth' => '',
      );
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -48,7 +48,7 @@ class Default_Model_FirewallRule
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -72,12 +72,12 @@ class Default_Model_FirewallRule
         $this->getMapper()->find($id, $this);
         return $this;
     }
-    
+
     public function findByService($service) {
     	$this->getMapper()->findByService($service, $this);
     	return $this;
     }
-   
+
     public function save()
     {
         return $this->getMapper()->save($this);

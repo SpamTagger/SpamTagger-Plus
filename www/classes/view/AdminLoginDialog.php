@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 require_once("system/SystemConfig.php");
 require_once("Auth.php");
 require_once("view/Language.php");
@@ -32,7 +32,7 @@ private $auth_;
  * constructor, if defined, set the posted value and find out the other variables (f.e. domain)
  */
 public function __construct() {
-    
+
   // first, unset any Auth session, this ensure that user is really logged out
   unset($_SESSION['_authsession']);
   // get global objects instances
@@ -42,7 +42,7 @@ public function __construct() {
   if (isset($_REQUEST['username'])) {
     $this->username_ = $_REQUEST['username'];
     $this->username_ = str_replace('\'', '\\\'', $this->username_); // avoid problems with ' in usernames..
-  
+
     $this->auth_ = AuthManager::getAuthenticator('admin');
     $this->auth_->create(null);
   } else {
@@ -112,7 +112,7 @@ public function printStatus()
   if ($this->auth_->getStatus() == -3) {
     return "<font color=\"red\">".$lang->print_txt('BADLOGIN')."</font>";
   } else if ($this->auth_->getStatus() == -2) {
-    return "<font color=\"red\">".$tlang->print_txt('SESSIONEXPIRED')."</font>";        
+    return "<font color=\"red\">".$tlang->print_txt('SESSIONEXPIRED')."</font>";
   }
   return "";
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -21,7 +21,7 @@
           <tr id="connectorform">
           <?php echo $this->partial('forms/domain/userauthentication/'.strtolower($connector).'Form.phtml', array('form' => $this->form,'t' => $this->t, 'message' => $this->message, 'domain' => $this->domain, 'images_path' => $this->images_path)); ?>
            </tr>
-           
+
           <tr>
             <td colspan="2"><hr /></td>
           </tr>
@@ -29,7 +29,7 @@
           <?php echo $this->InputRow($this->form->getElement($f));?>
           <?php }?>
           <?php echo $this->SubmitRow($this->form->getElement('submit'));?>
-          
+
           <tr>
             <td colspan="2"><hr /></td>
           </tr>
@@ -43,6 +43,6 @@
           <tr id="settingstest">
             <td colspan="2"></td>
           </tr>
-          
+
        </table>
 </fieldset>

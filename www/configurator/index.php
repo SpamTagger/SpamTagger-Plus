@@ -37,7 +37,7 @@
     <style>
       body {
       }
-  
+
     </style>
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/main.css">
@@ -68,7 +68,7 @@
       h1 small {
       color: white;
       }
-      
+
       .progress {
       position: relative;
       }
@@ -81,9 +81,9 @@
       background: -webkit-linear-gradient(-45deg,  #741864 0%,#7db9e8 100%); /* Chrome10-25,Safari5.1-6 */
       background: linear-gradient(135deg,  #741864 0%,#7db9e8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
       filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#741864', endColorstr='#7db9e8',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-      
+
       }
-      
+
       .progress span {
       position: absolute;
       display: block;
@@ -108,7 +108,7 @@
       height: 6em;
       padding: 10px 30px 10px 30px;
       }
-      
+
     </style>
   </head>
   <body class="container-fluid">
@@ -128,7 +128,7 @@
   'baseurl' => array('page' => 'baseurl.inc', 'prev' => 'hostid', 'next' => 'ending', 'sesstep' => 'baseurl', 'title' => 'Change Base URL', 'progress' => '84'),
   'ending' => array('page' => 'ending.inc', 'prev' => 'baseurl', 'next' => '', 'sesstep' => 'ending', 'title' => 'Some tips before you go !', 'progress' => '100')
   );
-  
+
   $validStep = $infoPage['welcome'];
   if (isset($_GET['step'])) {
     if (array_key_exists($_GET['step'], $infoPage)) {
@@ -150,7 +150,7 @@
       echo "<script>alert('Please valid each step the first time !');</script>";
     }
   }
-  
+
   ?>
     <header class="text-center row">
       <h1><img src="img/header_config_assistant.png" title="SpamTagger logo" alt="SpamTagger logo"/>
@@ -169,7 +169,7 @@
 	<?php } ?>
       </div>
       <div class="col-md-8">
-	<div class="jumbotron">  
+	<div class="jumbotron">
 	  <?php require($pagePath . $validStep['page']); ?>
 	</div>
 	<div class="progress" style="height: 3vh">

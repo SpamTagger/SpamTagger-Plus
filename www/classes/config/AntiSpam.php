@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
  require_once('helpers/PrefHandler.php');
- 
+
 /**
  * This class is only a settings wrapper for the antispam configurations
  */

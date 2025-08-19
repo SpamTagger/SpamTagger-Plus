@@ -17,7 +17,7 @@ var processTimers = new Array();
 var processreloadtime = 2000;
 
 $(document).ready(function(){
-	
+
 	$(".stopbutton").hover(
 	   function(event) {
 		   $(this).attr( 'src', images_path+"/stop_hover.gif");
@@ -42,12 +42,12 @@ $(document).ready(function(){
 			$(this).attr( 'src', images_path+"/restart.gif");
 		}
 	);
-	
 
-	$(".hostbloc").each(function(index) { 
-		 loadHost($(this).attr('id')); 
+
+	$(".hostbloc").each(function(index) {
+		 loadHost($(this).attr('id'));
     });
-	
+
 	$(".pagehead").click(function() {
 		for (t in hostTimers) {
 			clearTimeout(hostTimers[t]);
@@ -76,7 +76,7 @@ function loadHost(blocid) {
       }
    }
    hosturl = thisurl+'/hoststatus/slave/'+id;
-   
+
    if (moreTypes[id]) {
 	   hosturl += '/t/';
 	   for (m in moreTypes[id]) {
@@ -110,7 +110,7 @@ function loadHost(blocid) {
             	searchstring = new RegExp("host_\\d+_graph_\\S+");
             	matches = searchstring.exec($(this).attr('class'));
             	if (matches && matches.length > 0) {
-            	  gid = matches[0];	            	
+            	  gid = matches[0];
             	  if (moreStatus[gid]) {
             		 $("."+gid).show();
                          $("."+gid+'_link').hide();
@@ -122,7 +122,7 @@ function loadHost(blocid) {
             });
             if (moreStatus['procadvanced']) {
             	$(".procadvanced").show();
-            	$(".notprocadvanced").hide();         	
+            	$(".notprocadvanced").hide();
             } else {
             	$(".procadvanced").hide();
             	$(".notprocadvanced").show();
@@ -175,7 +175,7 @@ function hideGraph(id) {
 function stopstart(action, slave, process) {
 	statustextid = slave+'_'+process+'_pstatus';
 	$("."+statustextid).html(loadingimg);
-	
+
 	url = baseurl+'/monitorstatus/restartservice/s/'+slave+'/p/'+process+'/a/'+action;
 	//alert(url);
 	statusrequest = $.ajax({
@@ -191,14 +191,14 @@ function stopstart(action, slave, process) {
       	  $("."+statustextid).html('timed out - '+textStatus+' - '+errorThrown);
         }
 	});
-	
+
 	showStatus(slave, process);
 }
 
 function showStatus(slave, process) {
 	statustextid = slave+'_'+process+'_pstatus';
 	//$("#"+statustextid).html(loadingimg);
-	
+
 	url = baseurl+'/monitorstatus/showprocess/s/'+slave+'/p/'+process;
 	statusrequest = $.ajax({
 		  type: "GET",
@@ -221,7 +221,7 @@ function showStatus(slave, process) {
     	  }
       }
     });
-	
+
 }
 
 function showAdvancedProcs() {
@@ -241,17 +241,17 @@ function showSpool(slave, spool) {
     var WindowObjectReference = window.open(thisurl+'/viewspool/slave/'+slave+'/spool/'+spool, '', 'width=' + viewWidth
 				+ ',height=' + viewHeight
 				+ ',toolbar=0,resizable=1,status=0,scrollbars=yes');
-				
+
 }
 
 function alignHostStats(blocid) {
-	
+
 	stats_block = $('#'+blocid+' .hostpiestatsbox').height();
 	table_block = $('#'+blocid+' .hoststatstable').height();
-	
+
 	//alert('stats_block: '+stats_block+'  => table_bloc: '+table_block);
 	top_margin = Math.floor((stats_block - table_block ) / 2);
-	
+
 	$('#'+blocid+' .hoststatstable').css('margin-top', top_margin);
 }
 
@@ -269,7 +269,7 @@ function setMoreMode(host, more, mode) {
 	}
 	moreModes[host][more] = mode;
 	clearTimeout(hostTimers[host]);
-	loadHost(''+host);	   
+	loadHost(''+host);
 }
 
 function setMorePeriod(host, more, period) {
@@ -278,5 +278,5 @@ function setMorePeriod(host, more, period) {
 	}
 	morePeriods[host][more] = period;
 	clearTimeout(hostTimers[host]);
-	loadHost(''+host);  
+	loadHost(''+host);
 }

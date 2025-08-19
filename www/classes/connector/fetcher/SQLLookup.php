@@ -5,25 +5,25 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class takes care of fetching addresses in a SQL database
  * They may be multiple addresses, separated by ','
  * @package SpamTagger Plus
  */
  class SQLlookup extends AddressFetcher {
-    
-    
+
+
     public function fetch($username, $domain) {
         $sysconf_ = SystemConfig::getInstance();
         $settings = $domain->getConnectorSettings();
-        
+
         if (! $settings instanceof SQLSettings) {
             return false;
         }
         $dsn = $settings->getDSN();
-        
+
         $query = "SELECT ".$settings->getSetting('email_field')." from ".$settings->getSetting('table');
         $query .= " WHERE ".$settings->getSetting('login_field')."='$username' AND ".$settings->getSetting('domain_field')."='".$domain->getPref('name')."'";
 
@@ -38,13 +38,13 @@
         }
         $res->free();
         $db->disconnect();
-  
+
         return $this->getAddresses();
     }
-    
+
     public function searchUsers($u, $d) {
       require_once('helpers/DataManager.php');
-  
+
       $db_slaveconf = DM_SlaveConfig :: getInstance();
       $query = "SELECT username FROM mysql_auth WHERE username LIKE '".$db_slaveconf->sanitize($u)."%' AND domain='".$db_slaveconf->sanitize($d->getPref('name'))."'";
       $res = $db_slaveconf->getListOfHash($query);
@@ -57,10 +57,10 @@
       }
       return $ret;
    }
-   
+
    public function searchEmails($l, $d) {
       require_once('helpers/DataManager.php');
-      
+
       $db_slaveconf = DM_SlaveConfig :: getInstance();
       if ($d->getPref('name') != '*') {
         $query = "SELECT email FROM mysql_auth WHERE email LIKE '%".$db_slaveconf->sanitize($l)."%@".$db_slaveconf->sanitize($d->getPref('name'))."'";

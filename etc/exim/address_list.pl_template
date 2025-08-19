@@ -40,7 +40,7 @@ while (<>) {
 #    }
     print AFILE "\n";
   }
-}  
+}
 close AFILE;
 
 print "OK ".$ret." - address list saved in $afile\n";

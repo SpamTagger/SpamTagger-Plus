@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Domain general settings form
  */
 
@@ -12,19 +12,19 @@ class Default_Form_DomainGeneral extends Zend_Form
 {
 	protected $_domain;
 	protected $_panelname = 'general';
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 
 	    parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 
 		$this->setAttrib('id', 'domain_form');
@@ -33,20 +33,20 @@ class Default_Form_DomainGeneral extends Zend_Form
             'filters'    => array('StringTrim')));
 	    ## TODO: add specific validator
 	    $panellist->addValidator(new Zend_Validate_Alnum());
-        
+
         foreach ($this->_domain->getConfigPanels() as $panel => $panelname) {
         	$panellist->addMultiOption($panel, $panelname);
         }
         $panellist->setValue($this->_panelname);
         $this->addElement($panellist);
-        
+
         $panel = new Zend_Form_Element_Hidden('panel');
 		$panel->setValue($this->_panelname);
 		$this->addElement($panel);
 		$name = new Zend_Form_Element_Hidden('name');
 		$name->setValue($this->_domain->getParam('name'));
 		$this->addElement($name);
-		
+
 		$domainname = new  Zend_Form_Element_Text('domainname', array(
             'label'   => $t->_('Domain name')." :",
 		    'required' => false,
@@ -54,7 +54,7 @@ class Default_Form_DomainGeneral extends Zend_Form
 	    $domainname->setValue($this->_domain->getParam('name'));
 	    require_once('Validate/DomainName.php');
         $domainname->addValidator(new Validate_DomainName());
-	    $this->addElement($domainname);	
+	    $this->addElement($domainname);
 
 
             $enabledomain = new Zend_Form_Element_Checkbox('enabledomain', array(
@@ -69,7 +69,7 @@ class Default_Form_DomainGeneral extends Zend_Form
             $this->addElement($enabledomain);
 
 
-		
+
 		$alias = new Zend_Form_Element_Textarea('aliases', array(
 		      'label'    =>  $t->_('Aliases')." :",
 		      'title' => $t->_("Add an alias for this domain. Aliases are seen as classical domains by the system"),
@@ -90,8 +90,8 @@ class Default_Form_DomainGeneral extends Zend_Form
 	    $sender->setValue($this->_domain->getPref('systemsender'));
         require_once('Validate/EmailAddressField.php');
         $sender->addValidator(new Validate_EmailAddressField());
-	    $this->addElement($sender);	
-	    
+	    $this->addElement($sender);
+
 	    $falseneg = new  Zend_Form_Element_Text('falseneg_to', array(
 	        'label'    => $t->_('False negative address')." :",
 		    'title' => $t->_("Mail for false negatives (mails which were not detected as spam when they should have been)"),
@@ -100,7 +100,7 @@ class Default_Form_DomainGeneral extends Zend_Form
 	    $falseneg->setValue($this->_domain->getPref('falseneg_to'));
         $falseneg->addValidator(new Zend_Validate_EmailAddress(Zend_Validate_Hostname::ALLOW_LOCAL));
 	    $this->addElement($falseneg);
-	    
+
 	    $falsepos = new  Zend_Form_Element_Text('falsepos_to', array(
 	        'label'    => $t->_('False positive address')." :",
 		'title' => $t->_("Mail for false positives (mails which were detected as spam when they shouldn\'t have been) (sent from analyze button in summaries)"),
@@ -109,7 +109,7 @@ class Default_Form_DomainGeneral extends Zend_Form
 	    $falsepos->setValue($this->_domain->getPref('falsepos_to'));
         $falsepos->addValidator(new Zend_Validate_EmailAddress(Zend_Validate_Hostname::ALLOW_LOCAL));
 	    $this->addElement($falsepos);
-	    
+
 	    $supportname = new  Zend_Form_Element_Text('supportname', array(
 	        'label'    => $t->_('Support name')." :",
 		'title' => $t->_("Name of the person in charge of the support"),
@@ -117,7 +117,7 @@ class Default_Form_DomainGeneral extends Zend_Form
 		    'filters'    => array('StringToLower', 'StringTrim')));
 	    $supportname->setValue($this->_domain->getPref('supportname'));
 	    $this->addElement($supportname);
-	    
+
 	    $supportemail = new  Zend_Form_Element_Text('supportemail', array(
 	        'label'    => $t->_('Support email')." :",
                 'title' => $t->_("Email for release content"),
@@ -126,12 +126,12 @@ class Default_Form_DomainGeneral extends Zend_Form
 	    $supportemail->setValue($this->_domain->getPref('supportemail'));
         $supportemail->addValidator(new Zend_Validate_EmailAddress(Zend_Validate_Hostname::ALLOW_LOCAL));
 	    $this->addElement($supportemail);
-		
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
-		$this->addElement($submit);	
+		$this->addElement($submit);
 	}
-	
+
 	public function setParams($request, $domain) {
 		foreach (array('systemsender', 'falseneg_to', 'falsepos_to', 'supportname', 'supportemail') as $pref) {
 		    $domain->setPref($pref, $request->getParam($pref));

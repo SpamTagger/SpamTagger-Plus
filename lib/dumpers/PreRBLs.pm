@@ -39,7 +39,7 @@ sub get_specific_config
           $hosts = '';
         }
 	$config{'__AVOIDHOSTS__'} = $hosts;
-	
+
 	return %config;
 }
 

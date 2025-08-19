@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a DataManager instance
  */
@@ -20,7 +20,7 @@ class DM_Custom extends DataManager {
 
     public function __construct($host, $port, $username, $password, $database) {
         parent :: __construct();
-        
+
         $this->setOption('HOST', $host);
         $this->setOption('PORT', $port);
         $this->setOption('USER', $username);

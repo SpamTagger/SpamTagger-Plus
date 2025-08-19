@@ -4,14 +4,14 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the main controller for the configuration pages
  */
- 
+
 /**
  * require valid session
  */
-require_once("objects.php"); 
+require_once("objects.php");
 require_once("view/Template.php");
 require_once("view/Form.php");
 global $sysconf_;
@@ -38,7 +38,7 @@ $antispam_ = new AntiSpam();
 $antispam_->load();
 
 if ($antispam_->getPref('enable_warnlists') && $user_->getDomain()->getPref('enable_warnlists')) {
-  $topics['warn'] = array('WARNLISTTOPIC', 'conf_warnlist.tmpl', 'ConfigUserWWList');  
+  $topics['warn'] = array('WARNLISTTOPIC', 'conf_warnlist.tmpl', 'ConfigUserWWList');
 }
 
 /*
@@ -69,7 +69,7 @@ $template_ = new Template($topics[$topic][1]);
 $replace = array(
     "__PRINT_USERNAME__" => $user_->getName(),
     "__LINK_LOGOUT__" => '/logout.php',
-    
+
     "__MENULIST__" => getMenuList(),
     "__THISTOPIC__" => $topic,
     "__TOPIC_TITLE__" => $lang_->print_txt($topics[$topic][0]."TITLE"),
@@ -83,10 +83,10 @@ $template_->output($replace);
 
 
 function getMenuList() {
-  global $template_;	
+  global $template_;
   global $topics;
   global $lang_;
-  
+
   $ret = "";
   foreach ($topics as $topicname => $topic) {
     $t = $template_->getTemplate('MENUITEM');

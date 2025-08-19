@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -28,10 +28,10 @@
          $status = $matches[2];
          $title = $matches[3];
      ?>
-         <img class="statusbullet" src="<?php echo $this->images_path;?>/status_<?php echo ($status == 'critical' ? 'red' : 'orange'); ?>.png" alt="" /><strong><?php echo $this->t->_('Spools')?> :</strong> 
+         <img class="statusbullet" src="<?php echo $this->images_path;?>/status_<?php echo ($status == 'critical' ? 'red' : 'orange'); ?>.png" alt="" /><strong><?php echo $this->t->_('Spools')?> :</strong>
          <a title="<?php echo $title; ?>" href="/admin/monitorstatus"><?php echo $short; ?></a>
        <?php } else { ?>
-         <img class="statusbullet" src="<?php echo $this->images_path;?>/status_green.png" alt="" /><strong><?php echo $this->t->_('Spools')?> :</strong> 
+         <img class="statusbullet" src="<?php echo $this->images_path;?>/status_green.png" alt="" /><strong><?php echo $this->t->_('Spools')?> :</strong>
          <?php echo $this->t->_($this->spools_status)?>
        <?php } ?>
      </li>

@@ -4,16 +4,16 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the top page
  */
- 
+
 /**
  * requires admin session and view
- */ 
+ */
 require_once('admin_objects.php');
 require_once("view/Template.php");
- 
+
 /**
  * session globals
  */

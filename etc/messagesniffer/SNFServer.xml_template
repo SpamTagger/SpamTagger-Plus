@@ -86,25 +86,25 @@
             </database>
 
             <regions>
-            
+
                 <white on-off='on' symbol='0'>
                     <edge probability='-1.0' confidence='0.4'/>
                     <edge probability='-0.8' confidence='1.0'/>
                     <panic on-off='on' rule-range='1000'/>
                 </white>
-            
+
                 <caution on-off='on' symbol='40'>
                     <edge probability='0.4' confidence='0.0'/>
                     <edge probability='0.8' confidence='0.5'/>
                 </caution>
-            
+
                 <black on-off='on' symbol='63'>
                     <edge probability='0.8' confidence='0.2'/>
                     <edge probability='0.8' confidence='1.0'/>
                     <truncate on-off='on' probability='0.9' peek-one-in='5' symbol='20'/>
                     <sample on-off='on' probability='0.8' grab-one-in='5' passthrough='no' passthrough-symbol='0'/>
                 </black>
-            
+
             </regions>
 
             <training on-off='on'>

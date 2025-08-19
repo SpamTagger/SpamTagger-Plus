@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Antivirus configuration
  */
 
@@ -27,29 +27,29 @@ class Default_Model_AntivirusConfig
         'notices_to' => '',
         'scanners' => ''
      );
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -57,7 +57,7 @@ class Default_Model_AntivirusConfig
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -81,12 +81,12 @@ class Default_Model_AntivirusConfig
         $this->getMapper()->find($id, $this);
         return $this;
     }
-   
+
     public function save()
     {
         return $this->getMapper()->save($this);
     }
-    
+
     public function getActiveScanners() {
     	$scanners = array();
     	foreach (preg_split('/\s+/', $this->getParam('scanners')) as $sname) {

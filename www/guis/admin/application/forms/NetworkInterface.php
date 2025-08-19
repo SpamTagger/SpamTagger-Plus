@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Network interface form
  */
 
@@ -12,7 +12,7 @@ class Default_Form_NetworkInterface extends Zend_Form
 {
 	protected $_interfaces = array();
 	protected $_interface;
-	
+
 	public function __construct($interfaces, $interface)
 	{
 	    $this->_interfaces = $interfaces;
@@ -28,15 +28,15 @@ class Default_Form_NetworkInterface extends Zend_Form
 
 	    parent::__construct();
 	}
-	
+
 	public function getInterface() {
 		return $this->_interface;
 	}
-	
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 		$restrictions = Zend_Registry::get('restrictions');
 
@@ -47,13 +47,13 @@ class Default_Form_NetworkInterface extends Zend_Form
             'filters'    => array('StringTrim')));
 	    ## TODO: add specific validator
 	    $iflist->addValidator(new Zend_Validate_Alnum());
-        
+
         foreach ($this->_interfaces as $if) {
         	$iflist->addMultiOption($if->getName(), $if->getName());
         }
         $iflist->setValue($this->_interface->getName());
         $this->addElement($iflist);
-		
+
 
 	$enableConfigurator = new Zend_Form_Element_Checkbox('enable_configurator', array(
             'label'   => $t->_('Enable configurator interface (192.168.1.42)'). " :",
@@ -78,7 +78,7 @@ class Default_Form_NetworkInterface extends Zend_Form
 		if ($restrictions->isRestricted('NetworkInterface', 'address')) {
 			$address->setAttrib('disabled', 'disabled');
 		}
-		
+
 		$virtaddresses = new  Zend_Form_Element_Textarea('virtual_addresses', array(
 				    'label'    => $t->_('Additional IPv4 addresses'). " :",
 				    'required' => false,
@@ -92,7 +92,7 @@ class Default_Form_NetworkInterface extends Zend_Form
 		if ($restrictions->isRestricted('NetworkInterface', 'address')) {
 			$virtaddresses->setAttrib('disabled', 'disabled');
 		}
-		
+
 		$netmask = new  Zend_Form_Element_Text('netmask', array(
 		    'label'    => $t->_('Network mask'). " :",
 		    'required' => false,
@@ -104,7 +104,7 @@ class Default_Form_NetworkInterface extends Zend_Form
 		if ($restrictions->isRestricted('NetworkInterface', 'netmask')) {
 			$netmask->setAttrib('disabled', 'disabled');
 		}
-		
+
 		$gateway = new  Zend_Form_Element_Text('gateway', array(
 		    'label'    => $t->_('Gateway'). " :",
 		    'required' => false,
@@ -116,16 +116,16 @@ class Default_Form_NetworkInterface extends Zend_Form
 		if ($restrictions->isRestricted('NetworkInterface', 'gateway')) {
 			$gateway->setAttrib('disabled', 'disabled');
 		}
-		
+
 		$ifname = new Zend_Form_Element_Hidden('interface');
 		$ifname->setValue($this->_interface->getName());
 		$this->addElement($ifname);
-		
+
 		$ipv4mode = new Zend_Form_Element_Select('ipv4mode', array(
 				            'label'      => $t->_('Configure IPv4')." :",
 				            'required'   => true,
 				            'filters'    => array('StringTrim')));
-		
+
 		$ipv4mode->addMultiOption('disabled', $t->_('Disabled'));
 		$ipv4mode->addMultiOption('static', $t->_('Manually'));
 		$ipv4mode->addMultiOption('dhcp', $t->_('Dynamically through DHCP'));
@@ -134,12 +134,12 @@ class Default_Form_NetworkInterface extends Zend_Form
                         $ipv4mode->setAttrib('disabled', 'disabled');
                 }
 		$this->addElement($ipv4mode);
-		
+
 		$ipv6mode = new Zend_Form_Element_Select('ipv6mode', array(
 						            'label'      => $t->_('Configure IPv6')." :",
 						            'required'   => true,
 						            'filters'    => array('StringTrim')));
-		
+
 		$ipv6mode->addMultiOption('disabled', $t->_('Disabled'));
 		$ipv6mode->addMultiOption('static', $t->_('Manually'));
 		$ipv6mode->addMultiOption('manual', $t->_('Automatically'));
@@ -147,7 +147,7 @@ class Default_Form_NetworkInterface extends Zend_Form
 		$this->addElement($ipv6mode);
 	        if ($restrictions->isRestricted('NetworkInterface', 'ipv6mode')) {
                         $ipv6mode->setAttrib('disabled', 'disabled');
-                }	
+                }
 		$ipv6address = new  Zend_Form_Element_Text('ipv6address', array(
 				    'label'    => $t->_('IPv6 address'). " :",
 				    'required' => false,
@@ -159,7 +159,7 @@ class Default_Form_NetworkInterface extends Zend_Form
 		if ($restrictions->isRestricted('NetworkInterface', 'address')) {
 			$ipv6address->setAttrib('disabled', 'disabled');
 		}
-		
+
 		$ipv6netmask = new  Zend_Form_Element_Text('ipv6netmask', array(
 				    'label'    => $t->_('Prefix length'). " :",
 				    'required' => false,
@@ -171,7 +171,7 @@ class Default_Form_NetworkInterface extends Zend_Form
 		if ($restrictions->isRestricted('NetworkInterface', 'netmask')) {
 			$ipv6netmask->setAttrib('disabled', 'disabled');
 		}
-		
+
 		$ipv6gateway = new  Zend_Form_Element_Text('ipv6gateway', array(
 				    'label'    => $t->_('Gateway'). " :",
 				    'required' => false,
@@ -183,14 +183,14 @@ class Default_Form_NetworkInterface extends Zend_Form
 		if ($restrictions->isRestricted('NetworkInterface', 'gateway')) {
 			$ipv6gateway->setAttrib('disabled', 'disabled');
 		}
-		
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
 		$this->addElement($submit);
 		if ($restrictions->isRestricted('NetworkInterface', 'submit')) {
 			$submit->setAttrib('disabled', 'disabled');
 		}
-				
+
 		$reloadnet = new Zend_Form_Element_Button('relaodnetnow', array(
 		     'label'    => $t->_('Reload network now')));
 		$this->addElement($reloadnet);
@@ -198,14 +198,14 @@ class Default_Form_NetworkInterface extends Zend_Form
 			$reloadnet->setAttrib('disabled', 'disabled');
 		}
 	}
-	
+
 	public function setParams($request, $interface) {
 		$t = Zend_Registry::get('translate');
                 $restrictions = Zend_Registry::get('restrictions');
                 if ($restrictions->isRestricted('NetworkInterface', 'submit')) {
                         throw new Exception('Access restricted');
                 }
-		
+
         if ($request->getParam('ipv4mode') == 'static') {
         	if ($request->getParam('address') == '') {
         		$f = $this->getElement('address');
@@ -227,7 +227,7 @@ class Default_Form_NetworkInterface extends Zend_Form
         } else {
         	$interface->setIPv4Param('mode', 'disabled');
         }
-        
+
         if ($request->getParam('ipv6mode') == 'static') {
         	if ($request->getParam('ipv6address') == '') {
         		$f = $this->getElement('ipv6address');
@@ -242,7 +242,7 @@ class Default_Form_NetworkInterface extends Zend_Form
         	$interface->setIPv6Param('mode', 'static');
         	$interface->setIPv6Param('address', $request->getParam('ipv6address'));
         	$interface->setIPv6Param('netmask', $request->getParam('ipv6netmask'));
-        	$interface->setIPv6Param('gateway', $request->getParam('ipv6gateway'));	
+        	$interface->setIPv6Param('gateway', $request->getParam('ipv6gateway'));
         } elseif ($request->getParam('ipv6mode') == 'manual') {
         	$interface->setIPv6Param('mode', 'manual');
         } else {

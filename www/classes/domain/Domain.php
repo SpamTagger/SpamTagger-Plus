@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
  /**
   * Domain contains a Connector (with AddressFormat and LoginFormat transformers).
   * It inherits from the PrefHandler storage possibilities
@@ -13,23 +13,23 @@
 require_once("helpers/PrefHandler.php");
 require_once("connector/ConnectorSettings.php");
 require_once("connector/LoginFormatter.php");
-  
- /** 
+
+ /**
  * Domain preferences and management
  * This class is mainly a wrapper to the domain object preferences
  * and the different object that it use, such as authentication connectors.
- * 
+ *
  * @package SpamTagger Plus
  */
 class Domain extends PrefHandler {
 
  /**
-  * Domain destination SMTP port 
+  * Domain destination SMTP port
   * This value is taken from the destination field below which is formatted like this 'server/port'
   * @var number
   */
  private $destination_port_ = 25;
- 
+
  /**
   * Domain configuration set with default values (will be stored in domain table)
   * @var array
@@ -37,10 +37,10 @@ class Domain extends PrefHandler {
  private $pref_domain_ = array(
                       'id'                    => 0,
                       'name'                  => '',
-                      'destination'           => '', 
-                      'callout'               => 'false', 
+                      'destination'           => '',
+                      'callout'               => 'false',
                       'altcallout'            => '',
-                      'adcheck'               => 'false', 
+                      'adcheck'               => 'false',
                       'forward_by_mx'         => 'false',
                       'greylist'              => 'false',
                      );
@@ -50,21 +50,21 @@ class Domain extends PrefHandler {
    * @var array
    */
   private $pref_domain_prefs_ = array(
-                      'delivery_type'         => 1, 
-                      'viruswall'             => 1, 
-                      'virus_subject'         => '{Virus?}', 
-                      'spamwall'              => 1, 
+                      'delivery_type'         => 1,
+                      'viruswall'             => 1,
+                      'virus_subject'         => '{Virus?}',
+                      'spamwall'              => 1,
                       'spam_tag'              => '{Spam?}',
                       'contentwall'           => 1,
                       'content_subject'       => '{Content?}',
-                      'auth_type'             => 'local', 
-                      'auth_server'           => 'localhost', 
-                      'auth_modif'            => 'username_only', 
+                      'auth_type'             => 'local',
+                      'auth_server'           => 'localhost',
+                      'auth_modif'            => 'username_only',
                       'auth_param'            => '',
-                      'address_fetcher'       => 'local', 
+                      'address_fetcher'       => 'local',
                       'allow_smtp_auth'       => 0,
-                      'daily_summary'         => 0, 
-                      'weekly_summary'        => 1, 
+                      'daily_summary'         => 0,
+                      'weekly_summary'        => 1,
                       'monthly_summary'       => 0,
                       'language'              => 'en',
                        'gui_displayed_spams'  => '20',
@@ -92,14 +92,14 @@ class Domain extends PrefHandler {
 
   /**
    * Authentication connector object used by the domain
-   * This is used to define how users will be authenticated (remote via imap/pop/ldap etc.. or local via mysql) 
+   * This is used to define how users will be authenticated (remote via imap/pop/ldap etc.. or local via mysql)
    * @var Connector
    */
   private $connector;
-  
+
   /**
    * Login format used for the domain
-   * This is how login entered in the spamtagger interface will be transformed and formatted before being send 
+   * This is how login entered in the spamtagger interface will be transformed and formatted before being send
    * to the server used for the authentication
    * @var LoginFormatter
    */
@@ -109,7 +109,7 @@ class Domain extends PrefHandler {
    * Domain object constructor
    */
   public function __construct() {}
-  
+
   /**
    * Reload domain preferences
    * reload the domain preferences
@@ -127,15 +127,15 @@ class Domain extends PrefHandler {
    */
   public function load($name) {
     global $sysconf_;
-  
+
     $this->addPrefSet('domain', 'd', $this->pref_domain_);
     $this->addPrefSet('domain_pref', 'p', $this->pref_domain_prefs_);
     $this->setPrefSetRelation('p', 'd.prefs');
-  
+
     $use_id = 0;
     if (is_numeric($name)) { $this->setPref('id', $name); $use_id = 1;}
     $matches = array();
-    if (!preg_match('/^[A-Za-z0-9\_\-\.\*]+$/', $name, $matches)) { return false; } // bad domain name 
+    if (!preg_match('/^[A-Za-z0-9\_\-\.\*]+$/', $name, $matches)) { return false; } // bad domain name
 
     $where_clause = "p.id=d.prefs";
     if ($use_id) {
@@ -143,26 +143,26 @@ class Domain extends PrefHandler {
     } else {
       $where_clause .= " AND d.name='".$name."'";
     }
-    if (!$this->loadPrefs("d.id as id, d.name as name, p.id as pid,", $where_clause, true)) { 
+    if (!$this->loadPrefs("d.id as id, d.name as name, p.id as pid,", $where_clause, true)) {
 	$this->formatter_ = LoginFormatter::getFormatter('');
-	return false; 
+	return false;
     }
-  
+
     if (preg_match('/(.+)\/(\d+)/', $this->getPref('destination'), $matches)) {
       $this->setPref('destination', $matches[1]);
       $this->destination_port_ = $matches[2];
-    }     
-  
+    }
+
     $this->formatter_ = LoginFormatter::getFormatter($this->getPref('auth_modif'));
     $this->reloadConnector();
     return true;
   }
-  
+
   /**
    * Reload the connector settings
    * @return     bool  true on success, false on failure
    */
-   public function reloadConnector() {   
+   public function reloadConnector() {
      $this->connector = ConnectorSettings::getConnectorSettings($this->getPref('auth_type'));
      $this->connector->setServerSettings($this->getPref('auth_server'));
      $this->connector->setParamSettings($this->getPref('auth_param'));
@@ -196,18 +196,18 @@ class Domain extends PrefHandler {
     }
     return parent::setPref($pref, $value);
   }
-  
+
   /**
    * Set the destination port
    * Set the value of the destination server SMTP port
    * @param port     number the port number
    * @return         bool   false on failure, true on success
-   */ 
+   */
   public function setPort($port) {
     $this->destination_port_ = $port;
     return true;
   }
-  
+
   /**
    * Get the destination port
    * Get the value of the destination server SMTP port
@@ -241,8 +241,8 @@ class Domain extends PrefHandler {
     	return $ret;
     }
     ## set as default domain if needed
-    if ($sysconf_->getPref('default_domain') == "your_domain" || 
-           $sysconf_->getPref('default_domain') == "" || 
+    if ($sysconf_->getPref('default_domain') == "your_domain" ||
+           $sysconf_->getPref('default_domain') == "" ||
            $sysconf_->getPref('default_domain') == 'localdomain' ) {
        $sysconf_->setPref('default_domain', $this->getPref('name'));
        $sysconf_->save();
@@ -279,7 +279,7 @@ class Domain extends PrefHandler {
     $res = $sysconf_->dumpConfiguration('domains', $this->getPref('name'));
     return $ret;
   }
-  
+
   /**
    * Connector accessor¬
    * @return  ConnectorSettings  ConnectorSettings object
@@ -287,7 +287,7 @@ class Domain extends PrefHandler {
    public function getConnectorSettings() {
     return $this->connector;
    }
-   
+
    /**
     * get the reformatted username
     * @param  $login_given  string  the username given by the user

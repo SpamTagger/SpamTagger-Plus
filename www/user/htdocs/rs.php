@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the force message page
  */
 require_once('variables.php');
@@ -147,7 +147,7 @@ fclose($f);
 
 $headers = array(
    'From' => $destination,
-   'Subject' => 'Report Spam' 
+   'Subject' => 'Report Spam'
 );
 $text = 'Spam not detected:'."\n
 From: ".trim($sender)."
@@ -172,7 +172,7 @@ $params['host']='localhost';
 $params['port']='2525';
 $mail_object = Mail::factory('smtp', $params);
 if ($mail_object->send($destination, $hdrs, $body)) {
-  header("status: 202");  
+  header("status: 202");
   header("HTTP/1.1 202 Accepted");
   echo "MESSAGESENT";
 } else {

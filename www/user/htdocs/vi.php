@@ -4,9 +4,9 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the reasons list display page
- */  
+ */
 
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
   return 200;
@@ -107,7 +107,7 @@ function displayRules() {
   global $spam;
   global $template_;
   global $viewrules;
-  
+
   if (! $viewrules) {
   	return '';
   }
@@ -119,13 +119,13 @@ function displayRules() {
   	$line = $t;
     $line = preg_replace('/__RULE__/', htmlentities($value['description']), $line);
     $line = preg_replace('/__SCORE__/', htmlentities($value['score']), $line);
-    
+
     if ($i++ % 2) {
       $line = preg_replace("/__COLOR1__(\S{7})__COLOR2__(\S{7})/", "$1", $line);
     } else {
       $line = preg_replace("/__COLOR1__(\S{7})__COLOR2__(\S{7})/", "$2", $line);
     }
-    
+
     $full .= $line;
   }
   return $full;
@@ -134,7 +134,7 @@ function displayRules() {
 function displayHeaders() {
   global $viewheaders;
   global $spam;
-  
+
   if (!$viewheaders) {
   	return '';
   }
@@ -148,7 +148,7 @@ function displayHeaders() {
 function displayBody() {
   global $viewbody;
   global $spam;
-  
+
   if (!$viewbody) {
     return '';
   }
@@ -172,7 +172,7 @@ function getLink($var) {
   global $viewbody;
   global $spam;
   global $lang_;
-  
+
   $baseurl = "vi.php?id=".$spam->getData('exim_id')."&a=".$spam->getData('to')."&s=".$_GET['s'];
   $baseurl .= "&lang=".$lang_->getLanguage();
   $vr = $viewrules;
@@ -200,13 +200,13 @@ function getLink($var) {
     }
   }
   $baseurl .= "&vr=$vr&vh=$vh&vb=$vb";
-  return $baseurl;    
+  return $baseurl;
 }
 
 function getMIMEParts() {
   global $spam;
   global $lang_;
-  
+
   $parts = $spam->getPartsType();
   if (count($parts) < 1) {
   	return $lang_->print_txt('NONE');

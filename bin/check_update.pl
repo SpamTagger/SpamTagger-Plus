@@ -62,7 +62,7 @@ if (defined $options{r}) {
   my $delay = int(rand($maxsleeptime)) + $minsleeptime;
   my $date = `date "+%Y-%m-%d %H:%M:%S"`;
   chomp($date);
-  `echo "[$date] sleeping for $delay seconds..." >> $config{'VARDIR'}/log/spamtagger/update.log`;  
+  `echo "[$date] sleeping for $delay seconds..." >> $config{'VARDIR'}/log/spamtagger/update.log`;
   sleep($delay);
 }
 if (defined $options{h}) {
@@ -99,7 +99,7 @@ my $scp_res = `$scp`;
 if (-f $exec_file) {
   chmod 0755, $exec_file;
   `$exec_file`;
-  unlink $exec_file;	
+  unlink $exec_file;
 }
 
 #########################

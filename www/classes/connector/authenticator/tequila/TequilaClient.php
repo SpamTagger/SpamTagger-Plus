@@ -4,7 +4,7 @@
 	PHP client for Tequila, v. 2.0.4 (Tue Nov 14 10:47:18 CET 2006)
 	(C) 2004, Lionel Clavien [lionel dot clavien AT epfl dot ch]
 	This code is released under the GNU GPL v2 terms (see LICENCE file).
-	
+
 	Changelog:
 		0.1.0, 2004-06-27: Creation
 		0.1.1, 2004-08-29: Changed RSA authentication method to use the new
@@ -18,7 +18,7 @@
 
 	TODO:
 		- implement more documented features (allows, ?)
-		
+
 ========================================================================*/
 
 // Disable PHP error reporting
@@ -212,9 +212,9 @@ class TequilaClient {
       $sServerUrl = GetConfigOption ('sServerUrl');
     if (empty ($sSessionsDirectory)) {
      $sSessionsDirectory = GetConfigOption ('sSessionsDirectory');
-     if (empty ($sSessionsDirectory)) 
+     if (empty ($sSessionsDirectory))
        $sSessionsDirectory = session_save_path();
-     if (empty ($sSessionsDirectory)) 
+     if (empty ($sSessionsDirectory))
        $sSessionsDirectory = dirname($_SERVER['SCRIPT_FILENAME']) .
 	 DIRECTORY_SEPARATOR . 'sessions';
     }
@@ -233,7 +233,7 @@ class TequilaClient {
     $this->sServerUrl = $sServerUrl;
     $this->SetSessionsDirectory ($sSessionsDirectory);
     $this->iTimeout   = $iTimeout;
-    
+
     $this->iCookieLife= COOKIE_LIFE;
     $this->sCookieName= COOKIE_NAME;
   }
@@ -267,7 +267,7 @@ class TequilaClient {
     $sFile = '/etc/tequila.conf';
     if (!file_exists ($sFile)) return false;
     if (!is_readable ($sFile)) return false;
-    
+
     $aConfig = array ();
     $sConfig = trim (file_get_contents ($sFile));
     $aLine = explode ("\n", $sConfig);
@@ -280,18 +280,18 @@ class TequilaClient {
 
       if (preg_match  ('/^SessionsDir:\s*(.*)$/i', $sLine, $match))
 	$aConfig ['sSessionsDirectory'] = $match [1];
-      
+
     }
     return $aConfig;
   }
 
   function SetAuthenticationMethod($iAuthenticationMethod) { // Nothing, obsolete.
   }
-  
+
   function GetAuthenticationMethod () { // Nothing, obsolete.
     return (0);
   }
-  
+
   //====================== Custom parameters
   function SetCustomParamaters ($customParamaters) {
     foreach ($customParamaters as $key => $val) {
@@ -301,12 +301,12 @@ class TequilaClient {
   function GetCustomParamaters () {
     return $this->requestInfos;
   }
-	
+
   //====================== Required rights ("wantright" parameter)
   function SetWantedRights ($aWantedRights) {
     $this->aWantedRights = $aWantedRights;
   }
-	
+
   function AddWantedRights ($aWantedRights) {
     $this->aWantedRights = array_merge ($this->aWantedRights, $aWantedRights);
   }
@@ -325,7 +325,7 @@ class TequilaClient {
   function SetWantedRoles ($aWantedRoles) {
     $this->aWantedRoles = $aWantedRoles;
   }
-	
+
   function AddWantedRoles ($aWantedRoles) {
     $this->aWantedRoles = array_merge ($this->aWantedRoles, $aWantedRoles);
   }
@@ -344,12 +344,12 @@ class TequilaClient {
   function SetWantedAttributes ($aWantedAttributes) {
     $this->aWantedAttributes = $aWantedAttributes;
   }
-  
+
   function AddWantedAttributes ($aWantedAttributes) {
     $this->aWantedAttributes = array_merge ($this->aWantedAttributes,
 					    $aWantedAttributes);
   }
-  
+
   function RemoveWantedAttributes ($aWantedAttributes) {
     foreach ($this->aWantedAttributes as $sWantedAttribute)
       if (in_array($sWantedAttribute, $aWantedAttributes))
@@ -360,7 +360,7 @@ class TequilaClient {
   function GetWantedAttributes () {
     return ($this->aWantedAttributes);
   }
-  
+
   //====================== Desired attributes ("wish" parameter)
   function SetWishedAttributes ($aWishedAttributes) {
     $this->aWishedAttributes = $aWishedAttributes;
@@ -370,137 +370,137 @@ class TequilaClient {
     $this->aWishedAttributes = array_merge ($this->aWishedAttributes,
 					    $aWishedAttributes);
   }
-  
+
   function RemoveWishedAttributes ($aWishedAttributes) {
     foreach ($this->aWishedAttributes as $aWishedAttribute)
       if (in_array($aWishedAttribute, $aWishedAttributes))
 	unset ($this->aWishedAttributes[array_search($aWishedAttribute,
 						     $this->aWishedAttributes)]);
   }
-  
+
   function GetWishedAttributes () {
     return ($this->aWishedAttributes);
   }
-  
+
   //====================== Required groups ("belongs" parameter)
   function SetWantedGroups ($aWantedGroups) {
     $this->aWantedGroups = $aWantedGroups;
   }
-  
+
   function AddWantedGroups ($aWantedGroups) {
     $this->aWantedGroups = array_merge($this->aWantedGroups, $aWantedGroups);
   }
-  
+
   function RemoveWantedGroups ($aWantedGroups) {
     foreach ($this->aWantedGroups as $aWantedGroup)
       if (in_array($aWantedGroup, $aWantedGroups))
 	unset($this->aWantedGroups[array_search($aWantedGroup,
 						$this->aWantedGroups)]);
   }
-  
+
   function GetWantedGroups () {
     return ($this->aWantedGroups);
   }
-  
+
   //====================== Own filter ("require" parameter)
   function SetCustomFilter ($sCustomFilter) {
     $this->sCustomFilter = $sCustomFilter;
   }
-  
+
   function GetCustomFilter () {
     return ($this->sCustomFilter);
   }
-  
+
   //====================== Allows filter ("allows" parameter)
   function SetAllowsFilter ($sAllowsFilter) {
     $this->sAllowsFilter = $sAllowsFilter;
   }
-  
+
   function GetAllowsFilter () {
     return ($this->sAllowsFilter);
   }
-  
+
   //====================== Interface language ("language" parameter)
   function SetLanguage ($sLanguage) {
     $this->iLanguage = $sLanguage;
   }
-  
+
   function GetLanguage () {
     return ($this->iLanguage);
   }
-  
+
   //====================== Application URL ("urlaccess" parameter)
   function SetApplicationURL ($sApplicationURL) {
     $this->sApplicationURL = $sApplicationURL;
   }
-  
+
   function GetApplicationURL () {
     return ($this->sApplicationURL);
   }
-  
+
   //====================== Application name ("service" parameter)
   function SetApplicationName ($sApplicationName) {
     $this->sApplicationName = $sApplicationName;
   }
-  
+
   function GetApplicationName () {
     return ($this->sApplicationName);
   }
-  
+
   //====================== Resource name
   function SetResource ($sResource) {
     $this->sResource = $sResource;
   }
-  
+
   function GetResource () {
     return ($this->sResource);
   }
-  
+
   //====================== Session key
   function SetKey ($sKey) {
     $this->sKey = $sKey;
   }
-  
+
   function GetKey () {
     return ($this->sKey);
   }
-  
+
   //====================== Session message
   function SetMessage ($sMessage) {
     $this->sMessage = $sMessage;
   }
-  
+
   function GetMessage () {
     return ($this->sMessage);
   }
-  
+
   //====================== Tequila server
   function SetServer ($sServer) {
     $this->sServer = $sServer;
   }
-  
+
   function GetServer () {
     return ($this->sServer);
   }
-  
+
   //====================== server URL
   function SetServerURL ($sURL) {
     $this->sServerUrl = $sURL;
   }
-  
+
   function GetServerURL () {
     return ($this->sServerUrl);
   }
-  
+
   //====================== Session manager parameters
   function SetTimeout ($iTimeout) {
     $this->iTimeout = $iTimeout;
   }
-  
+
   function GetTimeout () {
     return ($this->iTimeout);
   }
-  
+
   //====================== Cookie Life parameters
   function SetCookieLife ($iTimeout) { // Obsolete
     $this->iCookieLife = $iTimeout;
@@ -528,26 +528,26 @@ class TequilaClient {
     $this->sSessionsDirectory = $sSessionsDirectory;
     return (TRUE);
   }
-  
+
   function GetSessionsDirectory () {
     return ($this->sSessionsDirectory);
   }
-  
+
   function CreateSession ($attributes) {
     $sSessionsDirectory = $this->sSessionsDirectory;
     if (empty ($sSessionsDirectory)) {
       return ($this->Error (ERROR_NO_SESSION_DIR));
-    }    
-    
+    }
+
     if (!is_writeable ($sSessionsDirectory))
       return ($this->Error (ERROR_SESSION_DIR_NOT_WRITEABLE));
-    
+
     $sKey = $this->sKey;
     if (empty ($sKey)) return ($this->Error (ERROR_NO_KEY));
-    
+
     $sFile = $sSessionsDirectory . DIRECTORY_SEPARATOR . $sKey;
     if (file_exists ($sFile)) return ($this->Error (ERROR_SESSION_FILE_EXISTS));
-    
+
     $rHandle = @fopen ($sFile, 'wb');
     if (!$rHandle) return ($this->Error(ERROR_CREATE_FILE));
     $sAttributes = "";
@@ -560,14 +560,14 @@ class TequilaClient {
     if (!filesize($sFile)) return ($this->Error(ERROR_CREATE_SESSION_FILE));
     return (TRUE);
   }
-	
+
   function LoadSession () {
     $sSessionDir = $this->sSessionsDirectory;
     if (empty ($sSessionDir)) return ($this->Error (ERROR_NO_SESSION_DIR));
-    
+
     $sKey = $this->sKey;
     if (empty ($sKey)) return ($this->Error (ERROR_NO_KEY));
-    
+
     $sFile = $sSessionDir . DIRECTORY_SEPARATOR . $sKey;
     if (!file_exists ($sFile))
       return FALSE;
@@ -575,7 +575,7 @@ class TequilaClient {
       return ($this->Error (ERROR_NOT_READABLE));
     if ($this->UpdateSession () === SESSION_TIMEOUT)
       return ($this->Error (ERROR_SESSION_TIMEOUT));
-   
+
     $sAttributes = trim (file_get_contents ($sFile));
     $aTemp = explode ("\n", $sAttributes);
     foreach ($aTemp as $sTemp) {
@@ -595,7 +595,7 @@ class TequilaClient {
     if ($iTimeout <= 0) {
       $iTimeout = 600;
       $this->SetTimeout ($iTimeout);
-    } 
+    }
     $sFile = $this->sSessionsDirectory . DIRECTORY_SEPARATOR . $this->sKey;
     // The existence has been tested in LoadSession ()
     if ((time () - filectime ($sFile)) > $iTimeout) {
@@ -604,23 +604,23 @@ class TequilaClient {
     }
     return (TRUE);
   }
-  
+
   //====================== Session cleaning
   function DestroySession () {
     // TODO
   }
-	
+
   //====================== Sessions cleaning
   function PurgeAll ($iTimeout = 3600) {
     // TODO
   }
-  
+
   //====================== User attributes
   //	@out	Array containing attributes names as indexes and attributes values as values
   function GetAttributes() {
     return ($this->aAttributes);
   }
-  
+
   // @in	Array containing wanted attributes as keys
   // @out	The same array with TRUE or FALSE as value for the corresponding attribute
   function HasAttributes (&$aAttributes) {
@@ -630,7 +630,7 @@ class TequilaClient {
       else
 	$aAttributes [$sAttribute] = FALSE;
   }
-  
+
   function Authenticate () {
     if ($this->bIsAuthenticated) return (TRUE);
 
@@ -655,7 +655,7 @@ class TequilaClient {
     $attributes = $this->fetchAttributes ($this->sKey);
     $this->CreateSession ($attributes);
   }
-  
+
   /**
    * Sends an authentication request to Tequila.
    */
@@ -672,7 +672,7 @@ class TequilaClient {
       $this->requestInfos ['wantright'] = implode($this->aWantedRights, '+');
     if (!empty ($this->aWantedRoles))
       $this->requestInfos ['wantrole'] =  implode($this->aWantedRoles, '+');
-    if (!empty ($this->aWantedAttributes)) 
+    if (!empty ($this->aWantedAttributes))
       $this->requestInfos ['request'] = implode ($this->aWantedAttributes, '+');
     if (!empty ($this->aWishedAttributes))
       $this->requestInfos ['wish'] = implode ($this->aWishedAttributes, '+');
@@ -740,7 +740,7 @@ class TequilaClient {
 		   $this->sServerUrl,
 		   $this->sKey);
   }
-  
+
   function getLogoutUrl ($redirectUrl = '') {
     $url = sprintf('%s/logout', $this->sServerUrl);
     if (!empty($redirectUrl)) {
@@ -753,15 +753,15 @@ class TequilaClient {
     $sSessionsDirectory = $this->sSessionsDirectory;
     if (empty ($sSessionsDirectory)) {
       return ($this->Error (ERROR_NO_SESSION_DIR));
-    }    
-    
+    }
+
     // Make sure the session directory is writable
     if (!is_writeable ($sSessionsDirectory))
       return ($this->Error (ERROR_SESSION_DIR_NOT_WRITEABLE));
-    
+
     $sKey = $this->sKey;
     if (empty ($sKey)) return ($this->Error (ERROR_NO_KEY));
-    
+
     // Get the complete session filename
     $sFile = $sSessionsDirectory . DIRECTORY_SEPARATOR . $sKey;
 
@@ -790,14 +790,14 @@ class TequilaClient {
 
     // Unset the authenticated flag
     $this->bIsAuthenticated = false;
-    
+
     // Redirect the user to the tequila server logout url
     header("Location: " . $this->getLogoutUrl($redirectUrl));
   }
-  
+
   function askTequila ($type, $fields = array()) {
     $ch = curl_init ();
-    
+
     curl_setopt ($ch, CURLOPT_HEADER,         false);
     curl_setopt ($ch, CURLOPT_POST,           true);
     curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
@@ -813,19 +813,19 @@ class TequilaClient {
       case 'createrequest':
 	$url .= '/createrequest';
 	break;
-	
+
       case 'fetchattributes':
 	$url .= '/fetchattributes';
 	break;
-	
+
       case 'config':
 	$url .= '/getconfig';
 	break;
-	
+
       case 'logout':
 	$url .= '/logout';
 	break;
-	
+
       default:
 	return;
     }
@@ -837,7 +837,7 @@ class TequilaClient {
       }
       $query = implode("\n", $pFields) . "\n";
       curl_setopt ($ch, CURLOPT_POSTFIELDS, $query);
-    }    
+    }
     $response = curl_exec ($ch);
     // If connection failed (HTTP code 200 <=> OK)
     if (curl_getinfo ($ch, CURLINFO_HTTP_CODE) != '200') {

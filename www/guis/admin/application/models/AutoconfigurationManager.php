@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Mentor Reka
  * @copyright 2025, SpamTagger
- * 
+ *
  * Auto-configuration Manager
  */
 

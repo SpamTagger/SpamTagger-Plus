@@ -6,7 +6,7 @@
 %org-name% = __ORGNAME__
 %org-long-name% = __ORGNAME__
 %web-site% = __ORGNAME__
- 
+
 ###############################
 ## system wide configuration ##
 ###############################
@@ -104,7 +104,7 @@ Block Unencrypted Messages = __BLOCKUNENCRYPT__
 Allow Password-Protected Archives = __ALLOWPWDARCHIVES__
 Check Filenames In Password-Protected Archives = no
 
-Allowed Sophos Error Messages = 
+Allowed Sophos Error Messages =
 Sophos IDE Dir = /usr/local/Sophos/ide
 Sophos Lib Dir = /usr/local/Sophos/lib
 Monitors For Sophos Updates = /usr/local/Sophos/ide/*ides.zip
@@ -141,7 +141,7 @@ Allow Script Tags = __ALLOWSCRIPT__
 Allow WebBugs = __ALLOWWEBBUGS__
 Ignored Web Bug Filenames = spacer pixel.gif pixel.png gap shim
 Known Web Bug Servers = msgtag.com
-Web Bug Replacement = 
+Web Bug Replacement =
 Allow Object Codebase Tags = __ALLOWCODEBASE__
 Convert Dangerous HTML To Text = no
 Convert HTML To Text = no
@@ -189,8 +189,8 @@ Stored Size Message Report = &StoredContentReport
 Disinfected Report = %report-dir%/disinfected.report.txt
 Inline HTML Signature = %report-dir%/inline.sig.html
 Inline Text Signature = %report-dir%/inline.sig.txt
-Signature Image Filename = 
-Signature Image <img> Filename = 
+Signature Image Filename =
+Signature Image <img> Filename =
 Inline HTML Warning = %report-dir%/inline.warning.html
 Inline Text Warning = %report-dir%/inline.warning.txt
 Sender Content Report = %report-dir%/sender.content.report.txt
@@ -251,7 +251,7 @@ Content Modify Subject = yes
 Content Subject Text = &ContentSubject
 Size Modify Subject = no
 Size Subject Text = &ContentSubject
-Disarmed Subject Text = 
+Disarmed Subject Text =
 Disarmed Modify Subject = no
 Spam Modify Subject = yes
 Spam Subject Text = {ST_SPAM}
@@ -260,7 +260,7 @@ High Scoring Spam Subject Text = {ST_SPAM}
 Warning Is Attachment = yes
 Attachment Warning Filename = AttentionVirus.txt
 Attachment Encoding Charset = ISO-8859-1
-Archive Mail = 
+Archive Mail =
 Missing Mail Archive Is = directory
 
 Send Notices = __SENDNOTICE__
@@ -283,8 +283,8 @@ Spam List Definitions = %etc-dir%/dnsblacklists.conf
 Virus Scanner Definitions = %etc-dir%/virus.scanners.conf
 
 Spam Checks = &SpamWall
-Spam List = 
-Spam Domain List = 
+Spam List =
+Spam Domain List =
 Trusted IPs = __TRUSTEDIPS__
 Spam Lists To Reach High Score = __HIGHSPAMHITS__
 Spam List Timeout = 10
@@ -389,10 +389,10 @@ Log SpamAssassin Rule Actions = no
 
 SpamAssassin Temporary Dir = __VARDIR__/spool/tmp/mailscanner/spamassassin
 SpamAssassin User State Dir =  __VARDIR__/mailscanner/users
-SpamAssassin Install Prefix = 
+SpamAssassin Install Prefix =
 SpamAssassin Site Rules Dir = /etc/mail/spamassassin
 SpamAssassin Local Rules Dir = __SRCDIR__/share/spamassassin
-SpamAssassin Local State Dir = 
+SpamAssassin Local State Dir =
 SpamAssassin Default Rules Dir =  /usr/local/share/spamassassin
 
 DB DSN =

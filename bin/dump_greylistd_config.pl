@@ -60,15 +60,15 @@ sub get_greylist_config
 {
   my $slave_db = DB::connect('slave', 'st_config');
 
-  my %configs = $slave_db->getHashRow("SELECT retry_min, retry_max, expire, avoid_domains 
+  my %configs = $slave_db->getHashRow("SELECT retry_min, retry_max, expire, avoid_domains
                                                                          FROM greylistd_config");
   my %ret;
-  
+
   $ret{'__RETRYMIN__'} = $configs{'retry_min'};
   $ret{'__RETRYMAX__'} = $configs{'retry_max'};
   $ret{'__EXPIRE__'} = $configs{'expire'};
   $ret{'__AVOID_DOMAINS_'} = $configs{'avoid_domains'};
-  
+
   return %ret;
 }
 
@@ -80,7 +80,7 @@ sub dump_domain_to_avoid
    if (! $domains eq "") {
      @domains_to_avoid = split /\s*[\,\:\;]\s*/, $domains;
    }
-   
+
    my $file = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/domains_to_avoid_greylist.list";
    if ( !open(DOMAINTOAVOID, ">$file") ) {
 		$lasterror = "Cannot open template file: $file";
@@ -100,7 +100,7 @@ sub dump_greylistd_file
 	my %greylist_conf = %$href;
 	my $srcpath = $conf->getOption('SRCDIR');
 	my $varpath = $conf->getOption('VARDIR');
-	
+
 	my $template_file = $srcpath."/etc/greylistd/greylistd.conf_template";
 	my $target_file = $srcpath."/etc/greylistd/greylistd.conf";
 
@@ -123,14 +123,14 @@ sub dump_greylistd_file
         foreach my $key (keys %greylist_conf) {
 			$line =~ s/$key/$greylist_conf{$key}/g;
 		}
-		
+
 		print TARGET $line;
 	}
 
 	close TEMPLATE;
 	close TARGET;
 
-        chown $uid, $gid, $target_file;	
+        chown $uid, $gid, $target_file;
 	return 1;
 }
 

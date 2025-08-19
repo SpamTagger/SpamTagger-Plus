@@ -16,7 +16,7 @@ $(document).ready(function(){
     	controller = 'managetracing';
     	quarantineblock = 'tracinglog';
     }
-	
+
     $("#reference").keyup(function(event){
        if ($("#reference").val() == "") {
     	 showHideSearch(1);
@@ -27,12 +27,12 @@ $(document).ready(function(){
     if ($("#reference").val() == "") {
     	showHideSearch(1);
     }
-    
+
     $("#domain").change(function(event){
       enableSearchSubmit();
     });
     enableSearchSubmit();
-    
+
     if (! $("#tracinglog").html()) {
         launchSearch();
     }
@@ -89,7 +89,7 @@ function launchSearch() {
             $('#showSpamOnly').attr('checked', false);
         }
     });
-    
+
     if ($("#reference").val()) {
     	var ref = $("#reference").val();
     	ref = ref.replace(/\//, '-');
@@ -120,7 +120,7 @@ function launchSearch() {
         	$("#"+quarantineblock).html('jserror');
           }
     });
-    
+
     if ($("#dataloading").html()) {
     	setTimeout("launchSearch()", reloaddelay)
     }
@@ -193,7 +193,7 @@ function showHideSearch(status) {
        $("#"+fields[i]).attr("disabled", "disabled");
      }
   };
-  
+
   if (status) {
       $("#dosearch").attr("disabled", "disabled");
   } else {
@@ -207,12 +207,12 @@ function highlightActionIcon(img_row, forced, img_ext, img_path) {
 	  var img1 = "r" + img_row;
 	  var img2 = "v" + img_row;
 	  var img3 = "a" + img_row;
-	  
+
 	  var img_src1 = img_path + '/released' + img_ext + ".png";
 	  if (forced < 1) {
 	    img_src1 = img_path + '/release' + img_ext + ".png";
 	  }
-	  var img_src2 = img_path + '/info' + img_ext + ".png";  
+	  var img_src2 = img_path + '/info' + img_ext + ".png";
 	  var img_src3 = img_path + '/analyse' + img_ext + ".png";
 
 	  var elem = document.getElementById(img1);
@@ -253,7 +253,7 @@ function showHideToolTip(e, show, st, comm) {
 	   if (st == 'vi') { text = vitext; }
 	   if (st == 'sa') { text = satext; }
 	   if (st == 'cl') { text = cltext; }
-	   
+
 	   elem.innerHTML = text;
 	   rExp = /&[a-z]+;/gi;
 	   textcpt = text.replace(rExp, '_');
@@ -265,7 +265,7 @@ function showHideToolTip(e, show, st, comm) {
 	   } else {
 	      offsety = comm;
 	   }
-	   
+
 	   elem.style.top = posy + 10 +"px";
 	   elem.style.left = posx + offsety +"px";
 	   elem.style.display = 'block';
@@ -333,7 +333,7 @@ function showLogExtract(slaveid, msgid) {
    }
    if ($("."+tdid).hasClass('searched')) {
       return;
-   } 
+   }
    $("."+tdid).html(loadingimg);
    url = baseurl+'/managetracing/logextract/s/'+slaveid+'/m/'+msgid;
    //alert(tdid+' -- '+$("."+tdid).html());
@@ -356,7 +356,7 @@ function showLogExtract(slaveid, msgid) {
 function setHandlers() {
    $('.checklog_action').click( function() {
          if ($('.checklog_action').is(':checked')) {
-            $('.checklog_box').attr('checked', true);             
+            $('.checklog_box').attr('checked', true);
          } else {
             $('.checklog_box').attr('checked', false);
          }

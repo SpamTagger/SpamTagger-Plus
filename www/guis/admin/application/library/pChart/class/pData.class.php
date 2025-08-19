@@ -247,7 +247,7 @@
 
    /* Mark all series as drawable */
    function drawAll()
-    { foreach($this->Data["Series"] as $Key => $Value) { if ( $this->Data["Abscissa"] != $Key ) { $this->Data["Series"][$Key]["isDrawable"]=TRUE; } } }    
+    { foreach($this->Data["Series"] as $Key => $Value) { if ( $this->Data["Abscissa"] != $Key ) { $this->Data["Series"][$Key]["isDrawable"]=TRUE; } } }
 
    /* Return the average value of the given series */
    function getSerieAverage($Serie)
@@ -507,7 +507,7 @@
        $this->Data["Series"][$Serie]["Color"]["Alpha"] = 100;
       }
     }
-     
+
    function normalize($NormalizationFactor=100,$UnitChange=NULL,$Round=1)
     {
      $Abscissa = $this->Data["Abscissa"];

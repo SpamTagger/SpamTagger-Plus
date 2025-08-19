@@ -26,8 +26,8 @@ $(document).ready(function(){
 		}
 	}
 	alignStats();
-	
-	$('#globalstatsbloc').hover( 
+
+	$('#globalstatsbloc').hover(
 			function() { countspaused = true; },
 			function() { countspaused = false; });
 });
@@ -36,9 +36,9 @@ function alignStats() {
 	big_block = $('#globalstatsbloc').height();
 	stats_block = big_block - $('#countsbloc'+currentblock+' h1').height();
 	table_block = $('#countsbloc'+currentblock+' .globalstatstable').height();
-	
+
 	top_margin = Math.floor((stats_block - table_block ) / 2) - 10;
-	
+
 	$('#countsbloc'+currentblock+' .globalstatstable').css('margin-top', top_margin);
 }
 
@@ -51,12 +51,12 @@ function loadcounts() {
 		return;
 	}
 	loadingcounts = true;
-	
+
 	if (currentcountstype.length < 1) {
 		currentcountstype = countstype.slice();
 	}
 	curtype = currentcountstype.shift();
-	
+
 	url = baseurl+'/index/globalstats';
 	if (curtype) {
 		url += '/t/'+curtype;
@@ -79,7 +79,7 @@ function loadcounts() {
 					currentcountblocks =  countsblock.slice();
 				}
 				currentblock = currentcountblocks.shift();
-				
+
 			    $("#countsbloc"+currentblock).html(msg);
 			    if (previousblock) {
     			    $("#countsbloc"+previousblock).fadeOut(function() { $("#countsbloc"+previousblock).empty(); });
@@ -109,7 +109,7 @@ function loadstatus() {
 	}
 	loadingstatus = true;
 	$("#globalstatusloaading").html(loadingimg);
-	
+
 	url = baseurl+'/index/globalstatus';
 	statusrequest = $.ajax({
 		  type: "GET",

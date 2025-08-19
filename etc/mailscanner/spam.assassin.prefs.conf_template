@@ -14,8 +14,8 @@ bayes_auto_learn_threshold_nonspam 0.1
 
 bayes_ignore_header X-SpamTagger
 bayes_ignore_header X-SpamTagger-ID
-bayes_ignore_header X-SpamTagger-SpamCheck 
-bayes_ignore_header X-SpamTagger-SpamScore 
+bayes_ignore_header X-SpamTagger-SpamCheck
+bayes_ignore_header X-SpamTagger-SpamScore
 bayes_ignore_header X-SpamTagger-Information
 bayes_ignore_header X-SpamTagger-SPF
 bayes_ignore_header X-Newsl

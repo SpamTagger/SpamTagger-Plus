@@ -1,29 +1,29 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * SMTP callout form
  */
 
-class Default_Form_Domain_AddressVerification_Smtp 
+class Default_Form_Domain_AddressVerification_Smtp
 {
 	protected $_domain;
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 	}
-	
+
 	public function addForm($form) {
 		$name = new Zend_Form_Element_Hidden('connector');
 		$name->setValue('smtp');
 		$form->addElement($name);
-		
+
 		$t = Zend_Registry::get('translate');
-		
+
 		require_once('Validate/SMTPHostList.php');
 		$alternateserver = new  Zend_Form_Element_Text('alternate', array(
 	        'label'    => $t->_('Use alternate server')." :",
@@ -33,11 +33,11 @@ class Default_Form_Domain_AddressVerification_Smtp
         $alternateserver->addValidator(new Validate_SMTPHostList());
 	    $form->addElement($alternateserver);
 	}
-	
+
 	public function setParams($request, $domain) {
 	   $this->setParamsFromArray(array('callout_server' => $request->getParam('alternate')), $domain);
 	}
-	
+
 	public function setParamsFromArray($array, $domain) {
 	   if (isset($array['callout_server'])) {
 			$domain->setParam('altcallout',$array['callout_server']);
@@ -51,7 +51,7 @@ class Default_Form_Domain_AddressVerification_Smtp
 	public function getParams() {
 		return array('callout_server' => $this->_domain->getParam('altcallout'));
 	}
-	
+
 	public function getParamsString($params) {
 		return '';
 	}

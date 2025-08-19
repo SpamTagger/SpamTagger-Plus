@@ -42,7 +42,7 @@ sub get_specific_config
 	$config{'__DOMAINSTOSPF__'} =~ s/\n//g;
 	$config{'__DOMAINSTOSPF__'} =~ s/\s+/ /g;
 	$config{'__WHITERBLS__'} = $row{'whiterbls'} || '';
-	
+
 	return %config;
 }
 

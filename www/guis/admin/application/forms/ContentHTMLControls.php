@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * HTML controls form
  */
 
@@ -19,37 +19,37 @@ class Default_Form_ContentHTMLControls extends ZendX_JQuery_Form
 		   'allow_codebase' => array('text' => 'Codebase objects', 'silent' => 'silent_codebase'),
 		   'allow_webbugs' => array('text' => 'Web Bugs', 'silent' => 'silent_webbugs'),
 		);
-	
+
 	public function __construct($dc,$as) {
 		$this->_dangerouscontent = $dc;
 		$this->_antispam = $as;
 		parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-    	
+
 		$this->setMethod('post');
-		
-		
+
+
 		$this->setAttrib('id', 'contenthtmlcontrols_form');
-	    
+
 		$allowoptions = array('yes' => $t->_('allow'), 'no' => $t->_('block'));
 		$blockoptions = array('no' => $t->_('allow'), 'yes' => $t->_('block'));
 		$disarmoptions = array('yes' => $t->_('allow'), 'no' => $t->_('block'), 'disarm' => $t->_('disarm'));
-		
+
 		foreach ($this->_fields as $mf => $f) {
-			
+
 		  $ff = new Zend_Form_Element_Select($mf, array(
                'label'      => $t->_($f['text'])." :",
                'title' => $t->_("Choose action to perform when this item is detected inside an HTML document"),
                'required'   => true,
                'filters'    => array('StringTrim')));
-        
+
           foreach ($disarmoptions as $lk => $lv) {
              $ff->addMultiOption($lk, $lv);
           }
@@ -66,7 +66,7 @@ class Default_Form_ContentHTMLControls extends ZendX_JQuery_Form
 	       }
 	      $this->addElement($sff);
 		}
-        
+
 		require_once('Validate/IpList.php');
 		$trustednet = new Zend_Form_Element_Textarea('html_wl_ips', array(
 		      'label'    =>  $t->_('Trusted IPs/Networks')." :",
@@ -78,13 +78,13 @@ class Default_Form_ContentHTMLControls extends ZendX_JQuery_Form
 	    $trustednet->addValidator(new Validate_IpList());
 		$trustednet->setValue($this->_antispam->getParam('html_wl_ips'));
 		$this->addElement($trustednet);
-	    
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
 		$this->addElement($submit);
-		
+
 	}
-	
+
 	public function setParams($request, $dc, $as) {
 		foreach ($this->_fields as $mf => $f) {
 			$dc->setParam($mf, $request->getParam($mf));

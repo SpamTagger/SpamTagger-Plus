@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
-  
+
 /**
  * a quarantine is filled with spam
  */
@@ -26,7 +26,7 @@ define ("DEFAULT_MSGS", 20);
  * This is the class that will fetch all spam in the quarantine according to filter criteria
  */
 class SpamQuarantine extends Quarantine {
-  
+
   /**
    * filter criteria
    * @var  array
@@ -46,7 +46,7 @@ class SpamQuarantine extends Quarantine {
                       'order'         => array('date', 'desc'),
                       'page'          => 1
                     );
-                  
+
   /**
    * allowed orders with corresponding column names
    * @var array
@@ -60,7 +60,7 @@ class SpamQuarantine extends Quarantine {
                      'subject'    => 'M_subject',
                      'forced'     => 'forced'
                     );
-                    
+
   protected $order_tags_ = array(
       'date' => 'ODATE',
       'time' => 'OTIME',
@@ -70,7 +70,7 @@ class SpamQuarantine extends Quarantine {
       'subject'    => 'OSUBJECT',
       'forced'     => 'OFORCED'
   );
-                    
+
    private $stats_ = array(
                'msgs'  => 0,
                'spams' => 0,
@@ -83,7 +83,7 @@ class SpamQuarantine extends Quarantine {
                'clean' => 0,
                'pclean' => 0
     );
- 
+
 /**
  * check if user/admin as correct authorization
  * @return   bool  true if authorized, false if not
@@ -91,7 +91,7 @@ class SpamQuarantine extends Quarantine {
 private function isAllowed() {
    global $admin_;
    global $log_;
-   
+
    // at least domain should be set
    if ($this->getFilter('to_domain') == "") {
      return false;
@@ -100,13 +100,13 @@ private function isAllowed() {
    if ( (! $admin_ instanceof Administrator) ) {
      global $user_;
      if ( (! $user_ instanceof User) || (! $user_->hasAddress($this->getSearchAddress()))) {
-        $log_->log('-- user not allowed to access quarantine', PEAR_LOG_WARNING);  
+        $log_->log('-- user not allowed to access quarantine', PEAR_LOG_WARNING);
         return false;
      }
    // if admin, then admin must have right to manage users and to manage this domain
    } else {
      if ( (! $admin_->checkPermissions(array('can_manage_users'))) || (! $admin_->canManageDomain($this->getFilter('to_domain')))) {
-        $log_->log('-- admin not allowed to access quarantine', PEAR_LOG_WARNING); 
+        $log_->log('-- admin not allowed to access quarantine', PEAR_LOG_WARNING);
         return false;
      }
    }
@@ -127,13 +127,13 @@ public function load() {
    if (!$this->isAllowed()) {
     return false;
    }
-   
-   $log_->log('-- searching spam quarantine', PEAR_LOG_INFO); 
-   
+
+   $log_->log('-- searching spam quarantine', PEAR_LOG_INFO);
+
    // required here for sanity checks
    require_once ('helpers/DM_MasterSpool.php');
    $db_masterspool = DM_MasterSpool :: getInstance();
-    
+
    // now we clean up the filter criteria
    if (!is_numeric($this->getFilter('days'))) {
      $this->setFilter('days', DEFAULT_DAYS);
@@ -151,7 +151,7 @@ public function load() {
     $index = substr($this->getFilter('to_local'), 0, 1);
     if (preg_match('/^[0-9]/', $index)) {
       $index = 'num';
-    } 
+    }
     if (preg_match('/^[^a-z0-9]/', $index)) {
       $index = 'misc';
      }
@@ -159,7 +159,7 @@ public function load() {
    if ($this->getFilter('group_quarantines'))  {
      $index = '';
    }
- 
+
    // now prepare the where statement
    // domain and user filters
    if ( (! $admin_ instanceof Administrator) ) {
@@ -208,7 +208,7 @@ public function load() {
    if ($index != "") {
      $table .= "_".strtolower($index);
    }
-   
+
    // get the number of spam found
    $count_query = "SELECT COUNT(DISTINCT exim_id) as count FROM $table WHERE $where";
 
@@ -216,7 +216,7 @@ public function load() {
    if (isset($count_row['count']) && is_numeric($count_row['count'])) {
       $this->setNbElements($count_row['count']);
    }
-    
+
    // and get the spam themselves
    $query = "SELECT date_in, time_in, sender, to_domain, to_user, exim_id, exim_id as id, M_subject, M_date, forced, in_master, store_slave, M_score, M_rbls, M_prefilter, M_globalscore, is_newsletter";
    $query .= " FROM $table WHERE ".$where;
@@ -232,7 +232,7 @@ public function load() {
    }
    $order_query .= ", ".$this->ordered_fields_['time']." ".$order[1];
    $query .= " ORDER BY ".$order_query;
-   
+
    // set the page limit
    $limit = "";
    if (!is_numeric($clean_filters['page'])) {
@@ -250,17 +250,17 @@ public function load() {
      $this->elements_[$spam['exim_id']] = new Spam();
      $this->elements_[$spam['exim_id']]->loadFromArray($spam);
    }
-   
+
    if ($this->getFilter('page') > $this->getNBPages()) {
     $this->setFilter('page', 1);
    }
-   
+
    // get statistics
    $sysconf = SystemConfig::getInstance();
    if (count($sysconf->getSlaves()) < 1) {
      $sysconf->loadSlaves();
    }
-        
+
    $mesgs = 0;
    $today = @getdate();
    $today_date = $today['year'].sprintf('%02d', $today['mon']).sprintf('%02d', $today['mday']);
@@ -277,7 +277,7 @@ public function load() {
        $this->stats_['virus'] += $stats->virus;
        $this->stats_['content'] += $stats->content;
        $this->stats_['clean'] += $stats->clean;
-     } 
+     }
    }
    if ($this->stats_['msgs'] != 0) {
      $this->stats_['pspams'] = (100/$this->stats_['msgs'])*$this->stats_['spams'];
@@ -296,7 +296,7 @@ public function load() {
 public function getHTMLList($to) {
   global $lang_;
   global $user_;
-          
+
   $i = 0;
   $res = "";
   $t = $to->getTemplate('QUARANTINE');
@@ -330,7 +330,7 @@ public function getHTMLList($to) {
     $template = str_replace('__FORCETARGET__', urlencode("/fm.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_slave')."&lang=".$lang_->getLanguage()."&n=".$spam->getCleanData('is_newsletter')), $template);
     $template = str_replace('__REASONSTARGET__', urlencode("/vi.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_slave')."&lang=".$lang_->getLanguage()), $template);
     $template = str_replace('__ANALYSETARGET__', urlencode("/send_to_analyse.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_slave')."&lang=".$lang_->getLanguage()), $template);
-  
+
     $template = str_replace('__MSG_ID__', urlencode($spam->getCleanData('exim_id')), $template);
     $template = str_replace('__STORE_ID__', urlencode($spam->getCleanData('store_slave')), $template);
     $template = str_replace('__NEWS__', $spam->getCleanData('is_newsletter'), $template);
@@ -343,12 +343,12 @@ public function getHTMLList($to) {
       $template = str_replace('__FORCE_ICON__', $to->getDefaultValue('FORCE_IMG'), $template);
       $template = str_replace('__FORCEDCLASS__', 'msgnotforced', $template);
     }
-    
+
     require_once ('helpers/DM_MasterConfig.php');
     $db = DM_MasterConfig::getInstance();
     $query = "select type from wwlists where sender = '".$user_->getPref('pref')."'";
-    $result = $db->getHash($query);   
-    
+    $result = $db->getHash($query);
+
 
     ### BEGIN newsl
 
@@ -378,7 +378,7 @@ public function getHTMLList($to) {
     }
 
     ### END newsl
-    
+
     $res .= $template;
   }
   return  $res;
@@ -402,7 +402,7 @@ public function getStat($type) {
      return $this->stats_[$type];
    }
 }
- 
+
 /**
  * send the summary of the actual quarantine
  * This method actually just pass parameters to the send_summary.pl script and return the result
@@ -414,7 +414,7 @@ public function doSendSummary() {
     return "";
    }
    $sysconf_ = SystemConfig::getInstance();
-   
+
    // create the command string
    $command = $sysconf_->SRCDIR_."/bin/send_summary.pl ".addslashes($this->getSearchAddress())." 0 ".$this->getFilter('days');
    $command = escapeshellcmd($command);
@@ -425,10 +425,10 @@ public function doSendSummary() {
 
    $lang = Language::getInstance('user');
    $tmp = array();
-   
+
    if (preg_match('/SUMSENT (?:to\s*)?(\S+\@\S+)/', $result, $tmp)) {
      return $lang->print_txt_param('SUMSENTTO', $tmp[1]);
-   } 
+   }
    return  $lang->print_txt_param('SUMNOTSENTTO', addslashes($this->getSearchAddress()));
 }
 
@@ -440,10 +440,10 @@ public function doSendSummary() {
 
 public function purge() {
      // First, we do some checks...
-   if (!$this->isAllowed()) {   
+   if (!$this->isAllowed()) {
     return false;
    }
-   
+
    if ($this->getFilter('to_local') != "") {
     $index = strtolower(substr($this->getFilter('to_local'), 0, 1));
    } else {

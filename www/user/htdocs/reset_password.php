@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the force message page
  */
 
@@ -24,17 +24,17 @@ require_once("user/User.php");
 // get global objects instances
 $sysconf_ = SystemConfig::getInstance();
 
-// first get default domain 
+// first get default domain
 $domain = $sysconf_->getPref('default_domain');
 $username = $_REQUEST['u'];
 $username = str_replace('\'', '\\\'', $username); // avoid problems with ' in usernames..
-    
+
 // if we can find domain in login name given (such as login@domain)
 $ret = array();
 if (preg_match('/(.+)[@%](\S+)$/', $username, $ret)) {
   $domain = $ret[2];
 }
-   
+
 // if the domain is explicitly set in the REQUEST
 if (isset($_REQUEST['domain']) && in_array($_REQUEST['domain'], $sysconf_->getFilteredDomains())) {
   $domain = $_REQUEST['domain'];
@@ -55,7 +55,7 @@ $message = "NONLOCALDOMAIN";
 if ($user->isLocalUser()) {
     $message = $user->resetLocalPassword();
 }
- 
+
 $lang_ = Language::getInstance('user');
 if (isset($_REQUEST['lang'])) {
   $lang_->setLanguage($_REQUEST['lang']);

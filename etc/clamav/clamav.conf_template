@@ -1,5 +1,5 @@
 LogFile __VARDIR__/log/clamav/clamav.log
-DatabaseDirectory __VARDIR__/spool/clamav 
+DatabaseDirectory __VARDIR__/spool/clamav
 LocalSocket __VARDIR__/run/clamav/clamd.sock
 
 #LogFileMaxSize 2M

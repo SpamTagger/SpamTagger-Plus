@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Quarantined spam mapper
  */
 
@@ -87,7 +87,7 @@ class Default_Model_QuarantinedSpamMapper
                    $partition = $first - 97;
                 } else if ( $first >= 48 && $first <= 57 ) {
                    $partition = 26;
-                } 
+                }
                        if ($this->_table != '' && $this->_table != 'spam') {
 				$query->where('partition = ?', $partition);
                        }
@@ -98,7 +98,7 @@ class Default_Model_QuarantinedSpamMapper
 				$domain = new Default_Model_Domain();
 				$domain->findByName($params['domain']);
 				$query->where('domain = ?', $domain->getId());
-		    } else { 
+		    } else {
 			    $query->where('to_domain = ?', $params['domain']);
 		    }
 		}
@@ -111,7 +111,7 @@ class Default_Model_QuarantinedSpamMapper
 		if (isset($params['forced']) && $params['forced'] != "") {
 			$query->where('forced != 1');
 		}
-		if (isset($params['td']) && isset($params['td']) && isset($params['tm']) && isset($params['tm']) 
+		if (isset($params['td']) && isset($params['td']) && isset($params['tm']) && isset($params['tm'])
 		  && isset($params['fd']) && isset($params['fd']) && isset($params['fm']) && isset($params['fm'])
 		   ) {
                         $fromdate = new Zend_Date(array('year' => $params['fy'], 'month' => $params['fm'], 'day' => $params['fd']));
@@ -126,7 +126,7 @@ class Default_Model_QuarantinedSpamMapper
                         }
                         if ($fromdate > $today) {
                                 $fromdate = new Zend_Date(array('year' => $params['fy']-1, 'month' => $params['fm'], 'day' => $params['fd']));
-                        } 
+                        }
                         $sysconf = new Default_Model_SystemConf;
                         $sysconf->load();
                         $maxdays = $sysconf->getParam('days_to_keep_spams');
@@ -173,9 +173,9 @@ class Default_Model_QuarantinedSpamMapper
 		} else if (!empty($params['showNewslettersOnly'])) {
 		    $query->where('is_newsletter = ?', 1);
 		}
-                
+
 		$this->buildBaseFetchAll($query, $params);
-		 
+
 		$nbspams = 0;
 		#echo $query."<br />";
 		$row = $this->getDbTable()->fetchRow($query);
@@ -194,7 +194,7 @@ class Default_Model_QuarantinedSpamMapper
 
 		if ($this->_table != '' && $this->_table != 'spam') {
 			$this->getDbTable()->setTableName($this->_table);
-		} 
+		}
 		$query = $this->getDbTable()->select();
 		$this->buildBaseFetchAll($query, $params);
 
@@ -212,16 +212,16 @@ class Default_Model_QuarantinedSpamMapper
 
 		## possible orders
 		$orders = array(
-            'date' => 'date_in, time_in', 
-            'to' => 'to_user, to_domain', 
-            'from' => 'sender', 
-            'subject' => 'M_Subject', 
+            'date' => 'date_in, time_in',
+            'to' => 'to_user, to_domain',
+            'from' => 'sender',
+            'subject' => 'M_Subject',
             'globalscore' => 'M_globalscore'
             );
         if ($this->_table != '' && $this->_table != 'spam') {
 			$orders['date'] = 'date_in';
 			$orders['to'] = 'to_user';
-		} 
+		}
 
             ## set order
             if (isset($params['orderfield']) && array_key_exists($params['orderfield'], $orders) && $params['orderorder']) {
@@ -254,7 +254,7 @@ class Default_Model_QuarantinedSpamMapper
                 }
             	$entries[] = $entry;
             }
-            
+
             if (!empty($params['showSpamOnly'])) {
                 foreach ($entries as $key => $element) {
                     if ($element->getParam('is_newsletter') == '1') {
@@ -269,7 +269,7 @@ class Default_Model_QuarantinedSpamMapper
                     }
                 }
             }
-            
+
             return $entries;
 	}
 

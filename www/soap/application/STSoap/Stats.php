@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  */
 
-class STSoap_Stats 
+class STSoap_Stats
 {
 
  /**
@@ -16,12 +16,12 @@ class STSoap_Stats
    * @return array
    */
 	static public function Logs_StartGetStat($params) {
-		
+
 		$stats_id = 0;
-		
+
 		require_once('SpamTagger/Config.php');
     	$stconfig = SpamTagger_Config::getInstance();
-    	
+
     	if (!isset($params['what'])
     	        || !$params['datefrom'] || !preg_match('/^\d{8}$/', $params['datefrom'])
     	        || !$params['dateto'] || !preg_match('/^\d{8}$/', $params['dateto']) ) {
@@ -32,19 +32,19 @@ class STSoap_Stats
     	if (isset($params['fulldays']) && $params['fulldays']) {
     		$cmd .= " -f";
     	}
-    	
+
     	if (isset($params['search_id']) && $params['search_id']) {
     		$stats_id = $params['search_id'];
     	} else {
             $stats_id = md5(uniqid(mt_rand(), true));
     	}
-    	
+
         $cmd .= "> ".$stconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id." &";
         $res = `$cmd`;
 	`echo '$cmd' > /tmp/test.tmp`;
     	return array('search_id' => $stats_id, 'cmd' => $cmd) ;
 	}
-	
+
   /**
    * This function will fetch stats results
    *
@@ -58,15 +58,15 @@ class STSoap_Stats
 			return array('error' => 'no such results');
 		}
 		$stats_id = $params['search_id'];
-		
+
 		require_once('SpamTagger/Config.php');
     	$stconfig = SpamTagger_Config::getInstance();
-    	
+
 		$file = $stconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id;
 		if (!file_exists($file)) {
 			return array('error' => 'no such results');
 		}
-		
+
 		$lines = file($file);
 		$res = array('message' => 'search running');
 		$pid = 0;
@@ -112,10 +112,10 @@ class STSoap_Stats
                           $data_res = $lines;
 			}
 		}
-               
+
                 foreach ($data_res as $line) {
                    $res['data'][] = utf8_encode($line);
-                } 
+                }
 		return $res;
 	}
   /**
@@ -132,12 +132,12 @@ class STSoap_Stats
 		$stats_id = $params['search_id'];
 	    require_once('SpamTagger/Config.php');
     	$stconfig = SpamTagger_Config::getInstance();
-    	
+
 		$file = $stconfig->getOption('VARDIR')."/run/spamtagger/stats_search/".$stats_id;
 		if (!file_exists($file)) {
 			return array('error' => 'no such results');
 		}
-		
+
 		$lines = file($file);
 		$pid = 0;
 		foreach ($lines as $line) {

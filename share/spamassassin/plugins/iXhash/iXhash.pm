@@ -137,7 +137,7 @@ sub ixhashtest {
 	# see http://issues.apache.org/SpamAssassin/show_bug.cgi?id=3828#c123
 	my $oldalarm = 0;
 	my $timer = Mail::SpamAssassin::Timeout->new({ secs => $permsgstatus->{main}->{conf}->{'ixhash_timeout'}});
-	
+
 	my $time_err = $timer->run_and_catch(sub {
 		# create a temporary file unless we are to use only Perl code and we don't find a hash value in metadata
 		# If we use the system's 'tr' and 'md5sum' utilities we need this.
@@ -154,7 +154,7 @@ sub ixhashtest {
 				dbg ("IXHASH: Not writing body to temporary file - reusing stored hashes");
 			}
 		}
-		
+
 
 		my $digest = compute1sthash($permsgstatus,$body, $tmpfile);
 		if ($digest){
@@ -168,10 +168,10 @@ sub ixhashtest {
 					$hits = 1 if $rr->address =~ /^127\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
 				}
 			}
-		}			
+		}
 		# Only go ahead if $hits ist still 0 - i.e hash #1 didn't score a hit
 		if ($hits == 0 ){
-			$digest = compute2ndhash($permsgstatus,$body, $tmpfile);			
+			$digest = compute2ndhash($permsgstatus,$body, $tmpfile);
 			if ($digest){
 				dbg ("IXHASH: Now checking $digest.$dnszone");
 				# Now check via DNS query
@@ -185,9 +185,9 @@ sub ixhashtest {
 				} # end if $answer
 			} # end if $digest
 		} # end if $hits
-		
+
 		if ( $hits == 0 ){
-			$digest = compute3rdhash($permsgstatus,$body, $tmpfile);			
+			$digest = compute3rdhash($permsgstatus,$body, $tmpfile);
 			if (length($digest) == 32){
 				dbg ("IXHASH: Now checking $digest.$dnszone");
 				# Now check via DNS query
@@ -203,7 +203,7 @@ sub ixhashtest {
 		} # end if $hits
 	}  # end of sub{
 	); # end of timer->run_and_catch
-	
+
 	if ($timer->timed_out()) {
 		dbg("IXHASH: ".$permsgstatus->{main}->{conf}->{'ixhash_timeout'}." second timeout exceeded while checking ".$digest.".".$dnszone."!");
 	}
@@ -307,7 +307,7 @@ sub compute2ndhash{
 				chop($digest);
 					dbg ("IXHASH: Computed hash-value ".$digest." via method 2, using system utilities");
 					$permsgstatus->{msg}->put_metadata('X-iXhash-hash-2', $digest) if ($permsgstatus->{main}->{conf}->{'use_ixhash_cache'} == 1) ;
-			
+
 			}
 		}
 		else

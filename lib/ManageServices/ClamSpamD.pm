@@ -25,7 +25,7 @@ use utf8;
 
 our @ISA = "ManageServices";
 
-sub init 
+sub init
 {
 	my $module = shift;
 	my $class = shift;
@@ -61,7 +61,7 @@ sub config
 		'checktimer'	=> 10,
 		'actions'	=> {},
 	};
-	
+
 	return $config;
 }
 
@@ -69,7 +69,7 @@ sub setup
 {
 	my $self = shift;
 	my $class = shift;
-	
+
 	return 0;
 }
 
@@ -85,12 +85,12 @@ sub mainLoop
 {
 	my $self = shift;
 	my $class = shift;
-	
+
 	my $cmd = $self->{'cmd'};
 	$cmd .= ' --config-file=' . $self->{'conffile'};
 	$self->doLog("Running $cmd", 'daemon');
 	system(split(/ /, $cmd));
-	
+
 	return 1;
 }
 

@@ -38,7 +38,7 @@ $options = array (
 );
 
 require_once('SoapInterface.php');
-  
+
 if(isset($_GET['wsdl'])) {
   handleWSDL();
 } else {
@@ -49,7 +49,7 @@ if(isset($_GET['wsdl'])) {
 function handleSOAP() {
   global $options;
   global $url;
-  
+
   require_once('Zend/Soap/Server.php');
   $server = new Zend_Soap_Server($url);
 
@@ -64,7 +64,7 @@ function handleSOAP() {
 function handleWSDL() {
   global $options;
   global $url;
-  
+
   require_once('Zend/Soap/AutoDiscover.php');
   $autodiscover = new Zend_Soap_AutoDiscover();
 #  $autodiscover->setClass('STSoap_Test');

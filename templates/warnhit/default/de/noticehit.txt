@@ -2,7 +2,7 @@ Subject: SpamTagger Warn/Weisse Liste getroffen
 
 Guten Tag,
 
-Sie haben diese Meldung erhalten, weil der Absender einer Meldung, 
+Sie haben diese Meldung erhalten, weil der Absender einer Meldung,
 die als Spam erkannt wurde, unter __LEVEL__ __LIST__ gestellt wurde.
 
 Empf=E4nger: __TO__

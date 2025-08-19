@@ -1129,7 +1129,7 @@ SpamAssassin Local Rules Dir =
 #SpamAssassin Default Rules Dir = /opt/MailScanner/share/spamassassin
 SpamAssassin Default Rules Dir =
 
-# 
+#
 # Advanced Settings
 # -----------------
 #

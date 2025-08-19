@@ -25,7 +25,7 @@ use utf8;
 
 our @ISA = "ManageServices";
 
-sub init 
+sub init
 {
 	my $module = shift;
 	my $class = shift;
@@ -62,7 +62,7 @@ sub config
 		'checktimer'	=> 10,
 		'actions'	=> {},
 	};
-	
+
 	return $config;
 }
 
@@ -105,7 +105,7 @@ sub setup
 		#$dumped = 1 if system("/usr/bin/pyzor discover 2>&1 >/dev/null");
 	#}
 	#$self->doLog('/usr/bin/pyzor discover failed', 'daemon') unless ($dumped);
-	
+
 	return 1;
 }
 
@@ -121,9 +121,9 @@ sub mainLoop
 {
 	my $self = shift;
 	my $class = shift;
-	
+
 	my $cmd = $self->{'cmd'};
-	open(my $CONF, '<', $self->{'conffile'}) 
+	open(my $CONF, '<', $self->{'conffile'})
 		|| die "Cannot open config file $self->{'conffile'}";
 	while (my $line = <$CONF>) {
 		if ($line =~ m/^#/) {
@@ -132,7 +132,7 @@ sub mainLoop
 			next;
 		} elsif ($line =~ m/([^=]*) *= *(.*)/) {
 			my ($op, $val) = ($1, $2);
-			
+
 			if ($op eq $val || $val eq "yes") {
 				$cmd .= ' --' . $op;
 			} elsif ($val ne "no") {
@@ -146,7 +146,7 @@ sub mainLoop
 
 	$self->doLog("Running $cmd", 'daemon');
 	system(split(/ /, $cmd));
-	
+
 	return 1;
 }
 

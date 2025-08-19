@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Quarantined spam
  */
 
@@ -24,12 +24,12 @@ class Default_Model_QuarantinedSpam
           ### newsl
           'is_newsletter' => '0',
     );
-    
+
 	protected $_mapper;
 	protected $_table = 'spam';
 
         protected $_destination;
-	
+
 	public function __construct() {
 	    $table = SpamTagger_Config::getInstance()->getOption('SPAMTABLE');
 		if ($table != "" && $table != 'spam') {
@@ -38,13 +38,13 @@ class Default_Model_QuarantinedSpam
 			$this->_values['domain'] = 0;
 		}
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		$ret = null;
 		if (array_key_exists($param, $this->_values)) {
@@ -55,7 +55,7 @@ class Default_Model_QuarantinedSpam
 		}
 		return $ret;
 	}
-	
+
     public function getCleanParam($param) {
       $split_fields = array(
         'M_subject' => 80,
@@ -74,11 +74,11 @@ class Default_Model_QuarantinedSpam
 
       return $ret;
     }
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -86,14 +86,14 @@ class Default_Model_QuarantinedSpam
 		}
 		return $ret;
 	}
-		
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-		
+
     public function setMapper($mapper)
     {
         $this->_mapper = $mapper;
@@ -143,29 +143,29 @@ class Default_Model_QuarantinedSpam
         $this->getMapper()->find($todomain, $touser, $exim_id, $this);
         return $this;
     }
-        
+
     public function fetchAllCount($params = NULL) {
     	return $this->getMapper()->fetchAllCount($params);
     }
     public function fetchAll($params = NULL) {
     	return $this->getMapper()->fetchAll($params);
     }
-    
+
     public function getNbPages() {
     	return $this->getMapper()->getNbPages();
     }
     public function getEffectivePage() {
     	return $this->getMapper()->getEffectivePage();
     }
-      
+
     public function save()
-    {	
+    {
         return $this->getMapper()->save($this);
     }
-    
+
     public function delete()
     {
     	return $this->getMapper()->delete($this);
     }
-    
+
 }

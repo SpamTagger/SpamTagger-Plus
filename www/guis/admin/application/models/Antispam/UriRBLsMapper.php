@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * UriRBLs prefilter mapper
  */
 
 class Default_Model_Antispam_UriRBLsMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_Antispam_UriRBLsMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_Antispam_UriRBLs $module)
     {
         $result = $this->getDbTable()->find($id);
@@ -45,7 +45,7 @@ class Default_Model_Antispam_UriRBLsMapper
         	$module->setParam($key, $row[$key]);
         }
     }
-    
+
     public function save(Default_Model_Antispam_UriRBLs $module) {
        $data = $module->getParamArray();
        $res = '';

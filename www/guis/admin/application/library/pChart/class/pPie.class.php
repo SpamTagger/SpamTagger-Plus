@@ -97,7 +97,7 @@
      /* Dump the real number of data to draw */
      $Values = "";
      foreach ($Data["Series"][$DataSerie]["Data"] as $Key => $Value)
-      #{ if ($Value != 0) { $Values[] = $Value; } 
+      #{ if ($Value != 0) { $Values[] = $Value; }
       {
          $Values[] = $Value;
       }
@@ -188,7 +188,7 @@
 
        $Offset = $i + $DataGapAngle; $ID++;
       }
-      
+
      /* Second pass to smooth the angles */
      if ( $SecondPass )
       {
@@ -225,7 +225,7 @@
            $Yc = sin(($i-90)*PI/180) * $Radius + $Y;
 
            if ( $FirstPoint ) { $this->pChartObject->drawLine($Xc,$Yc,$X0,$Y0,$Settings); } { $FirstPoint = FALSE; }
-  
+
            $this->pChartObject->drawAntialiasPixel($Xc,$Yc,$Settings);
           }
          $this->pChartObject->drawLine($Xc,$Yc,$X0,$Y0,$Settings);
@@ -248,7 +248,7 @@
            else
             $this->writePieLabel($Xc,$Yc,$Label,$Angle,$Settings,FALSE);
           }
-  
+
          $Offset = $i + $DataGapAngle; $ID++;
         }
       }
@@ -444,7 +444,7 @@
          $Settings = $SliceColors[$SliceID];
          if ( $Border )
           { $Settings["R"]+= 30; $Settings["G"]+= 30; $Settings["B"]+= 30;; }
-  
+
          $Angle = $SliceAngle[$SliceID][1];
          $Xc = cos(($Angle-90)*PI/180) * $Radius + $X;
          $Yc = sin(($Angle-90)*PI/180) * $Radius*$SkewFactor + $Y;
@@ -470,7 +470,7 @@
          $this->pChartObject->drawLine($Plots[2],$Plots[3],$Plots[2],$Plots[3]- $SliceHeight,array("R"=>255,"G"=>255,"B"=>255));
          $Border = "";
          $Border[] = $Plots[0]; $Border[] = $Plots[1]; $Border[] = $Plots[0]; $Border[] = $Plots[1] - $SliceHeight;
-         $Border[] = $Plots[2]; $Border[] = $Plots[3] - $SliceHeight; $Border[] = $Plots[2]; $Border[] = $Plots[3]; 
+         $Border[] = $Plots[2]; $Border[] = $Plots[3] - $SliceHeight; $Border[] = $Plots[2]; $Border[] = $Plots[3];
          $this->pChartObject->drawPolygon($Border,$Settings);
         }
       }
@@ -487,7 +487,7 @@
 
          $Border = "";
          $Border[] = $Plots[0]; $Border[] = $Plots[1]; $Border[] = $Plots[0]; $Border[] = $Plots[1] - $SliceHeight;
-         $Border[] = $Plots[count($Plots)-2]; $Border[] = $Plots[count($Plots)-1] - $SliceHeight; $Border[] = $Plots[count($Plots)-2]; $Border[] = $Plots[count($Plots)-1]; 
+         $Border[] = $Plots[count($Plots)-2]; $Border[] = $Plots[count($Plots)-1] - $SliceHeight; $Border[] = $Plots[count($Plots)-2]; $Border[] = $Plots[count($Plots)-1];
          $this->pChartObject->drawPolygon($Border,$Settings);
         }
       }
@@ -517,7 +517,7 @@
          $Settings = $SliceColors[$SliceID];
          if ( $Border )
           { $Settings["R"]+= 30; $Settings["G"]+= 30; $Settings["B"]+= 30; }
-  
+
          $Angle = $SliceAngle[$SliceID][1];
          if ( $Angle < 270 && $Angle > 90 )
           {
@@ -599,7 +599,7 @@
            $Yc = sin(($i-90)*PI/180) * $Radius*$SkewFactor + $Y - $SliceHeight;
 
            if ( $FirstPoint ) { $this->pChartObject->drawLine($Xc,$Yc,$X0,$Y0,$Settings); } { $FirstPoint = FALSE; }
-  
+
            $this->pChartObject->drawAntialiasPixel($Xc,$Yc,$Settings);
            if ($i < 270 && $i > 90 ) { $this->pChartObject->drawAntialiasPixel($Xc,$Yc+$SliceHeight,$Settings); }
           }
@@ -1391,7 +1391,7 @@
       {
        $Settings = $SliceColors[$SliceID];  $Settings["NoBorder"] = TRUE;
        $Settings["R"] = $Settings["R"]+$Cf*2; $Settings["G"] = $Settings["G"]+$Cf*2; $Settings["B"] = $Settings["B"]+$Cf*2;
- 
+
        $this->pChartObject->drawPolygon($Plots["TopPoly"],$Settings);
 
        foreach($Plots["AA"] as $Key => $Pos)

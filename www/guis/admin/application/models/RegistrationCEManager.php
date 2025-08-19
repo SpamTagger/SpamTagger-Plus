@@ -8,25 +8,25 @@
  */
 
 class Default_Model_RegistrationCEManager
-{	
+{
 	private $_serial = array('abc1', 'def2', 'ghi3');
-        private $_data = array('first_name'  => '', 
-	'last_name' => '', 
-	'email' => '' , 
-	'company_name' => '', 
-	'address' => '', 
-	'postal_code' => '', 
-	'city' => '', 
-	'country' => '', 
-	'accept_newsletters' => 0, 
-	'accept_releases' => 0, 
+        private $_data = array('first_name'  => '',
+	'last_name' => '',
+	'email' => '' ,
+	'company_name' => '',
+	'address' => '',
+	'postal_code' => '',
+	'city' => '',
+	'country' => '',
+	'accept_newsletters' => 0,
+	'accept_releases' => 0,
 	'accept_send_statistics' => 0);
 
-    
+
 	public function load() {
 		//TODO: implement
 	}
-	
+
 	public function setSerialPart($part, $string) {
 		if (!preg_match('/^[A-Za-z0-9]{4}$/', $string)) {
 			return false;
@@ -61,12 +61,12 @@ class Default_Model_RegistrationCEManager
                return '';
         }
 
-	
+
     public function save()
     {
     	//return Default_Model_Localhost::sendSoapRequest('Config_saveRegistration', $this->getSerialString());
         $this->_data['timeout'] = 200;
         return Default_Model_Localhost::sendSoapRequest('Config_register_ce', $this->_data);
     }
-    	
+
 }

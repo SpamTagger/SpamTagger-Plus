@@ -35,13 +35,13 @@ sub create {
    my $server = shift;
    my $port = shift;
    my $params = shift;
-   
- 
+
+
    my $this = {
            error_text => "No authentication scheme available",
            error_code => -1,
          };
-         
+
   bless $this, "SMTPAuthenticator::NoAuth";
   return $this;
 }

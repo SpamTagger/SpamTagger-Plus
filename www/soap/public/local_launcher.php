@@ -31,6 +31,6 @@ if (!$argv[1]) {
 }
 
 include('STSoap/Services.php');
-$res = STSoap_Services::$argv[1](); 
+$res = STSoap_Services::$argv[1]();
 echo $res;
 ?>

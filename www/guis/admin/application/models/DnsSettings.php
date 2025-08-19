@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * System DNS settings
  */
 
@@ -15,17 +15,17 @@ class Default_Model_DnsSettings
 	protected $_domainsearch = "";
 	protected $_nameservers = array();
 	protected $_heloname = '';
-	
+
 	public function __construct() {
 	}
-	
+
 	public function getDomainSearch() {
 		return $this->_domainsearch;
 	}
     public function setDomainSearch($domainsearch) {
 		$this->_domainsearch = $domainsearch;
 	}
-	
+
 	public function getNameServer($position) {
 		$position = $position - 1;
 		if (isset($this->_nameservers[$position])) {
@@ -33,27 +33,27 @@ class Default_Model_DnsSettings
 		}
 		return '';
 	}
-	
+
 	public function getNameServers() {
 		return $this->_nameservers;
 	}
-	
+
     public function addNameServer($nameserver) {
 		$this->_nameservers[] = $nameserver;
 	}
-	
+
 	public function clearNameServers() {
 		$this->_nameservers = array();
 	}
-	
+
 	public function setHeloName($helo) {
 		$this->_heloname = $helo;
 	}
-	
+
 	public function getHeloName() {
 		return $this->_heloname;
 	}
-    
+
 	public function load() {
 	   if (file_exists($this->_config_file)) {
 	   	  $content = file($this->_config_file);
@@ -73,7 +73,7 @@ class Default_Model_DnsSettings
 	   $config = SpamTagger_Config::getInstance();
 	   $this->setHeloName($config->getOption('HELONAME'));
 	}
-	
+
     public function save()
     {
     	$tmpfile = '/tmp/st_resolv.tmp';
@@ -81,13 +81,13 @@ class Default_Model_DnsSettings
     	if ($this->_domainsearch != '') {
              $txt = 'search '.$this->_domainsearch."\n";
     	}
-    	
+
     	foreach ($this->_nameservers as $ns) {
     		if ($ns != '') {
     			$txt .= 'nameserver '.$ns."\n";
     		}
     	}
-    	
+
         $written = file_put_contents($tmpfile, $txt);
     	if ($written || $txt == '') {
     	   $soapres = Default_Model_Localhost::sendSoapRequest('Config_saveDnsConfig', null);
@@ -96,5 +96,5 @@ class Default_Model_DnsSettings
     	}
     	return 'NOK could not write config file';
     }
-    	
+
 }

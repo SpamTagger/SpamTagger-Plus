@@ -20,7 +20,7 @@ class Api_Model_UserAPI
 	 *   General:
 	 *    user => user name, can be only local part or username with domain in the form of 'username[@%]domain' - cannot be modified
 	 *    domain  => domain the user belongs to - cannot be modified
-	 *  
+	 *
 	 *   Interface display:
 	 *    language =>  preferred language
 	 *
@@ -29,7 +29,7 @@ class Api_Model_UserAPI
 	 *    gui_displayed_spams => integer, number of spams to display per page, should be one of 5, 10, 20, 50 or 100
 	 *    gui_displayed_days => integer, number of day to display in quarantine
 	 *    gui_mask_forced => can be 0 or 1, mask or show messages already forced
-	 *    
+	 *
 	 *   Address group:
 	 *    addresses => comma separated list of email address linked to this user
 	 *
@@ -42,7 +42,7 @@ class Api_Model_UserAPI
             Zend_Registry::get('response')->setResponse(401, 'authentication required');
             return false;
         }
-        
+
         $user = null;
         try {
             $user = $this->findUser($params);
@@ -56,13 +56,13 @@ class Api_Model_UserAPI
         Zend_Registry::get('response')->setResponse(200, 'user '.$user->getParam('username').' in domain '.$user->getParam('domain').' exists');
         return true;
 	}
-	
+
 	public function add($params) {
 		if (!Zend_Registry::isRegistered('user')) {
 			Zend_Registry::get('response')->setResponse(401, 'authentication required');
 			return false;
 		}
-		
+
 		$user = null;
 		try {
 			$user = $this->findUser($params);
@@ -77,13 +77,13 @@ class Api_Model_UserAPI
         Zend_Registry::get('response')->setResponse(200, 'user '.$user->getParam('username').' in domain '.$user->getParam('domain').' added');
         return true;
 	}
-	
+
 	public function edit($params) {
 		if (!Zend_Registry::isRegistered('user')) {
 			Zend_Registry::get('response')->setResponse(401, 'authentication required');
 			return false;
 		}
-		
+
 		$user = null;
 		try {
 			$user = $this->findUser($params);
@@ -98,7 +98,7 @@ class Api_Model_UserAPI
 		Zend_Registry::get('response')->setResponse(200, 'user '.$user->getParam('username').' in domain '.$user->getParam('domain').' edited');
 		return true;
 	}
-	
+
 	public function delete($params) {
 		if (!Zend_Registry::isRegistered('user')) {
 			Zend_Registry::get('response')->setResponse(401, 'authentication required');
@@ -118,7 +118,7 @@ class Api_Model_UserAPI
 		Zend_Registry::get('response')->setResponse(200, 'user '.$user->getParam('username').' in domain '.$user->getParam('domain').' deleted');
 		return true;
 	}
-	
+
 	public function userList($params) {
 		if (!Zend_Registry::isRegistered('user')) {
 			Zend_Registry::get('response')->setResponse(401, 'authentication required');
@@ -145,7 +145,7 @@ class Api_Model_UserAPI
 		Zend_Registry::get('response')->setResponse(200, 'Users', $list);
 		return true;
 	}
-	
+
 	public function show($params) {
 		if (!Zend_Registry::isRegistered('user')) {
 			Zend_Registry::get('response')->setResponse(401, 'authentication required');
@@ -166,7 +166,7 @@ class Api_Model_UserAPI
 		Zend_Registry::get('response')->setResponse(200, 'user '.$user->getParam('username'), $settings);
 		return true;
 	}
-	
+
 	private function findUser($params) {
 		$domain = '';
 		$username = '';
@@ -182,16 +182,16 @@ class Api_Model_UserAPI
 			}
 		}
 		$user = new Default_Model_User();
-		
+
 		$user->find($username, $domain);
 		return $user;
 	}
-	
+
 	private function setupParams($user, $params) {
 		if (isset($params['language']) && preg_match('/^[-a-z_]+$/', $params['language'])) {
 			$user->setPref('language', $params['language']);
 		}
-		
+
 		$added_addresses = array();
 		if (isset($params['addresses'])) {
 		   $as = preg_split('/,/', $params['addresses']);
@@ -203,7 +203,7 @@ class Api_Model_UserAPI
 		   	   }
 		   }
 		}
-		
+
 		if (isset($params['gui_default_address'])) {
 			$addresses = $user->getAddresses();
 			if (!in_array($params['gui_default_address'], $addresses) && !in_array($params['gui_default_address'], $added_addresses)) {
@@ -212,14 +212,14 @@ class Api_Model_UserAPI
 				$user->setPref('gui_default_address', $params['gui_default_address']);
 			}
 		}
-		
+
 		if (isset($params['gui_displayed_spams']) && is_numeric($params['gui_displayed_spams'])) {
 			$user->setPref('gui_displayed_spams', $params['gui_displayed_spams']);
 		}
 		if (isset($params['gui_displayed_days']) && is_numeric($params['gui_displayed_days'])) {
 			$user->setPref('gui_displayed_days', $params['gui_displayed_days']);
 		}
-		
+
 		if (isset($params['gui_mask_forced']) && is_numeric($params['gui_mask_forced'])) {
 			if ($params['gui_mask_forced']) {
 				$user->setPref('gui_mask_forced', 1);
@@ -227,7 +227,7 @@ class Api_Model_UserAPI
 				$user->setPref('gui_mask_forced', 0);
 			}
 		}
-		
+
 		if (!$user->save()) {
 			throw new Exception('Error while saving user data');
 		}
@@ -235,7 +235,7 @@ class Api_Model_UserAPI
 			$user->addAddress($a);
 		}
 	}
-	
+
 	private function getParams($user, $params = array()) {
 		$data = array();
 		$data['username'] = $user->getParam('username');
@@ -246,7 +246,7 @@ class Api_Model_UserAPI
 		$data['addresses'] = array();
 		foreach ($user->getAddresses() as $add) {
        		array_push($data['addresses'], $add);
-		} 
+		}
 		return $data;
 	}
 }

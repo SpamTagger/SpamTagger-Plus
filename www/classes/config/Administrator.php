@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
@@ -30,28 +30,28 @@ class Administrator extends PrefHandler {
 	      'domains' => '',
           'web_template' => 'default'
 	      );
-          
+
   /**
    * password confirmation
    * @var string
    */
   private $confirmation_ = "";
-  
+
   /**
    * password hash backup
    * @var string
    */
   private $password_ = "";
-    
+
   /**
    * domains manageable by administrator
    * @var array
-   */   
+   */
   private $domains_ = array();
 
 /**
  * constructor
- */ 
+ */
 public function __construct() {
      $this->addPrefSet('administrator', 'a', $this->pref_);
 }
@@ -79,7 +79,7 @@ private function addDomain($domain) {
     $this->domains_[$domain] = $domain;
     return true;
   }
-  return false;   
+  return false;
 }
 
 /**
@@ -135,11 +135,11 @@ public function canManageDomain($domain) {
  * @return        boolean true on success, false on failure
  */
 public function load($name) {
-  
+
   if (!is_string($name) || $name == "") {
     return false;
   }
-   
+
   require_once('helpers/DM_SlaveConfig.php');
   $db_slaveconf = DM_SlaveConfig :: getInstance();
   $name = $db_slaveconf->sanitize($name);
@@ -148,7 +148,7 @@ public function load($name) {
   $domains = split(',', $this->getPref('domains'));
   foreach ($domains as $domain) {
     if ($domain != "") {
-     $this->domains_[$domain] = $domain; 
+     $this->domains_[$domain] = $domain;
     }
   }
   $this->password_ = $this->getPref('password');
@@ -175,7 +175,7 @@ public function save() {
  if (!$this->isLoaded() && $this->getPref('password') == "******") {
     return "PLEASEGIVEPASSWORD";
  }
- 
+
  // if password are identical, then save
  if ($this->getPref('password') == $this->confirmation_) {
  	// encrypt password
@@ -183,9 +183,9 @@ public function save() {
  } else {
  	$this->setPref('password', $this->password_);
  }
- 
+
  $where = "username='".$this->getPref('username')."'";
- 
+
  return $this->savePrefs('', $where, '');
 }
 

@@ -41,13 +41,13 @@ sub New {
            varused => ['GAUGE', 'LAST'],
          );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
-  
+
 
   my $this = {
   	 statfile => $statfile,
   	 rrd => $rrd
   };
-  
+
   return bless $this, "RRD::Disk";
 }
 
@@ -55,12 +55,12 @@ sub New {
 sub collect {
   my $this = shift;
   my $snmp = shift;
-  
+
   my %things = (
         rootused => '1.3.6.1.4.1.2021.9.1.9.1',
         varused => '1.3.6.1.4.1.2021.9.1.9.2',
         );
-  
+
   return RRD::Generic::collect($this->{rrd}, $snmp, \%things);
 }
 
@@ -69,13 +69,13 @@ sub plot {
   my $dir = shift;
   my $period = shift;
   my $leg = shift;
-  
+
   my %things = (
         rootused => ['line', '7648EB', '', 'System [/]   ', 'AVERAGE', '%10.2lf %%', ''],
         varused => ['area', 'EB9C48', '', 'Datas  [/var]', 'AVERAGE', '%10.2lf %%', ''],
    );
   my @order = ('varused', 'rootused');
-  
+
   my $legend = "\t\t              Last\t  Average\t\t    Max\\n";
   return RRD::Generic::plot('disk', $dir, $period, $leg, 'Disks usage [%]', 0, 100, $this->{rrd}, \%things, \@order, $legend);
 }

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Message trace
  */
 
@@ -58,7 +58,7 @@ class Default_Model_MessageTrace
         'subject' => 80,
 		);
 		$data = $this->getParam($param);
-		
+
 		if ($param == 'from' || $param == 'tos') {
 			$data = $this->getCleanAddress($data);
 		}
@@ -68,11 +68,11 @@ class Default_Model_MessageTrace
 				$data = preg_replace('/\=\?[^?]{3,15}\?.\?[^?]+\?\=/', $ddata, $data);
 		}
 
-		$ret = htmlentities($data, ENT_COMPAT, "UTF-8");	
+		$ret = htmlentities($data, ENT_COMPAT, "UTF-8");
 		if ($param == 'report') {
 			$ret = preg_replace('/,/', '<br />', $ret);
 		}
-		
+
 		if ($param == 'size' && is_numeric($ret)) {
 			if ($ret > 1000000000) {
 				$ret = ($ret / 1000000000)." ".$t->_('Gb');
@@ -83,7 +83,7 @@ class Default_Model_MessageTrace
 			} else {
 				$ret .= " ".$t->_('bytes');
 			}
-		} 
+		}
 		if (isset($split_fields[$param]) && (strlen($ret) > $split_fields[$param])) {
 			$ret = substr($ret, 0, $split_fields[$param]);
 			$ret .= '...';
@@ -164,7 +164,7 @@ class Default_Model_MessageTrace
 		$this->getMapper()->find($id, $this);
 		return $this;
 	}
-	
+
 	public function loadFromLine($line) {
 		if (preg_match('/^([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)/', $line, $matches)) {
 			$this->setParam('date_in', $matches[1]);
@@ -205,7 +205,7 @@ class Default_Model_MessageTrace
 	public function fetchAll($params = NULL) {
 		return $this->getMapper()->fetchAll($params);
 	}
-	
+
 
 	public function getNbPages() {
 		return $this->getMapper()->getNbPages();

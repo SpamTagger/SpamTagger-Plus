@@ -20,7 +20,7 @@ CREATE TABLE rrd_stats_element (
   PRIMARY KEY (id)
 );
 
-## global                      
+## global
 INSERT INTO rrd_stats_element VALUES(NULL, 1, 'countspams', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedCount + SPAMTAGGER-MIB::globalSpamCount','0','U', 'spams',2,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 1, 'countdangerous', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalVirusCount + SPAMTAGGER-MIB::globalNameCount + SPAMTAGGER-MIB::globalOtherCount','0','U', 'dangerous',1,'area','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 1, 'countoutgoing', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRelayedCount','0','U', 'outgoing',3,'stack','','12.0lf','');
@@ -31,7 +31,7 @@ INSERT INTO rrd_stats_element VALUES(NULL, 2, 'outgoing', 'DERIVE', 'LAST', 'SPA
 INSERT INTO rrd_stats_element VALUES(NULL, 2, 'cleans', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalCleanCount','0','10000', 'cleans',4,'line','','8.2lf','');
 
 
-## sessions                               
+## sessions
 INSERT INTO rrd_stats_element VALUES(NULL, 3, 'countaccepted', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalMsgCount','0','U', 'accepted',3,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 3, 'countrefused', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedCount','0','U', 'refused',1,'area','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 3, 'countdelayed', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalDelayedCount','0','U', 'delayed',2,'stack','','12.0lf','');
@@ -41,7 +41,7 @@ INSERT INTO rrd_stats_element VALUES(NULL, 4, 'refused', 'DERIVE', 'LAST', 'SPAM
 INSERT INTO rrd_stats_element VALUES(NULL, 4, 'delayed', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalDelayedCount','0','10000', 'delayed',3,'line','','8.2lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 4, 'relayed', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalRelayedCount','0','10000', 'relayed',4,'line','','8.2lf','');
 
-## accepted                    
+## accepted
 INSERT INTO rrd_stats_element VALUES(NULL, 5, 'countcleans', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalCleanCount','0','U', 'cleans',3,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 5, 'countspams', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalSpamCount','0','U', 'spams',2,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 5, 'countdangerous', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalVirusCount + SPAMTAGGER-MIB::globalNameCount + SPAMTAGGER-MIB::globalOtherCount','0','U', 'dangerous',1,'area','','12.0lf','');
@@ -71,7 +71,7 @@ INSERT INTO rrd_stats_element VALUES(NULL, 9, 'countratelimited', 'GAUGE', 'LAST
 INSERT INTO rrd_stats_element VALUES(NULL, 10, 'greylisted', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalDelayedGreylistCount','0','10000', 'greylisted',1,'line','','8.2lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 10, 'ratelimited', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalDelayedRatelimitCount','0','10000', 'rate limited',2,'line','','8.2lf','');
 
-## relayed                               
+## relayed
 INSERT INTO rrd_stats_element VALUES(NULL, 11, 'countbyhosts', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRelayedHostCount','0','U', 'by hosts',3,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 11, 'countauthentified', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRelayedAuthenticatedCount','0','U', 'authentified',4,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 11, 'countrefused', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRelayedRefusedCount','0','U', 'refused',2,'stack','','12.0lf','');

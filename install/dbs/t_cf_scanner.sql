@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS scanner;
 CREATE TABLE scanner (
   id				 int(11) NOT NULL AUTO_INCREMENT,
   name				 varchar(40) NOT NULL,
-  comm_name			 varchar(40) NOT NULL, 
+  comm_name			 varchar(40) NOT NULL,
   active			 tinyint(1) NOT NULL DEFAULT '0',
   path				 varchar(200) NOT NULL DEFAULT '/usr/local',
   installed			 tinyint(1) NOT NULL DEFAULT '0',

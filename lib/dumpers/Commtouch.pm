@@ -36,7 +36,7 @@ sub get_specific_config
 	my %row = $db->getHashRow("SELECT ctasdLicense, ctipdLicense FROM Commtouch");
 	$config{'__CTASDLICENSE__'} = $row{'ctasdLicense'};
 	$config{'__CTIPDLICENSE__'} = $row{'ctipdLicense'};
-	
+
 	return %config;
 }
 

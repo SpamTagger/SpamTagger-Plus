@@ -24,12 +24,12 @@ function loadSpool(newparams) {
 	params['spool'] = spool;
 	params['limit'] = limit;
 	params['offset'] = offset;
-	
+
 	for (key in newparams) {
 		params[key] = newparams[key];
 	}
 	offset = params['offset'];
-	
+
 	url = thisurl+'/monitorstatus/viewspool';
 	for(key in params)
 	{
@@ -57,8 +57,8 @@ function loadSpool(newparams) {
 }
 
 function setPage(page) {
-	a = new Array(); 
-	a['offset']=(page-1)*limit; 
+	a = new Array();
+	a['offset']=(page-1)*limit;
 	loadSpool(a);
 }
 
@@ -66,11 +66,11 @@ function registerEvents() {
 	$(".tooltipped").mouseover(function(e) {
 		showToolTip($(this), e);
 	});
-	
+
    $(".tooltipped").mouseout(function() {
 	    hideToolTip();
 	});
-   
+
    $(".queuedelete").click(function(e) {
 	   launchCommand('delete',$(this));
    });

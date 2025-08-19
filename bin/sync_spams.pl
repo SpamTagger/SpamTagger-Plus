@@ -47,13 +47,13 @@ if ($opt && $opt =~ /\-D/) {
 
 # connect to slave database
 my $slave_dbh;
-$slave_dbh = DBI->connect("DBI:mysql:database=st_spool;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock", 
+$slave_dbh = DBI->connect("DBI:mysql:database=st_spool;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
                            "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                or die("CANNOTCONNECTSLAVEDB\n", $slave_dbh->errstr);
 
 # connect to master database
 my $master_dbh;
-$master_dbh = DBI->connect("DBI:mysql:database=st_spool;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}", 
+$master_dbh = DBI->connect("DBI:mysql:database=st_spool;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
 			   "spamtagger", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0})
 		or die("CANNOTCONNECTMASTERDB\n", $master_dbh->errstr);
 
@@ -65,10 +65,10 @@ foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
   }
   my $sth = $slave_dbh->prepare("SELECT * FROM spam_$letter WHERE in_master='0'");
   $sth->execute() or next;
-  if ($debug) { 
+  if ($debug) {
     print $sth->rows." found\n";
   }
-  
+
   while (my $row = $sth->fetchrow_hashref()) {
     # build query
     my $query = "INSERT IGNORE INTO spam_$letter SET ";
@@ -81,7 +81,7 @@ foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
 
     # save in master
     my $res = $master_dbh->do($query);
-    if (!$res) { 
+    if (!$res) {
       if ($debug) {
         print "failed for: ".$row->{exim_id}."\n   with message: ".$master_dbh->errstr."\n   query was: $query\n";
       }
@@ -92,7 +92,7 @@ foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
     # update slave record
     $query = "UPDATE spam_$letter SET in_master='1' WHERE exim_id='".$row->{exim_id}."'";
     $slave_dbh->do($query);
-  } 
+  }
 }
 print "SUCCESSFULL|$total\n";
 #my $sth = $dbh->prepare("SELECT hostname, port, password FROM master");
@@ -104,7 +104,7 @@ sub get_master_config
         $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
                         "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
                 or die("CANNOTCONNECTDB", $dbh->errstr);
- 
+
 	my $sth = $dbh->prepare("SELECT hostname, port, password FROM master");
         $sth->execute() or die("CANNOTEXECUTEQUERY", $dbh->errstr);
 

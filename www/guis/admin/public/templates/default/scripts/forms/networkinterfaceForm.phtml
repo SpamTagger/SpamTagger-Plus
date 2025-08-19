@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -11,11 +11,11 @@
    <fieldset id="ipsettings">
         <?php echo $this->InputRow($this->form->getElement('interface'),array('fieled_only'=>true,'nobox'=>true));?>
        <table class="ftable">
-          <?php echo $this->InputRow($this->form->getElement('ipv4mode'));?> 
+          <?php echo $this->InputRow($this->form->getElement('ipv4mode'));?>
           <tr class="ipv4autoaddress"><td class="flabel"><?php echo $this->t->_('Assigned IPv4 address')?> : </td><td class="fvalue"><?php echo $this->form->getInterface()->getIPv4Param('auto_address');?></tr>
-          
+
           <?php foreach (array('address', 'netmask', 'gateway') as $el) {?>
-              <?php echo $this->InputRow($this->form->getElement($el), array('row_class'=> 'ipv4configs'));?> 
+              <?php echo $this->InputRow($this->form->getElement($el), array('row_class'=> 'ipv4configs'));?>
           <?php }?>
           <?php echo $this->InputRow($this->form->getElement('virtual_addresses'),array('label_addclass'=>'flabeltextarea', 'row_class'=> 'ipv4configs'));?>
 	  <tr><td colspan="2"><hr /></td></tr>
@@ -24,14 +24,14 @@
 
 	  <tr><td colspan="2"><hr /></td></tr>
 
-          <?php echo $this->InputRow($this->form->getElement('ipv6mode'));?> 
+          <?php echo $this->InputRow($this->form->getElement('ipv6mode'));?>
           <tr class="ipv6autoaddress"><td class="flabel"><?php echo $this->t->_('Assigned IPv6 address')?> : </td><td class="fvalue"><?php echo $this->form->getInterface()->getIPv6Param('auto_address');?></tr>
           <?php foreach (array('ipv6address', 'ipv6netmask', 'ipv6gateway')as $el) {?>
-               <?php echo $this->InputRow($this->form->getElement($el), array('row_class'=> 'ipv6configs'));?> 
-          <?php }?>  
-          
+               <?php echo $this->InputRow($this->form->getElement($el), array('row_class'=> 'ipv6configs'));?>
+          <?php }?>
+
         <?php echo $this->SubmitRow($this->form->getElement('submit'));?>
-          
+
        </table>
      </fieldset>
-     
+

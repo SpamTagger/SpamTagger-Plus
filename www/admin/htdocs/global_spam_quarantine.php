@@ -6,11 +6,11 @@
  * @copyright 2025, SpamTagger
  * @abstract This is the global spam quarantine controller
  */
- 
+
 /**
  * requires admin session, and quarantine stuff
  */
-require_once("admin_objects.php"); 
+require_once("admin_objects.php");
 require_once("user/SpamQuarantine.php");
 require_once("view/Template.php");
 require_once("view/Form.php");

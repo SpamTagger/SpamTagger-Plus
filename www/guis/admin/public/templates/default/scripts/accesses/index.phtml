@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -14,7 +14,7 @@
     <ul id="domainnavoptions">
       <li class="domainoptiontop" onclick="javascript:loadurl('<?php echo $this->addurl?>')"><span><a href="<?php echo $this->addurl?>"><?php echo $this->t->_('New administrator');?></a></span><img src="<?php echo $this->images_path?>/domainaddbutton.png" alt="add" /></li>
     </ul>
- 
+
     <div id="searchpanel">
       <form id="searchform" action="">
         <p id="searchlabel"><?php echo $this->t->_('Administrator specific settings')?></p>
@@ -32,16 +32,16 @@
                          'username' => $this->username,
                          'searchurl' => $this->searchurl,
                          't' => $this->t,
-)); ?>   
+)); ?>
     </div>
   </div>
- 
+
   <div id="domaincontentpanel">
     <div id="adminconfigpanel" class="domainconfigpanel">
-  
+
     <p class="descmessage"><?php echo $this->t->_('Please select or add an administrator using the navigation panel on the left')?>.</p>
  <?php echo $this->partial('layouts/message.phtml', array('message' => $this->message, 't' => $this->t)); ?>
     </div>
   </div>
- 
+
 </div>

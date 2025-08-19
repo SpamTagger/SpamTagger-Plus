@@ -5,39 +5,39 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * This is the class takes care of gathering and processing user, domain and system statistics
  */
 class Statistics {
-    
+
   /**
    * object for which to get statistics
    * may be full email address (user), a domain (@domain) or _global
    * @var string
    */
   private $object_ = "";
-  
+
   /**
    * object type (user, domain or system)
    * @var string
    */
   private $object_type_ = "";
-  
+
   /**
    * start date of the statistics
    * may be a full qualified date (YYYYMMDD), a delta of days '-XX' or 'today'
    * @var string
    */
   private $startdate_ = "";
- 
+
   /**
    * stop date of the statistics
    * may be a full qualified date (YYYYMMDD), a delta of days '+XX' or 'today'
    * @var string
    */
-  private $stopdate_ = ""; 
-  
+  private $stopdate_ = "";
+
   /**
    * gathered statistics
    * @var  array
@@ -54,10 +54,10 @@ class Statistics {
                'clean' => 0,
                'pclean' => 0
    );
-   
+
    private $graph_id_;
    private $date_type_ = 'date';
-  
+
 /**
  * constructor
  */
@@ -78,13 +78,13 @@ public function load($object, $startdate, $stopdate) {
    if (!$this->setObject($object)) { return false; }
    if (!$this->setDate('start', $startdate)) { return false; }
    if (!$this->setDate('stop', $stopdate)) { return false; }
-	
+
    // load slave
    $sysconf = SystemConfig::getInstance();
    if (count($sysconf->getSlaves()) < 1) {
      $sysconf->loadSlaves();
    }
-   
+
    // gather stats
    foreach ($sysconf->getSlaves() as $slave) {
      $stats = $slave->getStats($this->object_, $this->startdate_, $this->stopdate_);
@@ -154,7 +154,7 @@ public function setDate($type, $date) {
   if ( ! ($type == 'start' || $type == 'stop') ) {
   	return false;
   }
-  
+
   if ($date == 'today') {
   	$today = @getdate();
     if ($type == 'start') {
@@ -172,7 +172,7 @@ public function setDate($type, $date) {
     $this->stopdate_ = $date;
     return true;
   }
-  
+
   if (preg_match('/^[-+]\d+$/', $date, $matches)) {
     $this->date_type_ = 'period';
   	if ($type == 'start') {
@@ -182,7 +182,7 @@ public function setDate($type, $date) {
     $this->stopdate_ = $date;
     return true;
   }
-  
+
   return false;
 }
 
@@ -201,19 +201,19 @@ public function getDateArray($type) {
 public function getStatInTemplate($template, $tpl_name) {
   global $lang_;
   $t = $template->getTemplate($tpl_name);
-  
+
   $barwidth = $template->getDefaultValue('BARWIDTH');
   if ($barwidth == "" || !is_int($barwidth)) {
   	$barwidth = 300;
   }
-  
+
   $startd = Statistics::getAnyDateAsArray($this->startdate_);
   $stopd = Statistics::getAnyDateAsArray($this->stopdate_);
   $date_string = $lang_->print_txt_mparam('FROMDATETODATE', array($startd['day'], $startd['month'], $startd['year'], $stopd['day'], $stopd['month'], $stopd['year']));
   if ($this->date_type_ == 'period') {
   	$date_string = abs($this->startdate_)." ".$lang_->print_txt('LASTDAYS');
   }
-  
+
   foreach (preg_split('/\n/', $t) as $line) {
   	if (preg_match('/\_\_LANG\_([A-Z0-9]+)\_\_/', $line, $matches)) {
       $line = preg_replace('/\_\_LANG\_([A-Z0-9]+)\_\_/', $lang_->print_txt($matches[1]), $line);
@@ -237,7 +237,7 @@ public function getStatInTemplate($template, $tpl_name) {
   $t = str_replace('__BARWIDTH_CLEAN__', $this->getBarWidth('pclean', $barwidth), $t);
   $t = str_replace('__PIE_GRAPH__', '/stats/'.$this->graph_id_.'_pie.png', $t);
   $t = str_replace('__DATE_STRING__', $date_string, $t);
-    
+
   return $t;
 }
 
@@ -247,7 +247,7 @@ private function getBarWidth($what, $fullwidth) {
   }
   $ratio = $fullwidth / 100;
   if ($what == 'pclean') {
-    return $fullwidth - (ceil($this->stats_['pspams']*$ratio) + ceil($this->stats_['pvirus']*$ratio));	
+    return $fullwidth - (ceil($this->stats_['pspams']*$ratio) + ceil($this->stats_['pvirus']*$ratio));
   }
   if ($what == 'pspams' && (ceil($this->stats_['pspams']*$ratio) + ceil($this->stats_['pvirus']*$ratio)) > $fullwidth) {
     return floor($this->stats_[$what]*$ratio);
@@ -292,7 +292,7 @@ public static function colorToArray($color) {
   $gv = eval("return $g;");
   $b = '0x'.$matches[3];
   $bv = eval("return $b;");
-  
+
   return array($rv, $gv, $bv);
 }
 

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Domain delivery form
  */
 
@@ -12,19 +12,19 @@ class Default_Form_DomainDelivery extends Zend_Form
 {
 	protected $_domain;
 	protected $_panelname = 'delivery';
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 
 	    parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 
 		$this->setAttrib('id', 'domain_form');
@@ -33,20 +33,20 @@ class Default_Form_DomainDelivery extends Zend_Form
             'filters'    => array('StringTrim')));
 	    ## TODO: add specific validator
 	    $panellist->addValidator(new Zend_Validate_Alnum());
-        
+
         foreach ($this->_domain->getConfigPanels() as $panel => $panelname) {
         	$panellist->addMultiOption($panel, $panelname);
         }
         $panellist->setValue($this->_panelname);
         $this->addElement($panellist);
-        
+
         $panel = new Zend_Form_Element_Hidden('panel');
 		$panel->setValue($this->_panelname);
 		$this->addElement($panel);
 		$name = new Zend_Form_Element_Hidden('name');
 		$name->setValue($this->_domain->getParam('name'));
 		$this->addElement($name);
-		
+
 		$domainname = new  Zend_Form_Element_Text('domainname', array(
             'label'   => $t->_('Domain name')." :",
 		    'required' => false,
@@ -54,8 +54,8 @@ class Default_Form_DomainDelivery extends Zend_Form
 	    $domainname->setValue($this->_domain->getParam('name'));
 	    require_once('Validate/DomainName.php');
         $domainname->addValidator(new Validate_DomainName());
-	    $this->addElement($domainname);	
-        
+	    $this->addElement($domainname);
+
 		require_once('Validate/SMTPHostList.php');
 		$servers = new Zend_Form_Element_Textarea('servers', array(
 		      'label'    =>  $t->_('Destination servers')." :",
@@ -67,7 +67,7 @@ class Default_Form_DomainDelivery extends Zend_Form
 	    $servers->addValidator(new Validate_SMTPHostList());
 		$servers->setValue($this->_domain->getDestinationFieldString());
 		$this->addElement($servers);
-		
+
 		$port = new  Zend_Form_Element_Text('port', array(
 	        'label'    => $t->_('Destination port')." :",
 		    'required' => false,
@@ -76,13 +76,13 @@ class Default_Form_DomainDelivery extends Zend_Form
 	    $port->setValue($this->_domain->getDestinationPort());
         $port->addValidator(new Zend_Validate_Int());
 	    $this->addElement($port);
-		
+
 	    $multiple = new Zend_Form_Element_Select('multipleaction', array(
             'label'      => $t->_('Use multiple servers as')." :",
             'title' => $t->_("Choose method to deliver mails to destination server"),
             'required'   => false,
             'filters'    => array('StringTrim')));
-        
+
         foreach ($this->_domain->getDestinationActionOptions() as $key => $value) {
         	$multiple->addMultiOption($key, $t->_($key));
                 $options = $this->_domain->getDestinationActionOptions();
@@ -92,7 +92,7 @@ class Default_Form_DomainDelivery extends Zend_Form
         }
         #$multiple->setValue('');
         $this->addElement($multiple);
-        
+
         $usemx = new Zend_Form_Element_Checkbox('usemx', array(
 	    'label'   => $t->_('Use MX resolution'). " :",
             'title' => $t->_("If destination servers have MX record in internal"),
@@ -103,19 +103,19 @@ class Default_Form_DomainDelivery extends Zend_Form
             $usemx->setChecked(true);
 	}
 	$this->addElement($usemx);
-        
+
         $test = new Zend_Form_Element_Button('testdestinationSMTP', array(
 		     'label'    => $t->_('Test destinations'),
              'onclick' => 'javascript:stopreloadtest=0;testDestinationSMTP(\''.$this->_domain->getParam('name').'\', 1);'));
 		$this->addElement($test);
-		
-		
+
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
-		$this->addElement($submit);	
-		
+		$this->addElement($submit);
+
 	}
-	
+
     public function setParams($request, $domain) {
     	$domain->setDestinationPort($request->getParam('port'));
     	$domain->setDestinationOption($request->getParam('multipleaction'));

@@ -5,22 +5,22 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * requires PEAR's Auth class
  */
 require_once("Auth.php");
- 
+
 /**
  * This is the LDAPAuthenticator class
  * This will take care of authenticate user against a LDAP server
  * @package SpamTagger Plus
  */
 class LDAPAuthenticator extends AuthManager {
-    
+
     protected $exhaustive_ = true;
     protected $domain_ = null;
-    
+
     function create($domain) {
        $settings = $domain->getConnectorSettings();
        if (! $settings instanceof LDAPSettings) {
@@ -28,7 +28,7 @@ class LDAPAuthenticator extends AuthManager {
         }
        $this->domain_ = $domain;
        $url = $settings->getURL();
-       
+
        $funct = array ("LoginDialog", "loginFunction");
        $params = array (
                         "url" => $url,
@@ -58,7 +58,7 @@ class LDAPAuthenticator extends AuthManager {
       if ($ret) {
         return true;
       }
-      
+
       // if failed, try the same without startTLS enforcement
       $settings = $this->domain_->getConnectorSettings();
       if (! $settings instanceof LDAPSettings) {
@@ -78,7 +78,7 @@ class LDAPAuthenticator extends AuthManager {
                         "version" => intval($settings->getSetting('version')),
                         "referrals" => false,
                         "start_tls" => false,
-                      ); 
+                      );
       $this->auth_ = new Auth('LDAP', $params, $funct);
       if (!$this->auth_ instanceof Auth) {
         return false;

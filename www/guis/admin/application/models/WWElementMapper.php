@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * White/Warn list element mapper
  */
 
 class Default_Model_WWElementMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_WWElementMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_WWElement $element)
     {
         $result = $this->getDbTable()->find($id);
@@ -40,13 +40,13 @@ class Default_Model_WWElementMapper
             return;
         }
         $row = $result->current();
-        
+
         $element->setId($id);
         foreach ($element->getAvailableParams() as $key) {
         	$element->setParam($key, $row->$key);
         }
     }
-    
+
     public function fetchAll($destination, $type)
     {
         $resultSet = $this->getDbTable()->fetchAll($this->getDbTable()->select()->where('recipient = ?', $destination)->where('type = ?', $type)->order('recipient ASC'));
@@ -58,7 +58,7 @@ class Default_Model_WWElementMapper
         }
         return $entries;
      }
-    
+
     public function fetchAllField($destination, $type, $field)
     {
         $resultSet = $this->getDbTable()->fetchAll($this->getDbTable()->select()->where('recipient = ?', $destination)->where('type = ?', $type)->order('recipient ASC'));
@@ -84,7 +84,7 @@ class Default_Model_WWElementMapper
 					'expiracy'	=> '',
 					'status'	=> 1,
 				)
-	
+
 			);
 		}
 	}
@@ -107,7 +107,7 @@ class Default_Model_WWElementMapper
 					'status'	=> 1,
 					'comments'	=> $comment,
 				)
-	
+
 			);
 		}
 	}
@@ -125,9 +125,9 @@ class Default_Model_WWElementMapper
         }
         return $res;
     }
-    
+
     public function delete(Default_Model_WWElement $element) {
     	$where = $this->getDbTable()->getAdapter()->quoteInto('id = ?', $element->getId());
-    	return $this->getDbTable()->delete($where);   	
+    	return $this->getDbTable()->delete($where);
     }
 }
