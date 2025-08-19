@@ -34,7 +34,7 @@ sub usage
   	domain	the domain to query
   	ip		(optional) check if given IP is in the list of results\n\n";
 	exit();
-	
+
 }
 
 if ($0 =~ m/(\S*)\/\S+.pl$/) {
@@ -53,7 +53,7 @@ my ($target,$v);
 if (defined $ARGV[2]) {
 	$target = $ARGV[2];
 	unless ( $dns->{'validator'}->is_ipv4($ARGV[2])
-		|| $dns->{'validator'}->is_ipv6($ARGV[2]) ) 
+		|| $dns->{'validator'}->is_ipv6($ARGV[2]) )
 	{
 		print "\n'$target' is not a IPv4 or IPv6 address\n";
 		usage();

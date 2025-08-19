@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this file manages soap authorization
  * this is a basic scheme based on allowed ip addresses
  */
- 
+
 global $server;
 
 /**
@@ -18,7 +18,7 @@ global $server;
  * @var numeric
  */
 $soapsession_timeout = 60* 10;
- 
+
 /**
  * will set an authorized session if coming from an authorized host
  * @param  $username  string  username used fo the request
@@ -36,8 +36,8 @@ function setAuthenticated($username, $usertype, $hostname) {
  $allowed = false;
  // check if requesting host is allowed
  foreach ($allowed_hosts as $host) {
-   
-   $ip = gethostbyname($host); 
+
+   $ip = gethostbyname($host);
    $res .=  " | testing: $ip";
    if ($remote_ip == $ip || $remote_ip == gethostbyaddr($ip)) {
       $allowed = true;
@@ -52,7 +52,7 @@ function setAuthenticated($username, $usertype, $hostname) {
  if (! $db_slavespool instanceof DM_SlaveSpool) {
    return "ERRORWITHDBCONNECTOR";
  }
- 
+
  // set session id
  $id = md5 (uniqid (rand()));
  $clean_sql['username'] = $db_slavespool->sanitize($username);
@@ -65,11 +65,11 @@ function setAuthenticated($username, $usertype, $hostname) {
  if (!$db_slavespool->doExecute($query)) {
     return 'ERRORWHILESETTINGSESSION';
  }
- 
+
  // purge old sessions
  $query = "DELETE FROM soap_auth WHERE CAST(UNIX_TIMESTAMP(NOW()) AS SIGNED) - CAST(UNIX_TIMESTAMP(time) AS SIGNED) >= $soapsession_timeout";
  $db_slavespool->doExecute($query);
- 
+
  return $id;
 }
 
@@ -80,10 +80,10 @@ function setAuthenticated($username, $usertype, $hostname) {
  */
 function getAdmin($sid) {
   global $soapsession_timeout;
-  
+
   require_once("config/Administrator.php");
   $sysconf_ = SystemConfig::getInstance();
-  
+
   // required here for sanity checks
   require_once ('helpers/DM_SlaveSpool.php');
   $db_slavespool = DM_SlaveSpool :: getInstance();
@@ -91,7 +91,7 @@ function getAdmin($sid) {
     return "ERRORWITHDBCONNECTOR";
   }
   $clean_sid = $db_slavespool->sanitize($sid);
-  
+
   // fetch session datas in database
   $query = "SELECT user FROM soap_auth WHERE id='$clean_sid' AND (CAST(UNIX_TIMESTAMP(NOW()) AS SIGNED) - CAST(UNIX_TIMESTAMP(time) AS SIGNED) < $soapsession_timeout) AND user_type='admin'";
   $res = $db_slavespool->getHash($query);
@@ -102,7 +102,7 @@ function getAdmin($sid) {
   if (!isset($username) || $username == "") {
     return "BADADMINNAME ($username)";
   }
-  
+
   // and finally instantiate the Administrator object
   $admin = new Administrator();
   if (!$admin->load($username)) {
@@ -138,7 +138,7 @@ function checkAuthenticated($sid, $type) {
     if (isset($admin_) && $admin_ instanceof Administrator) {
       return true;
     }
-  } 
+  }
   return false;
 }
 ?>

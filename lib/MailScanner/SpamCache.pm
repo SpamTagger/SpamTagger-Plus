@@ -24,50 +24,50 @@ my $NextCacheExpire;
 
 sub initialise {
   MailScanner::Log::InfoLog("Initializing SpamCache...");
-  
+
   %SpamCache::conf = (
     cache_useable => 0
   );
-  
+
   if (!MailScanner::Config::IsSimpleValue('usespamcache') || !MailScanner::Config::Value('usespamcache')) {
     MailScanner::Log::WarnLog("SpamCache disable by config");
     return 1;
   }
-  
+
   if (! eval "require DBD::SQLite") {
     MailScanner::Log::WarnLog("WARNING: You are trying to use the SpamAssassin cache but your DBI and/or DBD::SQLite Perl modules are not properly installed!");
     return 1;
   }
-  
+
   if (! eval "require Digest::MD5") {
     MailScanner::Log::WarnLog("WARNING: You are trying to use the SpamAssassin cache but your Digest::MD5 Perl module is not properly installed!");
     return 1;
   }
   ## init db
   my $spamcachepath = MailScanner::Config::Value('spamcachedatabasefile');
-  
+
   ## connect to db
   $MailScanner::SpamCache::cachedbh = DBI->connect("dbi:SQLite:$spamcachepath","","",{PrintError=>0,InactiveDestroy=>1});
   if ( !$MailScanner::SpamCache::cachedbh ) {
     MailScanner::Log::WarnLog("WARNING: Could not connect or create database at: $spamcachepath");
     return 1;
   }
-  
+
   ## create structure (silent when already created)
   $MailScanner::SpamCache::cachedbh->do("CREATE TABLE cache (md5 TEXT, count INTEGER, last TIMESTAMP, first TIMESTAMP, spamreport BLOB, virusinfected INT)");
   $MailScanner::SpamCache::cachedbh->do("CREATE UNIQUE INDEX md5_uniq ON cache(md5)");
   $MailScanner::SpamCache::cachedbh->do("CREATE INDEX last_seen_idx ON cache(last)");
   $MailScanner::SpamCache::cachedbh->do("CREATE INDEX first_seen_idx ON cache(first)");
-  
+
   MailScanner::Log::InfoLog("Using spam results cache in: $spamcachepath");
   $SpamCache::conf{cache_useable} = 1;
-  
+
   SetCacheTimes();
   CacheExpire();
-  
+
   return 1;
 }
- 
+
 ## called per message ##
 sub isUseable {
   return  $SpamCache::conf{cache_useable};
@@ -75,9 +75,9 @@ sub isUseable {
 
 sub CheckCache {
  my $md5 = shift;
- 
+
  return if (!$SpamCache::conf{cache_useable});
- 
+
  my($sql, $sth);
  $sql = "SELECT md5, count, last, first, spamreport FROM cache WHERE md5=?";
  my $hash = $MailScanner::SpamCache::cachedbh->selectrow_hashref($sql,undef,$md5);
@@ -99,9 +99,9 @@ sub CheckCache {
 
 sub CacheResult {
  my ($md5, $spamreport) = @_;
- 
+
  return if (!$SpamCache::conf{cache_useable});
- 
+
  my $dbh = $MailScanner::SpamCache::cachedbh;
 
  my $sql = "INSERT INTO cache (md5, count, last, first, spamreport) VALUES (?,?,?,?,?)";
@@ -114,9 +114,9 @@ sub CacheResult {
 ## called per batch ##
 sub CheckForCacheExpire {
  my $this = shift;
- 
+
  return if (!$SpamCache::conf{cache_useable});
- 
+
  CacheExpire() if $NextCacheExpire<=time;
 }
 
@@ -128,10 +128,10 @@ sub AddVirusStats {
  return if (!$SpamCache::conf{cache_useable});
 
  my $sth = $MailScanner::SpamCache::cachedbh->prepare('UPDATE cache SET virusinfected=? WHERE md5=?');
-  $sth->execute($message->{virusinfected}, 
+  $sth->execute($message->{virusinfected},
                $message->{md5}) or MailScanner::Log::WarnLog($DBI::errstr);
 }
- 
+
 
 
 ## Internal calls

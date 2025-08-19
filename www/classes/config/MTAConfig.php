@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
  require_once('helpers/PrefHandler.php');
- 
+
 /**
  * This class is only a settings wrapper for the exim configurations
  */
@@ -21,7 +21,7 @@ class MTAConfig extends PrefHandler
    * @var  numeric
    */
   private  $stage_ = 1;
-  
+
   /**
    * exim instance settings
    * @var array
@@ -86,7 +86,7 @@ public function getStage() {
  * @return         boolean  true on success, false on failure
  */
 public function load($stage) {
-    
+
   if (!$this->setStage($stage)) {
     return false;
   }
@@ -105,7 +105,7 @@ public function save() {
   $relay = preg_replace('/:$/', '', $relay);
   $this->setPref('relay_from_hosts', $relay);
   $sysconf_ = SystemConfig::getInstance();
-  
+
   $mta = 'MTA'.$this->getStage();
   $sysconf_->setProcessToBeRestarted($mta);
   return $this->savePrefs('', 'stage='.$this->getStage(), '');
@@ -117,10 +117,10 @@ public function save() {
  */
 public function getAvailableCertificates() {
 	global $sysconf_;
-    
+
     $dir = $sysconf_->SRCDIR_."/etc/exim/certs";
     $certs = array();
-    
+
     if (exists)
     $files = @scandir($dir);
     if (empty($files)) {

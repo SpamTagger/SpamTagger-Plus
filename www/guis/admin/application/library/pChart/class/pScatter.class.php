@@ -508,7 +508,7 @@
 
            $LastX = $X; $LastY = $Y;
           }
-         $SplineSettings["Forces"] = $Forces; 
+         $SplineSettings["Forces"] = $Forces;
          $this->pChartObject->drawSpline($WayPoints,$SplineSettings);
         }
       }
@@ -530,7 +530,7 @@
        $Result = "";
        foreach($Values as $Key => $Value)
         {
-         if ( $Value == VOID ) 
+         if ( $Value == VOID )
           $Result[] = VOID;
          else
           $Result[] = $this->pChartObject->GraphAreaX1 + $Data["Axis"][$AxisID]["Margin"] + ($Step * ($Value-$Data["Axis"][$AxisID]["ScaleMin"]));
@@ -547,7 +547,7 @@
        $Result = "";
        foreach($Values as $Key => $Value)
         {
-         if ( $Value == VOID ) 
+         if ( $Value == VOID )
           $Result[] = VOID;
          else
           $Result[] = $this->pChartObject->GraphAreaY2 - $Data["Axis"][$AxisID]["Margin"] - ($Step * ($Value-$Data["Axis"][$AxisID]["ScaleMin"]));
@@ -658,7 +658,7 @@
           {
            $Picture = $Series["Picture"];
            list($PicWidth,$PicHeight) = $this->pChartObject->getPicInfo($Picture);
-           $PicX = $X+$IconAreaWidth/2; $PicY = $Y+$IconAreaHeight/2; 
+           $PicX = $X+$IconAreaWidth/2; $PicY = $Y+$IconAreaHeight/2;
 
            $this->pChartObject->drawFromPNG($PicX-$PicWidth/2,$PicY-$PicHeight/2,$Picture);
           }
@@ -847,7 +847,7 @@
 
      if ( !is_array($Points) ) { $Point = $Points; $Points = ""; $Points[0] = $Point; }
 
-     if ( !isset($Data["ScatterSeries"][$ScatterSerieID]) ) 
+     if ( !isset($Data["ScatterSeries"][$ScatterSerieID]) )
       return(0);
 
      $Series = $Data["ScatterSeries"][$ScatterSerieID];

@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * File name mapper
  */
 
 class Default_Model_FileNameMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_FileNameMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_FileName $f)
     {
         $result = $this->getDbTable()->find($id);
@@ -45,7 +45,7 @@ class Default_Model_FileNameMapper
         	$f->setParam($key, $row[$key]);
         }
     }
-    
+
     public function fetchAll()
     {
         $resultSet = $this->getDbTable()->fetchAll($this->getDbTable()->select()->order('rule ASC'));
@@ -57,7 +57,7 @@ class Default_Model_FileNameMapper
         }
         return $entries;
      }
-        
+
     public function save(Default_Model_FileName $f) {
        $data = $f->getParamArray();
        $res = '';
@@ -70,9 +70,9 @@ class Default_Model_FileNameMapper
         }
         return $res;
     }
-    
+
     public function delete(Default_Model_FileName $f) {
     	$where = $this->getDbTable()->getAdapter()->quoteInto('id = ?', $f->getId());
-    	return $this->getDbTable()->delete($where);   	
+    	return $this->getDbTable()->delete($where);
     }
 }

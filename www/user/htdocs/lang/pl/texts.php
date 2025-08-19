@@ -13,7 +13,7 @@ $txt['NEWSLETTERSSHORTHELP'] = "Tutaj możesz zarządzać swoimi newsletterami."
 $txt['NEWSLETTERSALLOW'] = "dostarcz";
 $txt['NEWSLETTERACCEPT'] = "Akceptuj ten newsletter";
 $txt['SPAM_WHITELIST_DISABLED'] = "Lista nie jest aktywna dla tej domeny (skontaktuj się z administratorem).";
-/* 
+/*
  * generic buttons
  */
 $txt['SUBMIT'] = "Wyślij";
@@ -435,7 +435,7 @@ $txt['KEEPBOUNCESINQUARANTINE'] = "Zachowaj komunikaty o błędach";
 $txt['PARAMETERSSAVED'] = "Twoje ustawienia zostały zapisane.";
 $txt['NOTSAVED'] = "Nie można zapisać Twoich ustawień.";
 $txt['INVALIDSUMMARYTO'] = "Adres e-mail podany dla raportów jest nieprawidłowy";
-/* 
+/*
  * quarantine  (new)
  */
 $txt['CONFIGQUARSHORTHELP'] = "Wyświetlanie kwarantanny można dostosować (liczbę dni i wierszy) do własnych potrzeb i przyzwyczajeń.";
@@ -449,7 +449,7 @@ $txt['TODAY'] = "Dzisiaj";
  * wwlists (new)
  */
 $txt['WARNLISTSHORTHELP'] = "Lista ostrzeżeń zawiera zaufane adresy dla, których chcesz powiadomienia gdy wiadomość zostanie uznana za spam. Możesz natychmiast zwolnić wiadomość w przypadku błędnego filtrowania.<br />
-\t\t\t\t\t\t\t\t   Uwaga: Ta funkcjonalność powinna być użyta tymczasowo, gdyż powoduje spadek poziomu ochrony. 
+\t\t\t\t\t\t\t\t   Uwaga: Ta funkcjonalność powinna być użyta tymczasowo, gdyż powoduje spadek poziomu ochrony.
 \t\t\t\t\t\t\t\t   Sprawdź w instrukcji (dostępne w sekcji <a href=\"help.php\">\"Pomoc\"</a>) więcej informacji na temat użycia listy ostrzeżeń. ";
 $txt['WARNLISTFORADDRESS'] = "Lista ostrzeżeń dla adresu";
 $txt['ADDAWARNENTRY'] = "Dodaj adres do listy";
@@ -461,7 +461,7 @@ $txt['REMTHEENTRY'] = "Usuń wybrane";
 $txt['DISABLETHEENTRY'] = "Wyłącz/włącz wybrane";
 $txt['WHITELISTSHORTHELP'] = "Biała lista zawiera adresy zaufanych nadawców, dla których nigdy nie nastąpi przechowywanie w kwarantannie. <br />
  Ostrzeżenie: ta funkcja powinna być używana jako rozwiązanie tymczasowe, ponieważ zmniejsza ogólną ochronę.
-Sprawdź instrukcję (dostępną w sekcji <a href=\"help.php\"> „Pomoc” </a>), aby uzyskać więcej informacji na temat korzystania z białej listy. 
+Sprawdź instrukcję (dostępną w sekcji <a href=\"help.php\"> „Pomoc” </a>), aby uzyskać więcej informacji na temat korzystania z białej listy.
 ";
 $txt['BLACKLISTSHORTHELP'] = "Czarna lista zawiera adresy nadawców.
                                   Sprawdź w instrukcji  (dostępna w sekcji <a href=\"help.php\">\"Pomoc\"</a>) więcej informacji na temat użycia czarnej listy.

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Reporting statistics mapper
  */
 
@@ -19,7 +19,7 @@ class Default_Model_ReportingStatsMapper
 		$trace_id = 0;
 		$slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         foreach ($slaves as $s) {
         	$res = $s->sendSoapRequest('Logs_StartGetStat', $params);
         	if (isset($res['search_id'])) {
@@ -31,12 +31,12 @@ class Default_Model_ReportingStatsMapper
         }
         return $search_id;
 	}
-	
+
 	public function getStatusFetchAll($params) {
 		$res = array('finished' => 0, 'count' => 0, 'data' => array());
 	    $slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         $params['noresults'] = 1;
         $stillrunning = count($slaves);
         $globalrows = 0;
@@ -58,25 +58,25 @@ class Default_Model_ReportingStatsMapper
         }
         return $res;
 	}
-	
+
     public function abortFetchAll($params) {
 		$slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         foreach ($slaves as $s) {
         	$res = $s->sendSoapRequest('Logs_AbortStats', $params);
         }
         return $res;
 	}
-	
+
 	public function fetchAll($params)
-	{	
+	{
 		$slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-		
+
         $entriesflat = array();
         $sortarray = array();
-        
+
         $params['noresults'] = 0;
         $stillrunning = count($slaves);
         $globalrows = 0;
@@ -136,7 +136,7 @@ class Default_Model_ReportingStatsMapper
 
         if (isset($params['sort'])) {
            switch ($params['sort']) {
-           	case 'msgs':  
+           	case 'msgs':
            	    usort($entries, array('Default_Model_ReportingStats', 'compareMsgs'));
            	    break;
            	case 'spams':

@@ -5,21 +5,21 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * requires PEAR's Auth class
  */
 require_once("Auth.php");
- 
+
 /**
  * This is the SQLAuthenticator class
  * This will take care of authenticate user against a SQL server
  * @package SpamTagger Plus
  */
 class SQLAuthenticator extends AuthManager {
-    
+
     protected $exhaustive_ = true;
-    
+
     function create($domain) {
        require_once('connector/settings/SQLSettings.php');
        if (isset($domain) && $domain->getConnectorSettings()) {
@@ -28,7 +28,7 @@ class SQLAuthenticator extends AuthManager {
 	 $settings = new SQLSettings('local');
        }
        $dsn = $settings->getDSN();
-       
+
        $funct = array ("LoginDialog", "loginFunction");
        $params = array (
                         "dsn"   => $dsn,
@@ -44,7 +44,7 @@ class SQLAuthenticator extends AuthManager {
       }
       return false;
     }
-    
+
    public function isExhaustive() {
        if ($this->getType() == 'local') {
            return false;

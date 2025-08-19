@@ -66,7 +66,7 @@ int main(int argc, char *argv[], char *argp[]) {
 			printf("ERRSTRNCPY");
 			exit(0);
 		}
-			
+
 		break;
 	case 2:
 		if ((! sprintf(exec_path, "%s", EXIM1)) || (! sprintf(exec_arg, "%s", STOP))) {
@@ -171,7 +171,7 @@ int main(int argc, char *argv[], char *argp[]) {
 		exit(0);
 	}
 
-	if (! S_ISREG(exec_stat->st_mode)) {	
+	if (! S_ISREG(exec_stat->st_mode)) {
 		printf("NOTAFILE");
 		exit(0);
 	}
@@ -182,13 +182,13 @@ int main(int argc, char *argv[], char *argp[]) {
 			printf("CANNOTSYSTEM");
 			printf("\n error: %s\n", strerror(errno));
 			exit(0);
-		} 
+		}
 	}
 	else {
 		printf("CANNOTSETUID");
 		exit(0);
 	}
 
-	exit(1);	
+	exit(1);
 
 }

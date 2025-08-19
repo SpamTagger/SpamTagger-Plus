@@ -109,7 +109,7 @@ foreach my $file (@ARGV) {
 }
 
 unless (scalar(keys(%files))) {
-	print "usage: 
+	print "usage:
   cat file.eml | $0
 or
   $0 file.eml

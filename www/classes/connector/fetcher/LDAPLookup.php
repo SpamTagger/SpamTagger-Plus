@@ -5,40 +5,40 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class takes care of fetching LDAP addresses
  * @package SpamTagger Plus
  */
  class LDAPlookup extends AddressFetcher {
-    
+
     /**
      * ldap connection handler
      * @var resource
      */
     protected $connection_;
-    
+
     /**
      * Definition of possible mail attributes
      * @var array
      */
      protected $mail_attributes_ = array('mail', 'maildrop', 'mailAlternateAddress', 'mailalternateaddress', 'proxyaddresses', 'proxyAddresses', 'oldinternetaddress', 'oldInternetAddress', 'cn', 'userPrincipalName', 'mailPrimaryAddress', 'mailAlternativeAddress');
-    
+
     public function fetch($username, $domain) {
         $settings = $domain->getConnectorSettings();
         if (! $this->connect($settings)) {
             return $this->getAddresses();
         }
-        
+
         $userfilter = '';
         $filter = sprintf('(&(%s=%s)%s)',
-                    $settings->getSetting('useratt'), 
+                    $settings->getSetting('useratt'),
                     $username,
                     $userfilter);
 
         $r = ldap_search($this->connection_, $settings->getSetting('basedn'), $filter);
-        $ret = array(); 
+        $ret = array();
         if ($r) {
           $result = ldap_first_entry($this->connection_, $r);
           while ($result) {
@@ -60,11 +60,11 @@
           $result = ldap_next_entry($this->connection_, $result);
          }
          ldap_free_result($r);
-        }            
-                    
+        }
+
         return $this->getAddresses();
     }
-    
+
     /**
      * Connect to the ldap server and bind if needed
      * @param  $settings  LDAPSetting  LDAP settings
@@ -88,12 +88,12 @@
         }
         return true;
     }
-    
-    
+
+
     public function canModifyList() {
         return false;
     }
-    
+
     public function searchUsers($u, $d) {
     	$ignore_username = array('/SM_[a-z0-9]{17}/');
         $settings = $d->getConnectorSettings();
@@ -134,7 +134,7 @@
         @ldap_free_result($r);
         return $ret;
     }
-    
+
     public function searchEmails($l, $d) {
       $ignore_email = array('/FederatedEmail\.[-a-z0-9]{20,}/');
       $settings = $d->getConnectorSettings();
@@ -153,7 +153,7 @@
 	  $filter .= "($att=".$add_expr.")";
         } else {
           $filter .= "($att=".$add_expr."@".$d->getPref('name').")";
-	}      
+	}
       }
       #$filter .= "))";
       $filter .= ")";
@@ -188,7 +188,7 @@
 		    $ret[strtolower($address.'@'.$d->getPref('name'))] = strtolower($address.'@'.$d->getPref('name'));
  		  }
                   // matches STMP: xx@xx  fields
-                  if (preg_match('/\s?\S+:([a-zA-Z0-9\_\-\.]+\@[a-zA-Z0-9\_\-\.]+)/i', $address, $matches)) {               
+                  if (preg_match('/\s?\S+:([a-zA-Z0-9\_\-\.]+\@[a-zA-Z0-9\_\-\.]+)/i', $address, $matches)) {
                     $ret[strtolower($matches[1])] = strtolower($matches[1]);
                   }
                   // matches other fields
@@ -205,6 +205,6 @@
       }
       return $ret;
     }
-   
+
  }
 ?>

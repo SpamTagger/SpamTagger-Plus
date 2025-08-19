@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Administrator mapper
  */
 
 class Default_Model_FeatureRestrictionMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,12 +32,12 @@ class Default_Model_FeatureRestrictionMapper
         }
         return $this->_dbTable;
     }
-        
+
     public function fetchAll($params)
     {
     	$restrictions = array();
     	$query = $this->getDbTable()->select();
-    	    	
+
     	if (isset($params['target']) && preg_match('/^(administrator|manager|hotline|user)$/', $params['target'])) {
     		$query->where('target_level = ?', $params['target']);
     	}

@@ -31,21 +31,21 @@ our @ISA        = "SockClient";
 
 sub new {
   my $class = shift;
-  
+
   my %msgs = ();
-  
+
   my $spec_this = {
      %msgs => (),
      currentid => 0,
      socketpath => '',
      timeout => 5,
   };
-  
+
   my $conf = ReadConfig::getInstance();
   $spec_this->{socketpath} = $conf->getOption('VARDIR')."/run/prefdaemon.sock";
-  
+
   my $this = $class->SUPER::new($spec_this);
-  
+
   bless $this, $class;
   return $this;
 }
@@ -53,7 +53,7 @@ sub new {
 sub setTimeout {
    my $this = shift;
    my $timeout = shift;
-   
+
    return 0 if ($timeout !~ m/^\d+$/);
    $this->{timeout} = $timeout;
    return 1;
@@ -64,16 +64,16 @@ sub getPref {
   my $this = shift;
   my $object = shift;
   my $pref = shift;
-  
+
   if ($object !~ m/^[-_.!\$#=*&\@a-z0-9]+$/i) {
     return '_BADOBJECT';
   }
   if ($pref !~ m/^[-_a-z0-9]+$/) {
     return '_BADPREF';
   }
-  
+
   my $query = "PREF $object $pref";
-  
+
   my $result = $this->query($query);
   return $result;
 }
@@ -83,16 +83,16 @@ sub getRecursivePref {
   my $this = shift;
   my $object = shift;
   my $pref = shift;
-  
+
   if ($object !~ m/^[-_.!\$#=*&\@a-z0-9]+$/i) {
     return '_BADOBJECT';
   }
   if ($pref !~ m/^[-_a-z0-9]+$/) {
     return '_BADPREF';
   }
-  
+
   my $query = "PREF $object $pref R";
-  
+
   my $result = $this->query($query);
   return $result;
 }
@@ -164,11 +164,11 @@ sub isWhitelisted {
    my $this = shift;
    my $object = shift;
    my $sender = shift;
-   
+
    if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i) {
     return '_BADOBJECT';
    }
-  
+
    my $query = "WHITE $object $sender";
    my $result;
    if (my $result = $this->query("WHITE $object $sender")) {
@@ -188,11 +188,11 @@ sub isWarnlisted {
    my $this = shift;
    my $object = shift;
    my $sender = shift;
-   
+
    if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i) {
     return '_BADOBJECT';
    }
-  
+
    my $result;
    if (my $result = $this->query("WARN $object $sender")) {
     return $result;
@@ -233,7 +233,7 @@ sub isBlacklisted {
 
 sub logStats {
    my $this = shift;
-   
+
    my $query = 'STATS';
    return $this->query($query);
 }

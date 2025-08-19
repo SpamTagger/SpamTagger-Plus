@@ -44,7 +44,7 @@ sub getInstance {
   }
   return $oneTrueSelf;
 }
-  
+
 ## constructor
 sub new {
   %config_options = readConfig();
@@ -52,14 +52,14 @@ sub new {
   my $this = {
          configs => \%config_options
          };
-         
+
   return bless $this, "ReadConfig";
 }
 
 sub getOption {
   my $this = shift;
   my $o = shift;
-  
+
   if (exists($this->{configs}->{$o})) {
      return $this->{configs}->{$o};
   }

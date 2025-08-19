@@ -2,7 +2,7 @@ function resizePanel(toresize, fromresize) {
    var h = 0;
    var marginbottom = 23;
    var margintop = 0;
-      
+
    for (el in fromresize) {
      h = h + document.getElementById(fromresize[el]).offsetHeight -1;
    }
@@ -10,7 +10,7 @@ function resizePanel(toresize, fromresize) {
 
    document.getElementById(toresize).style.height = h+'px';
 }
- 
+
 function goConf(topic) {
   document.location = "configuration.php?t="+topic;
 }
@@ -29,7 +29,7 @@ function groupAddressesConfig() {
         document.getElementById('quar_gui_default_address').disabled=true;
     } else {
         document.getElementById('quar_gui_default_address').disabled=false;
-    }   
+    }
     document.getElementById('filter').submit();
 }
 

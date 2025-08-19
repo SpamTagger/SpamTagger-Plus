@@ -40,12 +40,12 @@ if (defined($nottodeletefile)) {
 my $mapper = ElementMapper::getElementMapper($what);
 if (!defined($mapper)) {
   error("Element type \"$what\" not supported");
-  exit 1; 
+  exit 1;
 }
 
-if (! open (IMPORTFILE, $importfile)) { 
-  warning("Could not open import file: $importfile"); 
-  exit 0; 
+if (! open (IMPORTFILE, $importfile)) {
+  warning("Could not open import file: $importfile");
+  exit 0;
 }
 
 my %elements = ();

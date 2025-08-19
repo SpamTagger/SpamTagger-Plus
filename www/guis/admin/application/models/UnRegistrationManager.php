@@ -4,19 +4,19 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * System registration
  */
 
 class Default_Model_UnRegistrationManager
-{	
+{
 	private $_serial = array('abc1', 'def2', 'ghi3');
         private $_data = array('rsp' => '');
-    
+
 	public function load() {
 		//TODO: implement
 	}
-	
+
 	public function setSerialPart($part, $string) {
 		if (!preg_match('/^[A-Za-z0-9]{4}$/', $string)) {
 			return false;
@@ -51,12 +51,12 @@ class Default_Model_UnRegistrationManager
                return '';
         }
 
-	
+
     public function save()
     {
     	#return Default_Model_Localhost::sendSoapRequest('Config_saveRegistration', $this->getSerialString());
         $this->_data['timeout'] = 200;
         return Default_Model_Localhost::sendSoapRequest('Config_unregister', $this->_data);
     }
-    	
+
 }

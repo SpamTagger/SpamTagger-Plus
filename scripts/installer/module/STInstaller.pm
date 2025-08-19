@@ -67,12 +67,12 @@ sub do {
     # make sure everything is gone
     `killall -TERM mysqld_safe mysqld httpd snmpd exim MailScanner 2>&1 > /dev/null`;
     print "[done]\n";
-   
+
     print " - Removing SpamTagger directories... ";
     my $cmd = "rm -rf ".$this->{srcdir};
-    `$cmd 2>&1 > /dev/null`; 
-    $cmd = "rm -rf ".$this->{vardir}; 
-    `$cmd 2>&1 > /dev/null`; 
+    `$cmd 2>&1 > /dev/null`;
+    $cmd = "rm -rf ".$this->{vardir};
+    `$cmd 2>&1 > /dev/null`;
     print "[done]\n";
   }
 
@@ -98,7 +98,7 @@ sub do {
   my $pass2 = '';
   my $pdlg = $dfact->getPasswordDialog();
   while ( $pass1 ne $pass2) {
-    print "Password mismatch, please try again.\n" if ! $pass2 eq ''; 
+    print "Password mismatch, please try again.\n" if ! $pass2 eq '';
     $pdlg->build('Enter the admin user password', '');
     $pass1 = $pdlg->display();
     $pdlg->build('Please confirm the admin user password', '');
@@ -145,7 +145,7 @@ sub do {
   $ENV{'LOGFILE'} = $this->{logfile};
   $ENV{'USEDEBS'} = 'Y';
   #print `/root/testenv.sh`;
- 
+
   print " - Creating configuration file...                      ";
   open CONF, ">".$this->{conffile};
   print CONF "SRCDIR = ".$this->{srcdir}."\n";
@@ -190,7 +190,7 @@ sub do {
   wait;
   close INST;
   print "*** finished ! ***\n";
-  $dlg->build('Press any key to continue', ''); 
+  $dlg->build('Press any key to continue', '');
   $dlg->display();
 }
 

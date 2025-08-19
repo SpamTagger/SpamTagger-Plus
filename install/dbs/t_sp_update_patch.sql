@@ -8,6 +8,6 @@ CREATE TABLE update_patch (
   time				time NOT NULL,
   status			varchar(150) NOT NULL,
   description			varchar(250),
-  PRIMARY KEY (id) 
+  PRIMARY KEY (id)
 );
 

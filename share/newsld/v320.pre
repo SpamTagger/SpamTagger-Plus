@@ -29,7 +29,7 @@ loadplugin Mail::SpamAssassin::Plugin::Check
 #loadplugin Mail::SpamAssassin::Plugin::URIDetail
 
 # Shortcircuit - stop evaluation early if high-accuracy rules fire
-# 
+#
 # loadplugin Mail::SpamAssassin::Plugin::Shortcircuit
 
 # Plugins which used to be EvalTests.pm

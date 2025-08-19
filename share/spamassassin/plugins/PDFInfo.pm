@@ -1,7 +1,7 @@
 # <@LICENSE>
-# 
+#
 # Free as in beer.  Free as in speech.  You get the picture...
-# 
+#
 # If you find it useful, consider adding to the SARE Beer Fund...
 # https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=donate%40rulesemporium%2ecom&item_name=SARE%20Beer%20Fund&item_number=69
 #
@@ -16,11 +16,11 @@
 # Modified: 2007-07-19
 # By: Dallas Engelken <dallase@uribl.com>
 #
-# Changes: 
+# Changes:
 #   0.6 - added support for tags - PDFCOUNT, PDFVERSION, PDFPRODUCER, etc.
 #       - fixed issue on perl 5.6.1 where pdf_match_details() failed to call
 #         _find_pdf_mime_parts(), resulting in no detection of pdf mime parts.
-#       - quoted-printable support - requires MIME::QuotedPrint (which should be in everyones 
+#       - quoted-printable support - requires MIME::QuotedPrint (which should be in everyones
 #         install as a part of the MIME-Base64 package which is a SA req)
 #       - added simple pdf_is_empty_body() function with counts the body bytes minus the
 #         subject line.  can add optional <bytes> param if you need to allow for a few bytes.
@@ -45,7 +45,7 @@
 #          - created: Creation Date
 #          - modified: Last Modified
 #   0.2 - support PDF octet-stream
-#   0.1 - just ported over the imageinfo code, and renamed to pdfinfo.  
+#   0.1 - just ported over the imageinfo code, and renamed to pdfinfo.
 #         - removed all support for png, gif, and jpg from the code.
 #         - prepended pdf_ to all function names to avoid conflicts with ImageInfo in SA 3.2.
 #
@@ -53,11 +53,11 @@
 #
 #   PDFInfo.pm (plugin)  - http://www.rulesemporium.com/plugins/private/PDFInfo.pm
 #   pdfinfo.cf (ruleset) - http://www.rulesemporium.com/plugins/private/pdfinfo.cf
-#   
+#
 # Installation:
 #
 #   1) place ruleset in your local config dir
-#   2) place plugin in your plugins dir 
+#   2) place plugin in your plugins dir
 #   3) add to init.pre (or v310.pre) the following line
 #      loadplugin Mail::SpamAssassin::Plugin::PDFInfo
 #           or if not in plugin dir..
@@ -68,13 +68,13 @@
 #
 #  pdf_count()
 #
-#     body RULENAME  eval:pdf_count(<min>,[max]) 
+#     body RULENAME  eval:pdf_count(<min>,[max])
 #        min: required, message contains at least x pdf mime parts
 #        max: optional, if specified, must not contain more than x pdf mime parts
 #
 #  pdf_image_count()
 #
-#     body RULENAME  eval:pdf_image_count(<min>,[max]) 
+#     body RULENAME  eval:pdf_image_count(<min>,[max])
 #        min: required, message contains at least x images in pdf attachments.
 #        max: optional, if specified, must not contain more than x pdf images
 #
@@ -85,13 +85,13 @@
 #        max: optional, if specified, message must not contain more than this much pixel area
 #
 #  pdf_named()
-# 
-#     body RULENAME  eval:pdf_named(<string>) 
+#
+#     body RULENAME  eval:pdf_named(<string>)
 #        string: exact file name match, if you need partial match, see pdf_name_regex()
 #
 #  pdf_name_regex()
-# 
-#     body RULENAME  eval:pdf_name_regex(<regex>) 
+#
+#     body RULENAME  eval:pdf_name_regex(<regex>)
 #        regex: regular expression, see examples in ruleset
 #
 #  pdf_match_md5()
@@ -145,7 +145,7 @@ sub new {
   $class = ref($class) || $class;
   my $self = $class->SUPER::new($mailsaobject);
   bless ($self, $class);
-  
+
   $self->register_eval_rule ("pdf_count");
   $self->register_eval_rule ("pdf_image_count");
   $self->register_eval_rule ("pdf_pixel_coverage");
@@ -213,7 +213,7 @@ my %get_details = (
           $fuzzy_data .= $line;
 	}
       }
- 
+
       if ($line =~ m/^\/([A-Za-z]+)/) {
          $pdf_tags .= $1;
       }
@@ -224,7 +224,7 @@ my %get_details = (
       # once we hit the first stream, we stop collecting data for fuzzy md5
       $no_more_fuzzy = 1 if ($line =~ m/stream/);
 
-      # From a v1.3 pdf      
+      # From a v1.3 pdf
       # [12234] dbg: pdfinfo: line=630 0 0 149 0 0 cm
       # [12234] dbg: pdfinfo: line=/Width 630
       # [12234] dbg: pdfinfo: line=/Height 149
@@ -268,7 +268,7 @@ my %get_details = (
       # [5310] dbg: pdfinfo: line=/Author(colet)>>endobj
       # or all on same line inside xml - v1.6+
       # <</CreationDate(D:20070226165054-06'00')/Creator( Adobe Photoshop CS2 Windows)/Producer(Adobe Photoshop for Windows -- Image Conversion Plug-in)/ModDate(D:20070226165100-06'00')>>
-    
+
       if ($line =~ /\/Producer\s?\(([^\)\\]+)/) {
         $producer = $1;
       }
@@ -301,7 +301,7 @@ my %get_details = (
     # store encrypted flag.
     $pms->{pdfinfo}->{encrypted} = $encrypted;
 
-    # if we had multiple images in the pdf, we need to store the total HxW as well.  
+    # if we had multiple images in the pdf, we need to store the total HxW as well.
     # If it was a single Image PDF, then this value will already be in the hash.
     $pms->{pdfinfo}->{dems_pdf}->{"${total_height}x${total_width}"} = 1 if ($total_height && $total_width);;
 
@@ -352,7 +352,7 @@ my %get_details = (
       $self->_set_tag($pms, 'PDFMD5FUZZY2', $tags_md5);
     }
   },
-  
+
 );
 
 # ----------------------------------------
@@ -363,7 +363,7 @@ sub _set_tag {
 
   dbg("pdfinfo: set_tag called for $tag $value");
   return unless ($tag && $value);
-   
+
   if (exists $pms->{tag_data}->{$tag}) {
     $pms->{tag_data}->{$tag} .= " $value";  # append value
   }
@@ -379,7 +379,7 @@ sub _find_pdf_mime_parts {
 
   # bail early if message does not have pdf parts
   return 0 if (exists $pms->{'pdfinfo'}->{'no_parts'});
- 
+
   # initialize
   $pms->{'pdfinfo'}->{"pc_pdf"} = 0;
   $pms->{'pdfinfo'}->{"count_pdf"} = 0;
@@ -390,7 +390,7 @@ sub _find_pdf_mime_parts {
 
   dbg("pdfinfo: Identified $part_count possible mime parts that need checked for PDF content");
 
-  # cache this so we can easily bail 
+  # cache this so we can easily bail
   $pms->{'pdfinfo'}->{'no_parts'} = 1 unless $part_count;
 
   foreach my $p (@parts) {
@@ -399,11 +399,11 @@ sub _find_pdf_mime_parts {
     next unless ( defined($name) );
     next unless ( defined($type) );
     next unless ( defined( $p->get_header('content-transfer-encoding') ) );
-    
+
     my $cte = lc $p->get_header('content-transfer-encoding') || '';
-    
+
     dbg("pdfinfo: found part, type=".($type ? $type : '')." file=".($name ? $name : '')." cte=".($cte ? $cte : '')."");
- 
+
     # make sure its a cte we support
     next unless ($cte =~ /^(?:base64|quoted\-printable)$/);
 
@@ -438,7 +438,7 @@ sub pdf_named {
   }
 
   return 0 if (exists $pms->{'pdfinfo'}->{'no_parts'});
-  
+
   return 0 unless (exists $pms->{'pdfinfo'}->{"names_pdf"});
   return 1 if (exists $pms->{'pdfinfo'}->{"names_pdf"}->{$name});
   return 0;
@@ -491,7 +491,7 @@ sub pdf_is_encrypted {
 sub pdf_count {
   my ($self,$pms,$body,$min,$max) = @_;
   return unless defined $min;
-  
+
   # make sure we have image data read in.
   if (!exists $pms->{'pdfinfo'}) {
     $self->_find_pdf_mime_parts($pms);
@@ -530,10 +530,10 @@ sub pdf_pixel_coverage {
   if (!exists $pms->{'pdfinfo'}) {
     $self->_find_pdf_mime_parts($pms);
   }
- 
+
   return 0 if (exists $pms->{'pdfinfo'}->{'no_parts'});
   return 0 unless (exists $pms->{'pdfinfo'}->{"pc_pdf"});
- 
+
   # dbg("pdfinfo: pc_$type: $min, ".($max ? $max:'').", $type, ".$pms->{'pdfinfo'}->{"pc_pdf"});
   return result_check($min, $max, $pms->{'pdfinfo'}->{"pc_pdf"});
 }
@@ -552,12 +552,12 @@ sub pdf_image_to_text_ratio {
   return 0 if (exists $pms->{'pdfinfo'}->{'no_parts'});
   return 0 unless (exists $pms->{'pdfinfo'}->{"pc_pdf"});
 
-  # depending on how you call this eval (body vs rawbody), 
+  # depending on how you call this eval (body vs rawbody),
   # the $textlen will differ.
   my $textlen = length(join('',@$body));
 
   return 0 unless ( $textlen > 0 && exists $pms->{'pdfinfo'}->{"pc_pdf"} && $pms->{'pdfinfo'}->{"pc_pdf"} > 0);
-  
+
   my $ratio = $textlen / $pms->{'pdfinfo'}->{"pc_pdf"};
   dbg("pdfinfo: image ratio=$ratio, min=$min max=$max");
   return result_check($min, $max, $ratio, 1);
@@ -576,16 +576,16 @@ sub pdf_is_empty_body {
   }
 
   return 0 if (exists $pms->{'pdfinfo'}->{'no_parts'});
- 
+
   # check for cached result
   return 1 if $pms->{'pdfinfo'}->{"no_body_text"};
- 
+
   shift @$body;  # shift body array removes line #1 -> subject line.
 
   my $bytes = 0;
   my $textlen = length(join('',@$body));
   foreach my $line (@$body) {
-    next unless ($line =~ m/\S/); 
+    next unless ($line =~ m/\S/);
     next if ($line =~ m/^Subject/);
     $bytes += length($line);
   }
@@ -597,7 +597,7 @@ sub pdf_is_empty_body {
     return 1;
   }
 
-  # cache it and return 0 
+  # cache it and return 0
   $pms->{'pdfinfo'}->{"no_body_text"} = 0;
   return 0;
 }
@@ -703,7 +703,7 @@ sub pdf_match_details {
 
   my $check_value = $pms->{pdfinfo}->{details}->{$detail};
   return unless $check_value;
- 
+
   my $hit = 0;
   $check_value =~ s/[\{\}\\]//g;
   my $eval = 'if (q{'.$check_value.'} =~ '.$regex.') { $hit = 1; }';

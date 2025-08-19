@@ -5,10 +5,10 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * User contains Email addresses and belong to a Domain
- */ 
+ */
 require_once('user/Email.php');
 require_once('domain/Domain.php');
 require_once('connector/AddressFetcher.php');
@@ -19,13 +19,13 @@ require_once('connector/AddressFetcher.php');
  * and usually belongs to a Domain.
  */
 class User extends PrefHandler {
-    
+
     /**
      * Addresses belonging to the user. This is an array of email addresses (strings)
      * @var array
      */
 	private	$addresses_ = array();
-    
+
     /**
      * User information
      * @var array
@@ -49,8 +49,8 @@ class User extends PrefHandler {
                        'summary_to' => '',
                        'summary_type' => 'NOTSET',
                        'allow_newsletters' => '',
-        	          );	
-                      
+        	          );
+
     /**
      * User local datas
      * @var array
@@ -66,19 +66,19 @@ class User extends PrefHandler {
      * @var string
      */
      private $main_address_;
-     
+
      /**
       * internal status of local user
       * @var bool
       */
       private $local_user_registered_ = false;
-      
+
      /**
       * Is user empty (i.e. login only with email address from digest summary)
       * @var bool
       */
       private $is_stub_ = false;
-      
+
      /**
       * temporary preferences, can be used or default display (i.e. quarantine)
       * @var array
@@ -104,7 +104,7 @@ class User extends PrefHandler {
     $this->setPref('domain', $d);
     return true;
   }
-  
+
   /**
    * Get the Domain object of the user
    * Create a Domain object taken from the domain pref of the user
@@ -115,7 +115,7 @@ class User extends PrefHandler {
     $d->load($this->getPref('domain'));
     return $d;
   }
-  
+
   /**
    * Get the addresses list belonging to the user
    * @return  array  addresses of the user
@@ -123,7 +123,7 @@ class User extends PrefHandler {
   public function getAddresses() {
 	return $this->addresses_;
   }
-  
+
   public function getAddressesWithPending() {
     $list = array();
     foreach ($this->addresses_ as $add) {
@@ -139,7 +139,7 @@ class User extends PrefHandler {
     }
     return $list;
   }
-  
+
   /**
    * Get the addresses list in a format suitable for a select object
    * @return  array  addresses of the user, key are address, value are also address
@@ -151,7 +151,7 @@ class User extends PrefHandler {
     }
     return $ret;
   }
-  
+
   /**
    * Load the user datas from the username given. If user not found in database, then domain datas are used as default
    * @param  $u  string   username (formatted login)
@@ -173,13 +173,13 @@ class User extends PrefHandler {
 
     $this->setPref('username', $u);
     unset($this->addresses_);
-    
+
     // check admin right on users domain
     if (isset($admin) && !$admin->canManageDomain($this->getPref('domain'))) {
        $log_->log('Admin not allowed to create user: '.$u, PEAR_LOG_WARNING);
        return false;
     }
-    
+
     // first set domain preferences as default values
     $d = new Domain();
     if (in_array($this->getPref('domain'), $sysconf_->getFilteredDomains())) {
@@ -214,7 +214,7 @@ class User extends PrefHandler {
     if ($this->isLocalUser()) {
       $this->getLocalUserDatas();
     }
-    
+
     if ($this->getPref('gui_default_address') == "" || ! $this->hasAddress($this->getPref('gui_default_address'))) {
     	$this->setPref('gui_default_address', $this->getMainAddress());
     }
@@ -223,7 +223,7 @@ class User extends PrefHandler {
     }
     return true;
   }
-  
+
 public function hasPrefs() {
   if ($this->isLoaded()) {
   	return true;
@@ -238,7 +238,7 @@ public function hasPrefs() {
 private function addRegisteredAddresses() {
   require_once('helpers/DataManager.php');
   global $sysconf_;
-  
+
   $db_slaveconf = DM_SlaveConfig :: getInstance();
   $query = "SELECT e.address as id, e.address, e.is_main, e.pref FROM email e, user u WHERE u.username='".$db_slaveconf->sanitize($this->getPref('username'))."' ";
   $query .= "AND u.domain='".$db_slaveconf->sanitize($this->getPref('domain'))."' AND e.user=u.id";
@@ -249,7 +249,7 @@ private function addRegisteredAddresses() {
       $this->addAddress($add_record['address']);
       if ($add_record['is_main']) {
         $this->setMainAddress($add_record['address'])  ;
-      } 
+      }
     }
     return true;
   }
@@ -267,7 +267,7 @@ public function hasAddress($str) {
   }
   return false;
 }
- 
+
 /**
  * Check if address list can be modified or not, depending of the AddressFetcher
  * @return  bool  true if can be modified, false if not
@@ -284,7 +284,7 @@ public function canModifyAddressList() {
  * check if user is locally defined (local connector)
  * @return  bool  true if local user, false if not
  */
-public function isLocalUser() { 
+public function isLocalUser() {
   if ($this->getDomain()->getPref('auth_type') == 'local') { return true; }
   return false;
 }
@@ -308,7 +308,7 @@ public function isLocalUser() {
 private function getLocalUserDatas() {
   require_once('helpers/DataManager.php');
   global $sysconf_;
-  
+
   $db_slaveconf = DM_SlaveConfig :: getInstance();
   $query = "SELECT realname, username, email from mysql_auth WHERE username='".$db_slaveconf->sanitize($this->getPref('username'))."' AND domain='".$db_slaveconf->sanitize($this->getPref('domain'))."'";
   $res = $db_slaveconf->getHash($query);
@@ -321,7 +321,7 @@ private function getLocalUserDatas() {
     }
   }
   $this->local_user_registered_ = true;
-  return true;  
+  return true;
 }
 
 /**
@@ -338,7 +338,7 @@ private function getLocalUserDatas() {
     }
     return parent::setPref($pref, $value);
  }
- 
+
 public function setTmpPref($pref, $value) {
 	$this->tmp_prefs_[$pref] = $value;
 }
@@ -366,36 +366,36 @@ public function getPref($pref) {
     }
     return $userpref;
 }
- 
+
 /**
  * Save locally stored datas for user
  * @return  bool  true on success, false on failure
  */
  private function saveLocalUserDatas() {
     require_once('helpers/DataManager.php');
-    global $sysconf_; 
-    
+    global $sysconf_;
+
     $password = $this->getData('password');
-    
+
     $db_masterconf = DM_MasterConfig :: getInstance();
     if ($this->local_user_registered_) {
       $query = "UPDATE mysql_auth SET realname='".$db_masterconf->sanitize($this->getData('realname'))."', domain='".$db_masterconf->sanitize($this->getPref('domain'))."' ";
-        if ($password != "notchanged") { 
+        if ($password != "notchanged") {
             $salt = '$6$rounds=1000$'.dechex(rand(0,15)).dechex(rand(0,15)).'$';
             $crypted = crypt($password, $salt);
 
-            $query .= ", password='".$crypted."' "; 
+            $query .= ", password='".$crypted."' ";
       }
       $query .= " WHERE username='".$db_masterconf->sanitize($this->getPref('username'))."'";
       $query .= " AND domain='".$db_masterconf->sanitize($this->getPref('domain'))."'";
     } else {
       $query = "INSERT INTO mysql_auth SET username='".$db_masterconf->sanitize($this->getPref('username'))."', realname='".$db_masterconf->sanitize($this->getData('realname'))."', domain='".$db_masterconf->sanitize($this->getPref('domain'))."' ";
       $query .= ", email='".$db_masterconf->sanitize($this->getMainAddress())."' ";
-      if ($password != "notchanged") { 
+      if ($password != "notchanged") {
          $salt = '$6$rounds=1000$'.dechex(rand(0,15)).dechex(rand(0,15)).'$';
          $crypted = crypt($password, $salt);
-      
-         $query .= ", password='".$crypted."' "; 
+
+         $query .= ", password='".$crypted."' ";
       }
     }
     if ($db_masterconf->doExecute($query)) {
@@ -413,7 +413,7 @@ public function getPref($pref) {
 
      require_once($sysconf_->SRCDIR_."/www/guis/admin/application/library/Pear/Text/Password.php");
      $password = Text_Password::create(12, 'pronounceable', 'numeric');
-            
+
      $this->getLocalUserDatas();
      $this->datas_['password'] = $password;
      $this->saveLocalUserDatas();
@@ -438,7 +438,7 @@ public function getPref($pref) {
 private function deleteLocalUserDatas() {
     require_once('helpers/DataManager.php');
     global $sysconf_;
-    
+
     $db_masterconf = DM_MasterConfig :: getInstance();
     if ($this->local_user_registered_) {
        $query = "DELETE FROM mysql_auth WHERE username='".$db_masterconf->sanitize($this->getPref('username'))."' AND domain='".$db_masterconf->sanitize($this->getPref('domain'))."'";
@@ -448,7 +448,7 @@ private function deleteLocalUserDatas() {
     }
     return false;
 }
-    
+
 
 /**
  * Save user datas to database
@@ -470,7 +470,7 @@ public function save() {
   if ($this->isLocalUser()) {
       $this->saveLocalUserDatas();
   }
-  
+
   // save addresses belonging to the user
   foreach ($this->addresses_ as $add => $val) {
      $email = new Email();
@@ -502,17 +502,17 @@ public function delete() {
   if (isset($admin) && !$admin->canManageDomain($this->getPref('domain'))) {
      return "NOTALLOWED";
   }
-  
+
   $ret = $this->deletePrefs(null);
-  
+
   foreach ($this->addresses_ as $add => $val) {
     $this->removeAddress($add);
   }
-  
+
   if ($this->isLocalUser()) {
       $this->deleteLocalUserDatas();
   }
-  
+
   $log_->log('-- END deleting user: '.$this->getPref('username'), PEAR_LOG_INFO);
   return $ret;
 }
@@ -566,7 +566,7 @@ public function getMainAddress() {
       return $addkey;
     }
   }
-   
+
   reset($this->addresses_);
   return key($this->addresses_);
 }
@@ -676,9 +676,9 @@ public function set_language($lang) {
   * @return   numeric  user id
   */
   public function getID() {
-    return $this->getRecordId('user'); 
+    return $this->getRecordId('user');
   }
-  
+
  /**
   * apply changes to all addresses
   * @return  boolean  true on success, false on failure
@@ -692,7 +692,7 @@ public function set_language($lang) {
     }
     return true;
   }
-  
+
   /**
    * set the real username (in case it is different from the login)
    * @param  string  user name
@@ -714,7 +714,7 @@ public function set_language($lang) {
   	}
     return $this->getPref('username');
   }
-  
+
   /**
    * set the user as a stub one or not
    * @param bool is_stub
@@ -725,10 +725,10 @@ public function set_language($lang) {
   		$this->is_stub_ = true;
   	}
   }
-  
+
   /**
    * ask if user is stub
-   * @return bool 
+   * @return bool
    */
   public function isStub() {
   	return $this->is_stub_;

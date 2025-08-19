@@ -1,12 +1,12 @@
 # <@LICENSE>
 # Copyright 2004 Apache Software Foundation
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@
 # Modified: 2007-01-17
 # By: Dallas Engelken <dallase@uribl.com>
 #
-# Changes: 
+# Changes:
 #   0.7 - added image_name_regex to allow pattern matching on the image name
 #       - added support for image/pjpeg content types (progressive jpeg)
 #       - updated imageinfo.cf with a few sample rules for using image_name_regex()
@@ -36,10 +36,10 @@
 # Files:
 #   ImageInfo.pm (plugin)  - http://www.rulesemporium.com/plugins/ImageInfo.pm
 #   imageinfo.cf (ruleset) - http://www.rulesemporium.com/plugins/imageinfo.cf
-#   
+#
 # Install:
 #   1) place ruleset in your local config dir
-#   2) place plugin in your plugins dir 
+#   2) place plugin in your plugins dir
 #   3) add to init.pre (or v310.pre) the following line
 #      loadplugin Mail::SpamAssassin::Plugin::ImageInfo
 #           or if not in plugin dir..
@@ -49,16 +49,16 @@
 # Usage:
 #  image_count()
 #
-#     body RULENAME  eval:image_count(<type>,<min>,[max]) 
-#        type: 'all','gif','png', or 'jpeg'  
-#        min: required, message contains at least this 
+#     body RULENAME  eval:image_count(<type>,<min>,[max])
+#        type: 'all','gif','png', or 'jpeg'
+#        min: required, message contains at least this
 #             many images
-#        max: optional, if specified, message must not 
+#        max: optional, if specified, message must not
 #             contain more than this number of images
 #
 #  image_count() examples
-# 
-#     body ONE_IMAGE  eval:image_count('all',1,1) 
+#
+#     body ONE_IMAGE  eval:image_count('all',1,1)
 #     body ONE_OR_MORE_IMAGES  eval:image_count('all',1)
 #     body ONE_PNG eval:image_count('png',1,1)
 #     body TWO_GIFS eval:image_count('gif',2,2)
@@ -79,8 +79,8 @@
 #     body SMALL_GIF_AREA  eval:pixel_coverage('gif',1,40000)   # catches only gifs that 1 to 40k pixel/sql
 #
 #  image_name_regex()
-# 
-#     body RULENAME  eval:image_name_regex(<regex>) 
+#
+#     body RULENAME  eval:image_name_regex(<regex>)
 #        regex: full quoted regexp, see examples below
 #
 #  image_name_regex() examples
@@ -89,7 +89,7 @@
 #
 #  See the ruleset for more examples that arent documented here.
 #
-#  New functions added in v0.5+ need some documentation here.  Or just 
+#  New functions added in v0.5+ need some documentation here.  Or just
 #  see .cf for sample rules.
 #
 # -------------------------------------------------------
@@ -114,7 +114,7 @@ sub new {
   $class = ref($class) || $class;
   my $self = $class->SUPER::new($mailsaobject);
   bless ($self, $class);
-  
+
   $self->register_eval_rule ("image_count");
   $self->register_eval_rule ("pixel_coverage");
   $self->register_eval_rule ("image_size_exact");
@@ -145,13 +145,13 @@ my %get_details = (
     #my $has_global_color_table = $global_color_table ? 1 : 0;
     #my $sorted_colors = ($packed & 0x08)?1:0;
     #my $resolution = ((($packed & 0x70) >> 4) + 1);
- 
+
     if ($height && $width) {
       my $area = $width * $height;
       $pms->{imageinfo}->{pc_gif} += $area;
       $pms->{imageinfo}->{dems_gif}->{"${height}x${width}"} = 1;
       $pms->{imageinfo}->{names_all}->{$part->{'name'}} = 1 if $part->{'name'};
-      dbg("imageinfo: gif image ".($part->{'name'} ? $part->{'name'} : '')." is $height x $width pixels ($area pixels sq.), with $color_table_size color table"); 
+      dbg("imageinfo: gif image ".($part->{'name'} ? $part->{'name'} : '')." is $height x $width pixels ($area pixels sq.), with $color_table_size color table");
     }
   },
 
@@ -166,15 +166,15 @@ my %get_details = (
     my $chunksize = 8;
     my ($width, $height) = ( 0, 0 );
     my ($depth, $ctype, $compression, $filter, $interlace);
-  
+
     while ($pos < $datalen) {
       my ($len, $type) = unpack("Na4", substr($data, $pos, $chunksize));
       $pos += $chunksize;
- 
+
       last if $type eq "IEND";  # end of png image.
 
       next unless ( $type eq "IHDR" && $len == 13 );
-      
+
       my $bytes = substr($data, $pos, $len + 4);
       my $crc = unpack("N", substr($bytes, -4, 4, ""));
 
@@ -221,7 +221,7 @@ my %get_details = (
     }
 
     if ($height && $width) {
-      my $area = $height * $width; 
+      my $area = $height * $width;
       $pms->{imageinfo}->{pc_jpeg} += $area;
       $pms->{imageinfo}->{dems_jpeg}->{"${height}x${width}"} = 1;
       $pms->{imageinfo}->{names_all}->{$part->{'name'}} = 1 if $part->{'name'};
@@ -315,7 +315,7 @@ sub image_name_regex {
 
 sub image_count {
   my ($self,$pms,$body,$type,$min,$max) = @_;
-  
+
   return unless defined $min;
 
   # make sure we have image data read in.
@@ -338,7 +338,7 @@ sub pixel_coverage {
   if (!exists $pms->{'imageinfo'}) {
     $self->_get_images($pms);
   }
-  
+
   # dbg("imageinfo: pc_$type: $min, ".($max ? $max:'').", $type, ".$pms->{'imageinfo'}->{"pc_$type"});
   return result_check($min, $max, $pms->{'imageinfo'}->{"pc_$type"});
 }
@@ -354,12 +354,12 @@ sub image_to_text_ratio {
     $self->_get_images($pms);
   }
 
-  # depending on how you call this eval (body vs rawbody), 
+  # depending on how you call this eval (body vs rawbody),
   # the $textlen will differ.
   my $textlen = length(join('',@$body));
 
   return 0 unless ( $textlen > 0 && exists $pms->{'imageinfo'}->{"pc_$type"} && $pms->{'imageinfo'}->{"pc_$type"} > 0);
-  
+
   my $ratio = $textlen / $pms->{'imageinfo'}->{"pc_$type"};
   dbg("imageinfo: image ratio=$ratio, min=$min max=$max");
   return result_check($min, $max, $ratio, 1);

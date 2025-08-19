@@ -5,21 +5,21 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * requires PEAR's Auth class
  */
 require_once("Auth.php");
 require_once 'Log.php';
 require_once 'Log/observer.php';
- 
+
 /**
  * This class is the main authenticator factory
  * These are used to let the users authenticate against different kind of server
  * @package SpamTagger Plus
  */
 abstract class AuthManager {
-    
+
   /**
   * List of available authenticators with corresponding classes
   * @var array
@@ -36,32 +36,32 @@ abstract class AuthManager {
                                      'tequila' => array('tequila', 'TequilaAuthenticator'),
                                      'digest' => array('digest', 'DigestAuthenticator')
                                      );
-                                     
+
   /**
    * internal type of authenticator
    * @var  string
    */
    private $type_ = 'local';
-   
+
    /**
     * PEAR's Auth object
     * @var Auth
     */
     protected $auth_;
-    
+
     protected $logObserver_;
     protected $hiddenerrors_ = array('No login session.');
- 
+
    /**
     * constructor
     * @param  $type  string  internal authenticator type
-    */         
+    */
    public function __construct($type) {
         if (isset(self::$authenticators_[$type][1])) {
            $this->type_ = $type;
-        } 
-   }  
-   
+        }
+   }
+
    /**
    * Authenticator factory
    */
@@ -77,14 +77,14 @@ abstract class AuthManager {
     }
     return null;
   }
-  
+
   /**
   * create authenticator using pear's Auth object
   * @param  $domain_name  Domain  the domain of the user
   * @return               bool    true on success, false on failure
   */
  abstract public function create($domain);
- 
+
  /**
   * set some default value once the Auth object is set up
   * @return               bool   true on success, false on failure
@@ -94,29 +94,29 @@ abstract class AuthManager {
     $this->auth_->setIdle(0);
     $this->auth_->setShowLogin(0);
  }
- 
- 
+
+
  /**
   * start function needed by Auth
   */
   public function start() {
     $this->auth_->start();
   }
-  
+
   /**
    * get authentication status
    */
   public function getStatus() {
     return $this->auth_->getStatus();
   }
-  
+
  /**
   * do the authentication job here
   * username is normally passed via $_POST['username'] but will be replaced here by the formatted value
   * password is passed via the $_POST['password']
   * this method may be overloaded in child class if we don't use the Auth class
   * @param $username    string  username to be used for authentication (formatted by LoginFormatter)
-  * @return             bool    true if user is successfully authenticated, false otherwise  
+  * @return             bool    true if user is successfully authenticated, false otherwise
   */
   public function doAuth($username) {
     if (!isset($this->auth_) || ! $this->auth_ instanceof Auth) {
@@ -125,18 +125,18 @@ abstract class AuthManager {
     if ($_POST['password'] == '') {
         return false;
     }
-    
+
     $this->logObserver_ = new Auth_Log_Observer(PEAR_LOG_DEBUG);
     $this->auth_->attachLogObserver($this->logObserver_);
     $this->auth_->start();
     if ($this->auth_->getAuth()) {
         return true;
     }
-    
+
     return false;
   }
-  
-  
+
+
  /**
   * get the internal formatter type
   * @return  string  internal formatter type
@@ -144,7 +144,7 @@ abstract class AuthManager {
   public function getType() {
     return $this->type_;
   }
-  
+
   /**
    * get available connectors
    * @return  array   array of available connectors
@@ -156,9 +156,9 @@ abstract class AuthManager {
           $ret[$value[0]] = $key;
         }
      }
-     return $ret; 
+     return $ret;
    }
-   
+
    /**
     * get a value that could have been retrieved during authentication
     * @param   value   string  value to be retrieved
@@ -167,7 +167,7 @@ abstract class AuthManager {
    public function getValue($value) {
    	 return "";
    }
-   
+
    public function getMessages() {
      $ret = array();
      foreach ($this->logObserver_->messages as $msg) {
@@ -180,7 +180,7 @@ abstract class AuthManager {
      }
    	 return $ret;
    }
-   
+
    public function isExhaustive() {
        if (isset($this->exhaustive_)) {
          return $this->exhaustive_;

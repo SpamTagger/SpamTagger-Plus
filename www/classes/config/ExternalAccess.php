@@ -28,16 +28,16 @@ class ExternalAccess
    * @var array
    */
    private $access_ = array();
-   
-   
+
+
 /**
  * load rule set from database
  * @param  $service  string  service to be loaded
  * @return           boolean true on success, false on failure
  */
 public function load($service) {
-  if (!isset($service) || !isset(ExternalAccessRule::$available_services_[$service]))  { 
-    return false; 
+  if (!isset($service) || !isset(ExternalAccessRule::$available_services_[$service]))  {
+    return false;
   }
   $this->service_ = $service;
 
@@ -56,7 +56,7 @@ public function load($service) {
     $this->access_[$id] = new ExternalAccessRule($this->service_);
     $this->access_[$id]->load($id);
   }
-  
+
   return true;
 }
 
@@ -66,7 +66,7 @@ public function load($service) {
  * @return  string  'OKSAVED' on success, error code on failure
  */
 public function save() {
-    
+
   foreach ($this->access_ as $key => $access) {
     $ret = $access->save();
     if ($ret != "OKSAVED" && $ret != "OKADDED") {
@@ -104,17 +104,17 @@ public function setIPS($ips) {
   foreach ($this->access_ as $id => $a) {
     if (!in_array($a->getPref('allowed_ip'), $ip_array)) {
       $a->delete();
-      unset($this->access_[$id]);      
+      unset($this->access_[$id]);
     }
   }
-  
+
   // then check for new/existing rules
   foreach($ip_array as $ip) {
     if (!preg_match('/^\d+\.\d+\.\d+\.\d+(\/\d+)?$/', $ip, $tmp)) {
       continue;
     }
-   
-    // create new rule 
+
+    // create new rule
     if (!$this->allowedIP($ip)) {
         $this->access_['_'.$inserted] = new ExternalAccessRule($this->service_);
         $this->access_['_'.$inserted]->setPref('allowed_ip', $ip);
@@ -131,7 +131,7 @@ public function setIPS($ips) {
 public function getDefaultPort() {
   if (isset(ExternalAccessRule::$available_services_[$this->service_][0])) {
     return  ExternalAccessRule::$available_services_[$this->service_][0];
-  }   
+  }
   return '0';
 }
 
@@ -142,7 +142,7 @@ public function getDefaultPort() {
 public function getDefaultProtocol() {
   if (isset(ExternalAccessRule::$available_services_[$this->service_][1])) {
     return  ExternalAccessRule::$available_services_[$this->service_][1];
-  }   
+  }
   return '';
 }
 
@@ -155,7 +155,7 @@ private function allowedIP($ip) {
   foreach ($this->access_ as $a) {
     if ($a->getPref('allowed_ip') == $ip) {
         return true;
-    } 
+    }
   }
   return false;
 }

@@ -42,9 +42,7 @@ sub initialise {
 
   if (open (CONFIG, $configfile)) {
     while (<CONFIG>) {
-      if (/^(\S+)\s*\=\s*(.*)$/) {
-       $Cloudmark::conf{$1} = $2;
-      }
+      $Cloudmark::conf{$1} = $2 if (/^(\S+)\s*\=\s*(.*)$/);
     }
     close CONFIG;
   } else {
@@ -70,10 +68,10 @@ sub Checks {
   ## check maximum message size
   my $maxsize = $Cloudmark::conf{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
-     MailScanner::Log::InfoLog("Message %s is too big for Cloudmark checks (%d > %d bytes)",
-                                $message->{id}, $message->{size}, $maxsize);
-     $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
-     return 0;
+    MailScanner::Log::InfoLog("Message %s is too big for Cloudmark checks (%d > %d bytes)",
+      $message->{id}, $message->{size}, $maxsize);
+    $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
+    return 0;
   }
 
   if ($Cloudmark::conf{'active'} < 1) {
@@ -83,93 +81,87 @@ sub Checks {
   }
 
 ### check against Cloudmark
-   my ($client, $err) = Cloudmark::CMAE::Client->new (
-            host    => $Cloudmark::conf{'server_host'},
-            timeout => $Cloudmark::conf{'timeOut'},
-            port    => $Cloudmark::conf{'server_port'},
-            );
+  my ($client, $err) = Cloudmark::CMAE::Client->new (
+    host    => $Cloudmark::conf{'server_host'},
+    timeout => $Cloudmark::conf{'timeOut'},
+    port    => $Cloudmark::conf{'server_port'},
+  );
 
-   if ($err)  {
-    	MailScanner::Log::InfoLog("$MODULE server could not be reached for ".$message->{id}."!");
-        $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, 'server could not be reached for');
-        return 0;
-   }
-  
-   my (@WholeMessage, $maxsize);
-   push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
-   push(@WholeMessage, "\n");
-   $message->{store}->ReadBody(\@WholeMessage, 0);
-   my $msg = "";
-    foreach my $line (@WholeMessage) {
-      $msg .= $line;
-   }
-    
-   my $score;
-   my $category;
-   my $sub_category;
-   my $rescan;
-   my $analysis;
+  if ($err)  {
+    MailScanner::Log::InfoLog("$MODULE server could not be reached for ".$message->{id}."!");
+      $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, 'server could not be reached for');
+    return 0;
+  }
 
-   $err = $client->score(rfc822 =>  $msg,
-            out_score => \$score,
-            out_category => \$category,
-            out_sub_category => \$sub_category,
-            out_rescan => \$rescan,
-            out_analysis => \$analysis);
-    
+  my (@WholeMessage, $maxsize);
+  push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
+  push(@WholeMessage, "\n");
+  $message->{store}->ReadBody(\@WholeMessage, 0);
+  my $msg = "";
+  foreach my $line (@WholeMessage) {
+    $msg .= $line;
+  }
+
+  my $score;
+  my $category;
+  my $sub_category;
+  my $rescan;
+  my $analysis;
+
+  $err = $client->score(rfc822 =>  $msg,
+    out_score => \$score,
+    out_category => \$category,
+    out_sub_category => \$sub_category,
+    out_rescan => \$rescan,
+    out_analysis => \$analysis);
+
+  if ($err) {
+    MailScanner::Log::InfoLog("$MODULE scoring failed for ".$message->{id}."!");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, 'scoring failed');
+    return 0;
+  }
+
+  my $header = "$analysis";
+  my $result_str = "";
+
+  if ($Cloudmark::conf{'show_categories'} eq 'yes') {
+    my $out_cat;
+    my $out_subcat;
+
+    $err = $client->describe_category(category => $category,
+      sub_category => $sub_category,
+      out_category_desc => \$out_cat,
+      out_sub_category_desc => \$out_subcat);
+
     if ($err) {
-        MailScanner::Log::InfoLog("$MODULE scoring failed for ".$message->{id}."!");
-        $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, 'scoring failed');
-        return 0;
+      MailScanner::Log::InfoLog("$MODULE Can't extract category/subcat names for ".$message->{id}."!");
+    } else {
+      # replace all punctuation and whitespace with underscores
+      $out_subcat =~ s/[[:punct:]\s]/_/g;
+      $result_str = ", xcat=$out_cat/$out_subcat";
     }
-    
-    my $header = "$analysis";
-    my $result_str = "";
-    
-    if ($Cloudmark::conf{'show_categories'} eq 'yes') {
-        my $out_cat;
-        my $out_subcat;
+  }
 
-        $err = $client->describe_category(category => $category, 
-                sub_category => $sub_category, 
-                out_category_desc => \$out_cat,
-                out_sub_category_desc => \$out_subcat);
+  $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}."-cmaetag", $header);
 
-        if ($err) {
-            MailScanner::Log::InfoLog("$MODULE Can't extract category/subcat names for ".$message->{id}."!");
-        }
-        else 
-        {
-            # replace all punctuation and whitespace with underscores
-            $out_subcat =~ s/[[:punct:]\s]/_/g;
-            
-            $result_str = ", xcat=$out_cat/$out_subcat";
-        }
+  if ($score > $Cloudmark::conf{'threshold'}) {
+    MailScanner::Log::InfoLog("$MODULE result is spam (".$score.$result_str.") for ".$message->{id});
+    if ($Cloudmark::conf{'putSpamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "is spam (".$score.$result_str.", ".$Cloudmark::conf{pos_text} .")");
     }
-    
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}."-cmaetag", $header);
-    
-    if ($score > $Cloudmark::conf{'threshold'}) {
-        MailScanner::Log::InfoLog("$MODULE result is spam (".$score.$result_str.") for ".$message->{id});
-        if ($Cloudmark::conf{'putSpamHeader'}) {
-          $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "is spam (".$score.$result_str.", ".$Cloudmark::conf{pos_text} .")");
-        }
-        $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{pos_text} .")");
+    $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{pos_text} .")");
 
-        return 1;
+    return 1;
+  } else {
+    MailScanner::Log::InfoLog("$MODULE result is not spam (".$score.$result_str.") for ".$message->{id});
+    if ($Cloudmark::conf{'putHamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "is not spam (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
     }
-    else {
-        MailScanner::Log::InfoLog("$MODULE result is not spam (".$score.$result_str.") for ".$message->{id});
-        if ($Cloudmark::conf{'putHamHeader'}) {
-           $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "is not spam (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
-        }
-        $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
+    $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
+    return 0;
+  }
 
-        return 0;
-    }
-    
-  return 0;    
-  
+  return 0;
 }
 
 sub dispose {

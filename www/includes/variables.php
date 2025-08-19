@@ -5,11 +5,11 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * we do set some global variables here
  */
- 
+
 // debug or not
 ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
 ini_set('display_errors', 0);

@@ -3,21 +3,21 @@
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
-#   
+#
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
 #   the Free Software Foundation; either version 2 of the License, or
 #   (at your option) any later version.
-#   
+#
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
 #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #   GNU General Public License for more details.
-#   
+#
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#   
+#
 #
 #   This script will dump the apache config file with the configuration
 #   settings found in the database.
@@ -128,7 +128,7 @@ sub dump_apache_file
 
 	close TEMPLATE;
 	close TARGET;
-	
+
 	return 1;
 }
 
@@ -136,7 +136,7 @@ sub dump_soap_wsdl {
 
         my $template_file = "$config{'SRCDIR'}/www/soap/htdocs/spamtagger.wsdl_template";
         my $target_file = "$config{'SRCDIR'}/www/soap/htdocs/spamtagger.wsdl";
-                 
+
         if ( !open(TEMPLATE, $template_file) ) {
                 $lasterror = "Cannot open template file: $template_file";
                 return 0;
@@ -146,15 +146,15 @@ sub dump_soap_wsdl {
                 close $template_file;
                 return 0;
         }
-        
+
         my $inssl = 0;
         while(<TEMPLATE>) {
                 my $line = $_;
-        
+
                 $line =~ s/__HOST__/$sys_conf{'HOST'}/g;
 		print TARGET $line;
                 }
-        
+
         close TEMPLATE;
         close TARGET;
 
@@ -168,7 +168,7 @@ sub get_system_config
 
 	my $sth = $dbh->prepare("SELECT hostname, default_domain, sysadmin, clientid FROM system_conf");
 	$sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
-	
+
 	if ($sth->rows < 1) {
 		return;
 	}
@@ -179,7 +179,7 @@ sub get_system_config
 	$config{'__QUALIFY_RECIPIENT__'} = $ref->{'sysadmin'};
 	$config{'__CLIENTID__'} = $ref->{'clientid'};
 
-	$sth->finish();	
+	$sth->finish();
 
         $sth = $dbh->prepare("SELECT hostname FROM slave WHERE id=".$HOSTID);
   	$sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
@@ -189,14 +189,14 @@ sub get_system_config
 	$ref = $sth->fetchrow_hashref() or return;
 	$config{'HOST'} = $ref->{'hostname'};
 	$sth->finish();
-	
- 	return %config;	
+
+ 	return %config;
 }
 
 #############################
 sub get_apache_config{
 	my %config;
-	
+
 	my $sth = $dbh->prepare("SELECT serveradmin, servername, use_ssl, timeout, keepalivetimeout,
 				min_servers, max_servers, start_servers, http_port, https_port, certificate_file, tls_certificate_data, tls_certificate_key, tls_certificate_chain FROM httpd_config");
 	$sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
@@ -254,7 +254,7 @@ sub dump_certificate
   my $path = $config{'SRCDIR'}."/etc/apache/certs/certificate.pem";
   my $backup = $config{'SRCDIR'}."/etc/apache/certs/default.pem";
   my $chainpath = $config{'SRCDIR'}."/etc/apache/certs/certificate-chain.pem";
-   
+
   if (!$cert || !$key || $cert =~ /^\s+$/ || $key =~ /^\s+$/) {
       my $cmd = "cp $backup $path";
       `$cmd`;
@@ -271,7 +271,7 @@ sub dump_certificate
   if ( $chain && $chain ne '' ) {
      if ( open(FILE, ">$chainpath")) {
          print FILE $chain."\n";
-         close FILE; 
+         close FILE;
      }
   }
 }

@@ -4,7 +4,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 #logviewpanel {
   width: 1030px;
   height: 380px;
@@ -28,7 +28,7 @@
   background-color: yellow;
 }
 .firstmatch {
-  background-color: #FF9966 !important;	
+  background-color: #FF9966 !important;
 }
 
 #logviewnavig {

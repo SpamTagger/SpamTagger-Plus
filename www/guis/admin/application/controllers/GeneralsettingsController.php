@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for general settings
  */
 
@@ -21,9 +21,9 @@ class GeneralsettingsController extends Zend_Controller_Action
     	$view->selectedMenu = 'Configuration';
     	$main_menus = Zend_Registry::get('main_menu')->findOneBy('id', 'subconfig_GeneralSettings')->class = 'submenuelselected';
     	$view->selectedSubMenu = 'GeneralSettings';
-    	
+
     	$this->config_menu = new Zend_Navigation();
-    	
+
     	$this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Defaults', 'id' => 'defaults', 'action' => 'defaults', 'controller' => 'generalsettings')));
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Company', 'id' => 'company', 'action' => 'company', 'controller' => 'generalsettings')));
 
@@ -34,13 +34,13 @@ class GeneralsettingsController extends Zend_Controller_Action
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Logging', 'id' => 'logging', 'action' => 'logging', 'controller' => 'generalsettings')));
         $this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Archiving', 'id' => 'archiving', 'action' => 'archiving', 'controller' => 'generalsettings')));
         $view->config_menu = $this->config_menu;
-        
+
         $view->headScript()->appendFile($view->scripts_path.'/baseconfig.js', 'text/javascript');
         $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
     }
-    
+
     public function indexAction() {
-  	
+
     }
 
     public function defaultsAction() {
@@ -50,18 +50,18 @@ class GeneralsettingsController extends Zend_Controller_Action
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'defaults')->label;
     	$request = $this->getRequest();
-    	
+
     	$defaults = new Default_Model_SystemConf();
     	$defaults->load();
     	$usergui = new Default_Model_UserGUI();
     	$usergui->load();
     	$domain = new Default_Model_Domain();
     	$domains = $domain->fetchAllName();
-    	
+
     	$form    = new Default_Form_Defaults($defaults, $usergui, $domains);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('defaults', 'generalsettings'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
             	$defaults->setParam('default_language', $request->getParam('language'));
@@ -82,11 +82,11 @@ class GeneralsettingsController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
     	$view->message = $message;
     }
-    
+
     public function companyAction() {
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'company')->class = 'generalconfigmenuselected';
@@ -94,14 +94,14 @@ class GeneralsettingsController extends Zend_Controller_Action
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'company')->label;
     	$request = $this->getRequest();
-    	
+
     	$defaults = new Default_Model_SystemConf();
     	$defaults->load();
-    	
+
     	$form    = new Default_Form_Company($defaults);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('company', 'generalsettings'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
             	$defaults->setParam('organisation', $request->getParam('companyname'));
@@ -117,7 +117,7 @@ class GeneralsettingsController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
     	$view->message = $message;
     }
@@ -162,14 +162,14 @@ class GeneralsettingsController extends Zend_Controller_Action
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'quarantines')->label;
     	$request = $this->getRequest();
-    	
+
     	$defaults = new Default_Model_SystemConf();
     	$defaults->load();
-    	
+
     	$form    = new Default_Form_Quarantines($defaults);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('quarantines', 'generalsettings'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
             	$defaults->setParam('days_to_keep_spams', $request->getParam('spamretention'));
@@ -184,11 +184,11 @@ class GeneralsettingsController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
     	$view->message = $message;
     }
-    
+
     public function tasksAction() {
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'tasks')->class = 'generalconfigmenuselected';
@@ -199,11 +199,11 @@ class GeneralsettingsController extends Zend_Controller_Action
 
     	$defaults = new Default_Model_SystemConf();
     	$defaults->load();
-  
+
     	$form    = new Default_Form_Tasks($defaults);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('tasks', 'generalsettings'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
                 $defaults->setParam('cron_time', $request->getParam('cron_time'));
@@ -219,20 +219,20 @@ class GeneralsettingsController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->form = $form;
     	$view->message = $message;
     }
-    
+
     public function loggingAction() {
-    	
+
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'logging')->class = 'generalconfigmenuselected';
     	$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'logging')->label;
     	$request = $this->getRequest();
-    	
+
         if ($request->isXmlHttpRequest()) {
         	$layout->disableLayout();
         	$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
@@ -242,11 +242,11 @@ class GeneralsettingsController extends Zend_Controller_Action
 
     	$defaults = new Default_Model_SystemConf();
     	$defaults->load();
-  
+
     	$form    = new Default_Form_Logging($defaults);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('logging', 'generalsettings'));
         $message = '';
-        
+
         if ($request->isPost()) {
             if ($form->isValid($request->getPost())) {
                 $defaults->setParam('use_syslog', $request->getParam('use_syslog'));
@@ -271,29 +271,29 @@ class GeneralsettingsController extends Zend_Controller_Action
             	$message = "NOK bad settings";
             }
         }
-        
+
         $view->waiturl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('logging', 'generalsettings');
         $view->finishedwait = 'Logging service restarted';
         $view->form = $form;
     	$view->message = $message;
     }
-    
+
     public function archivingAction() {
-    	 
+
     	$t = Zend_Registry::get('translate');
     	$this->config_menu->findOneBy('id', 'archiving')->class = 'generalconfigmenuselected';
     	$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
     	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'archiving')->label;
     	$request = $this->getRequest();
-    	 
+
     	$defaults = new Default_Model_SystemConf();
     	$defaults->load();
-    
+
     	$form    = new Default_Form_Archiving($defaults);
     	$form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('archiving', 'generalsettings'));
     	$message = '';
-    
+
     	if ($request->isPost()) {
     		if ($form->isValid($request->getPost())) {
                 try {
@@ -311,7 +311,7 @@ class GeneralsettingsController extends Zend_Controller_Action
     			$message = "NOK bad settings";
     		}
     	}
-    
+
     	$view->form = $form;
     	$view->message = $message;
     }

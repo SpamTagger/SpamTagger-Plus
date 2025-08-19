@@ -40,8 +40,8 @@ my @wait = ();
 my $dumped = 0;
 my $has_ipc_run = eval
 {
-	require IPC::Run;
-	1;
+  require IPC::Run;
+  1;
 };
 
 my %config = readConfig("/etc/spamtagger.conf");
@@ -115,7 +115,7 @@ if (open(my $fh, '>>', "$config{'VARDIR'}/log/spamtagger/spam_sync.log")) {
 # but in future we may think of different times for daily/weekly or monthly jobs
 
 my $slave_dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
-                                        "spamtagger","$config{'MYSPAMTAGGERPWD'}", {RaiseError => 0, PrintError => 1} );
+  "spamtagger","$config{'MYSPAMTAGGERPWD'}", {RaiseError => 0, PrintError => 1} );
 if (!$slave_dbh) {
   printf ("ERROR: no slave database found on this system ! \n");
   ## try to properly kill all databases
@@ -135,14 +135,14 @@ if (!$slave_dbh) {
 my $sth =  $slave_dbh->prepare("SELECT hostid FROM system_conf WHERE (0=HOUR(NOW())) AND ((MINUTE(NOW()) >= 0) AND (MINUTE(NOW()) < 0+$cron_occurence))");
 $sth->execute() or die ("error in SELECT");
 if ($sth->rows > 0) {
-    $itsmidnight=1;
+  $itsmidnight=1;
 }
 $sth->finish();
 
 $sth =  $slave_dbh->prepare("SELECT hostid FROM system_conf WHERE (HOUR(cron_time)=HOUR(NOW())) AND ((MINUTE(NOW()) >= MINUTE(cron_time)) AND (MINUTE(NOW()) < MINUTE(cron_time)+$cron_occurence))");
 $sth->execute() or die ("error in SELECT");
 if ($sth->rows > 0) {
-	$itstime=1;
+  $itstime=1;
 }
 $sth->finish();
 
@@ -661,9 +661,9 @@ sub readConfig {       # Reads configuration file given as argument.
   open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
   while (<CONFIG>) {
     chomp;                  # no newline
-    s/#.*$//;                # no comments
+    s/#.*$//;               # no comments
     s/^\*.*$//;             # no comments
-    s/;.*$//;                # no comments
+    s/;.*$//;               # no comments
     s/^\s+//;               # no leading white
     s/\s+$//;               # no trailing white
     next unless length;     # anything left?

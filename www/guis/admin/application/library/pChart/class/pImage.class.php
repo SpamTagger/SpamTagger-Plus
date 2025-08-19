@@ -77,7 +77,7 @@
        imagealphablending($this->Picture,FALSE);
        imagefilledrectangle($this->Picture, 0,0,$XSize, $YSize, imagecolorallocatealpha($this->Picture, 255, 255, 255, 127));
        imagealphablending($this->Picture,TRUE);
-       imagesavealpha($this->Picture,true); 
+       imagesavealpha($this->Picture,true);
       }
      else
       {
@@ -220,7 +220,7 @@
 
      if ( $FontName != NULL  )
       $this->FontName = $FontName;
- 
+
      if ( $FontSize != NULL  )
       $this->FontSize = $FontSize;
     }

@@ -67,17 +67,17 @@ sub Checks {
     $message->{prefilterreport} .= ", ClamSpam (too big)";
     $global::MS->{mta}->AddHeaderToOriginal($message, $ClamSpam::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
     return 0;
-  } 
-  
+  }
+
   my (@WholeMessage, $maxsize);
   push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   push(@WholeMessage, "\n");
   $message->{store}->ReadBody(\@WholeMessage, 0);
-     
+
   my $msgtext = "";
   foreach my $line (@WholeMessage) {
     $msgtext .= $line;
-  }      
+  }
 
   my $tim = $ClamSpam::conf{'timeOut'};
   use Mail::SpamAssassin::Timeout;
@@ -87,7 +87,7 @@ sub Checks {
   my $res = "";
   my @lines;
 
-  $t->run(sub {  
+  $t->run(sub {
     use IPC::Run3;
     my $out;
     my $err;
@@ -105,8 +105,8 @@ sub Checks {
   $ret = 1;
   my $spamfound = "";
 ## analyze result
- 
-  @lines = split "\n", $res; 
+
+  @lines = split "\n", $res;
   foreach my $line (@lines) {
     if ($line =~ m/:\s*(\S+)\s+FOUND$/ ) {
       $spamfound .= ", $1";

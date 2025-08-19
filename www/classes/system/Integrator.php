@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 
 /**
  * this class takes care of the system integrator information
@@ -16,7 +16,7 @@ class Integrator extends PrefHandler
    * integrator information
    * @var array
    */
-  private $infos_ = array(   
+  private $infos_ = array(
                         'Name_T' => "",
                         'Surname_T' => "",
                         'Phone_T' => "",
@@ -25,7 +25,7 @@ class Integrator extends PrefHandler
                         'SiteInternet' => "",
                         'Phone' => ""
                         );
-                        
+
  /**
   * constructor
   */
@@ -44,19 +44,19 @@ class Integrator extends PrefHandler
       }
     }
   }
-  
+
   /**
    * get information
    * @param $name string  information to be retrieved
    * @return      mixed   information value
-   */          
+   */
   public function getInfo($name) {
   	if (isset($this->infos_[$name])) {
       return $this->infos_[$name];
   	}
     return "";
   }
-  
+
   /**
    * set an information
    * @param $name  string  information name

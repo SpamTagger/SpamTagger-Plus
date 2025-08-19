@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -27,10 +27,10 @@
 <div id="logtextsearch_matches">
   <?php if ($this->res['search_results'] > 1) {?>
     <?php echo $this->t->_('Match') ?>
-    <?php echo $this->res['position']?> 
+    <?php echo $this->res['position']?>
     <?php echo $this->t->_('on') ?>
     <?php echo $this->res['search_results']?>
-    
+
     <?php if ($this->res['position'] > 1 || $this->res['position'] < $this->res['search_results']) { ?>
       &mdash;
       <?php if ($this->res['position'] > 1) {?>
@@ -73,7 +73,7 @@
     <a href="javascript:goToLine(<?php echo $this->res['fromline'] - $this->params['maxlines'] - 1?>);"><?php echo $this->t->_('page up');?></a>
  <?php }?>
  <?php if ( ($this->res['fromline'] > 1) && ($this->res['toline'] < $this->res['nblines'])) {?>
-   | 
+   |
  <?php }?>
  <?php if ( $this->res['toline'] < $this->res['nblines'] ) {?>
    <a href="javascript:goToLine(<?php echo $this->res['toline']+1?>);"><?php echo $this->t->_('page down');?></a>

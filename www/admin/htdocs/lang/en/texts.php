@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 $txt['SUBMIT']                      = "submit";
 $txt['CANCEL']                      = "cancel";
 $txt['CLOSE']                       = "close";
@@ -278,7 +278,7 @@ $txt['LDAPCALLOUT']                 = "LDAP/AD callout configuration";
 $txt['SERVICENEEDRESTART']          = "At least one service needs to be restarted";
 
 $txt['GREYLISTCONFIG']              = "Greylist daemon configuration";
-$txt['GREYRETRYMIN']                = "Minimum retry time"; 
+$txt['GREYRETRYMIN']                = "Minimum retry time";
 $txt['GREYRETRYMAX']                = "Maximum retry time";
 $txt['GREYEXPIRE']                  = "Lifetime of record";
 $txt['AVOIDGREYDOMAINS']            = "Exclude these sender domains";

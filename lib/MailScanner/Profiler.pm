@@ -44,7 +44,7 @@ sub start {
   my $var = shift;
 
   return unless MailScanner::Config::Value('profile');
-  
+
   $this->{start_times}{$var} = [gettimeofday];
 }
 
@@ -65,7 +65,7 @@ sub getResult {
   return unless MailScanner::Config::Value('profile');
 
   my $out = "";
- 
+
   my @keys = sort keys %{$this->{res_times}};
   foreach my $key (@keys) {
     $out .= " ($key:".$this->{res_times}{$key}."s)";

@@ -170,7 +170,7 @@ sub dumper {
 			push(@list,$cache{$_});
 		}
 	}
-			
+
 	if (scalar(@exceptions)) {
 		@exceptions = $self->dumper(join(' ',@exceptions));
 	}
@@ -181,12 +181,12 @@ sub dumper {
 	$self->{recursion} = $recursion;
 	return @list;
 }
-			
+
 sub getA
 {
 	my $self = shift;
 	my $target = shift;
-	
+
 	my $res = $self->{'resolver'}->query($target, 'A');
 	if (defined($res->{'answer'}->[0]->{'address'})) {
 		return ($res->answer)[0]->address;
@@ -201,7 +201,7 @@ sub getAAAA
 {
 	my $self = shift;
 	my $target = shift;
-	
+
 	my $res = $self->{'resolver'}->query($target, 'AAAA');
 	if ($res) {
 		return ($res->answer)[0]->address;
@@ -340,7 +340,7 @@ sub validIP4
 {
 	my $self = shift;
 	my $target = shift;
-	
+
 	return $self->{'validator'}->is_ipv4($target);
 }
 
@@ -348,7 +348,7 @@ sub validIP6
 {
 	my $self = shift;
 	my $target = shift;
-	
+
 	return $self->{'validator'}->is_ipv6($target);
 }
 
@@ -635,7 +635,7 @@ sub uniq
 {
 	my $self = shift;
 	my @ips = @_;
-	
+
 	my %ips;
 	foreach (@ips) {
 		$ips{$_} = 1;

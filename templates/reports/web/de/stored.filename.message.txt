@@ -2,7 +2,7 @@ Dies ist eine Nachricht vom SpamTagger
 --------------------------------------
 
 Der Dateianhang "$filename"
-ist in der Liste unerwueschter bzw. unsicherer Dateianhaenge und wurde durch 
+ist in der Liste unerwueschter bzw. unsicherer Dateianhaenge und wurde durch
 diese Nachricht ersetzt.
 
 Wenn Sie eine Kopie der Original Nachricht wuenschen, gehen Sie bitte zur :
@@ -11,7 +11,7 @@ https://spamtagger.org/support/support-request.html
 Am $date meldete der Virenscanner folgendes:
 $report
 
-Hinweis an den Administrator: 
+Hinweis an den Administrator:
 Datei: $hostname in $datenumber/$id
 
 ----------

@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the antispam configuration page
  */
- 
+
  /**
   * require admin session, view and AntiSpam objects
   */
@@ -54,7 +54,7 @@ if (! $pf) {
 
 if ($cform->shouldSave()) {
   foreach ($cposted as $key => $value) {
-    $pf->setPref($key, $value);	 
+    $pf->setPref($key, $value);
   }
   $saved = $pf->save($cposted);
   if ($saved == 'OKSAVED') {

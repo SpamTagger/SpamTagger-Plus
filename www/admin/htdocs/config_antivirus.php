@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the antivirus configuration page
  */
- 
+
  /**
   * require admin session, view and AntiVirus objects
   */
@@ -83,7 +83,7 @@ $replace = array(
         "__FORM_BEGIN_SCANNERS__" => $sform->open(),
         "__FORM_CLOSE_SCANNERS__" => $sform->close(),
         "__SCANNERSLIST_DRAW__" => $antivirus_->drawScanners($template_->getTemplate('SCANNERSLIST'), $sform),
-        "__SCANNERS_SAVE_STATUS__" => $save_msg,	
+        "__SCANNERS_SAVE_STATUS__" => $save_msg,
         "__FORM_BEGIN_SETTINGS__" => $cform->open(),
         "__FORM_CLOSE_SETTINGS__" => $cform->close(),
         "__SETTINGS_SAVE_STATUS__" => $csave_msg,

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * SMTP server settings
  */
 
@@ -73,29 +73,29 @@ class Default_Model_MtaConfig
        'allow_long' => 1,
        'folding' => 0,
      );
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -103,7 +103,7 @@ class Default_Model_MtaConfig
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -127,20 +127,20 @@ class Default_Model_MtaConfig
         $this->getMapper()->find($id, $this);
         return $this;
     }
-   
+
     public function save()
     {
         return $this->getMapper()->save($this);
     }
-    
+
     public function useRBL($rbl) {
     	return preg_match('/\b'.$rbl.'\b/', $this->getParam('rbls'));
     }
-    
+
     public function checkSSLCertificate() {
     	## openssl x509 -noout -modulus -in certificate.crt | openssl md5
     	## openssl rsa -noout -modulus -in privateKey.key | openssl md5
-     
+
     	## openssl verify certificate.crt
     }
 }

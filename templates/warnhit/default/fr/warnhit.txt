@@ -2,7 +2,7 @@ Subject: SpamTagger: Avertissement de blocage
 
 Bonjour,
 
-vous recevez ce message afin de vous avertir qu'un message de l'exp=E9diteur __SENDER__, 
+vous recevez ce message afin de vous avertir qu'un message de l'exp=E9diteur __SENDER__,
 pr=E9sent dans votre liste d'avertissement, a =E9t=E9 d=E9tect=E9 comme un spam.
 
 Si vous pensez qu'il s'agit d'une erreur et que vous souhaitez tout de m=EAme recevoir ce message,

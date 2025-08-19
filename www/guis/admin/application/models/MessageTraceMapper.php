@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Message trace mapper
  */
 
@@ -29,7 +29,7 @@ class Default_Model_MessageTraceMapper
 		$trace_id = 0;
 		$slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         foreach ($slaves as $s) {
         	$res = $s->sendSoapRequest('Logs_StartTrace', $params);
         	if (isset($res['trace_id'])) {
@@ -41,12 +41,12 @@ class Default_Model_MessageTraceMapper
         }
         return $trace_id;
 	}
-	
+
 	public function getStatusFetchAll($params) {
 		$res = array('finished' => 0, 'count' => 0, 'data' => array());
 	    $slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         $params['noresults'] = 1;
         $stillrunning = count($slaves);
         $globalrows = 0;
@@ -70,26 +70,26 @@ class Default_Model_MessageTraceMapper
         }
         return $res;
 	}
-	
+
     public function abortFetchAll($params) {
 		$slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         foreach ($slaves as $s) {
         	$res = $s->sendSoapRequest('Logs_AbortTrace', $params);
         }
         return $res;
 	}
-	
+
 	public function fetchAll($params)
-	{	
+	{
 		$slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-		
+
         $entriesflat = array();
         $sortarray = array();
         $slaveentries = array();
-        
+
         $params['noresults'] = 0;
         $params['soap_timeout'] = 20;
         $stillrunning = count($slaves);
@@ -109,14 +109,14 @@ class Default_Model_MessageTraceMapper
 
         	foreach ($sres['data'] as $line) {
         		if (preg_match('/^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d)/', $line, $matches)) {
-                    $id = md5(uniqid(mt_rand(), true)); 
+                    $id = md5(uniqid(mt_rand(), true));
         			$sortarray[$id] = $matches[1];
         			$entriesflat[$id] = $line;
         			$slaveentries[$id] = $s->getId();
         		}
         	}
         }
-        
+
         if (isset($params['orderfield']) && $params['orderfield'] == 'date') {
         	if ($params['orderorder'] == 'asc') {
         		$params['orderorder'] = 'desc';
@@ -137,9 +137,9 @@ class Default_Model_MessageTraceMapper
         	$entry->setParam('slave_id', $slaveentries[$se]);
         	$entries[] = $entry;
         }
-        
+
         $this->_nbelements = count($entries);
-        
+
 	    $mpp = 20;
 		if (isset($params['mpp']) && is_numeric($params['mpp'])) {
 			$mpp = $params['mpp'];
@@ -151,9 +151,9 @@ class Default_Model_MessageTraceMapper
 		if (isset($params['page']) && is_numeric($params['page']) && $params['page'] > 0 && $params['page'] <= $this->_pages ) {
 			$this->_page = $params['page'];
 		}
-		
+
 		$entriespage = array_slice($entries, ($this->_page - 1) * $mpp, $mpp);
-		
+
         return $entriespage;
 	}
 

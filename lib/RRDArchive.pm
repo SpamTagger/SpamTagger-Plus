@@ -37,7 +37,7 @@ use Scalar::Util qw(looks_like_number);
 
 #use Log::Log4perl qw(:easy);
 #Log::Log4perl->easy_init({
-#        level    => $INFO, 
+#        level    => $INFO,
 #        category => 'rrdtool',
 #        layout   => '%m%n',
 #    });
@@ -54,24 +54,24 @@ sub New {
   my $name = shift;
   my $type = shift;
   my $hosts_status = shift;
-  
+
   my $conf = ReadConfig::getInstance();
- 
+
   my @elements;
   my @hosts;
   my @databases;
   my %snmp;
   my %dynamic_vars;
-  
+
   my $slave_db = DB::connect('slave', 'st_config');
   my @hostsa = $slave_db->getListOfHash("SELECT id, hostname FROM slave");
   foreach my $h (@hostsa) {
   	push @hosts, $h->{'hostname'};
   }
-  
+
   my %community = $slave_db->getHashRow("SELECT community FROM snmpd_config");
   my $community = $community{'community'};
-  
+
   my $spooldir = $conf->getOption('VARDIR')."/spool/newrrds/".$name."_".$type;
   if ( ! -d $spooldir ) {
     mkpath($spooldir);
@@ -99,14 +99,14 @@ sub New {
 sub addElement {
 	my $this = shift;
 	my $element = shift;
-	
+
 	$element->{'name'} =~ s/\s/_/g;
 	push @{$this->{'elements'}}, $element;
 }
 
 sub createDatabases {
 	my $this = shift;
-	
+
 	foreach my $h (@{$this->{'hosts'}}) {
 		my $dbfile = $this->{'spooldir'}."/".$h.".rrd";
 		push @{$this->{'databases'}}, {'host' => $h, 'rrd' => $this->createDatabase($dbfile)};
@@ -118,16 +118,16 @@ sub createDatabases {
 sub createDatabase {
 	my $this = shift;
 	my $file = shift;
-	
+
 	my $rrd = RRDTool::OO->new( file => $file );
 	if ( -f $file) {
 		return $rrd;
 	}
-	
+
 	## add elements
 	my @options;
 	foreach my $element (@{$this->{elements}}) {
-    @options = (@options, data_source => { 
+    @options = (@options, data_source => {
                                            name => $element->{'name'},
                                            type => $element->{'type'},
                                            min => $element->{'min'},
@@ -135,13 +135,13 @@ sub createDatabase {
                                            }
                  );
     }
-    
+
     ## add archives
-    
+
     # hourly values, step 1, rows 500
     my $count = 1;
     my $rows = 500;
-#    @options = (@options, 
+#    @options = (@options,
 #                   archive  => { rows      => $rows,
 #                                 cpoints   => $count,
 #                                 cfunc     => 'LAST',
@@ -153,13 +153,13 @@ sub createDatabase {
 #                   archive  => { rows      => $rows,
 #                                 cpoints   => $count,
 #                                 cfunc     => 'MAX',
-#                               },            
+#                               },
 #               );
-               
+
     ## daily values
     $count = 1;
     $rows = 8600;
-    @options = (@options, 
+    @options = (@options,
                    archive  => { rows      => $rows,
                                  cpoints   => $count,
                                  cfunc     => 'LAST',
@@ -171,13 +171,13 @@ sub createDatabase {
                    archive  => { rows      => $rows,
                                  cpoints   => $count,
                                  cfunc     => 'MAX',
-                               },            
+                               },
                );
-               
+
     ## weekly values
     $count = 6;
     $rows = 700;
-    @options = (@options, 
+    @options = (@options,
                    archive  => { rows      => $rows,
                                  cpoints   => $count,
                                  cfunc     => 'LAST',
@@ -189,13 +189,13 @@ sub createDatabase {
                    archive  => { rows      => $rows,
                                  cpoints   => $count,
                                  cfunc     => 'MAX',
-                               },            
+                               },
                );
-               
+
     ## monthly values
     $count = 24;
     $rows = 775;
-    @options = (@options, 
+    @options = (@options,
                    archive  => { rows      => $rows,
                                  cpoints   => $count,
                                  cfunc     => 'LAST',
@@ -207,12 +207,12 @@ sub createDatabase {
                    archive  => { rows      => $rows,
                                  cpoints   => $count,
                                  cfunc     => 'MAX',
-                               },            
+                               },
                );
     ## yearly values
     $count = 288;
     $rows = 797;
-    @options = (@options, 
+    @options = (@options,
                    archive  => { rows      => $rows,
                                  cpoints   => $count,
                                  cfunc     => 'LAST',
@@ -224,17 +224,17 @@ sub createDatabase {
                    archive  => { rows      => $rows,
                                  cpoints   => $count,
                                  cfunc     => 'MAX',
-                               },            
+                               },
                );
-                        
-    ## and create   
+
+    ## and create
     $rrd->create(
               step => $rrdstep,
-              @options         
+              @options
     );
-    
+
     foreach my $element (@{$this->{elements}}) {
-        
+
         if ($element->{'type'} eq 'COUNTER' || $element->{'type'} eq 'DERIVE') {
         	eval {
         	$rrd->tune(dsname => $element->{'name'}, minumum => 0);
@@ -242,30 +242,30 @@ sub createDatabase {
         	}
         }
     }
-    
+
 	return $rrd;
 }
 
 sub collect {
 	my $this = shift;
 	my $dynamic = shift;
-	
+
 	if (!defined($this->{'globaldatabase'})) {
 		$this->createDatabases();
 	}
-	
+
 	if (keys %{$dynamic} < 1) {
 		$$dynamic = $this->getDynamicOids();
 	}
-	
+
 	my %globalvalues;
 
-    foreach my $db (@{$this->{databases}}) {	
+    foreach my $db (@{$this->{databases}}) {
     	my %values;
     	foreach my $element (@{$this->{elements}}) {
-			
+
 			my $value = $this->getSNMPValue($db->{'host'}, $element->{'oid'}, $dynamic);
-			
+
 			$values{$element->{'name'}} = $value;
             $globalvalues{$element->{'name'}} += $value;
 		}
@@ -279,7 +279,7 @@ sub getSNMPValue {
 	my $host = shift;
 	my $oids = shift;
 	my $dynamic = shift;
-	
+
 	if (defined($host_failed{$host}) && $host_failed{$host} > 0) {
 		print "Host '$host' is not available!\n";
 		return 0;
@@ -309,7 +309,7 @@ sub getSNMPValue {
         }
         my $result = $this->{snmp}->{$host}->get_request(-varbindlist => [$oid]);
         my $error = $this->{snmp}->{$host}->error();
-        if (defined($error) && ! $error eq "") { 
+        if (defined($error) && ! $error eq "") {
            print "Error found: $error\n";
            $host_failed{$host} = 1;
         } else {
@@ -330,7 +330,7 @@ sub getSNMPValue {
 sub connectSNMP {
 	my $this = shift;
 	my $host = shift;
-	
+
     if (defined($this->{snmp}->{$host})) {
         return 1;
     }
@@ -338,7 +338,7 @@ sub connectSNMP {
     if ($host_failed{$host}) {
     	return 0;
     }
-    my ($session, $error) = Net::SNMP->session( 
+    my ($session, $error) = Net::SNMP->session(
                             -hostname => $host,
                             -community => $this->{'community'},
                             -port => 161,
@@ -356,7 +356,7 @@ sub connectSNMP {
 sub getDynamicOids {
 	my $this = shift;
 	my $dynamic_oids = shift;
-	
+
 	foreach my $h (@{$this->{'hosts'}}) {
 		$this->getDynamicOidsForHost($h, $dynamic_oids);
 	}
@@ -365,13 +365,13 @@ sub getDynamicOids {
 
 sub getDynamicOidsForHost {
 	my $this = shift;
-	my $host = shift;	
+	my $host = shift;
 	my $dynamic_oids = shift;
-	
+
 	if (!defined($this->{snmp}->{$host})) {
         $this->connectSNMP($host);
     }
-    
+
     my %partitions = ('OS' => '/', 'DATA' => '/var');
 	foreach my $part (keys %partitions) {
         ## first find out partition devices
@@ -387,13 +387,13 @@ sub getDynamicOidsForHost {
 		if ($part_device =~ m/^\/dev\/(\S+)/ ) {
 			$dynamic_oids->{$host}->{$part.'_DEVICE'} = $1;
 		}
-	
+
 	    my $ios_index = $this->getIndexOf($host, 'UCD-DISKIO-MIB::diskIODevice', $dynamic_oids->{$host}->{$part.'_DEVICE'});
             if (defined $ios_index) {
 	        $dynamic_oids->{$host}->{$part.'_IO'} = $ios_index;
             }
 	}
-	
+
 	my %interfaces = ('IF' => 'eth\d+');
 	foreach my $int (keys %interfaces) {
 		my $if_index = $this->getIndexOf($host, 'IF-MIB::ifDescr', $interfaces{$int});
@@ -401,7 +401,7 @@ sub getDynamicOidsForHost {
 		    $dynamic_oids->{$host}->{$int} = $if_index;
                 }
 	}
-		
+
 	return 1;
 }
 
@@ -410,15 +410,15 @@ sub getIndexOf {
 	my $host = shift;
 	my $givenbaseoid = shift;
 	my $search = shift;
-	
+
     if (!defined($this->{snmp}->{$host})) {
         $this->connectSNMP($host);
-    }	
+    }
 
     if (!defined $search) {
         return undef;
     }
-    
+
     ## first check for data and os parts
     my $baseoid = SNMP::translateObj($givenbaseoid);
     if (! defined $baseoid) {
@@ -446,7 +446,7 @@ sub getValueOfOid {
     my $this = shift;
     my $host = shift;
     my $givenoid = shift;
-    
+
     if (!defined($this->{snmp}->{$host})) {
         $this->connectSNMP($host);
     }

@@ -4,23 +4,23 @@
  * @package SpamTagger Plus
  * @author Mentor Reka
  * @copyright (C) 2017 Mentor Reka <reka.mentor@gmail.com>
- * 
+ *
  * UnRegistration form
  */
 
 class Default_Form_UnRegistration extends ZendX_JQuery_Form
 {
-	
+
 	protected $_unregistrationmgr;
 	protected $_currentLicense;
-	
+
 	public function __construct($mgr, $current_license) {
 		$this->_unregistrationmgr = $mgr;
 		$this->_currentLicense = $current_license;
 		parent::__construct();
 	}
 
-	
+
 	public function init()
 	{
 		$t = Zend_Registry::get('translate');
@@ -37,7 +37,7 @@ class Default_Form_UnRegistration extends ZendX_JQuery_Form
             	$rsp->setValue('');
             	$rsp->addValidator(new Zend_Validate_Alnum());
             	$this->addElement($rsp);
-		
+
 		$this->setAttrib('id', 'unregister_form');
 
 	        $submit = new Zend_Form_Element_Submit('unregister', array(

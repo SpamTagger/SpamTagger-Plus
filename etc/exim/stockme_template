@@ -3,7 +3,7 @@ then
   logfile __VARDIR__/spool/learningcenter/trace_report.log
   logwrite "$tod_full|$header_x-spamtagger-id:|$sender_address|${md5:${substr{0}{50}{${sg{$header_To:}{[\r\n\t]}{}}}}}|$header_x-spamtagger-senderip:|${sg{$header_x-spamtagger-spamcheck:}{[\r\n\t]}{}}"
 
-__IF__ STOCK 
+__IF__ STOCK
 if $header_X-SpamTagger-SpamCheck begins "spam"
 then
   unseen save __VARDIR__/spool/learningcenter/stockspam/tmp/$message_id

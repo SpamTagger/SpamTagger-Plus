@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is as list
  */
@@ -20,11 +20,11 @@ class AdminList extends ListManager
 /**
  * load adminsitrator from database
  * @return  boolean  true on success, false on failure
- */ 
+ */
 public function Load() {
   require_once('helpers/DM_SlaveConfig.php');
   $db_slaveconf = DM_SlaveConfig :: getInstance();
-  
+
   $query = "SELECT username FROM administrator";
   $row = $db_slaveconf->getList($query);
   foreach( $row as $admin) {

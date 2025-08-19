@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * index page controller
  */
 
 class IndexController extends Zend_Controller_Action
 {
-		    
+
     public function init()
     {
     	$layout = Zend_Layout::getMvcInstance();
@@ -27,18 +27,18 @@ class IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
-    	
+
     }
 
-    public function globalstatsAction() 
+    public function globalstatsAction()
     {
     	$layout = Zend_Layout::getMvcInstance();
         $view=$layout->getView();
         $layout->disableLayout();
         $view->addScriptPath(Zend_Registry::get('ajax_script_path'));
-        
+
         $request = $this->getRequest();
-        
+
         $stats_type = $request->getParam('t');
         if (!isset($stats_type) || !$stats_type || $stats_type == '') {
         	$stats_type = 'global';
@@ -47,12 +47,12 @@ class IndexController extends Zend_Controller_Action
         $what = array();
 		$what['stats'] = $reporting->getTodayStatElements($stats_type);
         $data = $reporting->getTodayValues($what, 0, $stats_type);
-        
+
         $view->graphlink = $view->baseurl.'/index/todaypie/c/1';
         if ($request->getParam('t') != '') {
             $view->graphlink .= '/t/'.$stats_type.'/r/'.uniqid();
         }
-        
+
         $view->stats_type = $stats_type;
         $total = 0;
         foreach ($data as $d) {
@@ -60,24 +60,24 @@ class IndexController extends Zend_Controller_Action
         }
         $view->stats_total = $total;
     	$view->stats = $data;
-    	
+
     	$template = Zend_Registry::get('default_template');
     	include_once(APPLICATION_PATH . '/../public/templates/'.$template.'/css/pieColors.php');
     	$view->colors = $data_colors;
     }
-    
-    public function globalstatusAction() 
+
+    public function globalstatusAction()
     {
     	$layout = Zend_Layout::getMvcInstance();
         $view=$layout->getView();
         $layout->disableLayout();
         $view->addScriptPath(Zend_Registry::get('ajax_script_path'));
-        
+
         $slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         $res = array();
-        
+
         foreach (array('hardware', 'spools', 'load') as $service) {
         	$res[$service] = array('status' => 'ok', 'message' => '', 'value' => '');
             foreach ($slaves as $s) {
@@ -93,7 +93,7 @@ class IndexController extends Zend_Controller_Action
                $res[$service]['value'] = $tmpres['value'];
             }
         }
-        
+
         $users = 0;
         foreach ($slaves as $s) {
            $susers = $s->getTodayStats('users');
@@ -102,14 +102,14 @@ class IndexController extends Zend_Controller_Action
            }
         }
         $view->users = $users;
-        
+
         $domain = new Default_Model_Domain();
         $domains = $domain->fetchAllName();
         $view->domains = count($domains);
         $view->distinctdomains = $domain->getDistinctDomainsCount();
         $view->hosts = (count($slaves));
         $view->status = $res;
-        
+
         $config = new SpamTagger_Config();
 	    }
     }
@@ -121,22 +121,22 @@ class IndexController extends Zend_Controller_Action
 		$view=$layout->getView();
 
 		$request = $this->getRequest();
-		
+
 		$usecache = false;
 		if (preg_match('/^[A-Za-z0-9]+$/', $request->getParam('c'))) {
 			$usecache = $request->getParam('c');
-		} 
+		}
 		$type = $request->getParam('t');
 		if (isset($type) && !preg_match('/^(accepted|refused|global|delayed|relayed|sessions)$/', $type)) {
 			echo "invalid selection: $type";
 			exit();
 		}
-        
+
 		$reporting = new Default_Model_ReportingStats();
 		$what = array();
 		$what['stats'] = $reporting->getTodayStatElements();
 		return $reporting->getTodayPie($what, 0, $usecache, $request->getParam('t'));
 	}
-	
+
 }
 

@@ -25,7 +25,7 @@ use utf8;
 
 our @ISA = "ManageServices";
 
-sub init 
+sub init
 {
 	my $module = shift;
 	my $class = shift;
@@ -59,7 +59,7 @@ sub config
 		'checktimer'	=> 10,
 		'actions'	=> {},
 	};
-	
+
 	return $config;
 }
 
@@ -78,7 +78,7 @@ sub setup
 	if (system($self->{'VARDIR'}.'/.pyenv/shims/dump_fail2ban_config.py')) {
 		$self->doLog('dump_fail2ban_config.py failed', 'daemon');
 	}
-	
+
 	return 1;
 }
 
@@ -94,11 +94,11 @@ sub mainLoop
 {
 	my $self = shift;
 	my $class = shift;
-	
+
 
 	$self->doLog("Running $self->{'cmd'} -b -s $self->{'socket'} -p $self->{'pidfile'}", 'daemon');
 	system($self->{'cmd'}, "-b", "-s", $self->{'socket'}, "-p", $self->{'pidfile'});
-	
+
 	return 1;
 }
 

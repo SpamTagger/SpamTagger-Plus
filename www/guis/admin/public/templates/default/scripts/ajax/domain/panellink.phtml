@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -9,9 +9,9 @@
 <?php if ($this->previouspanel) { ?>
 <a href="<?php echo $this->searchurl?>/name/<?php echo $this->name?>/panel/<?php echo $this->previouspanel?>"
  onclick="javascript:loadDomainPanel('<?php echo $this->previouspanel?>');return false;" >&lt;&lt; <?php echo $this->t->_('Previous step')?></a>
-<?php }?> 
+<?php }?>
 <?php if ($this->previouspanel && $this->nextpanel) {?>
-| 
+|
 <?php }?>
 <?php if ($this->nextpanel) {?>
 <a href="<?php echo $this->searchurl?>/name/<?php echo $this->name?>/panel/<?php echo $this->nextpanel?>"

@@ -4,18 +4,18 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Network interface mapper
  */
 
 class Default_Model_NetworkInterfaceMapper
 {
 	protected $_interface_file = '/etc/network/interfaces';
-	
+
     public function find($if, Default_Model_NetworkInterface $interface)
     {
     	$interface->setName($if);
-    	
+
     	## parse network file for interface
     	if (file_exists($this->_interface_file)) {
     		$interface_file = file($this->_interface_file);
@@ -52,11 +52,11 @@ class Default_Model_NetworkInterfaceMapper
 
             	if (preg_match('/^\s*(\S+)\s+(.*)/', $line, $matches) && $in_virtual == '') {
             		$key = $matches[1];
-            	    $interface->setParam($key, $matches[2]);   
+            	    $interface->setParam($key, $matches[2]);
             	}
             }
     	}
-    	
+
     	## fetch ifconfig values for auto-assigned addresses
     	$ifconfig = `/sbin/ifconfig`;
     	$current_int = '';
@@ -74,7 +74,7 @@ class Default_Model_NetworkInterfaceMapper
     		}
     	}
     }
-    
+
     public function fetchAll() {
         $entries = array();
         ## first check for configured interfaces
@@ -93,9 +93,9 @@ class Default_Model_NetworkInterfaceMapper
           		}
           	}
           }
-          
+
         }
-        
+
         ## next check for physical interfaces not configured
         $proc_test_physical_file = '/proc/sys/net/ipv4/neigh/__INTERFACE__';
         $physical_name = 'eth__ID__';
@@ -110,16 +110,16 @@ class Default_Model_NetworkInterfaceMapper
         		}
         	}
         }
-        ksort($entries);        
+        ksort($entries);
         return $entries;
     }
-    
+
     public function save($model) {
-    	
+
     	if (Zend_Registry::get('restrictions')->isRestricted('NetworkInterface', 'submit')) {
     		return 'NOK could not save due to restricted feature';
     	}
-    	
+
     	$tmpfile = '/tmp/st_initerfaces.tmp';
 
         $has_ipv6 = 0;
@@ -128,7 +128,7 @@ class Default_Model_NetworkInterfaceMapper
                 $has_ipv6 = 1;
             }
 	}
-    	
+
     	$txt = "auto lo\n";
         $txt .= "iface lo inet loopback\n";
         if ($has_ipv6) {
@@ -137,7 +137,7 @@ class Default_Model_NetworkInterfaceMapper
         } else {
             $txt .= "\tpost-up echo 1 > /proc/sys/net/ipv6/conf/lo/disable_ipv6\n";
         }
-    	
+
     	foreach ($this->fetchAll() as $interface) {
     		if ($interface->getName() == $model->getName()) {
     			continue;

@@ -5,15 +5,15 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class takes care of fetching addresses in a text file
  * @package SpamTagger Plus
  */
  class Filelookup extends AddressFetcher {
-    
-    
+
+
     public function fetch($username, $domain) {
       $sysconf_ = SystemConfig::getInstance();
       // for now, username <=> address relation file is in a predefined place
@@ -29,17 +29,17 @@
       foreach ($adds as $a) {
         $this->addAddress($a, $a);
       }
-  
+
       // old way of doing that: list($t1, $t2, $t3, $field, $file) = split (":", $domain->getPref('auth_param'));
-      
+
       return $this->getAddresses();
     }
-    
+
     public function searchUsers($u, $d) {
       // @todo  everything here ;o)
       return array();
     }
-    
+
     public function searchEmails($l, $d) {
       $addresses = array();
       $sysconf_ = SystemConfig::getInstance();
@@ -57,7 +57,7 @@
               $addresses[$field] = $field;
             }
          }
-      } 
+      }
       // @todo  everything here ;o)
       ksort($addresses);
       return $addresses;

@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Spamc form
  */
 
@@ -15,28 +15,28 @@ class Default_Form_AntiSpam_Spamc extends Default_Form_AntiSpam_Default
 	public $_ip_rbls = array();
 	public $_uri_rbls = array();
 	public $_rbls_class = '';
-	
+
 	public function getViewScriptFile() {
 		return $this->_viewscript;
 	}
-	
+
 	public function __construct($module) {
 		parent::__construct($module);
 	}
-	
+
 	public function init() {
 		parent::init();
-		
+
 		$as = new Default_Model_AntispamConfig();
 		$as->find(1);
-		
+
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-		
+
     	$rbllist = new Default_Model_DnsLists();
 		$rbllist->load();
-        
+
 		foreach ($rbllist->getRBLs('IPRBL DNSRBL IPRWL URIRBL') as $rbl) {
 			$userbl = new Zend_Form_Element_Checkbox('use_rbl_'.$rbl['name'], array(
 			         'label' => $rbl['dnsname'],
@@ -48,14 +48,14 @@ class Default_Form_AntiSpam_Spamc extends Default_Form_AntiSpam_Default
 	        }
 	        $this->addElement($userbl);
 	        $this->_rbl_checks[] = $userbl;
-	        if ($rbl['type'] == 'IPRBL' || $rbl['type'] == 'DNSRBL' || $rbl['type'] == 'IPRWL') {    	
+	        if ($rbl['type'] == 'IPRBL' || $rbl['type'] == 'DNSRBL' || $rbl['type'] == 'IPRWL') {
                     $this->_ip_rbls[] = $userbl;
-	        }       
-	        if ($rbl['type'] == 'URIRBL') {        	
+	        }
+	        if ($rbl['type'] == 'URIRBL') {
  	            $this->_uri_rbls[] = $userbl;
 	        }
 		}
-		
+
 		$localchecks = array(
 		  'use_bayes' => 'Use statistical filter',
 		  'bayes_autolearn' => 'enable auto learning',
@@ -65,10 +65,10 @@ class Default_Form_AntiSpam_Spamc extends Default_Form_AntiSpam_Default
 		  'use_botnet' => 'Enable botnet detection',
                   'dmarc_follow_quarantine_policy' => 'Honor DMARC quarantine policy',
  		);
-		
+
 		$titles = array('Enable SpamAssassin Bayesian',
 				'',
-				'This plugin checks for specific keywords in image/gif, image/jpeg or image/png attachments, using gocr (an optical character recognition program). ', 
+				'This plugin checks for specific keywords in image/gif, image/jpeg or image/png attachments, using gocr (an optical character recognition program). ',
 				'Checks for specific  properties like format/size for image detection',
 				'This plugin helps detected spam using attached PDF files',
 				'Botnet looks for possible botnet sources of email by checking various DNS values',
@@ -125,18 +125,18 @@ class Default_Form_AntiSpam_Spamc extends Default_Form_AntiSpam_Default
             }
 	        $this->addElement($el_timeout);
 	    }
-	    
+
 	    if (! $as->getParam('use_rbls')) {
 	    	$this->_rbls_class = 'hidden';
 	    }
 	}
-	
+
 	public function setParams($request, $module) {
 		parent::setParams($request, $module);
-		
+
 		$as = new Default_Model_AntispamConfig();
 		$as->find(1);
-		
+
 		$rbllist = new Default_Model_DnsLists();
 		$rbllist->load();
 		$rblstr = '';
@@ -150,11 +150,11 @@ class Default_Form_AntiSpam_Spamc extends Default_Form_AntiSpam_Default
 		if ($request->getParam('use_rbls')) {
            $as->setParam('sa_rbls', $rblstr);
 		}
-		
+
 		foreach (array('use_bayes', 'bayes_autolearn', 'use_fuzzyocr', 'use_imageinfo', 'use_pdfinfo', 'use_botnet', 'dmarc_follow_quarantine_policy') as $p) {
 			$as->setParam($p, $request->getParam($p));
 		}
-		
+
 	    foreach (array(
 	        'use_rbls' => 'rbls_timeout',
 	    	'use_dcc' => 'dcc_timeout',
@@ -169,7 +169,7 @@ class Default_Form_AntiSpam_Spamc extends Default_Form_AntiSpam_Default
 			}
 		}
 		$as->save();
-		
+
 		if ($as->getParam('use_rbls')) {
 			$this->_rbls_class = '';
 		} else {
@@ -191,5 +191,5 @@ class Default_Form_AntiSpam_Spamc extends Default_Form_AntiSpam_Default
 			}
 		}
 	}
-	
+
 }

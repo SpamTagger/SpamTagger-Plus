@@ -59,7 +59,7 @@ sub initialise {
      SFNHost => 'localhost',
      SFNTimeout => 10,
      tmpDir => '/tmp/MessageSniffer',
-     MaxTempFileSize => 64 * 1024, 
+     MaxTempFileSize => 64 * 1024,
      decisive_field => 'none',
      pos_text => '',
      neg_text => '',
@@ -103,13 +103,13 @@ sub Checks {
     $message->{prefilterreport} .= ", MessageSniffer (too big)";
     $global::MS->{mta}->AddHeaderToOriginal($message, $MessageSniffer::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
     return 0;
-  } 
-  
+  }
+
   my (@WholeMessage, $maxsize);
   push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   push(@WholeMessage, "\n");
   $message->{store}->ReadBody(\@WholeMessage, 0);
-     
+
   my $msgtext = "";
   foreach my $line (@WholeMessage) {
     $msgtext .= $line;
@@ -120,7 +120,7 @@ sub Checks {
      mkdir($MessageSniffer::conf{'tmpDir'});
      chmod(0777, $MessageSniffer::conf{'tmpDir'});
   };
- 
+
   my $tim = $MessageSniffer::conf{'timeOut'};
   use Mail::SpamAssassin::Timeout;
   my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
@@ -129,7 +129,7 @@ sub Checks {
   my $SNF_XCI_Return;
   my @lines;
 
-  $t->run(sub {  
+  $t->run(sub {
 
     # Truncate the message.
     my $mailtext = substr( $msgtext, 0, $MessageSniffer::conf{'MaxTempFileSize'} );
@@ -296,7 +296,7 @@ sub err_hash
     };
 }
 
-sub clean_die 
+sub clean_die
 {
    my ( $this, $file, $message ) = @_;
    unlink($file);

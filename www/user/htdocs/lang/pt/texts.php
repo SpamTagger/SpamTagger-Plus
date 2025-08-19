@@ -2,7 +2,7 @@
 $txt['NEWSLETTERSALLOW'] = "entregar";
 $txt['NEWSLETTERACCEPT'] = "Aceitar esta newsletter";
 $txt['SPAM_WHITELIST_DISABLED'] = "A lista não está ativada para este domínio (Contacte o seu administrador).";
-/* 
+/*
  * generic buttons
  */
 $txt['SUBMIT'] = "Submeter";
@@ -458,7 +458,7 @@ $txt['REMTHEENTRY'] = "Remover selecionados";
 $txt['DISABLETHEENTRY'] = "Desativar/ativar selecionados";
 $txt['WHITELISTSHORTHELP'] = "A lista branca contém endereços de remetente confiáveis para os quais nenhuma retenção de quarentena jamais ocorrerá.<br />
                                    Aviso: esta funcionalidade deve ser utilizada como uma solução temporária, uma vez que diminui a proteção global.
-                                  Verifique o manual (disponível na secção <a href=\"help.php\">\"Ajuda\"</a>) para obter mais informações sobre o uso da lista branca. 
+                                  Verifique o manual (disponível na secção <a href=\"help.php\">\"Ajuda\"</a>) para obter mais informações sobre o uso da lista branca.
 ";
 $txt['BLACKLISTSHORTHELP'] = "A lista negra contém endereços de remetentes não permitidos.
                                   Consulte o manual (disponível na secção <a href=\"help.php\">\"Ajuda\"</a>) para mais informações sobre o uso de listas negras.

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * System configuration
  */
 
@@ -34,21 +34,21 @@ class Default_Model_SystemConf
       'api_fulladmin_ips' => '',
       'api_admin_ips' => ''
     );
-    
+
     protected $_restart_what = array(
        'default_domain' => array('exim_stage1','exim_stage4')
     );
     protected $_to_restart = array();
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		if ($param == 'organisation') {
 			$company = preg_replace('/\S/', '', $value);
@@ -59,7 +59,7 @@ class Default_Model_SystemConf
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
-		
+
 		## eventually check for services to restart according to parameter changed
 		if (isset($this->_restart_what[$param])) {
 			foreach ($this->_restart_what[$param] as $s) {
@@ -67,14 +67,14 @@ class Default_Model_SystemConf
 			}
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -82,7 +82,7 @@ class Default_Model_SystemConf
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -109,11 +109,11 @@ class Default_Model_SystemConf
         $this->getMapper()->find($id, $this);
         return $this;
     }
-   
+
     public function save()
     {
     	$ret = $this->getMapper()->save($this);
-    	
+
     	## do we need to restart anything
     	$slave = new Default_Model_Slave();
     	foreach ($this->_to_restart as $s) {

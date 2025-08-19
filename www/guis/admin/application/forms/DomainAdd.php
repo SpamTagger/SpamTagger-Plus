@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * New domain form
  */
 
@@ -12,19 +12,19 @@ class Default_Form_DomainAdd extends Zend_Form
 {
 	protected $_domain;
 	protected $_panelname = 'general';
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 
 	    parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 
 		$this->setAttrib('id', 'domain_form');
@@ -32,14 +32,14 @@ class Default_Form_DomainAdd extends Zend_Form
             'required'   => false,
 		    'label'   =>  $t->_('Use default values from'). ": ",
             'filters'    => array('StringTrim')));
-        
+
 	    $defaultvalues->addMultiOption('__global__', $t->_('Global domains settings'));
         foreach ($this->_domain->fetchAllName() as $domain) {
         	$defaultvalues->addMultiOption($domain->getParam('name'), $domain->getParam('name'));
         }
         $defaultvalues->setValue('__global__');
         $this->addElement($defaultvalues);
-		
+
 		$domainname = new  Zend_Form_Element_Text('domainname', array(
             'label'   => $t->_('Domain name')." :",
 		    'required' => false,
@@ -47,16 +47,16 @@ class Default_Form_DomainAdd extends Zend_Form
 	    $domainname->setValue($this->_domain->getParam('name'));
 	    require_once('Validate/DomainName.php');
         $domainname->addValidator(new Validate_DomainName());
-	    $this->addElement($domainname);	
-	    
+	    $this->addElement($domainname);
+
 	    $mdomainname = new  Zend_Form_Element_Textarea('mdomainname', array(
             'label'   => $t->_('Domain name')." :",
 		    'required' => false,
 		    'rows' => 5,
 		    'cols' => 30,
 		    'filters'    => array('StringToLower', 'StringTrim')));
-	    $this->addElement($mdomainname);	
-		
+	    $this->addElement($mdomainname);
+
 	    $topdomains = new Zend_Form_Element_Select('topdomains', array(
 		    'required' => false));
 	    $domains = new Default_Model_Domain();
@@ -66,14 +66,14 @@ class Default_Form_DomainAdd extends Zend_Form
 	    }
 	    $topdomains->setValue($this->_params['domain']);
 	    $this->addElement($topdomains);
-		
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
-		$this->addElement($submit);	
+		$this->addElement($submit);
 	}
-	
+
 	public function setParams($request, $domain) {
-		
+
 	}
 
 }

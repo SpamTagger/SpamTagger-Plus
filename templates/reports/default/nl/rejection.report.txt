@@ -12,7 +12,7 @@ daarom verworpen. Gelieve geen mails meer naar ons te sturen naar dit adres:
 Als je vragen hebt hierover, of als je denkt dat je dit bericht niet voor jou bestemd is,
 gelieve dan de systeembeheerder te contacteren.
 
--- 
+--
 MailScanner
 Email Virus Scanner
 %org-long-name%

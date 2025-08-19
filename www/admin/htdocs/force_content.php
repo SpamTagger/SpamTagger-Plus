@@ -6,10 +6,10 @@
  * @copyright 2025, SpamTagger
  * @abstract This is the controller for the force content page
  */
- 
+
 /**
  * requires admin session, and content stuff
- */      
+ */
 require_once('admin_objects.php');
 require_once("view/Template.php");
 require_once("user/Content.php");
@@ -26,7 +26,7 @@ $content = new Content();
 if (isset($_GET['id']) && preg_match('/^[a-z,A-Z,0-9]{6}-[a-z,A-Z,0-9]{6,11}-[a-z,A-Z,0-9]{2,4}$/', $_GET['id'])) {
   $res = $content->load($_GET['id']);
 
-  if ($res == "OK") { 
+  if ($res == "OK") {
     $res = $content->force();
   }
 }

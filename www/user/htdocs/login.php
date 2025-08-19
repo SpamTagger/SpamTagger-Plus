@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the login page
  */
- 
+
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
   return 200;
 }
@@ -26,11 +26,11 @@ ini_set('error_reporting', E_ALL & ~E_STRICT);
 $sysconf_ = SystemConfig :: getInstance();
 $lang_ = Language :: getInstance('user');
 // do not let user log in if we are not a master !
-if ($sysconf_->ismaster_ < 1) { 
-  exit; 
+if ($sysconf_->ismaster_ < 1) {
+  exit;
 }
 
-// get the main Login object    
+// get the main Login object
 $login_ = new LoginDialog();
 // and start (if logged, we should be redirected here)
 $login_->start();

@@ -20,8 +20,8 @@ class Api_Model_DomainAPI
 	 *   General:
 	 *    name => string, domain name - cannot be modified
 	 *    aliases  => comma or \n separated string of aliases domains (use '' to delete all aliases)
-	 *    defaults => can be any existent domain name. 
-	 *                Values will be copied from it first as default vaules, 
+	 *    defaults => can be any existent domain name.
+	 *                Values will be copied from it first as default vaules,
 	 *                otherwise, default values are taken from the global domains settings
 	 *    systemsender => System mail sender address
 	 *    falseneg_to => False negative reporting address
@@ -36,8 +36,8 @@ class Api_Model_DomainAPI
 	 *
 	 *   Address verification:
 	 *    callout_connector => can be 'none', 'smtp', 'ldap'
-	 *    callout_server => server to use for callout    
-	 *    
+	 *    callout_server => server to use for callout
+	 *
      *    For ldap/Active Directory connector (callout_connector must be specified and set to 'ldap'):
      *      c_base_dn => base DN (i.e. dc=yourdomain,dc=com)
      *      c_bind_user => user account for non anonymous bind
@@ -81,7 +81,7 @@ class Api_Model_DomainAPI
 	 *     prevent_spoof => can be 0 or 1, enable antispoofing
 	 *     require_incoming_tls => can be 0 or 1, reject unencrypted sessions to this domain
 	 *     reject_capital_domain => can be 0 or 1, rejects domain names containing capitals (if set to 0)
-	 *    
+	 *
 	 *   Outgoing:
 	 *     allow_smtp_auth =>  can be 0 or 1, set if users can authenticate using SMTP for relaying
 	 *     require_outgoing_tls => can be 0 or 1, reject unencrypted relaying sessions from this domain
@@ -94,7 +94,7 @@ class Api_Model_DomainAPI
 	 *   Archiving:
 	 *     send_to_archiver => can be 0 or 1, set if messages should be sent to the archiver
 	 *     send_copy_to => string, email address to send a copy of every message (incoming and outgoing) to
-	 *     
+	 *
 	 *  Templates:
 	 *     web_template => User Web Interface template
 	 *     summary_template => spam quarantine reports template
@@ -106,7 +106,7 @@ class Api_Model_DomainAPI
 			Zend_Registry::get('response')->setResponse(401, 'authentication required');
 			return false;
 		}
-		 
+
 		$domain = new Default_Model_Domain();
 		try {
 			require_once('Validate/DomainName.php');
@@ -115,7 +115,7 @@ class Api_Model_DomainAPI
 				throw new Exception('Domain name not valid ('.$name.')');
 			}
 			$domain->setParam('name', $name);
-			
+
 			## check defaults values
             $defdom = new Default_Model_Domain();
             $defdom->findByName('__global__');
@@ -129,9 +129,9 @@ class Api_Model_DomainAPI
 				}
 			}
             $domain->copyPrefs($defdom);
-			
+
             $this->setupParams($domain, $params);
-            
+
 			$domain->save();
 			$domain->saveAliases();
 
@@ -149,7 +149,7 @@ class Api_Model_DomainAPI
             Zend_Registry::get('response')->setResponse(401, 'authentication required');
             return false;
         }
-         
+
         $domain = new Default_Model_Domain();
         try {
             require_once('Validate/DomainName.php');
@@ -173,7 +173,7 @@ class Api_Model_DomainAPI
         Zend_Registry::get('response')->setResponse(200, 'Domain '.$name.' successfully edited');
         return true;
 	}
-	
+
 	public function remove($name) {
 	    if (!Zend_Registry::isRegistered('user')) {
             Zend_Registry::get('response')->setResponse(401, 'authentication required');
@@ -203,7 +203,7 @@ class Api_Model_DomainAPI
             Zend_Registry::get('response')->setResponse(401, 'authentication required');
             return false;
         }
-        
+
         $domain = new Default_Model_Domain();
         try {
             require_once('Validate/DomainName.php');
@@ -222,13 +222,13 @@ class Api_Model_DomainAPI
         Zend_Registry::get('response')->setResponse(200, 'Domain '.$name.' exists');
         return true;
 	}
-	
+
 	public function show($name, $params) {
 		if (!Zend_Registry::isRegistered('user')) {
             Zend_Registry::get('response')->setResponse(401, 'authentication required');
             return false;
         }
-        
+
         $data = array();
         $domain = new Default_Model_Domain();
         try {
@@ -249,7 +249,7 @@ class Api_Model_DomainAPI
         Zend_Registry::get('response')->setResponse(200, 'Domain '.$name.' settings', $data);
         return true;
 	}
-	
+
 	public function domainList() {
 		if (!Zend_Registry::isRegistered('user')) {
             Zend_Registry::get('response')->setResponse(401, 'authentication required');
@@ -268,7 +268,7 @@ class Api_Model_DomainAPI
         Zend_Registry::get('response')->setResponse(200, 'Domains', $list);
         return true;
 	}
-	
+
 	private function setupParams($domain, $params) {
 		## aliases
 		if (isset($params['aliases'])) {
@@ -282,7 +282,7 @@ class Api_Model_DomainAPI
         }
         ## delivery
         $options = $domain->getDestinationActionOptions();
-        if (isset($params['destination_mode'])) { 
+        if (isset($params['destination_mode'])) {
             $domain->setDestinationOption($params['destination_mode']);
         }
         if (isset($params['destination_usemx'])) {
@@ -298,9 +298,9 @@ class Api_Model_DomainAPI
     		    $connectorform  = new $connectorformclass($domain);
     		    $data = array();
     		    foreach (array(
-    		            'callout_server' => 'callout_server', 
-    		            'c_base_dn' => 'basedn', 
-    		            'c_bind_user' => 'binddn', 
+    		            'callout_server' => 'callout_server',
+    		            'c_base_dn' => 'basedn',
+    		            'c_bind_user' => 'binddn',
                         'c_bind_pass' => 'bindpass',
                         'c_group' => 'group',
                         'c_use_ssl' => 'usessl'
@@ -308,7 +308,7 @@ class Api_Model_DomainAPI
     		    	if (isset($params[$key])) {
     		    		$data[$value] = $params[$key];
     		    	}
-    		    } 
+    		    }
     		    $connectorform->setParamsFromArray($data, $domain);
             } else {
             	throw new Exception('Callout connector does not exists');
@@ -329,9 +329,9 @@ class Api_Model_DomainAPI
 			$domain->setPref('delivery_type', $spam_actions[$params['delivery_type']]);
 		}
 		foreach (array(
-		      'spam_tag' => 'spam_tag', 
+		      'spam_tag' => 'spam_tag',
 		      'content_tag' => 'content_subject',
-		      'file_tag' => 'file_subject', 
+		      'file_tag' => 'file_subject',
 		      'virus_tag' => 'virus_subject') as $keytag => $desttag) {
 			if (isset($params[$keytag])) {
 				$domain->setPref($desttag, $params[$keytag]);
@@ -345,16 +345,16 @@ class Api_Model_DomainAPI
                  $data = array();
                  foreach (array(
                         'auth_server' => 'auth_server',
-                        'auth_use_ssl' => 'use_ssl', 
-                        'a_base_dn' => 'basedn', 
-                        'a_bind_user' => 'binddn', 
+                        'auth_use_ssl' => 'use_ssl',
+                        'a_base_dn' => 'basedn',
+                        'a_bind_user' => 'binddn',
                         'a_bind_pass' => 'bindpass',
                         'a_user_attr' => 'userattribute',
                         'a_protocol_version' => 'ldapversion') as $key => $value) {
                     if (isset($params[$key])) {
                         $data[$value] = $params[$key];
                     }
-                 } 
+                 }
                  $connectorform->setParamsFromArray($data, $domain);
              } else {
                  throw new Exception('Authentication connector does not exists');
@@ -383,9 +383,9 @@ class Api_Model_DomainAPI
             		break;
             	case 'local':
                     $domain->setPref('address_fetcher', 'local');
-            		break;        	
+            		break;
             }
-        }   
+        }
         ## Filtering
         foreach (array('spamwall', 'contentwall', 'viruswall') as $key) {
         	if (isset($params[$key]) && preg_match('/^[01]$/', $params[$key])) {
@@ -410,7 +410,7 @@ class Api_Model_DomainAPI
             if ( isset($params[$key]) && preg_match('/^[01]$/', $params[$key])) {
                 $domain->setPref($storekey, $params[$key]);
             }
-        }   
+        }
         foreach (array('batv_secret' => 'batv_secret','dkim_domain' => 'dkim_domain', 'dkim_selector' => 'dkim_selector', 'dkim_private_key' => 'dkim_pkey') as $key => $storekey) {
             if (isset($params[$key])) {
              	$domain->setPref($storekey, $params[$key]);
@@ -430,7 +430,7 @@ class Api_Model_DomainAPI
         	}
         }
 	}
-	
+
 	private function getDomainParams($domain, $params = array()) {
 		$data = array();
 		$data['name'] = $domain->getParam('name');
@@ -458,7 +458,7 @@ class Api_Model_DomainAPI
         if (empty($params) || in_array('destination', $params)) {
             $data['destination'] = preg_replace('/\n/', ',', $domain->getDestinationFieldStringForAPI());
         }
-        
+
         ## Address verification
         if (empty($params) || in_array('callout_connector', $params)) {
             $data['callout_connector'] = $domain->getCalloutConnector();
@@ -494,9 +494,9 @@ class Api_Model_DomainAPI
             $data['delivery_type'] = $domain->getSpamActionName();
         }
         foreach (array(
-              'spam_tag' => 'spam_tag', 
+              'spam_tag' => 'spam_tag',
               'content_tag' => 'content_subject',
-              'file_tag' => 'file_subject', 
+              'file_tag' => 'file_subject',
               'virus_tag' => 'virus_subject') as $keytag => $desttag) {
             if (empty($params) || in_array($keytag, $params)) {
                 $data[$keytag] = $domain->getPref($desttag);
@@ -524,7 +524,7 @@ class Api_Model_DomainAPI
                 }
             }
         }
-        
+
 	## Filtering, Templates
         foreach (array('prevent_spoof', 'require_incoming_tls', 'spamwall', 'contentwall', 'viruswall', 'greylist', 'web_template', 'summary_template', 'reject_capital_domain') as $key) {
             if (empty($params) || in_array($key, $params)) {
@@ -544,7 +544,7 @@ class Api_Model_DomainAPI
                 }
         	}
         }
-        
+
         ## Outgoing
         foreach (array('allow_smtp_auth' => 'allow_smtp_auth', 'require_outgoing_tls' => 'require_outgoing_tls', 'batv_enable' => 'batv_check') as $key => $storekey) {
         	$data[$key] = $domain->getPref($storekey);
@@ -552,11 +552,11 @@ class Api_Model_DomainAPI
         foreach (array('batv_secret' => 'batv_secret','dkim_domain' => 'dkim_domain', 'dkim_selector' => 'dkim_selector', 'dkim_private_key' => 'dkim_pkey') as $key => $storekey) {
         	$data[$key] = $domain->getPref($storekey);
         }
-        
+
         ## Archiving
         $data['send_to_archiver'] = $domain->getPref('archive_mail');
         $data['send_copy_to'] = $domain->getPref('copyto_mail');
-        
+
         foreach ($data as $key => $value) {
         	$data[$key] = preg_replace('/\n$/', '', $value);
         }

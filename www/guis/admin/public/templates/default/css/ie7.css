@@ -4,7 +4,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 #buttonmenu li .menubutton {
   line-height: 30px;
 }
@@ -58,7 +58,7 @@
    padding: 0px !important;
    vertical-align: middle !important;
 }
-	
+
 .configpanel {
   padding-bottom: 0px !important;
 }

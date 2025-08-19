@@ -36,7 +36,7 @@ $txt['FAQ'] = "
                       SpamTagger utilise plusieurs types de contr&ocirc;les diff&eacute;rents afin de filtrer les messages le plus efficacement possible. Ceux-ci peuvent &ecirc;tre des correspondances de mots et de phrases cl&eacute;s, des bases mondiales de spam et des calculs statistiques de phon&egrave;mes. L'addition de tous ces crit&egrave;res fourni un score global au message sur lequel SpamTagger prendra sa d&eacute;cision: spam ou pas. Le spam &eacute;tant une cible mouvante, ces param&egrave;tres doivent &ecirc;tre adapt&eacute;s le plus rapidement possible. C'est le travail de SpamTagger que de tenir ces r&eacute;glages aussi bons que possible.
                  </li>
                  <li> <h2>Erreurs</h2>
-                      SpamTagger &eacute;tant un syst&egrave;me de filtrage automatique, il est ouvert aux erreurs. Il y a deux types d'erreurs provoqu&eacute;es par SpamTagger: 
+                      SpamTagger &eacute;tant un syst&egrave;me de filtrage automatique, il est ouvert aux erreurs. Il y a deux types d'erreurs provoqu&eacute;es par SpamTagger:
                       <ul>
                        <li> les <h3>faux n&eacute;gatifs</h3> sont des spams qui ont pass&eacute; outre les diff&eacute;rents filtres de SpamTagger et qui ont r&eacute;ussi &agrave; atteindre votre bo&icirc;te sans &ecirc;tre d&eacute;tect&eacute;s. Ces cas sont ennuyeux, mais tant qu'ils restent assez rares, ils n'auront pas trop d'impact sur votre travail. Vous souvenez-vous du temps ou vous ne receviez qu'on ou deux spams par semaine ? SpamTagger devrait au moins vous ramener &agrave; cette situation.
                        </li>
@@ -53,7 +53,7 @@ $txt['DOCUMENTATION'] = "
                            <li> <h2>Vue de la quarantaine/actions</h2>
                               <ul>
                                 <li> <h3>addresse:</h3>
-                                   s&eacute;lectionnez l'adresse dont vous voulez visualiser la quarantaine. 
+                                   s&eacute;lectionnez l'adresse dont vous voulez visualiser la quarantaine.
                                 </li>
                                 <li> <h3>forcer le message (<img src=\"/templates/$template/images/force.gif\" align=\"top\" alt=\"\">): </h3>
                                    cliquez sur cette ic&ocirc;ne pour lib&eacute;rer le message. Il sera imm&eacute;diatement r&eacute;exp&eacute;di&eacute; dans votre bo&icirc;te.

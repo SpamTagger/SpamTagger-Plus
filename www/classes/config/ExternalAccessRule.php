@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
  require_once('helpers/PrefHandler.php');
- 
+
 /**
  * This class handle an external access rule
  */
@@ -27,7 +27,7 @@ class ExternalAccessRule extends PrefHandler {
 		                'allowed_ip' => '',
 		                'auth' => ''
 	                 );
-                     
+
    /**
     * list of possible services with default properties
     * @var array
@@ -77,7 +77,7 @@ public function save() {
   if ($this->getPref('service') == "") {
     return 'BADPARAMETERS';
   }
- 
+
   return $this->savePrefs('', '', '');
 }
 

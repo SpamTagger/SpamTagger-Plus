@@ -1,4 +1,4 @@
-<? 
+<?
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  * @abstract This is the domain edition controller. Display the domain list, allow edition, deletion and so...
  */
- 
+
 /**
  * requires admin session, and mainly Domain stuff
  */
@@ -67,16 +67,16 @@ if (isset($_GET['ba']) || ( isset($posted['ba']) && $posted['ba']) == '1') {
 $domains = preg_split("/[\n\r\s\,]/", $domainname);
 foreach ($domains as $domain) {
     if (preg_match("/^\s*$/", $domain) && ( !isset($posted['save_on_submit']) || $dform_->shouldSave())) { continue; };
-    
+
     if (! $admin_->canManageDomain($domain)) {
         continue;
     }
     $onedomain = 1;
-    
+
     unset($selected_domain);
     $selected_domain = new Domain();
     $selected_domain->load($domain);
-    
+
     // check if we have to delete the domain
     if (isset($_GET['m']) && $_GET['m'] == 'd') {
       $deleted = $selected_domain->delete();
@@ -86,11 +86,11 @@ foreach ($domains as $domain) {
         $selected_domain = new Domain();
         $onedomain = 0;
       } else {
-        $deleted_msg = $lang_->print_txt('DELETEERROR')."(".$deleted.")";    
+        $deleted_msg = $lang_->print_txt('DELETEERROR')."(".$deleted.")";
       };
       continue;
     }
-  
+
     // set preference posted
     foreach ($posted as $key => $value) {
         // if we have to save, replace some variables
@@ -106,7 +106,7 @@ foreach ($domains as $domain) {
     if (!$dform_->shouldSave() && $batchadd && $domainname != '0') {
     	$selected_domain->setPref('name', $domainname);
     }
-      
+
     // check if we have to save the domain
     if ($dform_->shouldSave()) {
       $saved = $selected_domain->save();
@@ -202,7 +202,7 @@ $replace = array(
   "__DOC_DOMAINFILTERING__" => $documentor->help_button('DOMAINFILTERING'),
   "__DOC_DOMAINPREFERENCES__" => $documentor->help_button('DOMAINPREFERENCES'),
   "__DOC_USERAUTHENTICATION__" => $documentor->help_button('USERAUTHENTICATION'),
-  "__DOC_DOMAINTEMPLATES__" => $documentor->help_button('DOMAINTEMPLATES'), 
+  "__DOC_DOMAINTEMPLATES__" => $documentor->help_button('DOMAINTEMPLATES'),
   "__DOC_WHITEWARNLIST__" => $documentor->help_button('WHITEWARNLIST'),
   "__DOMAINLIST_DRAW__" => $domains_->getList($template, $selected_domain->getPref('name')),
   "__REMOVE_FULLLINK__" => $_SERVER['PHP_SELF']."?m=d&d=",
@@ -279,7 +279,7 @@ $replace = array(
   "__LINK_EDITWARNLIST__" => "wwlist.php?t=2&a=@".$selected_domain->getPref('name'),
   "__LINK_EDITBLACKLIST__" => "wwlist.php?t=3&a=@".$selected_domain->getPref('name'),
   "__LINK_GOBATCHADD__" => $_SERVER['PHP_SELF']."?d=0&ba",
-   
+
 );
 
 $template_->output($replace);
@@ -288,10 +288,10 @@ $template_->output($replace);
 function doConnectorField($d, $f, $t)
 {
   if (!isset($d)) { return;}
-  
+
   $settings = $d->getConnectorSettings();
   if (!isset($settings)) { return; }
-  
+
   $matches = array();
   if (!preg_match('/^conn_(\S+)/', $t, $matches)) { return; }
   $type = $settings->getFieldType($matches[1]);

@@ -4,11 +4,11 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * LDAP user authentication settings form
  */
- 
-class Default_Form_Domain_UserAuthentication_Ldap 
+
+class Default_Form_Domain_UserAuthentication_Ldap
 {
 	protected $_domain;
 	protected $_settings = array(
@@ -23,19 +23,19 @@ class Default_Form_Domain_UserAuthentication_Ldap
                         "version" => 3,
                         "referrals" => false
                       );
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 	}
-	
+
 	public function addForm($form) {
 		$name = new Zend_Form_Element_Hidden('connector');
 		$name->setValue('ldap');
 		$form->addElement($name);
-		
+
 	    $t = Zend_Registry::get('translate');
-		
+
 		require_once('Validate/SMTPHostList.php');
 		$server = new  Zend_Form_Element_Text('ldapserver', array(
 	        'label'    => $t->_('LDAP server')." :",
@@ -44,23 +44,23 @@ class Default_Form_Domain_UserAuthentication_Ldap
 	    $server->setValue($this->_domain->getPref('auth_server'));
         $server->addValidator(new Validate_SMTPHostList());
 	    $form->addElement($server);
-	    
+
 	    $this->_settings = $this->getParams();
-	    	    
+
 	    $basedn = new  Zend_Form_Element_Text('basedn', array(
 	        'label'    => $t->_('Base DN')." :",
 		    'required' => false,
 		    'filters'    => array('StringTrim')));
 	    $basedn->setValue($this->_settings['basedn']);
 	    $form->addElement($basedn);
-	    
+
 	    $binddn = new  Zend_Form_Element_Text('binddn', array(
 	        'label'    => $t->_('Bind user')." :",
 		    'required' => false,
 		    'filters'    => array('StringTrim')));
 	    $binddn->setValue($this->_settings['binddn']);
 	    $form->addElement($binddn);
-	    
+
 	    $bindpass = new  Zend_Form_Element_Password('bindpass', array(
 	        'label'    => $t->_('Bind password')." :",
 		    'required' => false,
@@ -68,37 +68,37 @@ class Default_Form_Domain_UserAuthentication_Ldap
 		    'filters'    => array('StringTrim')));
 	    $bindpass->setValue($this->_settings['bindpw']);
 	    $form->addElement($bindpass);
-	    
+
 	    $userattr = new  Zend_Form_Element_Text('userattribute', array(
 	        'label'    => $t->_('User attribute')." :",
 		    'required' => false,
 		    'filters'    => array('StringTrim')));
 	    $userattr->setValue($this->_settings['userattr']);
 	    $form->addElement($userattr);
-	    
+
 	    $ldapusesslcheck = new Zend_Form_Element_Checkbox('ldapusessl', array(
 	        'label'   => $t->_('Use SSL'). " :",
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));
-	              
+
 	    if ($this->_settings['use_ssl']) {
             $ldapusesslcheck->setChecked(true);
 	    }
 	    $form->addElement($ldapusesslcheck);
-	    
+
 	    $version = new Zend_Form_Element_Select('ldapversion', array(
             'label'      => $t->_('Protocol version')." :",
             'required'   => false,
             'filters'    => array('StringTrim')));
-        
+
         foreach (array(2, 3) as $value) {
         	$version->addMultiOption($value, $value);
         }
         $version->setValue($this->_settings['version']);
         $form->addElement($version);
 	}
-	
+
 	public function setParams($request, $domain) {
 		$array = array(
 		   'basedn' => $request->getParam('basedn'),
@@ -111,7 +111,7 @@ class Default_Form_Domain_UserAuthentication_Ldap
 		);
 		$this->setParamsFromArray($array, $domain);
 	}
-	
+
     public function setParamsFromArray($array, $domain) {
     	$domain->setPref('auth_type', 'ldap');
     	if (isset($array['auth_server'])) {
@@ -119,7 +119,7 @@ class Default_Form_Domain_UserAuthentication_Ldap
     	}
     	$domain->setPref('auth_param', $this->getParamsString($array));
     }
-        
+
     public function getParams() {
        $ldapparams = $this->_settings;
        if ($this->_domain->getAuthConnector() != 'ldap') {
@@ -139,7 +139,7 @@ class Default_Form_Domain_UserAuthentication_Ldap
         }
         return $ldapparams;
     }
-    
+
     public function getParamsString($params) {
     	$fields = array('basedn', 'userattribute', 'binddn', 'bindpass', 'use_ssl', 'ldapversion');
     	$str = '';
@@ -154,5 +154,5 @@ class Default_Form_Domain_UserAuthentication_Ldap
     	$str = preg_replace('/^:/', '', $str);
     	return $str;
     }
-	
+
 }

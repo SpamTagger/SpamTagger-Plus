@@ -36,7 +36,7 @@ sub create {
    my $server = shift;
    my $port = shift;
    my $params = shift;
-   
+
    if ($port < 1 ) {
      $port = 25;
    }
@@ -46,7 +46,7 @@ sub create {
            server => $server,
            port => $port
          };
-         
+
   bless $this, "SMTPAuthenticator::SMTP";
   return $this;
 }
@@ -68,7 +68,7 @@ sub authenticate {
   if (@auths) {
     $auth_type = shift(@auths);
   }
- 
+
   if ($smtp->auth($auth_type, $username, $password)) {
   	$this->{'error_code'} = 0;
   	$this->{'error_text'} = '';

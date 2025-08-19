@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for maintenance page
  */
 
@@ -22,9 +22,9 @@ class MonitormaintenanceController extends Zend_Controller_Action
     	$main_menus = Zend_Registry::get('main_menu')->findOneBy('id', 'submonitor_Maintenance')->class = 'submenuelselected';
     	$view->selectedSubMenu = 'Maintenance';
     }
-    
+
     public function indexAction() {
-  	
+
     }
 
 }

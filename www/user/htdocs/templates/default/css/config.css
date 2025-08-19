@@ -1,6 +1,6 @@
 /* config.css */
 
-/*** https://user.spamtagger.org/templates/default/css/config.css ***/ 
+/*** https://user.spamtagger.org/templates/default/css/config.css ***/
 
 
 #generalconfigcontent {
@@ -14,11 +14,11 @@
   font-weight: normal;
   margin: 0px;
   padding: 0px;
-  margin-bottom: 31px;	
+  margin-bottom: 31px;
   font-size: 12px;
   line-height: 16px;
   color: #000000;
-  text-align: left; 
+  text-align: left;
 }
 
 .configpanel {
@@ -38,7 +38,7 @@
   text-decoration: none !important;
   height: 52px !important;
   line-height: 52px;
-  border-bottom:1px solid #D4D3D2;  
+  border-bottom:1px solid #D4D3D2;
   background-image:none;
   background-color: #F5F5F5;
   font-size: 12px !important;
@@ -58,7 +58,7 @@
   margin-bottom: 15px;
   border: 0px;
   padding-bottom: 15px;
-  border-bottom:1px solid #D4D3D2; 
+  border-bottom:1px solid #D4D3D2;
 }
 
 #fieldapplytoall {
@@ -86,7 +86,7 @@
  }
 
 #addressconfigpanel {
-  padding: 0px;	
+  padding: 0px;
 }
 
 #languageconfigpanel fieldset {
@@ -110,7 +110,7 @@
   margin: 0px;
   padding: 0px;
 }
-	
+
 
 #languageconfigpanel {
   width: 200px;
@@ -129,7 +129,7 @@
 }
 
 #languagelist a {
-  color: #552056;	
+  color: #552056;
 }
 
 #languagelist img {
@@ -138,7 +138,7 @@
   margin-right: 10px;
 }
 
-#languagelist li {  
+#languagelist li {
   height: 26px;
   margin: 0px;
   padding: 0px;
@@ -269,7 +269,7 @@
   font-size: 12px;
   height: 23px;
   line-height: 24px;
-  border-bottom: 1px solid #D4D3D2;  
+  border-bottom: 1px solid #D4D3D2;
   background-image:none;
   background-color: #F5F5F5;
   font-weight: bold!important;
@@ -294,7 +294,7 @@
   margin: 0px;
   padding: 0px;
   padding-left: 62px;
-  margin-top: 10px;	
+  margin-top: 10px;
   margin-bottom: -5px;
 }
 
@@ -320,7 +320,7 @@
 #param_summary_to {
   margin-left: 8px;
 }
-	
+
 #fieldsubmit {
   margin-bottom: 10px;
   padding-bottom: 0px;

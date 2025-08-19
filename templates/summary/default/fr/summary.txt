@@ -6,7 +6,7 @@ Ceci est le rapport de SpamTagger pour les ??NBDAYS dernier(s) jour(s).
 Pour l'adresse: ??ADDRESS
 
 Ce message vous informe des emails qui ont =E9t=E9 bloqu=E9s par SpamTagger.
-Si un de ces emails ne vous semble pas =EAtre du spam, vous pouvez le lib=E9rer 
+Si un de ces emails ne vous semble pas =EAtre du spam, vous pouvez le lib=E9rer
 en cliquant sur le lien "Lib=E9rer:".
 
 Les emails list=E9s ci-dessous seront d=E9truits dans ??SPAMNBDAYS jours.

@@ -4,12 +4,12 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the parameters page
- * 
- * @todo  use Form object 
+ *
+ * @todo  use Form object
  */
- 
+
 /**
  * require valid session
  */

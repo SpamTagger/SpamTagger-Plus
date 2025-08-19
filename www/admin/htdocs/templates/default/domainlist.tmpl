@@ -19,7 +19,7 @@ __DEFAULT__ elementPerPage = 100
     }
 
     function confirm_delete(id, name) {
-       if (confirm("__LANG_DOMAIN__: "+ name + 
+       if (confirm("__LANG_DOMAIN__: "+ name +
                "\n__LANG_CONFIRMDOMAINDELETE__ ")) {
          str = "__REMOVE_FULLLINK__"+id;
          window.location.href=str;
@@ -27,7 +27,7 @@ __DEFAULT__ elementPerPage = 100
     }
 
     __INCLUDE_USEMX_JS__
-    
+
     __PAGE_JS__
     </script>
   </head>
@@ -74,7 +74,7 @@ __DEFAULT__ sep = |
   <td width="60%" valign="top">
   <!-- DOMAIN EDIT -->
 __IF__ DOMAINSELECTED
-  __INCLUDE__(domainedit.tmpl) 
+  __INCLUDE__(domainedit.tmpl)
 __ELSE__ DOMAINSELECTED
   <center><div class="dataTableContent">__LANG_PLEASECHOOSEADOMAIN__</div></center>
 __FI__ DOMAINSELECTED

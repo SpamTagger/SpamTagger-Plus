@@ -23,5 +23,5 @@ class QuarantineController extends Zend_Controller_Action
      $api = new Api_Model_QuarantineAPI();
      $api->getSpam($request->getParams());
   }
-    
+
 }

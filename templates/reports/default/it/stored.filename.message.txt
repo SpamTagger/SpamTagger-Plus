@@ -8,5 +8,5 @@ At $date the virus scanner said:
 $report
 Note to Administrator: $hostname in $datenumber/$id
 
------------ 
+-----------
 SpamTagger

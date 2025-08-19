@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the file name protection configuration page
  */
- 
+
  /**
   * require admin session, view and file name settings objects
   */
@@ -53,7 +53,7 @@ $nposted = $nform->getResult();
 if ($nform->shouldSave()) {
   $new = new FileName();
   foreach($nposted as $k => $v) {
-	$new->setPref($k, $v); 
+	$new->setPref($k, $v);
   }
   $saved = $new->save();
   $list_->setSelected(0);
@@ -78,7 +78,7 @@ if ($eform->shouldSave()) {
   $esaved = $list_->getFileName($list_->getSelected())->save();
   $sysconf_ = SystemConfig::getInstance();
   $sysconf_->setProcessToBeRestarted('ENGINE');
-    
+
   $list_->setSelected(0);
   $list_->load();
   if ($esaved == 'OKSAVED' || $esaved == 'OKADDED') {

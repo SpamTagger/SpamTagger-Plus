@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
  /**
   * SystemConfig contains the list of Slaves, and uses DataManager classes
   * It inherits from PrefHandler to manage preferences
@@ -15,17 +15,17 @@ require_once ("helpers/DM_SlaveConfig.php");
 require_once ("helpers/DM_MasterConfig.php");
 require_once ("helpers/PrefHandler.php");
 
- /** 
+ /**
  * System configuration and global preferences
  * This class contains the global preferences and setting of the system
  * such as base paths, database access, etc...
- * 
+ *
  * @package SpamTagger Plus
  * @todo set members as private !
  */
- 
+
 class SystemConfig extends PrefHandler {
-    
+
   /**
    * Main spamtagger configuration file
    * This file contains the settings of the spamtagger configuration
@@ -41,7 +41,7 @@ class SystemConfig extends PrefHandler {
     var $dbspool_ = 'st_spool';
     var $dbstats_ = 'st_stats';
     var $dbpassword_ = '';
-    
+
     /**
      * Path to the spamtagger installation directory
      * @var string
@@ -69,24 +69,24 @@ class SystemConfig extends PrefHandler {
       * @var  array
       */
      private $pref_ = array (
-                    'organisation' => 'your_organisation', 
-                    'hostname' => 'spamtagger', 
-                    'hostid' => 1, 
-                    'clientid' => 0, 
-                    'default_domain' => 'your_domain', 
-                    'default_language' => 'en', 
-                    'sysadmin' => 'your_mail@yourdomain', 
-                    'days_to_keep_spams' => 60, 
-                    'days_to_keep_virus' => 60, 
-                    'cron_time' => '00:00:00', 
-                    'cron_weekday' => 1, 
-                    'cron_monthday' => 1, 
-                    'summary_subject' => '', 
-                    'analyse_to' => 'your_mail@yourdomain', 
-                    'summary_from' => 'your_mail@yourdomain', 
-                    'ad_server' => '', 
-                    'ad_param' => '', 
-                    'http_proxy' => '', 
+                    'organisation' => 'your_organisation',
+                    'hostname' => 'spamtagger',
+                    'hostid' => 1,
+                    'clientid' => 0,
+                    'default_domain' => 'your_domain',
+                    'default_language' => 'en',
+                    'sysadmin' => 'your_mail@yourdomain',
+                    'days_to_keep_spams' => 60,
+                    'days_to_keep_virus' => 60,
+                    'cron_time' => '00:00:00',
+                    'cron_weekday' => 1,
+                    'cron_monthday' => 1,
+                    'summary_subject' => '',
+                    'analyse_to' => 'your_mail@yourdomain',
+                    'summary_from' => 'your_mail@yourdomain',
+                    'ad_server' => '',
+                    'ad_param' => '',
+                    'http_proxy' => '',
                     'smtp_proxy' => '',
                     'syslog_host' => '',
                     'falseneg_to' => '',
@@ -98,21 +98,21 @@ class SystemConfig extends PrefHandler {
      * @var  array
      */
     var $gui_prefs_ = array (
-                    'want_domainchooser' => 1, 
-                    'want_aliases' => 1, 
-                    'want_submit_analyse' => 1, 
-                    'want_reasons' => 1, 
-                    'want_force' => 1, 
-                    'want_display_user_infos' => 1, 
-                    'want_summary_select' => 1, 
-                    'want_delivery_select' => 1, 
-                    'want_support' => 1, 
-                    'want_preview' => 1, 
-                    'want_quarantine_bounces' => 1, 
-                    'default_quarantine_days' => 7, 
+                    'want_domainchooser' => 1,
+                    'want_aliases' => 1,
+                    'want_submit_analyse' => 1,
+                    'want_reasons' => 1,
+                    'want_force' => 1,
+                    'want_display_user_infos' => 1,
+                    'want_summary_select' => 1,
+                    'want_delivery_select' => 1,
+                    'want_support' => 1,
+                    'want_preview' => 1,
+                    'want_quarantine_bounces' => 1,
+                    'default_quarantine_days' => 7,
                     'default_template' => 'default'
                   );
-    
+
     /**
      * array of slaves. Key are slave name or ip, value is the Slave_ object
      * @var array
@@ -141,7 +141,7 @@ class SystemConfig extends PrefHandler {
     private function __construct() {
         require_once ('helpers/DataManager.php');
         $hostid = 0;
-    
+
         $file_conf = DataManager :: getFileConfig(SystemConfig :: $CONFIGFILE_);
 
         foreach ($file_conf as $option => $value) {
@@ -166,7 +166,7 @@ class SystemConfig extends PrefHandler {
                 default :
                     }
         }
-        
+
         $this->addPrefSet('system_conf', 'c', $this->pref_);
         $this->addPrefSet('user_gui', 'u', $this->gui_prefs_);
         if (!$this->loadPrefs(null, null, false)) { return false; }
@@ -263,16 +263,16 @@ class SystemConfig extends PrefHandler {
     	if (count($this->slaves_) < 1) {
             $this->loadSlaves();
         }
-        
+
         foreach ($this->slaves_ as $slave) {
         	if (!$slave->dumpConfiguration($config, $params)) {
         		return false;
-        	}     
+        	}
         }
-        
+
         return true;
     }
-    
+
     /**
      * set a process as to be restarted
      * @param  $process string process to be restarted
@@ -282,11 +282,11 @@ class SystemConfig extends PrefHandler {
     	if (count($this->slaves_) < 1) {
             $this->loadSlaves();
         }
-        
+
         foreach ($this->slaves_ as $slave) {
             if (!$slave->setProcessToBeRestarted($process)) {
                 return false;
-            }     
+            }
         }
         return true;
     }
@@ -302,7 +302,7 @@ class SystemConfig extends PrefHandler {
 
         return $this->slaves_;
     }
-    
+
     /**
      * get slave host name/ip from its id
      * @param  $slaveid  numeric slave id
@@ -316,7 +316,7 @@ class SystemConfig extends PrefHandler {
           return "";
         }
         $slave = $this->slaves_[$slaveid];
-        return $slave->getPref('hostname'); 
+        return $slave->getPref('hostname');
     }
 
     /**
@@ -395,7 +395,7 @@ class SystemConfig extends PrefHandler {
         }
         $sudocmd = "/usr/bin/sudo";
         if (file_exists("/usr/sudo/bin/sudo")) {
-          $sudocmd = "/usr/sudo/bin/sudo"; 
+          $sudocmd = "/usr/sudo/bin/sudo";
         }
         $cmd = "$sudocmd ".$this->SRCDIR_."/bin/setpassword root ".escapeshellarg($p);
         $res = array ();

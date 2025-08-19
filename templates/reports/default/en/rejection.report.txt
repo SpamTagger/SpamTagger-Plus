@@ -12,7 +12,7 @@ rejected. Please do not send any more mail to us at this address:
 If you have any questions about this, or you believe you have received
 this message in error, please contact the site system administrators.
 
--- 
+--
 MailScanner
 Email Virus Scanner
 %org-long-name%

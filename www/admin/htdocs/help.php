@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  * @abstract This is the documentation window controller
  */
- 
+
 /**
  * requires admin session, and documentation stuff
  */
@@ -19,8 +19,8 @@ require_once('view/Template.php');
 $doc = new Documentor();
 // create view
 $template = new Template('help.tmpl');
- 
-// prepare replacements 
+
+// prepare replacements
 $replace = array(
         '__DOC_TEXT__' => $template->processText($doc->getHelpText($_GET['s']), array())
 );

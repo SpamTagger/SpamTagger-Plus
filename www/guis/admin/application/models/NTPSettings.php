@@ -4,18 +4,18 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * NTP settings
  */
 
 class Default_Model_NTPSettings
-{	
+{
 	protected $_configfile = '/etc/ntp.conf';
 	protected $_servers = array();
-	
+
 	public function __construct() {
 	}
-    
+
 	public function load() {
 		if (file_exists($this->_configfile)) {
 			$content = file($this->_configfile);
@@ -26,7 +26,7 @@ class Default_Model_NTPSettings
 			}
 		}
 	}
-	
+
 	public function getServersString() {
 		$ret = '';
 		foreach ($this->_servers as $s) {
@@ -34,7 +34,7 @@ class Default_Model_NTPSettings
 		}
 		return preg_replace('/^,\s*/', '', $ret);
 	}
-	
+
 	public function setServers($string) {
 		$this->_servers = array();
 		if ($string == "") {
@@ -47,19 +47,19 @@ class Default_Model_NTPSettings
 			$this->_servers[] = $s;
 		}
 	}
-	
+
 	public function useNTP() {
 		if (count($this->_servers) > 0) {
 			return true;
 		}
 		return false;
 	}
-	
-	
+
+
     public function save($sync = false)
     {
     	$tmpfile = '/tmp/st_ntp.tmp';
-    	
+
     	if (file_exists($this->_configfile)) {
     		$txt = '';
     		$content = file($this->_configfile);
@@ -85,5 +85,5 @@ class Default_Model_NTPSettings
     	}
     	return 'NOK config file not found';
     }
-    	
+
 }

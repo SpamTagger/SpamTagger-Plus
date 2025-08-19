@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Pending alias request mapper
  */
 
@@ -47,7 +47,7 @@ class Default_Model_PendingAliasMapper
         $alias->setParam('user', $row->user);
         $alias->setParam('date_in', $row->date_in);
     }
-    
+
     public function fetchAll($params)
     {
         $query = $this->getDbTable()->select();
@@ -67,8 +67,8 @@ class Default_Model_PendingAliasMapper
         }
         return $entries;
     }
-     
-     
+
+
     public function save(Default_Model_PendingAlias $alias) {
         $data = $alias->getParamArray();
         $res = '';

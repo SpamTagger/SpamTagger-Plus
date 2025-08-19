@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * needs some defaults
  */
@@ -15,32 +15,32 @@ require_once ("system/SystemConfig.php");
  * this class takes care of the page output according to the template file
  */
 class Template {
-    
+
   /**
    * file use as template
    * @var string
    */
   private $file_;
-  
+
   /**
    * content of the template
    * @var array
    */
   private $content_ = array();
-  
+
   /**
    * template model to be used
    * @var string
    */
   private $model_;
-  
+
   /**
    * if conditions
    * @var array
    * @todo set as private !
    */
-  private $ifs = array (); 
- 
+  private $ifs = array ();
+
   /**
    * conditions
    * @var array
@@ -49,7 +49,7 @@ class Template {
   /**
    * defaults value set in template
    * @var array
-   */  
+   */
   private $defaults_ = array();
 
   /**
@@ -57,7 +57,7 @@ class Template {
    * @var array
    */
   private $templates_ = array();
-  
+
 /**
  * constructor
  * @param $tmpl  string  template model to use
@@ -85,7 +85,7 @@ public function __construct($tmpl) {
     $domain = new Domain();
     if ( $domain->load($user_->getPref('domain'))) {
       $this->model_ = $domain->getPref('web_template');
-    } 
+    }
   }
 
   // if an address as been passed through url
@@ -125,7 +125,7 @@ public function __construct($tmpl) {
       $lang_ = Language::getInstance('user');
     }
   }
-  
+
   // fetch the template language file to override language texts
   $template_lang = $sysconf_->SRCDIR_."/www/".$mode."/htdocs/templates/".$this->model_."/lang/".$lang_->getLanguage()."/texts.php";
   if (file_exists($template_lang)) {
@@ -135,7 +135,7 @@ public function __construct($tmpl) {
       $lang_->setTextValue($t, $str);
     }
   }
-  
+
   // pre-process template
   $lines = file($this->file_);
   $this->parseLines($lines);
@@ -148,7 +148,7 @@ public function __construct($tmpl) {
 public function getFile() {
   return $this->file_;
 }
-  
+
 /**
  * return the template model to be used
  * @return string template filename
@@ -156,7 +156,7 @@ public function getFile() {
 public function getModel() {
   return $this->model_;
 }
-  
+
 /**
  * main output method, will send html page to browser
  * @param  $replace  array   list of tag with replacement to use
@@ -171,11 +171,11 @@ public function output($replace) {
   // first set mime type
 #  header("Vary: Accept");
 #  header("Content-Type: application/xhtml+xml; charset=utf-8");
-#  if (stristr($_SERVER[HTTP_ACCEPT], "application/xhtml+xml")) 
+#  if (stristr($_SERVER[HTTP_ACCEPT], "application/xhtml+xml"))
 #    header("Content-Type: application/xhtml+xml; charset=utf-8");
 #  else
 #    header("Content-Type: text/html; charset=utf-8");
-    
+
   // loop through template file
   foreach ($this->content_ as $line) {
 
@@ -218,7 +218,7 @@ private function processLine($line, $replace) {
   if (preg_match('/^\#/', $line, $matches)) {
     return;
   }
-  
+
   if (preg_match('/__REDIRECT__\s+(\S+)/', $line, $matches)) {
     if (isset($replace[$matches[1]])) {
       header("Location: /".$replace[$matches[1]]);
@@ -227,9 +227,9 @@ private function processLine($line, $replace) {
     header("Location: /".$matches[1]);
     exit();
   }
- 
+
   // ignore hidden condition until fi or else
-  if ($if_hidden && 
+  if ($if_hidden &&
         ! preg_match("/\_\_(FI|ELSE)\_\_\s+$hidden_condition/", $line)) {
     return;
   }
@@ -248,7 +248,7 @@ private function processLine($line, $replace) {
     $line =  preg_replace('/\_\_FORMAT\_DATE\(([^),]+)\s*,\s*([^),]+)\s*,\s*([^),]+)\s*,\s*([^),]+)\s*\)\_\_/', $this->formatDate($matches), $line);
   }
 
- 
+
    $line = str_replace('__TEMPLATE_PATH__', "templates/".$this->model_, $line);
 
   // check for if/else/fi conditions
@@ -270,7 +270,7 @@ private function processLine($line, $replace) {
     }
     return;
   }
-  
+
   if (preg_match('/\_\_FI\_\_\s+(\S+)/', $line, $matches)) {
     $if_hidden = false;
     return;
@@ -285,7 +285,7 @@ private function processLine($line, $replace) {
  // $line = preg_replace('/href="([^\/])/', 'href="templates/'.$this->model_.'/\\1', $line);
   // fix javascript exceptions
  // $line = preg_replace('/href="(\S+)javascript:/', 'href="javascript:', $line);
-  
+
   // and finally output line if not hidden
   if (!$if_hidden) {
     echo $line."\n";
@@ -303,14 +303,14 @@ public function processText($text, $replace) {
    $text = preg_replace('/([^\/])styles\//', "$1"."templates/".$this->model_."/styles/", $text);
    $text = preg_replace('/([^\/])scripts\//', "$1"."templates/".$this->model_."/scripts/", $text);
    $text = preg_replace('/([^\/])css\//', "$1"."templates/".$this->model_."/css/", $text);
-   
-  
+
+
   // replace tag with values
   foreach ($replace as $tag => $value) {
     $line = str_replace($tag, $value, $line);
   }
-  
-  return $text;  
+
+  return $text;
 }
 
 /**
@@ -368,9 +368,9 @@ private function getCondition($tag) {
 private function parseLines($lines) {
   $matches = array();
   $hidden = false;
-  
+
   foreach ($lines as $line) {
-    
+
     // check for included files
     if (preg_match('/\_\_INCLUDE\_\_\((\S+)\)/', $line, $matches)) {
       $included_lines = file("templates/".$this->model_."/".$matches[1]);
@@ -383,19 +383,19 @@ private function parseLines($lines) {
       $this->parseLines($included_lines);
       continue;
     }
-        
+
     // check for images and styles links
     $line = preg_replace('/([^\/])images\//', "$1"."templates/".$this->model_."/images/", $line);
     $line = preg_replace('/([^\/])styles\//', "$1"."templates/".$this->model_."/styles/", $line);
     $line = preg_replace('/([^\/])scripts\//', "$1"."templates/".$this->model_."/scripts/", $line);
     $line = preg_replace('/([^\/])css\//', "$1"."templates/".$this->model_."/css/", $line);
-  
+
     // find __DEFAULT__ tags
     if (preg_match('/\_\_DEFAULT\_\_\ ([A-Za-z\_]+)\ ?=\ ?(.*)\s*$/', $line, $matches)) {
       $this->defaults_[$matches[1]] = $matches[2];
       continue;
     }
-    
+
     // get the sub-templates
     if (preg_match('/\_\_TMPL\_([A-Z0-9]+)\_(START)\_\_/', $line, $matches)) {
       $sub_tmpl = $matches[1]; continue;
@@ -410,37 +410,37 @@ private function parseLines($lines) {
       $this->templates_[$sub_tmpl] .= $line;
       continue;
     }
-    
+
     // find starting/ending of blocks to be displayed or hidden
     if (preg_match('/\_\_(BEGIN)\_([A-Z0-9\_]+)\_BLOCK\_\_/', $line, $matches)) {
       $sysconf_ = SystemConfig::getInstance();
       if ( !$sysconf_->gui_prefs_["want_".strtolower($matches[2])]) {
-        $hidden = true; 
+        $hidden = true;
       }
       continue;
     }
     if (preg_match('/\_\_(CLOSE)\_([A-Z0-9\_]+)\_BLOCK\_\_/', $line, $matches)) {
       $hidden = false; continue;
     }
-  
+
     // find starting/ending of administration blocks to be displayed or hidden (used for navigation)
     global $admin_;
     if (preg_match('/\_\_(BEGIN)\_([A-Z0-9\_]+)\_ABLOCK\_\_/', $line, $matches)) {
       if ( $admin_ instanceof Administrator && !$admin_->canSeeBlock($matches[2])) {
-        $hidden = true; 
+        $hidden = true;
       }
       continue;
     }
     if (preg_match('/\_\_(CLOSE)\_([A-Z0-9\_]+)\_ABLOCK\_\_/', $line, $matches)) {
       $hidden = false; continue;
     }
-  
+
     // add line to content
     if (!$hidden) {
       array_push($this->content_, $line);
     }
   }
-  return true; 
+  return true;
 }
 
 private function formatDate($params) {
@@ -460,7 +460,7 @@ private function formatDate($params) {
   $str = preg_replace('/_D_/', $day, $str);
   $str = preg_replace('/_M_/', $month, $str);
   $str = preg_replace('/_Y_/', $year, $str);
-   
+
   return $str;
 }
 

@@ -5,20 +5,20 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class takes care of storing LDAP settings
  * @package SpamTagger Plus
  */
  class LDAPSettings extends ConnectorSettings {
-   
+
    /**
     * template tag
     * @var string
     */
    protected $template_tag_ = 'LDAPAUTH';
-   
+
    /**
    * Specialized settings array with default values
    * @var array
@@ -31,7 +31,7 @@
                               'usessl' => false,
                               'version' => 2
                              );
-             
+
    /**
     * fields type
     * @var array
@@ -44,13 +44,13 @@
                               'usessl' => array('checkbox', 'true'),
                               'version' => array('select', array('2' => '2', '3' => '3'))
                               );
-                  
+
    public function __construct($type) {
       parent::__construct($type);
       $this->setSetting('server', 'localhost');
       $this->setSetting('port', '389');
    }
-   
+
    /**
     * Get the LDAP connection URL
     * @return   string  connection url
@@ -66,16 +66,16 @@
      $url .= $this->getSetting('server').":".$this->getSetting('port')."/";
      return $url;
    }
-   
+
    /**
     * add ou check to the normal parameters found in the db
     */
    public function setParamSettings($settings) {
       parent::setParamSettings($settings);
-      
+
       // add OU if passed by login form
       if (isset($_POST['ou']) && preg_match('/^[a-zA-Z0-9]+$/', $_POST['ou'])) {
-        $this->setSetting('basedn', 'OU='.$_POST['ou'].",".$this->getSetting('basedn'));  
+        $this->setSetting('basedn', 'OU='.$_POST['ou'].",".$this->getSetting('basedn'));
       }
       return true;
    }

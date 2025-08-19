@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for interface users
  */
 
@@ -16,45 +16,45 @@ class UserController extends Zend_Controller_Action
     	$t = Zend_Registry::get('translate');
     	$this->view->headTitle($t->_('login'));
     	$this->view->layout()->setLayout('basic');
-    	
+
     	$auth = Zend_Auth::getInstance();
     	if ($auth->hasIdentity()) {
             $this->_redirect('/index');
     	}
 
-    	$request = $this->getRequest(); 
-        // determine the page the user was originally trying to request 
-        $redirect = $request->getPost('redirect'); 
-        if (strlen($redirect) == 0) 
-            $redirect = $request->getServer('REQUEST_URI'); 
-        if (strlen($redirect) == 0) 
+    	$request = $this->getRequest();
+        // determine the page the user was originally trying to request
+        $redirect = $request->getPost('redirect');
+        if (strlen($redirect) == 0)
+            $redirect = $request->getServer('REQUEST_URI');
+        if (strlen($redirect) == 0)
             $redirect = '/index';
 
 
         $request = $this->getRequest();
         $form    = new Default_Form_Login();
-        
+
         // Display only loggedOut message
         if ($this->getRequest()->getParam('message') == "loggedOut") {
         	$form->addErrorMessage(htmlspecialchars($this->getRequest()->getParam('message')));
         }
-        
+
         if ($this->getRequest()->isPost() && $form->isValid($request->getPost())) {
-        	
+
     	    $authAdapter = new Zend_Auth_Adapter_DbTable(
                           Zend_Registry::get('writedb'),
                           'administrator',
                           'username',
                           'password',
                           'ENCRYPT(?, SUBSTRING(password,1,2))'
-                       );   
+                       );
             $authAdapter2 = new Zend_Auth_Adapter_DbTable(
                           Zend_Registry::get('writedb'),
                           'administrator',
                           'username',
                           'password',
                           'ENCRYPT(?, SUBSTR(password, 1,12))'
-                       );   
+                       );
             ## This one should work for most crypt scheme, principally crypt-sha512, regarldess of the salt length
             $authAdapter4 = new Zend_Auth_Adapter_DbTable(
                           Zend_Registry::get('writedb'),
@@ -62,14 +62,14 @@ class UserController extends Zend_Controller_Action
                           'username',
                           'password',
                           'ENCRYPT(?, SUBSTR(password, 1, LOCATE(\'$\', password, LOCATE(\'$\', password, 4)+1)))'
-                       );   
+                       );
             $authAdapter3 = new Zend_Auth_Adapter_DbTable(
                           Zend_Registry::get('writedb'),
                           'administrator',
                           'username',
                           'password',
                           'MD5(?)'
-                       );                          
+                       );
 
             $givenusername = $this->getRequest()->getParam('username');
             $givenpassword = $this->getRequest()->getParam('password');
@@ -118,9 +118,9 @@ class UserController extends Zend_Controller_Action
          }
          $this->view->form = $form;
          $this->view->headLink()->appendStylesheet($this->view->css_path.'/login.css');
-         
+
     }
-    
+
     public function logoutAction()
     {
     	$auth = Zend_Auth::getInstance();
@@ -135,20 +135,20 @@ class UserController extends Zend_Controller_Action
         $view->username = $request->getParam('username');
         $view->page = $request->getParam('page');
     }
-    
+
     public function searchAction()
     {
         $layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
     	$layout->disableLayout();
-    	$view->addScriptPath(Zend_Registry::get('ajax_script_path')); 
-        
+    	$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
+
     	$request = $this->getRequest();
-    	
+
     	require_once('ManageuserController.php');
     	ManageuserController::searchUserOrEmails($this->getRequest(), $view);
-    	
+
     }
-    
-    
+
+
 }

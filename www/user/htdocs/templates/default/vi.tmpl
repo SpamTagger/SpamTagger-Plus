@@ -17,7 +17,7 @@ __IF__ FIRSTOPEN
    window.resizeTo(win_width, new_height);
 __FI__ FIRSTOPEN
    var expanded_image = "images/expanded.png";
-   var contracted_image = "images/expand.png";  
+   var contracted_image = "images/expand.png";
    var openedparts = new Array('msgbody');
 
    var popup_width = 500;
@@ -49,7 +49,7 @@ __FI__ FIRSTOPEN
 
 <div id="viewheader">
   <img src="images/message_info.png" alt="" />
-  <p>__LANG_INFORMATIONSABOUTMSG__ 
+  <p>__LANG_INFORMATIONSABOUTMSG__
     (__LANG_ID__: __MSG_ID__)</p>
 </div>
 
@@ -93,7 +93,7 @@ __IF__ SCORENOTNULL
    </tr>
      <tr><td class="fieldname">&nbsp;</td><td class="fieldvalue"></td></tr>
   </table>
-  
+
 __FI__ SCORENOTNULL
 
 <div id="msgheaderstitle" class="infotitle"><img id="msgheaders_expandimg" src="images/expand.png" alt="expand" onclick="javascript:openclosepanel('msgheaders'); return true;" /><p>__LANG_HEADERS__</p></div>
@@ -103,7 +103,7 @@ __FI__ SCORENOTNULL
      <td class="fieldvalue">__INFO_VALUE__</td>
    </tr>
   __TMPL_MSGHEADERS_STOP__
- 
+
  <table id="msgheaders" class="openclosepanel">
    <tr><td class="fieldname">&nbsp;</td><td class="fieldvalue"></td></tr>
    __MSGHEADERS_LIST__

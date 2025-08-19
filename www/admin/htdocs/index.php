@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  * @abstract This is the index page controller
  */
- 
+
 /**
  * requires admin session, and view
  */
@@ -18,8 +18,8 @@ $template_ = new Template('index.tmpl');
 
 // prepare replacements
 $replace = array (
-        "__TOP_PAGE__" => 'top.php', 
-        "__NAVIGATION_PAGE__" => 'navigation.php', 
+        "__TOP_PAGE__" => 'top.php',
+        "__NAVIGATION_PAGE__" => 'navigation.php',
         "__WELCOME_PAGE__" => 'welcome.php'
 );
 

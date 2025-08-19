@@ -42,10 +42,10 @@ my $_changing_day : shared = 0;
 sub new {
     my $class = shift;
     my $daemon = shift;
- 
+
     my $conf = ReadConfig::getInstance();
-     
-    my $this = {    
+
+    my $this = {
         'class' => $class,
         'daemon' => $daemon,
         'data' => undef,
@@ -53,9 +53,9 @@ sub new {
         'today_filename' => '_today',
         'history_filename' => '_history'
     };
-    
+
     bless $this, $class;
-    
+
     foreach my $option (keys %{ $this->{daemon} }) {
     	if (defined($this->{$option})) {
     		$this->{$option} = $this->{daemon}->{$option};
@@ -66,23 +66,23 @@ sub new {
     	$this->doLog("base path created: ".$this->{basepath});
     }
     $this->doLog("backend loaded", 'statsdaemon');
-    
+
     $this->{data} = $StatsDaemon::data_;
     return $this;
 }
 
 sub threadInit {
     my $this = shift;
-    
+
     $this->doLog("backend thread initialization", 'statsdaemon');
 }
 
-sub accessFlatElement {	
+sub accessFlatElement {
 	my $this = shift;
     my $element = shift;
 
     my $value = 0;
-    
+
     my ($path, $file, $base, $el_key) = $this->getPathFileBaseAndKeyFromElement($element);
     if ( open(FILE,$file)) {
     	while (<FILE>) {
@@ -97,20 +97,20 @@ sub accessFlatElement {
     			}
     		}
     	}
-    }   
-    
+    }
+
     return $value;
 }
 
 sub stabilizeFlatElement {
     my $this = shift;
     my $element = shift;
-    
+
     my ($path, $file, $base, $el_key) = $this->getPathFileBaseAndKeyFromElement($element);
     if (! -d $path) {
         mkpath($path);
     }
-    
+
     if ($this->{daemon}->isChangingDay()) {
     	my $sfile = $path."/".$this->{history_filename};
     	if (! open(FILE, ">>".$sfile)) {
@@ -120,13 +120,13 @@ sub stabilizeFlatElement {
     	print FILE sprintf('%.4u%.2u%.2u' ,$cdate->{'year'},$cdate->{'month'},$cdate->{'day'}).":";
     	print FILE $el_key.":".$this->{daemon}->getElementValueByName($element, 'value')."\n";
     	close FILE;
-    	
+
     	if (-f $file) {
     		unlink($file);
     	}
     	return 'STABILIZED';
     }
-    
+
     my %els = ();
     if ( open(FILE,$file)) {
         while (<FILE>) {
@@ -140,12 +140,12 @@ sub stabilizeFlatElement {
         }
     }
     close (FILE);
-    
+
     if ( open(FILE,">".$file)) {
     	flock FILE, LOCK_EX;
         foreach my $key (keys %els) {
         	print FILE $key.":".$els{$key}."\n";
-        }	
+        }
         print FILE $el_key.":".$this->{daemon}->getElementValueByName($element, 'value')."\n";
         flock FILE, LOCK_UN;
         close(FILE);
@@ -160,12 +160,12 @@ sub getStats {
     my $stop = shift;
     my $what = shift;
     my $data = shift;
-    
+
     return 'OK';
 }
 
 sub announceMonthChange {
-    my $this = shift;	
+    my $this = shift;
 }
 
 sub doLog {
@@ -173,10 +173,10 @@ sub doLog {
     my $message   = shift;
     my $given_set = shift;
     my $priority  = shift;
-    
+
     my $msg = $this->{class}." ".$message;
     if ($this->{daemon}) {
-        $this->{daemon}->doLog($msg, $given_set, $priority); 
+        $this->{daemon}->doLog($msg, $given_set, $priority);
     }
 }
 
@@ -184,10 +184,10 @@ sub doLog {
 sub getPathFileBaseAndKeyFromElement {
 	my $this = shift;
 	my $element = shift;
-	
+
 	my @els = split(/:/, $element);
     my $key = pop @els;
-    
+
     my $path = $this->{basepath}.'/'.join('/',@els);
     my $file = $path.'/'.$this->{today_filename};
     my $base = join(':', @els);

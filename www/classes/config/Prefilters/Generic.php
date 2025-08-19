@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
@@ -21,10 +21,10 @@ public function subload() {}
 public function addSpecPrefs() {}
 
 public function getSpecificTMPL() {
-  return "";  
+  return "";
 }
 
-public function getSpeciticReplace($template, $form) {  
+public function getSpeciticReplace($template, $form) {
   return array();
 }
 

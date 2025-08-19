@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Validate a list of email addresses
  */
 
@@ -19,7 +19,7 @@ class Validate_MessageID extends Zend_Validate_Abstract
     public function isValid($value)
     {
         $this->_setValue($value);
-        
+
         if (preg_match('/^[0-9A-Z]{6}-[0-9A-Z]{6,11}-[0-9A-Z]{2,4}$/i', $value)) {
         	return true;
         }

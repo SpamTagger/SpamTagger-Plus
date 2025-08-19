@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
  /**
  * needs some defaults
  */
 require_once ("system/SystemConfig.php");
- 
+
 class Pie {
 
   /**
@@ -18,24 +18,24 @@ class Pie {
    * @var string
    */
    private $filename_ = 'untitled.png';
-   
+
   /**
    * chart width and height
    * @var  array
    */
    private $size_ = array("width" => 0, "height" => 0);
-     
+
   /**
    * chart 3d effect width
    */
    private $width3d_ = 20;
-     
+
   /**
    * datas
    * @var array
    */
    private $datas_ = array();
-   
+
   /**
    * sum of all the values
    * @var numeric
@@ -55,10 +55,10 @@ public function setFilename($filename) {
   if ($filename != "") {
   	$this->filename_ = $filename;
     return true;
-  }	
+  }
   return false;
 }
-    
+
 /**
  * set the Pie size
  * @param $width  integer   graphic width
@@ -100,23 +100,23 @@ public function addValue($value, $name, $color) {
  */
 public function generate() {
   $sysconf = SystemConfig::getInstance();
-  
+
   $delta = 270;
   $width = $this->size_['width']*2;
   $height = ($this->size_['height']+$this->width3d_)*2;
   $ext_width = $width + 5;
   $ext_height= $height + $this->width3d_ + 5;
   $image = imagecreatetruecolor($ext_width, $ext_height);
-  
+
   $white    = imagecolorallocate($image, 0xFF, 0xFF, 0xFF);
   imagefilledrectangle($image, 0, 0, $ext_width, $ext_height, $white);
-   
+
   $xcenter = intval($ext_width / 2);
   $ycenter = intval($ext_height / 2) - ($this->width3d_/2);
-  
+
   $gray    = imagecolorallocate($image, 0xC0, 0xC0, 0xC0);
   $darkgray = imagecolorallocate($image, 0x90, 0x90, 0x90);
-  
+
   $colors = array();
   ## create 3d effect
   for ($i = $ycenter+$this->width3d_; $i > $ycenter; $i--) {
@@ -137,10 +137,10 @@ if ($angle < 1.1) {
     $last_angle += $angle;
    }
   }
-  
+
   ## create default
   imagefilledarc($image, $xcenter, $ycenter, $width, $height, 0, 360 , $gray, IMG_ARC_PIE);
-  
+
   ## creates real pies
   $last_angle = 0;
   foreach ($this->datas_ as $data) {
@@ -154,7 +154,7 @@ if ($angle < 1.1) {
   	imagefilledarc($image, $xcenter, $ycenter, $width, $height, $last_angle+$delta, $last_angle+$angle+$delta , $colors[$name], IMG_ARC_PIE);
     $last_angle += $angle;
   }
-  
+
   // resample to get anti-alias effect
   $destImage = imagecreatetruecolor($this->size_['width'], $this->size_['height']);
   imagecopyresampled($destImage, $image, 0, 0, 0, 0, $this->size_['width'], $this->size_['height'], $ext_width, $ext_height);

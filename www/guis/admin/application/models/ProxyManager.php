@@ -4,15 +4,15 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Proxies settings
  */
 
 class Default_Model_ProxyManager
-{	
+{
 	protected $_httpproxy = '';
 	protected $_smtpproxy = '';
-    
+
 	public function load() {
 		$config = SpamTagger_Config::getInstance();
 		$this->setHttpProxy($config->getOption('HTTPPROXY'));
@@ -32,17 +32,17 @@ class Default_Model_ProxyManager
     	}
     	return '';
     }
-    
+
     public function getSmtpProxy() {
     	return $this->_smtpproxy;
     }
     public function setSmtpProxy($string) {
     	$this->_smtpproxy = $string;
     }
-	
+
     public function save()
     {
     	return Default_Model_Localhost::sendSoapRequest('Config_saveSTConfigOption', array('HTTPPROXY' => $this->getHttpProxyString(), 'SMTPPROXY' => $this->getSMTPProxy()));
     }
-    	
+
 }

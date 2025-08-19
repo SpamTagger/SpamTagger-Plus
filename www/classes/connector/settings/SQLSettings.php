@@ -5,20 +5,20 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class takes care of storing settings of the local connector
  * @package SpamTagger Plus
  */
  class SQLSettings extends ConnectorSettings {
-   
+
    /**
     * template tag
     * @var string
     */
    protected $template_tag_ = 'SQLAUTH';
-   
+
     /**
    * Specialized settings array with default values
    * @var array
@@ -36,7 +36,7 @@
                               'email_field' => 'email',
                               'crypt_type' => 'crypt'
                              );
-                             
+
    /**
     * fields type
     * @var array
@@ -53,8 +53,8 @@
                               'domain_field' => array('text', 20),
                               'email_field' => array('text', 20),
                               'crypt_type' => array('select', array('crypt' => 'crypt'))
-                               );                          
-                             
+                               );
+
    public function __construct($type) {
       parent::__construct($type);
       $sysconf_ = SystemConfig::getInstance();
@@ -65,7 +65,7 @@
       $this->setSetting('pass', $sysconf_->dbpassword_);
       $this->setSetting('database', $sysconf_->dbconfig_);
    }
-   
+
    /**
     * Get the SQL connection DSN
     * @return   string  connection dsn
@@ -78,7 +78,7 @@
 
      return $dsn;
    }
-   
+
    public function getTemplateCondition() {
       if ($this->getType() == 'local') {
         return 'LOCALAUTH';

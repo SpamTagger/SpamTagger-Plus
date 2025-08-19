@@ -23,7 +23,7 @@
 #   Usage:
 #           test_dcc.sh
 
-RES=$(echo "Received: by stage2 with id 1CRoEF-00079h-3m 
+RES=$(echo "Received: by stage2 with id 1CRoEF-00079h-3m
         for <noone@nowhere>; Wed, 10 Nov 2004 09:53:23 +0100
 Subject: test
 X-SpamTagger-Information: Please contact postmaster@fastnet.ch for more information

@@ -23,28 +23,28 @@ class UserController extends Zend_Controller_Action
 		$api = new Api_Model_UserAPI();
 		$api->add($request->getParams());
 	}
-	
+
     public function editAction()
     {
         $request = $this->getRequest();
         $api = new Api_Model_UserAPI();
         $api->edit($request->getParams());
     }
-    
+
     public function existsAction()
     {
         $request = $this->getRequest();
         $api = new Api_Model_UserAPI();
         $api->exists($request->getParams());
     }
-    
+
     public function deleteAction()
     {
         $request = $this->getRequest();
         $api = new Api_Model_UserAPI();
         $api->delete($request->getParams());
     }
-    
+
     public function showAction()
     {
         $request = $this->getRequest();
@@ -58,7 +58,7 @@ class UserController extends Zend_Controller_Action
         $api = new Api_Model_UserAPI();
     	$api->userList($request->getParams());
     }
-    
+
     public function listAddresses()
     {
     	$request = $this->getRequest();

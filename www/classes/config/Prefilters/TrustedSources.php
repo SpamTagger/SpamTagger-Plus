@@ -3,7 +3,7 @@ require_once('helpers/PrefHandler.php');
 require_once('config/PreFilter.php');
 
 class TrustedSources extends PreFilter {
-    
+
     /**
      * prefilter properties
      * @var array
@@ -17,7 +17,7 @@ class TrustedSources extends PreFilter {
                         'authservers' => '',
                         'authstring' => ''
                      );
-                     
+
     private $form_;
 
 public function addSpecPrefs() {
@@ -25,7 +25,7 @@ public function addSpecPrefs() {
 }
 
 public function getSpecificTMPL() {
-  return "prefilters/TrustedSources.tmpl";  
+  return "prefilters/TrustedSources.tmpl";
 }
 
 public function getSpeciticReplace($template, $form) {
@@ -40,7 +40,7 @@ public function getSpeciticReplace($template, $form) {
          '__FORM_AUTHSTRING__' => $form->input('authstring', 35, $this->getPref('authstring')),
          '__FORM_DOMAINSTOSPF__' => $form->textarea('domainsToSPF', 35, 5, $this->getPref('domainsToSPF')),
        );
-  
+
   return $ret;
 }
 

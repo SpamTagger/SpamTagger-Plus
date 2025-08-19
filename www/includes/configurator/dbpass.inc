@@ -59,7 +59,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 		$slave = getDb('', 'root', $_POST['oldpassdb'], false);
                 if($master) {
 		      $users = array("'spamtagger'@'%'", "'root'@'127.0.0.1'", "'root'@'::1'", "'root'@'spamtagger'", "'root'@'localhost'");
-		     
+
 		      $sql = "SET PASSWORD FOR ".$users[0]." = PASSWORD(:newpassdb)";
 		      $sth = $master->prepare($sql);
 		      $retdb3 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
@@ -85,15 +85,15 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                       $sql = "SET PASSWORD FOR ".$users[3]." = PASSWORD(:newpassdb)";
                       $sth = $slave->prepare($sql);
                       $retdb10 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
-		      $actual_hostid = shell_exec("grep HOSTID /etc/spamtagger.conf |cut -d' ' -f3"); 
+		      $actual_hostid = shell_exec("grep HOSTID /etc/spamtagger.conf |cut -d' ' -f3");
                       $sth = $master->prepare("UPDATE st_config.master SET password=:newpassdb");
                       $retdbmaster = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
                       $sth = $master->prepare("UPDATE st_config.slave SET password=:newpassdb where id=:hostid");
-                      $retdbslave = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;               
+                      $retdbslave = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;
 		      $sql = "SET PASSWORD FOR ".$users[4]." = PASSWORD(:newpassdb)";
                       $sth = $master->prepare($sql);
 		      $retdb1 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
-                      $sql = "SET PASSWORD FOR ".$users[4]." = PASSWORD(:newpassdb)"; 
+                      $sql = "SET PASSWORD FOR ".$users[4]." = PASSWORD(:newpassdb)";
                       $sth = $slave->prepare($sql);
 		      $retdb2 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 

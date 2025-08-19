@@ -14,7 +14,7 @@ https://spamtagger.org/support/support-request.html
 Am $date meldete der Virenscanner folgendes:
 $report
 
-Hinweis an den Administrator: 
+Hinweis an den Administrator:
 Datei: $hostname in $datenumber/$id
 
 ----------

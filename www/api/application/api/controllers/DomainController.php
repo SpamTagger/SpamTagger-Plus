@@ -23,28 +23,28 @@ class DomainController extends Zend_Controller_Action
 		$api = new Api_Model_DomainAPI();
 		$api->add($request->getParam('name'), $request->getParams());
 	}
-	
+
     public function editAction()
     {
         $request = $this->getRequest();
         $api = new Api_Model_DomainAPI();
         $api->edit($request->getParam('name'), $request->getParams());
     }
-    
+
     public function existsAction()
     {
         $request = $this->getRequest();
         $api = new Api_Model_DomainAPI();
         $api->exists($request->getParam('name'));
     }
-    
+
     public function removeAction()
     {
         $request = $this->getRequest();
         $api = new Api_Model_DomainAPI();
         $api->remove($request->getParam('name'));
     }
-    
+
     public function showAction()
     {
         $request = $this->getRequest();

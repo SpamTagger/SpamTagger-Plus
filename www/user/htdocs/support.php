@@ -1,13 +1,13 @@
-<? 
+<?
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the support and help page
- */ 
- 
+ */
+
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {
   return 200;
 }
@@ -16,7 +16,7 @@ require_once("objects.php");
 require_once("view/SupportForm.php");
 require_once("view/Template.php");
 global $lang_;
-   
+
 $res = "";
 // check if support form has been posted
 if (isset($_POST['send']) && $_POST['send'] > 0) {
@@ -51,17 +51,17 @@ $replace = array(
 );
 
 $template_->output($replace);
-   
-   
+
+
 function includeSupport($lang) {
   global $txt;
   global $sysconf_;
   global $lang_;
-  
+
   $support_texts = $sysconf_->SRCDIR_."/www/user/htdocs/lang/".$lang."/support.txt";
   if (file_exists($support_texts)) {
     include($support_texts);
-   
+
     foreach ($txt as $t => $str) {
       $lang_->setTextValue($t, $str);
     }

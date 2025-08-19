@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Setup base view variables
  */
 
 class SpamTagger_View_Helper_FormatEmail extends Zend_View_Helper_Abstract
 {
-	
+
 	protected $_params = array(
 	   'localpart_length' => 20,
 	   'domainpart_length' => 20,
@@ -19,11 +19,11 @@ class SpamTagger_View_Helper_FormatEmail extends Zend_View_Helper_Abstract
 	   'global_length' => 100,
 	   'max_addresses' => 20,
 	);
-	
+
 	public function formatEmail($string = '', $params = array())
 	{
 		$t = Zend_Registry::get('translate');
-		
+
 		$tmpparams = $this->_params;
 		foreach ($params as $k => $v) {
 			$tmpparams[$k] = $v;

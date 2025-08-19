@@ -36,19 +36,19 @@ sub New {
   my $statfile = shift;
   $statfile = $statfile."/network.rrd";
   my $reset = shift;
-  
+
   my %things = (
            in => ['COUNTER', 'AVERAGE'],
            out => ['COUNTER', 'AVERAGE']
          );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
-  
+
 
   my $this = {
   	 statfile => $statfile,
   	 rrd => $rrd
   };
-  
+
   return bless $this, "RRD::Network";
 }
 
@@ -56,14 +56,14 @@ sub New {
 sub collect {
   my $this = shift;
   my $snmp = shift;
-  
+
   my $if = $this->getInterfaceID($snmp, 'eth0');
-  
+
   my %things = (
         in => '1.3.6.1.2.1.2.2.1.10.'.$if,
         out => '1.3.6.1.2.1.2.2.1.16.'.$if,
         );
-        
+
   return RRD::Generic::collect($this->{rrd}, $snmp, \%things);
 }
 
@@ -72,13 +72,13 @@ sub plot {
   my $dir = shift;
   my $period = shift;
   my $leg = shift;
-  
+
   my %things = (
         kbin => ['area', '54EB48', 'BA3614', 'In', 'AVERAGE', '%3.2lf KBps', 'in,1024,/'],
         kbout => ['line', '7648EB', 'BA3614', 'Out', 'AVERAGE', '%3.2lf KBps', 'out,1024,/'],
    );
   my @order = ('kbin', 'kbout');
-  
+
   my $legend = "\t\t  Last\tAverage\t   Max\\n";
   return RRD::Generic::plot('network', $dir, $period, $leg, 'Bandwidth [KBps]', 0, 0, $this->{rrd}, \%things, \@order, $legend);
 }
@@ -86,9 +86,9 @@ sub plot {
 sub getInterfaceID {
   my $this = shift;
   my $snmp = shift;
-  my $if_name = shift;  
+  my $if_name = shift;
   my $if_nb = 1;
-  
+
   my $base_oid = '1.3.6.1.2.1.2.2.1.2';
   for my $i (1..10) {
     my $oid = $base_oid.".$i";

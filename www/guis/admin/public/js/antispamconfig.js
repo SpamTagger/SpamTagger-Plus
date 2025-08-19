@@ -6,7 +6,7 @@
  */
 
 $(document).ready(function(){
-	
+
 	 $("#enable_whitelists").click(function(event){
 		 if ($("#enable_whitelists").is(':checked')) {
              $("#whitelist_list").show();
@@ -26,7 +26,7 @@ $(document).ready(function(){
              $(".blacklist_options").hide();
                  }
          });
-	 
+
 	 $("#enable_warnlists").click(function(event){
 		 if ($("#enable_warnlists").is(':checked')) {
              $("#warnlist_list").show();
@@ -34,7 +34,7 @@ $(document).ready(function(){
              $("#warnlist_list").hide();
 		 }
 	 });
-	
+
 	 $("#use_bayes").click(function(event){
 		 if ($("#use_bayes").is(':checked')) {
 	        $("#bayes_autolearn").removeAttr('disabled');
@@ -42,7 +42,7 @@ $(document).ready(function(){
 		    $("#bayes_autolearn").attr("disabled", "disabled");
 		 }
 	 });
-	 
+
 	 $("#use_rbls").click(function(event){
 		 if ($("#use_rbls").is(':checked')) {
 		     $("#rbls_timeout").removeAttr('disabled');
@@ -54,7 +54,7 @@ $(document).ready(function(){
 			 $("#urirbls").hide();
 		 }
 	 });
-	 
+
 	 $("#use_dcc").click(function(event){
 		 if ($("#use_dcc").is(':checked')) {
 		        $("#dcc_timeout").removeAttr('disabled');
@@ -62,7 +62,7 @@ $(document).ready(function(){
 			    $("#dcc_timeout").attr("disabled", "disabled");
 		 }
 	 });
-	 
+
 	 $("#use_razor").click(function(event){
 		 if ($("#use_razor").is(':checked')) {
 		        $("#razor_timeout").removeAttr('disabled');
@@ -70,7 +70,7 @@ $(document).ready(function(){
 			    $("#razor_timeout").attr("disabled", "disabled");
 		 }
 	 });
-	 
+
 	 $("#use_pyzor").click(function(event){
 		 if ($("#use_pyzor").is(':checked')) {
 		        $("#pyzor_timeout").removeAttr('disabled');
@@ -78,7 +78,7 @@ $(document).ready(function(){
 			    $("#pyzor_timeout").attr("disabled", "disabled");
 		 }
 	 });
-	 
+
 	 $("#use_spf").click(function(event){
 		 if ($("#use_spf").is(':checked')) {
 		        $("#spf_timeout").removeAttr('disabled');
@@ -86,7 +86,7 @@ $(document).ready(function(){
 			    $("#spf_timeout").attr("disabled", "disabled");
 		 }
 	 });
-	 
+
 	 $("#use_dkim").click(function(event){
 		 if ($("#use_dkim").is(':checked')) {
 		        $("#dkim_timeout").removeAttr('disabled');
@@ -94,7 +94,7 @@ $(document).ready(function(){
 			    $("#dkim_timeout").attr("disabled", "disabled");
 		 }
 	 });
-	 
+
 	 $("#use_domainkeys").click(function(event){
 		 if ($("#use_domainkeys").is(':checked')) {
 		        $("#domainkeys_timeout").removeAttr('disabled');
@@ -102,6 +102,6 @@ $(document).ready(function(){
 			    $("#domainkeys_timeout").attr("disabled", "disabled");
 		 }
 	 });
-	 
+
 	 $(".disabled").attr("disabled", "disabled");
 });

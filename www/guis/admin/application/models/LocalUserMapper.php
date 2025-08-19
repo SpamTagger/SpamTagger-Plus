@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Local user mapper
  */
 
@@ -56,7 +56,7 @@ class Default_Model_LocalUserMapper
         $user->setParam('realname', $row->realname);
         $user->setParam('email', $row->email);
     }
-     
+
     public function save(Default_Model_LocalUser $user) {
         $data = $user->getParamArray();
         $res = '';

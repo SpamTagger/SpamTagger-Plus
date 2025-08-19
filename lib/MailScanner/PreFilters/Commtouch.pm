@@ -97,22 +97,22 @@ sub Checks {
   my $ctipd_header = '';
   if ($Commtouch::conf{'use_ctipd'}) {
   	my $client_ip = $message->{clientip};
-  	
+
   	my $url = "http://".$Commtouch::conf{'ctipd_server_host'}.":".$Commtouch::conf{'ctipd_server_port'}."/ctipd/iprep";
-  	
+
   	my $request = "x-ctch-request-type: classifyip\r\n".
                   "x-ctch-pver: 1.0\r\n";
-                  
+
     $request .= "\r\n";
     # request body
     $request .= "x-ctch-ip: ".$client_ip."\r\n";
-    
+
     my $tim = $Commtouch::conf{'timeOut'};
     use Mail::SpamAssassin::Timeout;
     my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
     my $response = "";
-    
-    $t->run(sub {  
+
+    $t->run(sub {
       ## do the job...
       $response = $Commtouch::lwp->request(POST $url, Content => $request);
     });
@@ -120,28 +120,28 @@ sub Checks {
       MailScanner::Log::InfoLog("$MODULE ctipd timed out for ".$message->{id}."!");
       $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, 'ctipd timeout');
     } else {
-    
+
       my $status_line = $response->status_line . "\n";
       chomp $status_line;
-  
+
       ### parse results:
       my $status = -1; # unknown
       my $status_message = '';
-  
+
       if ($status_line =~ m/^(\d+)\s+(.*)/) {
         $status = $1;
         $status_message = $2;
       }
-  
+
       my $res = $response->content;
       if ($status != 200 || $res eq '') {
         MailScanner::Log::InfoLog("$MODULE ctipd returned error: ".$status." ".$status_message." for ".$message->{id});
         $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "$MODULE ctipd returned error: ".$status." ".$status_message);
       } else {
-    
+
         my $refid = '';
         my $action_result = '';
- 
+
         my @res_lines = split('\n', $res);
         foreach my $line (@res_lines) {
           if ($line =~ m/^X-CTCH-RefID:\s*(.*)/i) {
@@ -150,11 +150,11 @@ sub Checks {
           if ($line =~m/^x-ctch-dm-action:\s*(.*)/i) {
             $action_result = $1;
           }
-        }  
+        }
         $refid =~ s/[\n\r]+//;
         $action_result =~ s/[\n\r]+//;
         $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}."-ctIPd-RefID", $refid);
-   
+
         if ($action_result eq 'permfail' || ($action_result eq 'tempfail' && $Commtouch::conf{'ctipd_blocktempfail'})) {
             MailScanner::Log::InfoLog("$MODULE result is spam (ip: $action_result) for ".$message->{id});
             if ($Commtouch::conf{'putSpamHeader'}) {
@@ -195,12 +195,12 @@ sub Checks {
       $request .= $line;
     }
     my $url = "http://".$Commtouch::conf{'ctaspd_server_host'}.":".$Commtouch::conf{'ctaspd_server_port'}."/ctasd/ClassifyMessage_Inline";
-  
-    $t->run(sub {  
+
+    $t->run(sub {
       ## do the job...
       $response = $Commtouch::lwp->request(POST $url, Content => $request);
     });
-  
+
     if ($t->timed_out()) {
       MailScanner::Log::InfoLog("$MODULE ctaspd timed out for ".$message->{id}."!");
       $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, 'ctaspd timeout');
@@ -208,31 +208,31 @@ sub Checks {
     }
     $ret = -1;
     my $score = 0;
-  
+
     my $status_line = $response->status_line . "\n";
     chomp $status_line;
-  
+
     my $res = $response->content;
-  
+
     ### parse results:
     my $status = -1; # unknown
     my $status_message = '';
-  
+
     if ($status_line =~ m/^(\d+)\s+(.*)/) {
   	  $status = $1;
   	  $status_message = $2;
     }
-  
+
     if ($status != 200 || $res eq '') {
   	  MailScanner::Log::InfoLog("$MODULE ctaspd returned error: ".$status." ".$status_message." for ".$message->{id});
   	  $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "$MODULE ctaspd returned error: ".$status." ".$status_message);
       return 0;
     }
-  
+
     my $spam_result = '';
     my $vod_result = '';
     my $refid = '';
-  
+
     my @res_lines = split('\n', $res);
     foreach my $line (@res_lines) {
  	  if ($line =~ m/^X-CTCH-RefID:\s+(.*)/i) {
@@ -245,24 +245,24 @@ sub Checks {
         $vod_result = $1;
         $vod_result = 'Medium';
       }
-    }  
+    }
     $refid =~ s/[\n\r]+//;
     $spam_result =~ s/[\n\r]+//;
     $vod_result =~ s/[\n\r]+//;
-  
+
     if ($refid eq '') {
   	  MailScanner::Log::InfoLog("$MODULE ctaspd cannot get RefID for ".$message->{id});
       $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "$MODULE ctaspd cannot get RefID");
       return 0;
     }
     $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}."-ctasd-RefID", $refid);
-  
-  
+
+
     ## find out spam and VOD positives
-    if ($spam_result eq 'Confirmed' || 
+    if ($spam_result eq 'Confirmed' ||
         ( $spam_result eq 'Bulk' && $Commtouch::conf{'detect_spam_bulk'}) ||
         ( $spam_result eq 'Suspected' && $Commtouch::conf{'detect_spam_suspected'}) ) {
-         	
+
       MailScanner::Log::InfoLog("$MODULE result is spam (".$ctipd_header."Spam: $spam_result) for ".$message->{id});
       if ($Commtouch::conf{'putSpamHeader'}) {
         $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "is spam (".$ctipd_header."Spam: $spam_result, ".$Commtouch::conf{pos_text}. ")");
@@ -271,7 +271,7 @@ sub Checks {
 
       return 1;
     }
-  
+
     if ($vod_result eq 'Virus' ||
         ($vod_result eq 'High' && $Commtouch::conf{'detect_vod_high'}) ||
         ($vod_result eq 'Medium' && $Commtouch::conf{'detect_vod_medium'}) ) {
@@ -281,9 +281,9 @@ sub Checks {
       }
       $message->{prefilterreport} .= ", $MODULE ($ctipd_header VOD: $vod_result, ".$Commtouch::conf{pos_text}. ")");
 
-      return 1;	
+      return 1;
     }
- 
+
     MailScanner::Log::InfoLog("$MODULE result is not spam (".$ctipd_header."Spam: $spam_result, VOD: $vod_result) for ".$message->{id});
     if ($Commtouch::conf{'putHamHeader'}) {
       $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "is not spam (".$ctipd_header."Spam: $spam_result, VOD: $vod_result," .$Commtouch::conf{'neg_text'}. ")");
@@ -292,7 +292,7 @@ sub Checks {
 
     return 0;
   }
-  
+
 }
 
 sub dispose {

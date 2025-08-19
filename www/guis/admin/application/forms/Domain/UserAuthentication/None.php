@@ -1,34 +1,34 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * empty user authentication settings form
  */
 
 class Default_Form_Domain_UserAuthentication_None
 {
 	protected $_domain;
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 	}
-	
+
 	public function addForm($form) {
 		$name = new Zend_Form_Element_Hidden('connector');
 		$name->setValue('none');
 		$form->addElement($name);
-		
+
 		$t = Zend_Registry::get('translate');
 	}
-	
+
 	public function setParams($request, $domain) {
 		$this->setParamsFromArray(array(), $domain);
 	}
-	
+
     public function setParamsFromArray($array, $domain) {
        $domain->setPref('auth_type', 'none');
        $domain->setPref('auth_param', $this->getParamsString($array));
@@ -37,7 +37,7 @@ class Default_Form_Domain_UserAuthentication_None
     public function getParams() {
        return array();
     }
-    
+
     public function getParamsString($params) {
        return '';
     }

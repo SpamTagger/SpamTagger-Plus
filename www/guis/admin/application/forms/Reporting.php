@@ -4,36 +4,36 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Reporting page form
  */
 
 class Default_Form_Reporting extends ZendX_JQuery_Form
-{	
+{
 	protected $_params = array();
-	
+
 	public function __construct($params) {
-		
+
 		$this->_params = $params;
 		parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-    	
+
 		$this->setMethod('post');
-	           
+
 		$this->setAttrib('id', 'filter_form');
-		
+
 		$search = new  Zend_Form_Element_Text('search', array(
 		    'required' => false));
 	    $search->setValue($this->_params['search']);
 	    $this->addElement($search);
-	    
+
 	    $domainField = new  Zend_Form_Element_Select('domain', array(
 		    'required' => false));
 	    $domain = new Default_Model_Domain();
@@ -47,7 +47,7 @@ class Default_Form_Reporting extends ZendX_JQuery_Form
 	    }
 	    $domainField->setValue($this->_params['domain']);
 	    $this->addElement($domainField);
-	    	    
+
 	    $months = array('Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.');
 	    $fd = new Zend_Form_Element_Select('fd', array(
 		    'required' => true));
@@ -58,7 +58,7 @@ class Default_Form_Reporting extends ZendX_JQuery_Form
             $fd->setValue($this->_params['fd']);
 	    }
 	    $this->addElement($fd);
-	    
+
 	    $fm = new Zend_Form_Element_Select('fm', array(
 		    'required' => true));
 	    $i = 1;
@@ -69,7 +69,7 @@ class Default_Form_Reporting extends ZendX_JQuery_Form
             $fm->setValue($this->_params['fm']);
 	    }
 	    $this->addElement($fm);
-	    
+
 	    $td = new Zend_Form_Element_Select('td', array(
 		    'required' => true));
 	    for ($d = 1; $d <= 31; $d++) {
@@ -89,12 +89,12 @@ class Default_Form_Reporting extends ZendX_JQuery_Form
             $tm->setValue($this->_params['tm']);
 	    }
 	    $this->addElement($tm);
-	    
+
 	    $sorts = array(
-	                 'msgs' => 'number of messages received', 
-	                 'spams' => 'number of spams received', 
-	                 'spamspercent' => 'percent of spam received', 
-	                 'viruses' => 'number of viruses received', 
+	                 'msgs' => 'number of messages received',
+	                 'spams' => 'number of spams received',
+	                 'spamspercent' => 'percent of spam received',
+	                 'viruses' => 'number of viruses received',
 	                 'users' => 'number of users',
 	                 'what' => 'item name');
 	    $sort = new Zend_Form_Element_Select('sort', array(
@@ -107,7 +107,7 @@ class Default_Form_Reporting extends ZendX_JQuery_Form
             $sort->setValue($this->_params['sort']);
 	    }
 	    $this->addElement($sort);
-	    
+
 	    $tops = array(3, 10, 20, 100, 1000, 10000);
 	    $top = new Zend_Form_Element_Select('top', array(
 	        'label' => $t->_('Top items shown')." : ",
@@ -119,7 +119,7 @@ class Default_Form_Reporting extends ZendX_JQuery_Form
 	    	$top->setValue($this->_params['top']);
 	    }
 	    $this->addElement($top);
-	    
+
 	    $submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Refresh'),
 	         'onclick' => 'javascript:resubmit=1;launchSearch();return false;'));

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Domain templates form
  */
 
@@ -12,19 +12,19 @@ class Default_Form_DomainTemplates extends Zend_Form
 {
 	protected $_domain;
 	protected $_panelname = 'templates';
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 
 	    parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 
 		$this->setAttrib('id', 'domain_form');
@@ -33,13 +33,13 @@ class Default_Form_DomainTemplates extends Zend_Form
             'filters'    => array('StringTrim')));
 	    ## TODO: add specific validator
 	    $panellist->addValidator(new Zend_Validate_Alnum());
-        
+
         foreach ($this->_domain->getConfigPanels() as $panel => $panelname) {
         	$panellist->addMultiOption($panel, $panelname);
         }
         $panellist->setValue($this->_panelname);
         $this->addElement($panellist);
-        
+
         $panel = new Zend_Form_Element_Hidden('panel');
 		$panel->setValue($this->_panelname);
 		$this->addElement($panel);
@@ -53,33 +53,33 @@ class Default_Form_DomainTemplates extends Zend_Form
 	    $domainname->setValue($this->_domain->getParam('name'));
 	    require_once('Validate/DomainName.php');
         $domainname->addValidator(new Validate_DomainName());
-	    $this->addElement($domainname);	
-	    		
+	    $this->addElement($domainname);
+
 		$webtemplate = new Zend_Form_Element_Select('web_template', array(
             'required'   => false,
 		    'label'      => $t->_('Web user GUI')." : ",
                     'title' => $t->_("Template name for the user's web interface"),
             'filters'    => array('StringTrim')));
-        
+
         foreach ($this->_domain->getWebTemplates() as $template) {
         	$webtemplate->addMultiOption($template, $template);
         }
         $webtemplate->setValue($this->_domain->getPref('web_template'));
         $this->addElement($webtemplate);
-        
+
         $sumtemplate = new Zend_Form_Element_Select('summary_template', array(
             'required'   => false,
 		    'label'      => $t->_('Quarantine summary')." : ",
                     'title' => $t->_("Template name for the emails quarantine"),
             'filters'    => array('StringTrim')));
-        
+
         foreach ($this->_domain->getSummaryTemplates() as $template) {
         	$sumtemplate->addMultiOption($template, $template);
         }
         $sumtemplate->setValue($this->_domain->getPref('summary_template'));
         $this->addElement($sumtemplate);
-        
-        
+
+
         $reptemplate = new Zend_Form_Element_Select('report_template', array(
             'required'   => false,
             'label'      => $t->_('Content protection reports')." : ",

@@ -7,7 +7,7 @@
 var clearcalout_text = '';
 
 $(document).ready(function(){
-	 
+
 	 $("#ratelimit_enable").click(function(event){
 		 if ($("#ratelimit_enable").is(':checked')) {
 			 $("#rate_rule_row").show();
@@ -29,7 +29,7 @@ $(document).ready(function(){
 		 setNoRateLimitHosts();
 	 });
 	 setNoRateLimitHosts();
-	 
+
 	 $("#use_incoming_tls").click(function(event){
 		 if ($("#use_incoming_tls").is(':checked')) {
 			 $(".tls_row").show();
@@ -37,7 +37,7 @@ $(document).ready(function(){
 			 $(".tls_row").hide();
 		 }
 	 });
-	 
+
 	 $(".max_conn_field").keyup(function(event) {
 		if ( (parseInt($("#smtp_accept_max").val()) < parseInt($("#smtp_accept_max_per_host").val())) |
 				(parseInt($("#smtp_accept_max").val()) < parseInt($("#smtp_accept_max_per_trusted_host").val())) ) {
@@ -47,14 +47,14 @@ $(document).ready(function(){
 			$("#smtp_accept_max").val($("#smtp_reserve").val());
 		}
 	 });
-	 
+
 	 $("#smtp_tls_cert_infos").mouseover(function(event) {
 		 display_hover('smtp_tls_cert_infos', event, 1);
 	 });
 	 $("#smtp_tls_cert_infos").mouseout(function(event) {
 		 display_hover('smtp_tls_cert_infos', event, 0);
 	 });
-	 
+
 	 $('#clearcalloutbutton').click(function(evet) {
 		 clearcalout_text = $('#clearcalloutbutton').attr('value');
 		 $('#clearcalloutbutton').attr("disabled", "disabled");

@@ -25,7 +25,7 @@ use utf8;
 
 our @ISA = "ManageServices";
 
-sub init 
+sub init
 {
 	my $module = shift;
 	my $class = shift;
@@ -58,7 +58,7 @@ sub config
 		'checktimer'	=> 10,
 		'actions'	=> {},
 	};
-	
+
 	return $config;
 }
 
@@ -74,7 +74,7 @@ sub setup
 		# Must reload 'fail2ban' config after operating on 'fail2ban-server'
 		$class->SUPER::loadModule('fail2ban');
 	}
-	
+
 	$self->doLog('Dumping Fail2Ban config...', 'daemon');
 	$ENV{'PYENV_VERSION'} = '3.7.7';
 	if (system($self->{'VARDIR'}.'/.pyenv/shims/dump_fail2ban_config.py')) {
@@ -96,7 +96,7 @@ sub mainLoop
 {
 	my $self = shift;
 	my $class = shift;
-	
+
 	if (!-e $class->{'conf'}->getOption('VARDIR').'/run/fail2ban') {
 		mkdir($class->{'conf'}->getOption('VARDIR').'/run/fail2ban')
 			|| die("Could not create ".$class->{'conf'}->getOption('VARDIR').'/run/fail2ban');
@@ -105,7 +105,7 @@ sub mainLoop
 
 	$self->doLog("Running $cmd", 'daemon');
 	system(split(/ /,$cmd));
-	
+
 	return 1;
 }
 

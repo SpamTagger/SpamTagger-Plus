@@ -40,7 +40,7 @@ $txt['FAQ'] = "
                       <ul>
                        <li> <h3>falsos negativos</h3> falsos negativos são mensagens de spam que escaparam através da filtragem do SpamTagger e chegaram à sua caixa de correio sem serem detetadas. Estas são aborrecidas, mas desde que sejam uma ocorrência rara, não vão prejudicar muito a sua produtividade no trabalho. Lembra-se quando só recebia um par de mensagens de spam por semana? Na pior das hipóteses o SpamTagger garante-lhe isso.
                        </li>
-                       <li> <h3>falsos positivos</h3> são erros mais aborrecidos visto serem mensagens válidas a serem bloqueadas pelo sistema. Se não estiver suficientemente vigilante e não verificar a sua quarentena ou os seus relatórios com cuidado, isso pode levar à perda de mensagens importantes. O SpamTagger está otimizado para reduzir estes enganos ao máximo possível. Porém, embora seja muito muito raro, pode acontecer. É por isso que o SpamTagger fornece acesso à quarentena em tempo real e relatórios periódicos para o ajudar a diminuir o risco de perda de mensagens. 
+                       <li> <h3>falsos positivos</h3> são erros mais aborrecidos visto serem mensagens válidas a serem bloqueadas pelo sistema. Se não estiver suficientemente vigilante e não verificar a sua quarentena ou os seus relatórios com cuidado, isso pode levar à perda de mensagens importantes. O SpamTagger está otimizado para reduzir estes enganos ao máximo possível. Porém, embora seja muito muito raro, pode acontecer. É por isso que o SpamTagger fornece acesso à quarentena em tempo real e relatórios periódicos para o ajudar a diminuir o risco de perda de mensagens.
                        </li>
                       </ul>
                   </li>

@@ -10,11 +10,11 @@
   font-weight: normal;
   margin: 0px;
   padding: 0px;
-  margin-bottom: 31px;	
+  margin-bottom: 31px;
   font-size: 12px;
   line-height: 16px;
   color: #552056;
-  text-align: left; 
+  text-align: left;
 }
 
 .configpanel {
@@ -34,7 +34,7 @@
   text-decoration: none !important;
   height: 52px !important;
   line-height: 52px;
-  border-bottom:1px solid #C6ADC6;  
+  border-bottom:1px solid #C6ADC6;
   background-image:url(../images/contentheader_bg52.png);
   font-size: 12px !important;
   font-weight: normal !important;
@@ -53,7 +53,7 @@
   margin-bottom: 15px;
   border: 0px;
   padding-bottom: 15px;
-  border-bottom:1px solid #C6ADC6; 
+  border-bottom:1px solid #C6ADC6;
 }
 
 #fieldapplytoall {
@@ -81,7 +81,7 @@
  }
 
 #addressconfigpanel {
-  padding: 0px;	
+  padding: 0px;
 }
 
 #languageconfigpanel fieldset {
@@ -105,7 +105,7 @@
   margin: 0px;
   padding: 0px;
 }
-	
+
 
 #languageconfigpanel {
   width: 200px;
@@ -124,7 +124,7 @@
 }
 
 #languagelist a {
-  color: #552056;	
+  color: #552056;
 }
 
 #languagelist img {
@@ -133,7 +133,7 @@
   margin-right: 10px;
 }
 
-#languagelist li {  
+#languagelist li {
   height: 26px;
   margin: 0px;
   padding: 0px;
@@ -263,7 +263,7 @@
   font-size: 12px;
   height: 23px;
   line-height: 24px;
-  border-bottom: 1px solid #C6ADC6;  
+  border-bottom: 1px solid #C6ADC6;
   background-image:url(../images/boxtitle.png);
   font-weight: bold!important;
   text-align: left;
@@ -287,7 +287,7 @@
   margin: 0px;
   padding: 0px;
   padding-left: 62px;
-  margin-top: 10px;	
+  margin-top: 10px;
   margin-bottom: -5px;
 }
 
@@ -313,7 +313,7 @@
 #param_summary_to {
   margin-left: 8px;
 }
-	
+
 #fieldsubmit {
   margin-bottom: 10px;
   padding-bottom: 0px;

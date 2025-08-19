@@ -18,7 +18,7 @@ my $mode = "";
 if (defined($givenmode) && $givenmode =~ /^(-v|-h)$/) {
   $mode = 'h';
   if ($givenmode eq "-v") {
-    $mode = "v"; 
+    $mode = "v";
   }
 }
 
@@ -40,8 +40,8 @@ my $saspams = 0;
 my $sahams = 0;
 my $saunsure = 0;
 while (<LOGFILE>) {
-  if (/(\d\d):\d\d:\d\d .* NiceBayes result (is not spam|is spam) \(([^)]+)\)/) { 
-    $msgs++; 
+  if (/(\d\d):\d\d:\d\d .* NiceBayes result (is not spam|is spam) \(([^)]+)\)/) {
+    $msgs++;
     my $hour = $1;
     #my %hcount = ( 'msgs' => 0, 'spam' => 0, 'ham' => 0, 'weird' => 0, 'unsure' => 0);
     $hourly_counts{$hour}{'msgs'}++;
@@ -79,7 +79,7 @@ while (<LOGFILE>) {
       $saunsure++;
       $hourly_counts{$hour}{'saunsure'}++;
     }
-  } 
+  }
 }
 close LOGFILE;
 

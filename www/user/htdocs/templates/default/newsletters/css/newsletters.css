@@ -10,13 +10,13 @@ body {
 
 #allowed {
     float: left;
-    border-right: 1px solid #C6ADC6; 
+    border-right: 1px solid #C6ADC6;
     width:50%;
 }
 
 #denied {
-     float: left; 
-     width:49%; 
+     float: left;
+     width:49%;
 }
 
 #allowed table, #denied table {
@@ -69,8 +69,8 @@ div.button {
 }
 
 #rules {
-	float: left; 
-	margin: 0px; 
+	float: left;
+	margin: 0px;
 	padding: 0px;
 }
 .configpanel h1 {

@@ -8,14 +8,14 @@
 
 /**
  * This class takes care of alias adding requests
- */ 
+ */
 class AliasRequest {
-    
+
 /**
  * Generate the alias request
  * Will store the request in the database and generate the mail message
  * @param  $alias    string    alias requested
- * @return           string    html status string 
+ * @return           string    html status string
  */
 public function requestForm($alias) {
     require_once('objects.php');
@@ -27,7 +27,7 @@ public function requestForm($alias) {
     }
 
     $alias = strtolower($alias);
-    //check address format and domain validity   
+    //check address format and domain validity
     $matches = array();
     if (! preg_match('/[a-zA-Z0-9_\-.]+\@([a-zA-Z0-9_\-.]+)/', $alias, $matches)) {
        return 'BADADDRESSFORMAT';
@@ -45,20 +45,20 @@ public function requestForm($alias) {
     if (is_array($res) && isset($res['address']) && $res['address'] == $alias) {
       return 'ALIASALREADYREGISTERD';
     }
-    
+
     //check if no previous request are pending for this address
-    
+
     // first delete old records
     $query = "DELETE FROM pending_alias WHERE date_in != CURDATE();";
     $db_slaveconf->doExecute($query);
-    
+
     // and the check if still pending requests exists
     $query = "SELECT alias FROM pending_alias WHERE alias='$alias'";
     $res = $db_slaveconf->getHash($query);
     if (is_array($res) && isset($res['alias']) &&  $res['alias'] == $alias) {
       return 'ALIASALREADYPENDING';
     }
-    
+
     // save user if not registered, so that alias request can have a user reference
     if (!$user_->isRegistered()) {
       $user_->save();
@@ -122,7 +122,7 @@ public function requestForm($alias) {
 	return $res;
 */
    $sysconf_ = SystemConfig::getInstance();
-   
+
    // create the command string
    $command = $sysconf_->SRCDIR_."/bin/send_aliasrequest.pl ".$user_->getPref('username')." ".$alias." ".$token." ".$lang_->getLanguage();
    $command = escapeshellcmd($command);
@@ -133,7 +133,7 @@ public function requestForm($alias) {
    $tmp = array();
    if (preg_match('/REQUESTSENT (\S+\@\S+)/', $result, $tmp)) {
      return 'ALIASPENDING';
-   } 
+   }
    return  $result;
 }
 
@@ -141,7 +141,7 @@ public function requestForm($alias) {
  * This will check the request and add the alias if correct
  * @param  $id     string  MD5 hash of unique id
  * @param  $alias  string  alias requested
- * @return         string    html status string 
+ * @return         string    html status string
  */
 public function addAlias($id, $alias) {
     if (!is_string($id)) {
@@ -156,17 +156,17 @@ public function addAlias($id, $alias) {
     // check if pending alias exists and id is correct
     $query = "SELECT a.user, u.username, u.id, u.domain FROM pending_alias a, user u WHERE a.id='$id' AND a.alias='$alias' AND a.user=u.id";
     $res = $db_slaveconf->getHash($query);
-    
+
     if (!is_array($res) || ! isset($res['username'])) {
         return 'ALIASNOTPENDING';
     }
-    
+
     // ok, so we create the user instance
     require_once("user/User.php");
 	$user_ = new User();
     $user_->setDomain($res['domain']);
     $user_->load($res['username']);
-	
+
     // and we delete the pending request
 	$query = "DELETE FROM pending_alias WHERE id='$id' AND alias='$alias'";
 	$db_slaveconf->doExecute($query);
@@ -183,7 +183,7 @@ public function addAlias($id, $alias) {
  * This will check the request and remove the request if correct
  * @param  $id     string  MD5 hash of unique id
  * @param  $alias  string  alias requested
- * @return         string  html status string 
+ * @return         string  html status string
  */
 public function remAlias($id, $alias) {
     if (!is_string($id)) {
@@ -198,11 +198,11 @@ public function remAlias($id, $alias) {
     // check if pending alias exists and id is correct
     $query = "SELECT a.user, u.username, u.id, u.domain FROM pending_alias a, user u WHERE a.id='$id' AND a.alias='$alias' AND a.user=u.id";
     $res = $db_slaveconf->getHash($query);
-    
+
     if (!is_array($res)) {
         return "<font color=\"red\">".$lang_->print_txt('ALIASNOTPENDING')."</font><br/><br/>";
     }
-    
+
 	$query = "DELETE FROM pending_alias WHERE id='$id' AND alias='$alias'";
 	$db_slaveconf->doExecute($query);
 
@@ -216,7 +216,7 @@ public function remAliasWithoutID($alias) {
     require_once('helpers/DataManager.php');
     $db_slaveconf = DM_SlaveConfig :: getInstance();
     $alias = $db_slaveconf->sanitize($alias);
-    
+
     $query = "DELETE FROM pending_alias WHERE alias='$alias'";
     $db_slaveconf->doExecute($query);
     return 'ALIASREQUESTREMOVED';

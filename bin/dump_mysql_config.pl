@@ -74,7 +74,7 @@ sub dump_mysql_file
 		$line =~ s/__VARDIR__/$config{'VARDIR'}/g;
 		$line =~ s/__SRCDIR__/$config{'SRCDIR'}/g;
 
-		foreach my $key (keys %config) { 
+		foreach my $key (keys %config) {
                         $line =~ s/$key/$config{$key}/g;
                 }
 
@@ -83,7 +83,7 @@ sub dump_mysql_file
 
 	close TEMPLATE;
 	close TARGET;
-	
+
 	return 1;
 }
 

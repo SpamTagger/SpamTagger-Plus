@@ -6,14 +6,14 @@ Dies ist der Bericht von SpamTagger f=FCr die letzten ??NBDAYS Tage.
 F=FCr die Adresse: ??ADDRESS
 
 Diese Meldung informiert Sie =FCber E-Mails, die von SpamTagger gesperrt wurden.
-Wenn Sie meinen, dass eines dieser E-Mails kein Spam ist, k=F6nnen Sie es befreien, 
+Wenn Sie meinen, dass eines dieser E-Mails kein Spam ist, k=F6nnen Sie es befreien,
 indem Sie auf Link klicken "Befreien:".
 
-Die nachstehend aufgef=FChrte E-Mails werden in ??SPAMNBDAYS Tage vernichtet. 
+Die nachstehend aufgef=FChrte E-Mails werden in ??SPAMNBDAYS Tage vernichtet.
 Es ist daher wichtig, die gew=F6nschte E-Mails vor Ablauf dieser Frist zu befreien.
 
-Wenn Sie die Einstellungen der Berichte =E4ndern, die aktuellen Stand der Quarant=E4ne 
-einsehen oder eine Support-Anfrage erstellen m=F6chten, gehen Sie bitte auf die 
+Wenn Sie die Einstellungen der Berichte =E4ndern, die aktuellen Stand der Quarant=E4ne
+einsehen oder eine Support-Anfrage erstellen m=F6chten, gehen Sie bitte auf die
 SpamTagger Web-Schnittstelle unter der Adresse:
 
 ??WEBBASEURL
@@ -35,7 +35,7 @@ Meldung ID: ??ID
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D
-Diese Meldung wurde von SpamTagger automatisch erstellt. Beantworten Sie es bitte nicht. 
+Diese Meldung wurde von SpamTagger automatisch erstellt. Beantworten Sie es bitte nicht.
 F=FCr weitere Informationen
 
 ??SPAMTAGGERURL

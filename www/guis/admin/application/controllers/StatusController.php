@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for status page
  */
 
@@ -24,7 +24,7 @@ class StatusController extends Zend_Controller_Action
 
         $slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         $users = 0;
 
         $out = [ 'hardware' => [], 'spools' => [], 'load' => [] ];
@@ -79,7 +79,7 @@ class StatusController extends Zend_Controller_Action
                     $mo =  unserialize(base64_decode($m));
                 } else {
                     $mo = $m;
-                } 
+                }
                 if (! $mo instanceof Default_Model_InformationalMessage) {
                     continue;
                 }

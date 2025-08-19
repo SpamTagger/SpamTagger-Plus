@@ -4,33 +4,33 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Localization settings
  */
 
 class Default_Model_Localization
-{	
+{
 	protected $_dlglist = array(
-	                     'Africa' => 'Africa', 
+	                     'Africa' => 'Africa',
 	                     'America' => 'America',
-	                     'Asia' => 'Asia', 
+	                     'Asia' => 'Asia',
 	                     'Atlantic' => 'Atlantic Ocean',
 	                     'Australia' => 'Australia',
 	                     'Europe' => 'Europe',
 	                     'Indian' => 'Indian Ocean',
-	                     'Pacific' => 'Pacific Ocean', 
+	                     'Pacific' => 'Pacific Ocean',
 	                     'Etc' => 'None of the above');
-	
+
 	protected $_timezonefile = '/etc/timezone';
 	protected $_zoneinfodir = '/usr/share/zoneinfo';
 	protected $_currenttimezone = array('US', 'Central');
 	protected $_currentsubzones = array();
-	
+
 	public function __construct() {
 	}
-    
+
 	public function load() {
-	   
+
 	   if (file_exists($this->_timezonefile)) {
 	   	   $content = file($this->_timezonefile);
 	   	   foreach ($content as $line) {
@@ -43,7 +43,7 @@ class Default_Model_Localization
 	   	   }
 	   }
 	}
-	
+
 	public function getMainZone() {
 		return $this->_currenttimezone[0];
 	}
@@ -52,18 +52,18 @@ class Default_Model_Localization
 			$this->_currenttimezone[0] = $zone;
 		}
 	}
-	
+
  	public function getSubZone() {
 		return $this->_currenttimezone[1];
 	}
 	public function setSubZone($zone) {
 		$this->_currenttimezone[1] = $zone;
 	}
-	
+
 	public function getZones() {
 		return $this->_dlglist;
 	}
-	
+
 	public function getFullZone() {
 		return $this->_currenttimezone[0]."/".$this->_currenttimezone[1];
 	}
@@ -73,7 +73,7 @@ class Default_Model_Localization
     public function getTextSubZone() {
     	return preg_replace('/_/', ' ', $this->_currenttimezone[1]);
 	}
-	
+
 	public function getSubZones() {
 		$zone = $this->getMainZone();
 		if (isset($this->_dlglist[$zone])) {
@@ -87,10 +87,10 @@ class Default_Model_Localization
 		}
 		return $this->_currentsubzones;
 	}
-	
+
     public function save()
     {
     	return Default_Model_Localhost::sendSoapRequest('Config_saveTimeZone', $this->getMainZone()."/".$this->getSubZone());
     }
-    	
+
 }

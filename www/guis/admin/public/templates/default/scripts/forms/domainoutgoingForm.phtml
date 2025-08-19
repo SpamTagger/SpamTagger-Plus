@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -24,11 +24,11 @@
             <td colspan="2"><hr /></td>
           </tr>
 
-          <?php echo $this->InputRow($this->form->getElement('dkim_signature'));?>          
+          <?php echo $this->InputRow($this->form->getElement('dkim_signature'));?>
           <?php echo $this->InputRow($this->form->getElement('dkim_domain'),array('row_class'=>'dkim_domain_fieldset'));?>
           <?php echo $this->InputRow($this->form->getElement('dkim_selector'),array('row_class'=>'dkim_selandkey_fieldset'));?>
           <?php echo $this->InputRow($this->form->getElement('dkim_pkey'),array('row_class'=>'dkim_selandkey_fieldset','label_addclass'=>'flabeltextarea'));?>
-          
+
           <tr class="dkim_selandkey_fieldset">
             <td class="flabel flabelstrict"></td>
             <td class="fvalue fieldnote"><a id="generatepkey" href="javascript:generatePKI('rsa',2048);"><?php echo $this->t->_('Generate new private key')?>...</a></td>

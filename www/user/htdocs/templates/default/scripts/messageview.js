@@ -12,7 +12,7 @@ function initpanels() {
 function openclosepanel(panel) {
   var elem = document.getElementById(panel);
   var image = document.getElementById(panel+"_expandimg");
-  
+
   if (elem.style.visibility != 'visible' ) {
     elem.style.display = 'block';
     elem.style.visibility = 'visible';
@@ -51,7 +51,7 @@ function redim(width, height) {
     var current_height = cp.offsetTop;
     var dw = popup_width - current_width;
     var dh = popup_height - current_height;
-    document.body.removeChild(cp);  
+    document.body.removeChild(cp);
     window.resizeBy(dw, dh);
   }
   // end workaround

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -11,10 +11,10 @@ $spools = array(1 => 'incoming', 2 => 'filtering', 4 => 'outgoing');
 
 <?php echo $this->formatPeriod();?>
 <table class="hoststatustable spooltable" id='mainspooltable'>
-   
+
   <tr class="hoststatushead spoolhead">
    <td colspan="7">
-     <p><?php echo $this->t->_('Spool')?> : <strong><?php echo $this->t->_($spools[$this->spool]);?></strong> 
+     <p><?php echo $this->t->_('Spool')?> : <strong><?php echo $this->t->_($spools[$this->spool]);?></strong>
         <?php echo $this->t->_('on host')?> : <?php echo $this->slave->getId()?> (<?php echo $this->slave->getHostname();?>)</p>
    </td>
  </tr>
@@ -30,9 +30,9 @@ $spools = array(1 => 'incoming', 2 => 'filtering', 4 => 'outgoing');
       <td class="c_spoolstatus c_title"><?php echo $this->t->_('Status')?></td>
       <td class="c_spoolaction c_title"><?php echo $this->t->_('Action')?></td>
    </tr>
-   
+
    <?php foreach ($this->msgs as $msg) {?>
-   
+
    <tr>
       <td class="c_spooldate"><?php echo $this->formatPeriod($msg['time_in_queue'])?></td>
       <td class="c_spoolfrom"><span class="tooltipped"><?php echo $this->formatEmail($msg['from'])?>
@@ -50,7 +50,7 @@ $spools = array(1 => 'incoming', 2 => 'filtering', 4 => 'outgoing');
                  <span class="spoolfrozen"><?php echo $this->t->_('frozen'); ?></span>
            <?php  } elseif ($msg['first_delivery']) { ?>
                   <span class="spoolfirstdelivery"><?php echo $this->t->_('first delivery'); ?></span>
-           <?php } else { ?> 
+           <?php } else { ?>
                    <span class="spoolinretries"><?php echo $this->t->_('in retries');?></span>
             <?php }
           ?>
@@ -73,9 +73,9 @@ $spools = array(1 => 'incoming', 2 => 'filtering', 4 => 'outgoing');
        <?php }?>
       </td>
    </tr>
-   
+
    <?php }?>
- 
+
    <?php if ($this->pages > 1) { ?>
    <?php $nbprevnext = 5;?>
    <tr class="spoolpagination">
@@ -89,17 +89,17 @@ $spools = array(1 => 'incoming', 2 => 'filtering', 4 => 'outgoing');
         <?php }?>
         <a href="javascript:setPage(<?php echo $this->page-1;?>);">&lt;</a>&nbsp;
       <?php }?>
-      
+
     <?php $i=$this->page-$nbprevnext; $c=0;
           while ($c++ < $nbprevnext) { if ($i > 0) { ?><a href="javascript:setPage(<?php echo $i?>);"><?php echo $i;?></a> | <?php } $i++;}
-     ?>      
+     ?>
     <?php echo $this->page?>
 
     <?php $i=$this->page; $c=0; while ($i++ < $this->pages && $c++ < $nbprevnext) { ?>
         | <a href="javascript:setPage(<?php echo $i?>);"><?php echo $i;?></a>
-    <?php }?>   
-      
-      <?php if ($this->nextoffset > 0) {?> 
+    <?php }?>
+
+      <?php if ($this->nextoffset > 0) {?>
         &nbsp;<a href="javascript:setPage(<?php echo $this->page + 1; ?>);">&gt;</a>
         <?php if ($this->page < $this->pages - 1) { ?>
           &nbsp;<a href="javascript:setPage(<?php echo $this->pages;?>);">&gt;&gt;</a>

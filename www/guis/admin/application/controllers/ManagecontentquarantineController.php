@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for content quarantine page
  */
 
@@ -24,15 +24,15 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 			$params['orderfield'] = $matches[1];
 			$params['orderorder'] = $matches[2];
 		}
-		
+
 		$todateO = Zend_Date::now();
 	    $fromdateO = Zend_Date::now();
         $fromdateO->sub('1', Zend_Date::DAY, Zend_Registry::get('Zend_Locale')->getLanguage());
-        
-        $todate = Zend_Locale_Format::getDate($todateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));      
+
+        $todate = Zend_Locale_Format::getDate($todateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));
         $fromdate = Zend_Locale_Format::getDate($fromdateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));
-       
-        
+
+
         foreach ( array('fd' => 'day', 'fm' => 'month') as $tk => $tv) {
         	if  (!isset($params[$tk]) || !$params[$tk]) {
         	    $params[$tk] = $fromdate[$tv];
@@ -48,10 +48,10 @@ class ManagecontentquarantineController extends Zend_Controller_Action
         if ($params['tm'] < $params['fm']) {
         	$params['fy']--;
         }
-        
+
 		return $params;
 	}
-	
+
     public function init()
     {
     	$layout = Zend_Layout::getMvcInstance();
@@ -66,12 +66,12 @@ class ManagecontentquarantineController extends Zend_Controller_Action
     	$main_menus = Zend_Registry::get('main_menu')->findOneBy('id', 'submanage_ContentQuarantine')->class = 'submenuelselected';
     	$view->selectedSubMenu = 'ContentQuarantine';
     }
-    
+
     public function indexAction() {
   	    $t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
-		 
+
 		$request = $this->getRequest();
 		$form    = new Default_Form_ContentQuarantine($this->getSearchParams());
 		$form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'managecontentquarantine'));
@@ -79,16 +79,16 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 
 		$view->form = $form;
     }
-    
+
     public function searchAction() {
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
 		$layout->disableLayout();
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'managecontentquarantine', NULL, array());
-		 
+
 		$request = $this->getRequest();
-		 
+
 		$loading = 1;
 		if (! $request->getParam('load')) {
 			sleep(1);
@@ -96,14 +96,14 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 		}
 		$view->loading = $loading;
 		$view->params = $this->getSearchParams();
-		 
+
 		$nbelements = 0;
 		$orderfield = 'date';
 		$orderorder = 'desc';
 		$nbpages = 0;
 		$page = 0;
 		$elements = array();
-		 
+
 		$columns = array(
     	  'caction' => array('label' => 'Action'),
     	  'date' => array('label' => 'Date', 'label2' => 'date', 'order' => 'desc'),
@@ -120,14 +120,14 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 				$columns[$orderfield]['order'] = $orderorder;
 			}
 		}
-		
+
 		if ($request->getParam('domain') != "" || $request->getParam('reference') != "") {
 			$elements = array();
 			$nbelements = 0;
 			$element = new Default_Model_QuarantinedContent();
 			$params = $this->getSearchParams();
 			#$nbelements = $element->fetchAllCount($params);
-			 
+
 			#if ($nbelements > 0) {
 				$elements = $element->fetchAll($params);
 				$nbelements = $element->fetchAllCount();
@@ -137,7 +137,7 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 		}
 		$view->page = $page;
 		$view->elements = $elements;
-		 
+
 		$view->columns = $columns;
 		$view->nbelements = $nbelements;
 		$view->orderfield = $orderfield;
@@ -152,12 +152,12 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 		$layout->disableLayout();
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'managecontentquarantine', NULL, array());
-		 
+
 		$view->headLink()->appendStylesheet($view->css_path.'/popup.css');
 
 		$view->release_status = '';
 		$request = $this->getRequest();
-		
+
 		$id = '';
 		if ($request->getParam('id') && preg_match('/^\d{8}-[a-zA-Z0-9]{6}-[a-zA-Z0-9]{6,11}-[a-zA-Z0-9]{2,4}$/', $request->getParam('id'))) {
 			$id = $request->getParam('id');
@@ -167,14 +167,14 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 		if ($request->getParam('s') && is_numeric($request->getParam('s'))) {
 			$s = $request->getParam('s');
 		}
-		
+
 		if ($id == '') {
 			$view->release_status = $t->_('Bad message id');
 		}
 		if ($s == '') {
 			$view->release_status = $t->_('Bad parameters');
 		}
-		
+
 		$slave = new Default_Model_Slave();
 		$slave->find($s);
 		$res = $slave->sendSoapRequest('Content_release', array('id' => $id, 'soap_timeout' => 40));
@@ -184,7 +184,7 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 			$view->release_status = $t->_('Message could not be released')." (".$t->_($res['message']).")";
 		}
 	}
-	
+
 	public function viewAction() {
   	    $t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
@@ -194,9 +194,9 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'managecontentquarantine', NULL, array());
 		$view->headLink()->appendStylesheet($view->css_path.'/messageview.css');
 		$view->headScript()->appendFile($view->scripts_path.'/messageview.js', 'text/javascript');
-				
+
 		$request = $this->getRequest();
-		
+
 	        $id = '';
 		if ($request->getParam('id') && preg_match('/^\d{8}-[a-zA-Z0-9]{6}-[a-zA-Z0-9]{6,11}-[a-zA-Z0-9]{2,4}$/', $request->getParam('id'))) {
 			$id = $request->getParam('id');
@@ -206,14 +206,14 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 		if ($request->getParam('s') && is_numeric($request->getParam('s'))) {
 			$s = $request->getParam('s');
 		}
-		
+
 		if ($id == '') {
 			$view->release_status = $t->_('Bad message id');
 		}
 		if ($s == '') {
 			$view->release_status = $t->_('Bad parameters');
 		}
-		
+
 		$slave = new Default_Model_Slave();
 		$slave->find($s);
 		$res = $slave->sendSoapRequest('Content_find', array('id' => $id));
@@ -224,7 +224,7 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 				$msg->setParam($key, $value);
 			}
 			$view->msg = $msg;
-			
+
 			$msg->setParam('store_id', $s);
 			$view->infos = $res;
 			$view->msgid = $id;

@@ -5,14 +5,14 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class takes care of storing Connection settings
  * @package SpamTagger Plus
  */
 class ConnectorSettings {
-    
+
   /**
    * Settings array with default values
    * @var array
@@ -21,12 +21,12 @@ class ConnectorSettings {
                               'server' => 'localhost',
                               'port'   => 0
                              );
-                             
+
    private $settings_type_ = array(
                                'server' => array('text', 20),
                                'port' => array('text', 5)
-                               );                          
-    
+                               );
+
    /**
     * List of available connector with corresponding classes
     * @var array
@@ -43,7 +43,7 @@ class ConnectorSettings {
                               'radius'=> 'RadiusSettings',
                               'tequila' => 'TequilaSettings'
                            );
-                           
+
     /**
      * internal type of connector
      * @var string
@@ -53,7 +53,7 @@ class ConnectorSettings {
    /**
     * Constructor
     * Add the specialized settings to the parent settings
-    */ 
+    */
    public function __construct($type) {
      foreach($this->spec_settings_ as $setting => $value) {
         $this->addSetting($setting, $value);
@@ -71,7 +71,7 @@ class ConnectorSettings {
           break;
      }
    }
-   
+
    /**
     * Settings factory
     */
@@ -101,7 +101,7 @@ class ConnectorSettings {
     }
     return false;
    }
-   
+
    /**
     * Add a setting with a value
     * @param $setting  string setting name
@@ -123,7 +123,7 @@ class ConnectorSettings {
       }
       return false;
     }
-    
+
     /**
      * Get the available settings list
      * @return   array  available setting list
@@ -135,8 +135,8 @@ class ConnectorSettings {
         }
         return $ret;
      }
-    
-    
+
+
     /**
      * Set the server settings from the auth_server field of the domain preferences
      * domain preferences are formatted like this: server:port
@@ -147,7 +147,7 @@ class ConnectorSettings {
         if ($this->getType() == 'local') {
             return;
         }
-        
+
         if (preg_match('/:/', $settings)) {
            list($server, $port)  = preg_split ("/:/", $settings);
         } else {
@@ -163,7 +163,7 @@ class ConnectorSettings {
         $this->setSetting('port', $port);
         return true;
     }
-    
+
     /**
      * Set the parameters settings from the auth_param field of the domain
      * @param $settings  string  settings string from the domain preference
@@ -184,8 +184,8 @@ class ConnectorSettings {
     }
     return true;
    }
-   
-    
+
+
     /**
      * return the servers settings as a flattened string as expected by the auth_server preference of domain
      * @return  string  flattened server settings
@@ -193,7 +193,7 @@ class ConnectorSettings {
     public function getFlatServerSettings() {
         return $this->getSetting('server').":".$this->getSetting('port');
     }
-     
+
     /**
      * return the parameters settings as a flattened string as expected by the auth_param preference of domain
      * @return  string  flattened param settings
@@ -210,7 +210,7 @@ class ConnectorSettings {
     $ret = rtrim($ret, '\:');
     return $ret;
    }
-   
+
    /**
     * Get the internal connector type
     * @return   string  connector type
@@ -218,7 +218,7 @@ class ConnectorSettings {
     public function getType(){
       return $this->type_;
     }
-    
+
     /**
      * Get the field type of a setting
      * @return array field type and values if needed
@@ -232,7 +232,7 @@ class ConnectorSettings {
         }
         return null;
      }
-     
+
     /**
      * get the template tag for the condition
      * @return string  template condition

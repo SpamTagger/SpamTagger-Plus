@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
-         
+
 /**
  * main status fetcher function
  * will execute the get_status.pl script with authorization checks
@@ -28,7 +28,7 @@ function getStatus($sid, $params) {
   $res_a = array();
   exec($cmd, $res_a);
 
-  return $res_a[0]; 
+  return $res_a[0];
 }
 
 /**

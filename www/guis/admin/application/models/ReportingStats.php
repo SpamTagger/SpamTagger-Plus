@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Reporting statistics
  */
 
@@ -15,11 +15,11 @@ class Default_Model_ReportingStats
 	protected $_what = '';
 	protected $_fromdate;
 	protected $_todate;
-	
+
 	protected $_linemapper = array('msgs', 'spams', 'highspams', 'viruses', 'names', 'others', 'cleans', 'bytes', 'users', 'domains');
 
 	protected $_mapper;
-	
+
 	protected $_statscachefile = '/tmp/stat.cache';
 
 	public function setWhat($what) {
@@ -28,7 +28,7 @@ class Default_Model_ReportingStats
 	public function getWhat() {
 		return $this->_what;
 	}
-	
+
 	public function setValue($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
@@ -45,11 +45,11 @@ class Default_Model_ReportingStats
 		}
 		return $ret;
 	}
-	
+
 	public function getPercentValue($value) {
 		$msgs = $this->getValue('msgs');
 		$value = $this->getValue($value);
-		
+
 		if ($msgs == 0 || $value == 0) {
 			return 0;
 		}
@@ -64,7 +64,7 @@ class Default_Model_ReportingStats
         }
         $ratio = $fullwidth / 100;
         if ($what == 'cleans') {
-            return $fullwidth - (ceil($this->getPercentValue('spams')*$ratio) + ceil($this->getPercentValue('viruses')*$ratio));	
+            return $fullwidth - (ceil($this->getPercentValue('spams')*$ratio) + ceil($this->getPercentValue('viruses')*$ratio));
         }
         if ($what == 'spams' && (ceil($this->getPercentValue('spams')*$ratio) + ceil($this->getPercentValue('viruses')*$ratio)) > $fullwidth) {
             return floor($this->stats_[$what]*$ratio);
@@ -83,7 +83,7 @@ class Default_Model_ReportingStats
 		}
 		return $ret;
 	}
-	
+
 	public function setFromDate($str) {
 		$this->_fromdate = $str;
 		#new Zend_Date($str, 'yyyyMMdd');
@@ -92,7 +92,7 @@ class Default_Model_ReportingStats
 		$this->_todate = $str;
 		#new Zend_Date($str, 'yyyyMMdd');
 	}
-	
+
 	public function getDate($when) {
 		$date = new Zend_Date($this->_todate, 'yyyyMMdd');
 		if ($when == 'from') {
@@ -140,11 +140,11 @@ class Default_Model_ReportingStats
 	public function fetchAll($params = NULL) {
 		return $this->getMapper()->fetchAll($params);
 	}
-	
+
 	public function loadFromLine($line, $day = null) {
-		
+
 	}
-	
+
 	public function addFromLine($line, $day = null) {
 		$matches = preg_split('/\|/', $line);
 		$i = 0;
@@ -173,7 +173,7 @@ class Default_Model_ReportingStats
 		     $i++;
 		}
 	}
-	
+
 	public function isGlobal() {
 		if (preg_match('/_global\@(\S+)/', $this->getWhat(), $matches)) {
 			return $matches[1];
@@ -184,7 +184,7 @@ class Default_Model_ReportingStats
 		}
 		return null;
 	}
-	
+
 	public function isDomain() {
 		if (!preg_match('/\@/', $this->getWhat())) {
 			return true;
@@ -208,7 +208,7 @@ class Default_Model_ReportingStats
     	}
         return ($va > $vb) ? -1 : +1;
     }
-    
+
     static public function compareSpamsPercent($a, $b) {
     	$va = $a->getPercentValue('spams');
     	$vb = $b->getPercentValue('spams');
@@ -244,12 +244,12 @@ class Default_Model_ReportingStats
     	}
         return ($va > $vb) ? -1 : +1;
     }
-    
+
     public function createPieChart($id = null, $data = null, $params = array()) {
-        include("pChart/class/pData.class.php"); 
-        include("pChart/class/pDraw.class.php"); 
-        include("pChart/class/pPie.class.php"); 
-        include("pChart/class/pImage.class.php"); 
+        include("pChart/class/pData.class.php");
+        include("pChart/class/pDraw.class.php");
+        include("pChart/class/pPie.class.php");
+        include("pChart/class/pImage.class.php");
 
         $t = Zend_Registry::get('translate');
         $DataSet = new pData;
@@ -266,7 +266,7 @@ class Default_Model_ReportingStats
         	$vdata = array($data['cleans'], $data['spams'], $data['viruses']+$data['contents']);
         	$vwhats = array($t->_('clean'), $t->_('spam'), $t->_('dangerous'));
         }
-        
+
         $size = array(190, 190);
         $position = array(125, 80);
 
@@ -282,7 +282,7 @@ class Default_Model_ReportingStats
         }
         $label_bg = array('R'=>240,'G'=>240,'B'=>240,'A'=>255);
         $label_size = array('S' => -50, 'M' => 5, 'O' => LEGEND_HORIZONTAL);
-      
+
         if (isset($params['size']) && is_array($params['size'])) {
                 $size = $params['size'];
         }
@@ -290,7 +290,7 @@ class Default_Model_ReportingStats
         // 2D settings
         if (!isset($params['style']) || $params['style'] != '3D') {
         	$picture->setShadow(TRUE,array("X"=>2,"Y"=>2,"R"=>150,"G"=>150,"B"=>150,"Alpha"=>100));
-        
+
 
             if (isset($params['label_orientation']) && $params['label_orientation'] == 'vertical') {
             	$label_size = array('S' => -50, 'M' => 5, 'O' => LEGEND_VERTICAL);
@@ -336,10 +336,10 @@ class Default_Model_ReportingStats
             $position = array($radius,$radius);
         }
 
-        
+
         $config = new SpamTagger_Config();
-        $DataSet->AddPoints($vdata,"values");  
-        $DataSet->AddPoints($vwhats,"labels"); 
+        $DataSet->AddPoints($vdata,"values");
+        $DataSet->AddPoints($vwhats,"labels");
         $DataSet->setAbscissa("labels");
 
         $template = Zend_Registry::get('default_template');
@@ -353,13 +353,13 @@ class Default_Model_ReportingStats
         	$slice++;
         }
 
-        $picture->setFontProperties(array("FontName"=>$config->getOption('SRCDIR')."/www/guis/admin/application/library/pChart/fonts/pf_arma_five.ttf","FontSize"=>6,"R"=>80,"G"=>80,"B"=>80)); 
-        
+        $picture->setFontProperties(array("FontName"=>$config->getOption('SRCDIR')."/www/guis/admin/application/library/pChart/fonts/pf_arma_five.ttf","FontSize"=>6,"R"=>80,"G"=>80,"B"=>80));
+
         $nonnull = false;
         foreach ($vdata as $d) {
         	if ($d > 0) {
         		$nonnull = true;
-        		break; 
+        		break;
         	}
         }
         if ($nonnull) {
@@ -375,7 +375,7 @@ class Default_Model_ReportingStats
         		$chart->draw3DPie(
         		           $position[0],$position[1],
         		           array(
-        		                  "SliceHeight"=>10, 
+        		                  "SliceHeight"=>10,
         		                  "DrawLabels"=>FALSE,"WriteValues"=>$value['T'],"ValuePosition"=>$value['P'],
         		                  "ValueR"=>$value['R'],"ValueG"=>$value['G'],"ValueB"=>$value['B']));
         	}
@@ -383,17 +383,17 @@ class Default_Model_ReportingStats
              $picture->drawFilledCircle($position[0],$position[1],$radius,array("R"=>230, "G"=>230, "B"=>230));
         }
         $picture->setShadow(FALSE);
-        $picture->setFontProperties(array("FontName"=>$config->getOption('SRCDIR')."/www/guis/admin/application/library/pChart/fonts/pf_arma_five.ttf","FontSize"=>6,"R"=>80,"G"=>80,"B"=>80)); 
+        $picture->setFontProperties(array("FontName"=>$config->getOption('SRCDIR')."/www/guis/admin/application/library/pChart/fonts/pf_arma_five.ttf","FontSize"=>6,"R"=>80,"G"=>80,"B"=>80));
         if (!isset($params['no_label'])) {
             $chart->drawPieLegend(
                        $label_pos[0],$label_pos[1],
                        array(
                                "Style"=>LEGEND_ROUND,"Mode"=>$label_size['O'],
                                "Surrounding"=>$label_size['S'],"Margin"=>$label_size['M'],
-                               'R'=>$label_bg['R'], 'G'=>$label_bg['G'], 'B'=>$label_bg['B'], 'Alpha'=>$label_bg['A'] 
+                               'R'=>$label_bg['R'], 'G'=>$label_bg['G'], 'B'=>$label_bg['B'], 'Alpha'=>$label_bg['A']
                        ));
         }
-        
+
         if (isset($params['render']) && $params['render']) {
         	$picture->Stroke();
         } else {
@@ -405,7 +405,7 @@ class Default_Model_ReportingStats
             return $id;
         }
     }
-    
+
     public function getTodayStatElements($type) {
 		$els = array(          'cleans' => 'globalCleanCount',
     		                   'spams'=>  'globalSpamCount',
@@ -417,7 +417,7 @@ class Default_Model_ReportingStats
 		switch ($type) {
 			case 'refused':
 				$els = array(  'rbl' => 'globalRefusedRBLCount+globalRefusedBackscatterCount',
-    		                   'blacklists'=>  'globalRefusedHostCount+globalRefusedBlacklistedSenderCount', 
+    		                   'blacklists'=>  'globalRefusedHostCount+globalRefusedBlacklistedSenderCount',
     		                   'relay' => 'globalRefusedRelayCount',
     		                   'policies' => 'globalRefusedSpoofingCount+globalRefusedBATVCount+globalRefusedBadSPFCount+globalRefusedUnauthenticatedCount+globalRefusedUnencryptedCount+globalRefusedBadRDNSCount',
     	                       'callout' => 'globalRefusedCalloutCount',
@@ -427,7 +427,7 @@ class Default_Model_ReportingStats
 				$els = array(  'cleans' => 'globalCleanCount',
     		                   'spams'=>  'globalRefusedCount+globalSpamCount',
     		                   'dangerous' => 'globalNameCount+globalOtherCount',
-    		                   'viruses'=>  'globalVirusCount', 
+    		                   'viruses'=>  'globalVirusCount',
     	                       'outgoing' => 'globalRelayedCount');
 				break;
 			case 'delayed':
@@ -436,20 +436,20 @@ class Default_Model_ReportingStats
 				break;
 			case 'relayed':
 				$els = array(  'by hosts' => 'globalRelayedHostCount',
-    		                   'authentified'=>  'globalRelayedAuthenticatedCount', 
+    		                   'authentified'=>  'globalRelayedAuthenticatedCount',
     		                   'refused' => 'globalRelayedRefusedCount',
     	                       'viruses' => 'globalRelayedVirusCount');
 				break;
 			case 'sessions':
 				$els = array(  'accepted' => 'globalAcceptedCount',
-    		                   'refused'=>  'globalRefusedCount', 
+    		                   'refused'=>  'globalRefusedCount',
     		                   'delayed' => 'globalDelayedCount',
     	                       'relayed' => 'globalRelayedCount');
 				break;
 		}
 		return $els;
 	}
-	
+
 	public function getTodayValues($what, $slaveid, $type = 'unknown') {
 	    $slave = new Default_Model_Slave();
 	    $slaves = array();
@@ -460,11 +460,11 @@ class Default_Model_ReportingStats
             $slaves = $slave->fetchAll();
 	    }
         $total = array();
-        
+
         foreach ($slaves as $s) {
             $total = $this->cumulStats($total, $s->getTodaySNMPStats($what));
         }
-        
+
         if (!$type || $type == '') {
         	$type = 'unknown';
         }
@@ -477,16 +477,16 @@ class Default_Model_ReportingStats
 		file_put_contents($cachefile, serialize($total));
         return $total;
 	}
-	
+
 	private function cumulStats($total, $stats) {
 		foreach ($stats as $key => $value) {
 			$total[$key] += $value;
 		}
 		return $total;
 	}
-	
+
 	public function getTodayPie($what, $slaveid, $usecache, $type = 'global', $graph_params = array()) {
-		
+
     	$total = null;
     	$cachefile = $this->_statscachefile.".".$type;
     	if (is_numeric($slaveid) && $slaveid > 0) {

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * SpamTagger configuration fetcher
  */
 
@@ -12,7 +12,7 @@ class SpamTagger_Config
 {
 	private static $instance;
 	private $_configFile = '/etc/spamtagger.conf';
-	
+
 	private $_options = array();
 
 	public static function getInstance() {
@@ -39,14 +39,14 @@ class SpamTagger_Config
 			}
 		}
 	}
-	
+
 	public function getOption($option) {
 	    if (isset($this->_options[$option])) {
 	        return  $this->_options[$option];
 	    }
 	    return null;
 	}
-	 
+
 	public function getUserGUIAvailableLanguages() {
 		return array('en' => 'English', 'fr' => 'French', 'de' => 'German', 'es' => 'Spanish');
 	}

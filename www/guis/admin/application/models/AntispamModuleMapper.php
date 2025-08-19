@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * AntiSpam generic module configuration mapper
  */
 
 class Default_Model_AntispamModuleMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_AntispamModuleMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_AntispamModule $module)
     {
         $result = $this->getDbTable()->find($id);
@@ -45,7 +45,7 @@ class Default_Model_AntispamModuleMapper
         	$module->setParam($key, $row[$key]);
         }
     }
-    
+
     public function findByName($name, Default_Model_AntispamModule $module)
     {
     	$query = $this->getDbTable()->select();
@@ -53,7 +53,7 @@ class Default_Model_AntispamModuleMapper
         $row = $this->getDbTable()->fetchRow($query);
         return $this->find($row['id'], $module);
     }
-    
+
     public function fetchAll($where)
     {
         $resultSet = $this->getDbTable()->fetchAll($where, 'position ASC');
@@ -66,7 +66,7 @@ class Default_Model_AntispamModuleMapper
         }
         return $entries;
     }
-    
+
     public function save(Default_Model_AntispamModule $module) {
        $data = $module->getParamArray();
        $res = '';

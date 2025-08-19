@@ -39,7 +39,7 @@ our $VERSION    = 1.0;
 
 sub create {
    my $username = shift;
- 
+
    my $domainname = '';
    my $user = '';
    my $domain;
@@ -54,18 +54,18 @@ sub create {
    if ($domainname eq "") {
      my $system = SystemPref::create();
      $domainname = $system->getPref('default_domain');
-     $user = $username; 
+     $user = $username;
    }
    $domain = Domain::create($domainname);
    if (!$domain) {
      return;
    }
-   
+
    my $allowed = $domain->getPref('allow_smtp_auth');
    if (!$allowed) {
-     $authorized = 0; 
+     $authorized = 0;
    }
- 
+
    my $conf = ReadConfig::getInstance();
    my $cachepath = $conf->getOption('VARDIR')."/spool/tmp/exim_stage1/auth_cache/";
    if (! -d $cachepath) {
@@ -83,7 +83,7 @@ sub create {
    if ($userformat eq 'percent_add') {
       $realusername = $user.'%'.$domainname;
    }
-   
+
    # get auth server, port and params
    my $serverstr =  $domain->getPref('auth_server');
    my $server = $serverstr;
@@ -93,7 +93,7 @@ sub create {
      $port = $2;
    }
    my $authparam = $domain->getPref('auth_param');
-   
+
    # get auth type
    my $authtype = $domain->getPref('auth_type');
    my $auth;
@@ -123,7 +123,7 @@ sub create {
      require SMTPAuthenticator::NoAuth;
      $auth = SMTPAuthenticator::NoAuth::create('', '','');
    }
-   
+
    my $this = {
        username => $realusername,
        domain => $domain,
@@ -131,7 +131,7 @@ sub create {
        authorized => $authorized,
        cachefile => $cachefile
   };
-         
+
   bless $this, "SMTPAuthenticator";
   return $this;
 }
@@ -140,7 +140,7 @@ sub authenticate {
    my $this = shift;
    my $password = shift;
    my $ip = shift;
-  
+
    if ($this->{authorized}) {
 
      my $create_cache_record = 0;
@@ -150,7 +150,7 @@ sub authenticate {
          my $present = 0;
          if (-f $this->{cachefile}) {
              $present = 1;
-         } 
+         }
          $cachedb = DBI->connect("dbi:SQLite:".$this->{cachefile},"","",{PrintError=>0,InactiveDestroy=>1});
          if (!$present) {
              ## create database

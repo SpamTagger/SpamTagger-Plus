@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * SNMP daemon settings mapper
  */
 
 class Default_Model_SnmpdConfigMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_SnmpdConfigMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_SnmpdConfig $config)
     {
         $result = $this->getDbTable()->find($id);
@@ -45,7 +45,7 @@ class Default_Model_SnmpdConfigMapper
         	$config->setParam($key, $row[$key]);
         }
     }
-    
+
     public function fetchAll()
     {
         $resultSet = $this->getDbTable()->fetchAll();
@@ -57,7 +57,7 @@ class Default_Model_SnmpdConfigMapper
         }
         return $entries;
     }
-    
+
     public function save(Default_Model_SnmpdConfig $config) {
        $data = $config->getParamArray();
        $res = '';

@@ -25,7 +25,7 @@ use utf8;
 
 our @ISA = "ManageServices";
 
-sub init 
+sub init
 {
 	my $module = shift;
 	my $class = shift;
@@ -55,7 +55,7 @@ sub config
 		'timeout'	=> 5,
 		'actions'	=> {},
 	};
-	
+
 	return $config;
 }
 
@@ -82,7 +82,7 @@ sub mainLoop
 {
 	my $self = shift;
 	my $class = shift;
-	
+
 	$self->doLog("Running $self->{'cmd'}", 'daemon');
 	system($self->{'cmd'});
 

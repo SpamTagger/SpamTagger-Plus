@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Validate a list of hosts
  */
 
@@ -17,9 +17,9 @@ class Validate_HostList extends Zend_Validate_Abstract
         self::MSG_HOSTLIST => "'%value%' is not a valid host list",
         self::MSG_BADHOST => "'%host%' is not a valid host"
     );
-    
+
     public $host;
-    
+
     protected $_messageVariables = array(
         'host' => 'host'
     );
@@ -27,12 +27,12 @@ class Validate_HostList extends Zend_Validate_Abstract
     public function isValid($value)
     {
         $this->_setValue($value);
-        
-        $validator = new Zend_Validate_Hostname( 
-                                    Zend_Validate_Hostname::ALLOW_DNS | 
+
+        $validator = new Zend_Validate_Hostname(
+                                    Zend_Validate_Hostname::ALLOW_DNS |
                                     Zend_Validate_Hostname::ALLOW_IP |
                                     Zend_Validate_Hostname::ALLOW_LOCAL);
-    
+
         if ($value == '*') {
           	return true;
         }

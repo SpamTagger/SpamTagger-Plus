@@ -4,23 +4,23 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * DNS settings form
  */
 
 class Default_Form_NetworkDns extends Zend_Form
 {
 	protected $_dns;
-	
+
 	public function __construct($dnsconfig) {
 		$this->_dns = $dnsconfig;
 		parent::__construct();
 	}
-	
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
                 $restrictions = Zend_Registry::get('restrictions');
 
@@ -36,7 +36,7 @@ class Default_Form_NetworkDns extends Zend_Form
                 $search->setAttrib('disabled', 'disabled');
             }
 		$this->addElement($search);
-		
+
 		$primary = new  Zend_Form_Element_Text('primarydns', array(
 		    'label'    => $t->_('Primary DNS server'). " :",
                     'title'    => $t->_("We recommend to use the local DNS (or the master's one if you use the cluster version) as primary DNS"),
@@ -49,7 +49,7 @@ class Default_Form_NetworkDns extends Zend_Form
                 $primary->setAttrib('disabled', 'disabled');
             }
 		$this->addElement($primary);
-		
+
 		$secondary = new  Zend_Form_Element_Text('secondarydns', array(
 		    'label'    => $t->_('Secondary DNS server'). " :",
 		    'required' => false,
@@ -57,11 +57,11 @@ class Default_Form_NetworkDns extends Zend_Form
 	    ## TODO: add specific validator
 	    $secondary->setValue($this->_dns->getNameServer(2));
 	    $secondary->addValidator(new Zend_Validate_Ip());
-            if ($restrictions->isRestricted('NetworkDns', 'secondarydns')) { 
+            if ($restrictions->isRestricted('NetworkDns', 'secondarydns')) {
                 $secondary->setAttrib('disabled', 'disabled');
             }
 		$this->addElement($secondary);
-		
+
 		$tertiary = new  Zend_Form_Element_Text('tertiarydns', array(
 		    'label'    => $t->_('Tertiary DNS server'). " :",
 		    'required' => false,
@@ -69,17 +69,17 @@ class Default_Form_NetworkDns extends Zend_Form
 	    ## TODO: add specific validator
 	    $tertiary->setValue($this->_dns->getNameServer(3));
 	    $tertiary->addValidator(new Zend_Validate_Ip());
-            if ($restrictions->isRestricted('NetworkDns', 'tertiarydns')) { 
+            if ($restrictions->isRestricted('NetworkDns', 'tertiarydns')) {
                 $tertiary->setAttrib('disabled', 'disabled');
             }
 		$this->addElement($tertiary);
-		
+
 		$heloname = new  Zend_Form_Element_Text('heloname', array(
 				    'label'    => $t->_('Force HELO / EHLO identity with'). " :",
 				    'required' => false,
 				    'size' => 40,
 				    'filters'    => array('StringTrim')));
-		
+
 		$heloname->setValue($this->_dns->getHeloName());
 		$heloname->addValidator(new Zend_Validate_Hostname(
 			Zend_Validate_Hostname::ALLOW_DNS |
@@ -88,14 +88,14 @@ class Default_Form_NetworkDns extends Zend_Form
 			$heloname->setAttrib('disabled', 'disabled');
 		}
 		$this->addElement($heloname);
-		
+
 		$submit = new Zend_Form_Element_Submit('dnssubmit', array(
 		     'label'    => $t->_('Submit')));
-            if ($restrictions->isRestricted('NetworkDns', 'dnssubmit')) { 
+            if ($restrictions->isRestricted('NetworkDns', 'dnssubmit')) {
                 $submit->setAttrib('disabled', 'disabled');
             }
 		$this->addElement($submit);
-		
+
 	}
 
 }

@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller page that will display the log page
  */
- 
+
 /**
  * require admin session, and Slave/Soap stuff
  */
@@ -130,7 +130,7 @@ function viewLog($log, $date, $posted) {
 
   // check search parameters
   if (isset($posted['loglines']) && ( is_numeric($posted['loglines']) || $posted['loglines'] == 'all')) {
-    $loglines = $posted['loglines']; 
+    $loglines = $posted['loglines'];
   } else {
     $posted['loglines'] = 10;
   }
@@ -148,7 +148,7 @@ function viewLog($log, $date, $posted) {
 
   if ($posted['loglines'] != 'all') {
     $cmd = $cmd." ".$sysconf_->VARDIR_."/log/".$logfiles[$log].$ext." | tail -n".$posted['loglines'];
-  } else { 
+  } else {
     $cmd = $cmd." ".$sysconf_->VARDIR_."/log/".$logfiles[$log].$ext;
   }
   if (isset($search) && $search != "") {

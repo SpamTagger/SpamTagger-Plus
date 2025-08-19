@@ -1,18 +1,18 @@
-<? 
+<?
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the main index page
  * It is responsible for the frameset
  */
- 
+
 /**
  * require valid session
  */
-require_once("objects.php"); 
+require_once("objects.php");
 require_once("view/Template.php");
 require_once("system/SystemConfig.php");
 global $sysconf_;
@@ -21,8 +21,8 @@ global $lang_;
 /**
  * out if we are not on a master host
  */
-if ($sysconf_->ismaster_ < 1) { 
-  exit; 
+if ($sysconf_->ismaster_ < 1) {
+  exit;
 }
 
 // create view

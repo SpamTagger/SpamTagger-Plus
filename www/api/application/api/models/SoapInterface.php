@@ -22,7 +22,7 @@ class Api_Model_SoapInterface
 	public function Test_getResponse($question) {
 		return $question;
 	}
-	 
+
 	/**
 	 * *************
 	 * domainAdd
@@ -54,7 +54,7 @@ class Api_Model_SoapInterface
         $api->edit($domain_name, $params);
         return Zend_Registry::get('response')->getResponse();
     }
-	
+
     /**
      * This function test if a domain exists
      *
@@ -79,7 +79,7 @@ class Api_Model_SoapInterface
         $api->remove($domain_name);
         return Zend_Registry::get('response')->getResponse();
     }
-    
+
     /**
      * This function shows domain's data
      *
@@ -97,7 +97,7 @@ class Api_Model_SoapInterface
         }
         return Zend_Registry::get('response')->getResponse();
     }
-    
+
     /**
      * This function lists all domains
      *
@@ -110,7 +110,7 @@ class Api_Model_SoapInterface
         $api->domainList();
         return Zend_Registry::get('response')->getResponse();
     }
-    	
+
 	private function testAuth($params) {
 		if (isset($params['username']) && isset($params['password'])) {
 			$user = new Default_Model_Administrator();
@@ -119,11 +119,11 @@ class Api_Model_SoapInterface
                 Zend_Registry::set('user', $user);
             } else {
                 Zend_Registry::get('response')->setResponse(401, 'authentication failed');
-            }        
-            
+            }
+
 		}
 	}
-	
+
 	/**
 	* *************
 	* user
@@ -141,7 +141,7 @@ class Api_Model_SoapInterface
 		$api->exists($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function adds a user
 	*
@@ -154,7 +154,7 @@ class Api_Model_SoapInterface
 		$api->add($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function edits a user's settings
 	*
@@ -167,7 +167,7 @@ class Api_Model_SoapInterface
 		$api->edit($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function deletes a user
 	*
@@ -180,7 +180,7 @@ class Api_Model_SoapInterface
 		$api->delete($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function lists users of a domain
 	*
@@ -193,7 +193,7 @@ class Api_Model_SoapInterface
 		$api->userList($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function show user settings
 	*
@@ -206,7 +206,7 @@ class Api_Model_SoapInterface
 		$api->show($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* ***************
 	* address (email)
@@ -224,7 +224,7 @@ class Api_Model_SoapInterface
 		$api->exists($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function adds an address
 	*
@@ -237,7 +237,7 @@ class Api_Model_SoapInterface
 		$api->add($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function edits an address's settings
 	*
@@ -250,7 +250,7 @@ class Api_Model_SoapInterface
 		$api->edit($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function deletes an address
 	*
@@ -263,7 +263,7 @@ class Api_Model_SoapInterface
 		$api->delete($params);
 		return Zend_Registry::get('response')->getResponse();
 	}
-	
+
 	/**
 	* This function lists addresses of a domain
 	*

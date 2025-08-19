@@ -11,7 +11,7 @@ $(document).ready(function(){
 	      showHideSearch();
 	});
 	showHideSearch();
-	
+
 });
 
 function showHideSearch() {
@@ -53,7 +53,7 @@ function launchSearch() {
         	$("#statsbloc").html('jserror');
           }
     });
-    
+
     if ($("#dataloading").html()) {
     	setTimeout("launchSearch()", reloaddelay);
     }

@@ -8,7 +8,7 @@
 
 /**
  * this list contains FileType objects
- */ 
+ */
 require_once("config/FileType.php");
 
 /**
@@ -21,7 +21,7 @@ class FileTypeList {
    * @var array
    */
   private $filetypes_ = array();
-  
+
   /**
    * keep which rule is selected
    * @var numeric
@@ -34,10 +34,10 @@ class FileTypeList {
  * @return   boolean  true on success, false on failure
  */
 public function load() {
-    
+
   $query = "SELECT id FROM filetype";
   $db_slaveconf = DM_SlaveConfig :: getInstance();
-  
+
   unset($this->filetypes_);
   $this->filetypes_ = array();
   $list = $db_slaveconf->getList($query);
@@ -87,7 +87,7 @@ public function getFileType($filetype) {
  * @param  $filetype  numeric  filetype rule id
  * @param  $p         string   preference name
  * @param  $v         mixed    preference value
- * @return            boolean  true on success, false on failure   
+ * @return            boolean  true on success, false on failure
  */
 public function setFiletypePref($filetype, $p, $v) {
   if (isset($this->filetypes_[$filetype])) {
@@ -110,7 +110,7 @@ public function save() {
   }
   $sysconf_ = SystemConfig::getInstance();
   $sysconf_->setProcessToBeRestarted('ENGINE');
-  return $retok; 
+  return $retok;
 }
 
 
@@ -173,7 +173,7 @@ private function ifnot_selected($s, $id) {
   }
   return "";
 }
-    
+
 
 /**
  * get the formular beginning for the selected element
@@ -207,7 +207,7 @@ private function drawCloseEdit($f, $id) {
  * @param  $f      Form     html formular
  * @param  $id     numeric  id of the rule
  * @param  $size   numeric  size of the input text field
- * @return         string   html string for the field 
+ * @return         string   html string for the field
  */
 private function drawField($field, $f, $id, $size) {
   if ($this->getSelected() == $id) {

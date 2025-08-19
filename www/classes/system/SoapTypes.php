@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * message reasons
  */
 class SoapReasons {
-  public $reasons = array();    
+  public $reasons = array();
 }
 
 /**
@@ -35,7 +35,7 @@ class SoapSpools {
   public $incoming;
   public $filtering;
   public $outgoing;
-  
+
   public function __construct($i, $f, $o) {
     $this->incoming = $i;
     $this->filtering = $f;
@@ -63,7 +63,7 @@ class SoapProcesses {
   public $clamspamd;
   public $spamhandler;
   public $firewall;
-  
+
   static public function isOK($status) {
     if ( $status->mtaincoming  == 0 ||
          $status->mtafiltering  == 0 ||
@@ -73,14 +73,14 @@ class SoapProcesses {
          $status->masterdb  == 0 ||
          $status->slavedb  == 0 ||
          $status->snmpd == 0 ||
-         $status->greylistd == 0 || 
+         $status->greylistd == 0 ||
          $status->cron == 0 ||
          $status->prefdaemon = 0 ||
          $status->firewall == 0
      ) {
        return false;
      }
-     return true; 
+     return true;
   }
 }
 
@@ -91,7 +91,7 @@ class SoapLoad {
   public $avg5;
   public $avg10;
   public $avg15;
-  
+
   public function __construct($l5, $l10, $l15) {
     $this->avg5 = $l5;
     $this->avg10 = $l10;
@@ -105,7 +105,7 @@ class SoapLoad {
 class SoapDiskUsage {
   public $root;
   public $var;
-  
+
   public function __construct($r, $v) {
     $this->root = $r;
     $this->var = $v;
@@ -120,7 +120,7 @@ class SoapMemoryUsage {
   public $free;
   public $swaptotal;
   public $swapfree;
-  
+
   public function __construct($t, $f, $st, $sf) {
     $this->total = $t;
     $this->free = $f;
@@ -133,7 +133,7 @@ class SoapMemoryUsage {
  * system counts
  */
 class SoapStats {
-  public $bytes;    
+  public $bytes;
   public $msg;
   public $spam;
   public $pspam;
@@ -144,7 +144,7 @@ class SoapStats {
   public $user;
   public $clean;
   public $pclean;
-  
+
   public function __construct($b, $m, $s, $ps, $v, $pv, $c, $pc, $u, $l, $pl) {
     $this->bytes = $b;
     $this->msg = $m;
@@ -160,7 +160,7 @@ class SoapStats {
   }
 }
 
-$SoapClassMap = array( 
+$SoapClassMap = array(
                     "reasons" => "SoapReasons",
                     "messagelines" => "SoapText",
                     "servicestatus" => "SoapServiceStatus",

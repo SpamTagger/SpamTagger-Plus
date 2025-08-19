@@ -99,7 +99,7 @@ img {
   height: 48px;
   background-image:url(../images/contentheader_bg.png);
   overflow: hidden;
-  white-space: nowrap; 
+  white-space: nowrap;
   text-align: left;
   margin: 0px;
   padding: 0px;
@@ -168,14 +168,14 @@ img {
 }
 .c_action { width: 74px; padding-left: 10px !important; padding-right: 0px !important;}
 .c_date { width: 112px; }
-.c_globalscore { 
+.c_globalscore {
 	 width: 45px;
 	 padding: 0px !important;
 	 margin: 0px !important;
-	 line-height: 23px !important; 
-	 text-align: center; 
-	 padding-left: 9px !important; 
-	 padding-right: 0px !important; 
+	 line-height: 23px !important;
+	 text-align: center;
+	 padding-left: 9px !important;
+	 padding-right: 0px !important;
 }
 .c_to { width: 100px; }
 .c_from { width: 200px; }
@@ -218,7 +218,7 @@ img {
 }
 
 .bullet_off,.bullet_on {
-  margin-right: 2px;	
+  margin-right: 2px;
 }
 
 /* pagination */

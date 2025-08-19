@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Pending alias request mapper
  */
 
@@ -37,7 +37,7 @@ class Default_Model_RRDGraphicElementMapper
     {
         $query = $this->getDbTable()->select();
         $query->where('id = ?', $elementid);
-        
+
         $result = $this->getDbTable()->fetchAll($query);
         if (0 == count($result)) {
             return;
@@ -57,7 +57,7 @@ class Default_Model_RRDGraphicElementMapper
         $element->setParam('draw_format', $row->draw_format);
         $element->setParam('draw_unit', $row->draw_unit);
     }
-    
+
     public function fetchAll($params)
     {
         $query = $this->getDbTable()->select();
@@ -65,7 +65,7 @@ class Default_Model_RRDGraphicElementMapper
             $query->where('stats_id = ?', $params['graphicid']);
         }
         $query->order('draw_order');
-        
+
         $elements = array();
         $resultSet = $this->getDbTable()->fetchAll($query);
         foreach ($resultSet as $row) {

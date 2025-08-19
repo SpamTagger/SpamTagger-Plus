@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Domain general settings form
  */
 
@@ -14,7 +14,7 @@ class Default_Form_DomainArchiving extends Zend_Form
 	private $_mta;
 	protected $_panelname = 'archiving';
 	protected $_canArchive = false;
-	
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
@@ -26,15 +26,15 @@ class Default_Form_DomainArchiving extends Zend_Form
     	if ($sysconf->getParam('use_archiver')) {
     		$this->_canArchive = true;
     	}
-    	
+
 	    parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
                 $restrictions = Zend_Registry::get('restrictions');
 
@@ -44,31 +44,31 @@ class Default_Form_DomainArchiving extends Zend_Form
             'filters'    => array('StringTrim')));
 	    ## TODO: add specific validator
 	    $panellist->addValidator(new Zend_Validate_Alnum());
-        
+
         foreach ($this->_domain->getConfigPanels() as $panel => $panelname) {
         	$panellist->addMultiOption($panel, $panelname);
         }
         $panellist->setValue($this->_panelname);
         $this->addElement($panellist);
-        
+
         $panel = new Zend_Form_Element_Hidden('panel');
 		$panel->setValue($this->_panelname);
 		$this->addElement($panel);
 		$name = new Zend_Form_Element_Hidden('name');
 		$name->setValue($this->_domain->getParam('name'));
 		$this->addElement($name);
-        
+
 		$archive_mail = new Zend_Form_Element_Checkbox('archive_mail', array(
 		            'label'   => $t->_('Archive messages (whole domain)'). " :",
 		            'uncheckedValue' => "0",
 		            'checkedValue' => "1"
 		));
-		
+
 		if ($this->_domain->getPref('archive_mail')) {
 			$archive_mail->setChecked(true);
 		}
 		$this->addElement($archive_mail);
-		
+
 		$copyto_mail = new  Zend_Form_Element_Text('copyto_mail', array(
 		            'label'    => $t->_('Send a copy of all messages to')." :",
                             'title' => $t->_("Concerns only regular and released mails"),
@@ -81,18 +81,18 @@ class Default_Form_DomainArchiving extends Zend_Form
                if ($restrictions->isRestricted('DomainArchiving', 'copyto')) {
                         $copyto_mail->setAttrib('disabled', 'disabled');
                 }
-		
-		
+
+
  	   $submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
-	   $this->addElement($submit);	
-	  
+	   $this->addElement($submit);
+
  	}
-	
+
 	public function setParams($request, $domain) {
 
                 $restrictions = Zend_Registry::get('restrictions');
-        
+
 		if ($this->canArchive()) {
     		$domain->setPref('archive_mail', $request->getParam('archive_mail'));
 		}
@@ -100,12 +100,12 @@ class Default_Form_DomainArchiving extends Zend_Form
                         throw new Exception('Access restricted');
                 }
 		$domain->setPref('copyto_mail', $request->getParam('copyto_mail'));
-		
+
 		return true;
 	}
-	
+
 	public function canArchive() {
 		return $this->_canArchive;
 	}
-	
+
 }

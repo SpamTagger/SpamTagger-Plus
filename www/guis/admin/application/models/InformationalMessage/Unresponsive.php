@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Administrator
  */
 
@@ -17,9 +17,9 @@ class Default_Model_InformationalMessage_Unresponsive extends Default_Model_Info
         protected $_hostname = '';
 
         public function __construct($hostname) {
-           $this->_hostname = $hostname; 
+           $this->_hostname = $hostname;
         }
-	
+
 	public function check() {
 	}
 

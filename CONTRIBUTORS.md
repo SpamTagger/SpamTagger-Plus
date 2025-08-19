@@ -54,7 +54,7 @@ Remaining contributors are listed alphabetically:
 * [huzhanrong](https://github.com/huzhanrong) - Chinese
 * [Jacky](https://github.com/mrtayung) - Chinese
 * [jimmie](https://github.com/neisep) - Swedish
-* [joximu](https://github.com/joximu) - German 
+* [joximu](https://github.com/joximu) - German
 * [Kristoffer Grundström](https://github.com/Umeaboy) - Swedish
 * [louie0623](https://github.com/louies0623) - Chinese
 * [Magic4ce](https://github.com/Magic4ce) - Dutch
@@ -63,14 +63,14 @@ Remaining contributors are listed alphabetically:
 * [mattiasmun](https://github.com/mattiasmun) - Swedish
 * [Miguel Coias](https://github.com/j0hnnymcd3v1l) - Portuguese
 * [M Burak Şentürk](https://github.com/mbrksntrk) - Turkish
-* [miran68](https://github.com/Miran68) - Czech 
+* [miran68](https://github.com/Miran68) - Czech
 * [MurkBRA](https://github.com/MurkBRA) - Portuguese (Brazil)
 * [Marcelo Leães](https://github.com/mvldebian) - Portuguese (Brazil)
 * [Michal Čihař](https://github.com/nijel) - German
 * [nrafira11](https://github.com/nrafira11) - Indonesian
 * [nutcoiso](https://github.com/nutcoiso) - Portuguese
 * [Oğuz Ersen](https://github.com/oersen) - Turkish
-* [Oleksiy M.](https://github.com/Naghaul) - Russian 
+* [Oleksiy M.](https://github.com/Naghaul) - Russian
 * [Paulo Hecko](https://github.com/paulohecko) - Portuguese (Brazil)
 * [Razvan Trofin](https://github.com/Razvan-cmd) - Romanian, and others
 * [Reza Almanda](https://github.com/rezaalmanda) - Indonesian

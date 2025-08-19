@@ -5,14 +5,14 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class takes care of reformatting the login passed by adding the domain.
  * @package SpamTagger Plus
  */
 class DomainAddFormatter extends LoginFormatter {
-    
+
      public function format($login_given, $domain_name) {
        require_once('system/SystemConfig.php');
        $sysconf = SystemConfig::getInstance();
@@ -26,7 +26,7 @@ class DomainAddFormatter extends LoginFormatter {
            break;
          case 'percent_add':
            $separator = '%';
-           break; 
+           break;
        }
        $matches = array();
        if (preg_match('/^(\S+)[\@\%](\S+)$/', $login_given, $matches)) {
@@ -35,7 +35,7 @@ class DomainAddFormatter extends LoginFormatter {
        if ($login_given == "") {
         return false;
        }
-       return $login_given.$separator.$domain_name; 
+       return $login_given.$separator.$domain_name;
      }
 }
 ?>

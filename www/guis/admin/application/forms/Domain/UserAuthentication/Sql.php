@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * SQL user authentication settings form
  */
- 
+
 class Default_Form_Domain_UserAuthentication_Sql
 {
 	protected $_domain;
@@ -15,19 +15,19 @@ class Default_Form_Domain_UserAuthentication_Sql
                         "sqlusername" => '',
                         "sqlpassword" => ''
      );
-     
+
 	public function __construct($domain)
 	{
 	    $this->_domain = $domain;
 	}
-	
+
 	public function addForm($form) {
 		$name = new Zend_Form_Element_Hidden('connector');
 		$name->setValue('none');
 		$form->addElement($name);
-		
+
 		$t = Zend_Registry::get('translate');
-		
+
 		require_once('Validate/SMTPHostList.php');
 		$server = new  Zend_Form_Element_Text('authserver', array(
 	        'label'    => $t->_('Authentication server')." :",
@@ -36,16 +36,16 @@ class Default_Form_Domain_UserAuthentication_Sql
 	    $server->setValue($this->_domain->getPref('auth_server'));
         $server->addValidator(new Validate_SMTPHostList());
 	    $form->addElement($server);
-	    
+
 	    $this->_settings = $this->getParams();
-	    
+
 	    $username = new  Zend_Form_Element_Text('sqlusername', array(
 	        'label'    => $t->_('Username')." :",
 		    'required' => false,
 		    'filters'    => array('StringTrim')));
 	    $username->setValue($this->_settings['sqlusername']);
 	    $form->addElement($username);
-	    
+
 		$password = new  Zend_Form_Element_Password('sqlpassword', array(
 	        'label'    => $t->_('Password')." :",
 		    'required' => false,
@@ -54,7 +54,7 @@ class Default_Form_Domain_UserAuthentication_Sql
 	    $password->setValue($this->_settings['sqlpassword']);
 	    $form->addElement($password);
 	}
-	
+
 	public function setParams($request, $domain) {
 	   $array = array(
           'auth_server' => $request->getParam('authserver'),
@@ -85,7 +85,7 @@ class Default_Form_Domain_UserAuthentication_Sql
         $params['auth_server'] = $this->_domain->getPref('auth_server');
         return $params;
     }
-    
+
     public function getParamsString($params) {
        $fields = array('sqlusername', 'sqlpassword');
        $str = '';

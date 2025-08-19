@@ -36,15 +36,15 @@ sub new {
 
   my $this = {
          timeout => 5,
-         
+
          socketpath => '/tmp/'.$class,
   };
-  
+
   # add specific options of child object
   foreach my $sk (keys %spec_this) {
      $this->{$sk} = $spec_this{$sk};
-  } 
-  
+  }
+
   bless $this, $class;
   return $this;
 }
@@ -59,26 +59,26 @@ sub connect {
   if ($this->{timeout} =~ m/^(\d+)$/) {
     $this->{timeout} = $1;
   }
- 
+
   $this->{socket} = IO::Socket::UNIX->new(
                                 Peer    => $this->{socketpath},
                                 Type    => SOCK_STREAM,
                                 Timeout => $this->{timeout} )
     or return 0;
-    
+
   return 1;
 }
 
 sub query {
   my $this = shift;
   my $query = shift;
-  
+
   my $sent = 0;
   my $tries = 1;
 
   $this->connect() or return '_NOSERVER';
   my $sock = $this->{socket};
-  
+
   $sock->send($query) or return '_NOSERVER';
   $sock->flush();
 
@@ -96,13 +96,13 @@ sub query {
  #    };
  #    alarm $this->{timeout};
  #    $rv = $sock->recv($data, 1024, 0);
- #    alarm 0;    
+ #    alarm 0;
  #};
- 
+
   my $read_set = new IO::Select;
   $read_set->add($sock);
   my ($r_ready, $w_ready, $error) =  IO::Select->select($read_set, undef, undef, $this->{timeout});
-   
+
   foreach my $s (@$r_ready) {
     my $buf;
     my $buft;
@@ -124,8 +124,8 @@ sub query {
      return $buf;
    }
   return '_TIMEOUT';
- 
-   
+
+
   if (defined($rv) && length $data) {
     chop($data);
     return $data;

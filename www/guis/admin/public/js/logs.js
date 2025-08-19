@@ -7,7 +7,7 @@
 
 controller='monitorlogs';
 quarantineblock='logsbloc';
-$(document).ready(function(){	
+$(document).ready(function(){
 	launchSearch();
 });
 
@@ -45,7 +45,7 @@ function launchSearch() {
         	$("#"+quarantineblock).html('jserror');
           }
     });
-    
+
     if ($("#dataloading").html()) {
     	setTimeout("launchSearch()", reloaddelay);
     }

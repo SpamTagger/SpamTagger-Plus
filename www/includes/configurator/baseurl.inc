@@ -44,7 +44,7 @@ if ('baseurl.inc' == basename($_SERVER['SCRIPT_FILENAME']))
      		  touch('/var/spamtagger/run/configurator/baseurl');
           $_SESSION['burl'] = $_POST['burl'];
 		  ($retburl == 0) ? $retburl = "<span class='text-success'>SpamTagger Base URL changed</span>" : $retburl = "<span class='text-danger'>Failed to change SpamTagger Base URL</span>";
-		  echo $retburl;	          
+		  echo $retburl;
 	      } else {
 	        echo "<span class='text-danger'>No field should stay empty !</span>";
 	      }

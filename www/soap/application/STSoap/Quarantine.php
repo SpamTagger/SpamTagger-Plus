@@ -11,7 +11,7 @@ class STSoap_Quarantine
 
   /**
    * This function will fetch information on quarantined message
-   * 
+   *
    * @param  array  params
    * @return array
    */
@@ -29,12 +29,12 @@ class STSoap_Quarantine
     }
     require_once('SpamTagger/Config.php');
     $stconfig = SpamTagger_Config::getInstance();
-    
+
     $file = $stconfig->getOption('VARDIR').'/spam/'.$matches[2].'/'.$params['recipient'].'/'.$id;
 
     $ret['file'] = $file;
     $ret['status'] = 1;
     return $ret;
   }
-	
+
 }

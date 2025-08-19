@@ -1,4 +1,4 @@
-Onderwerp: SpamTagger: bericht behoud waarschuwing 
+Onderwerp: SpamTagger: bericht behoud waarschuwing
 
 Een bericht geleverd door __SENDER__ werd gededecteerd als spam en vastgehouden in quarantine.
 

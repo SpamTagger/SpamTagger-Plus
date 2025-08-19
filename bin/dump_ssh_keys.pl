@@ -58,11 +58,11 @@ sub do_known_hosts {
 
 	my $sth = $dbh->prepare("SELECT hostname, ssh_pub_key FROM slave");
 	$sth->execute() or return;
-	
+
 	while (my $ref = $sth->fetchrow_hashref() ) {
 		open KNOWNHOST, ">> $known_hosts_file";
 		print KNOWNHOST $ref->{'hostname'}." ".$ref->{'ssh_pub_key'}."\n";
-		close KNOWNHOST;	
+		close KNOWNHOST;
 	}
 	$sth->finish();
 	return;

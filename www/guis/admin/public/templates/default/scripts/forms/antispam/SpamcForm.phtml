@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -14,11 +14,11 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
 <?php }?>
 
     <?php echo $this->InputRow($this->form->getElement('use_rbls'),
-         array('post_field_text'=> 
+         array('post_field_text'=>
                     $this->InputRow($this->form->getElement('rbls_timeout'), array('label_only'=>true,'nobox'=>true)).
                     $this->InputRow($this->form->getElement('rbls_timeout'), array('field_only'=>true,'nobox'=>true,'post_field_text'=>$this->t->_('seconds'))))
     );?>
-    
+
 <tr id="iprbls" class="<?php echo $this->form->_rbls_class?>">
     <td class="flabel flabeltextarea flabelchecklist"><?php echo $this->t->_('Using these DNS RBLs')?> : </td>
     <td class="fvalue fvaluechecklist">
@@ -60,15 +60,15 @@ $baseconf = DataManager::getFileConfig(SystemConfig::$CONFIGFILE_); ?>
 </tr>
 
 <?php foreach (array(
-        'use_dcc' => 'dcc_timeout', 
+        'use_dcc' => 'dcc_timeout',
         'use_razor' => 'razor_timeout',
         'use_pyzor' => 'pyzor_timeout',
-        'use_spf' => 'spf_timeout', 
+        'use_spf' => 'spf_timeout',
         'use_dkim' => 'dkim_timeout',
        ) as $f => $tf) {?>
-       
+
      <?php echo $this->InputRow($this->form->getElement($f),
-         array('post_field_text'=> 
+         array('post_field_text'=>
                     $this->InputRow($this->form->getElement($tf), array('label_only'=>true,'nobox'=>true)).
                     $this->InputRow($this->form->getElement($tf), array('field_only'=>true,'nobox'=>true,'post_field_text'=>$this->t->_('seconds'))))
       );?>

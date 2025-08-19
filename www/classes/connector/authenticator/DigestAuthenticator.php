@@ -5,45 +5,45 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * This is the DigestAuthenticator class
  * This will take care of authenticate using previously sent digest ID
  * @package SpamTagger Plus
  */
 class DigestAuthenticator extends AuthManager {
-    
-    
+
+
     /**
      * values to be fetched from authentication
      * @var array
      */
     private $values_ = array('stub_user' => 1);
-    
+
     protected $exhaustive_ = false;
-    
+
     private $server_;
     private $status_ = 0;
-    
+
     /**
      * create the authenticator
      */
     function create($domain) {
         return true;
     }
-    
+
     /**
      * overridden from AuthManager
      */
     public function start() {}
-    
+
     /**
      * overridden from AuthManager
      */
     public function getStatus() {
     	return $this->status_;
     }
-    
+
     /**
      * overridden from Authmanager
      */
@@ -52,17 +52,17 @@ class DigestAuthenticator extends AuthManager {
        	  $this->status_ = -3;
        	  return false;
        }
-       
+
        $digest_id = $_REQUEST['d'];
        $use_user_prefs = $_REQUEST['p'];
-       
+
        // first purge very old accesses
        $query = "DELETE FROM digest_access WHERE DATEDIFF(date_expire, NOW()) < -60;";
        $query .= "WHERE id='".$digest_id."'";
        require_once ('helpers/DataManager.php');
        $db = DM_MasterConfig :: getInstance();
        $this->last_query_ = $query;
-      
+
        // query access
        $query = "SELECT id, date_in, date_expire, address, DATEDIFF(date_expire, NOW()) as expire ";
        $query .= ", DATEDIFF(NOW(), date_start) as nbdays ";
@@ -82,7 +82,7 @@ class DigestAuthenticator extends AuthManager {
               $this->values_['gui_displayed_days'] = $res['nbdays'] + 1;
           }
           $this->values_['domain'] = '';
-          
+
        	  // now check if address belongs to user
        	  $query = "SELECT u.username, u.domain FROM user u, email e WHERE e.user=u.id AND e.address='".$address."'";
        	  $this->last_query_ = $query;
@@ -110,7 +110,7 @@ class DigestAuthenticator extends AuthManager {
        $this->status_ = -3;
        return false;
     }
-    
+
     /**
      * overridden from Authmanager
      */

@@ -43,14 +43,14 @@ sub initialise {
   } else {
     MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
   }
-  
+
   $TrustedIPs::conf{'neg_text'} = 'position : '.$TrustedIPs::conf{'position'}.', ham decisive';
 }
 
 sub Checks {
   my $this = shift;
-  my $message = shift; 
-  
+  my $message = shift;
+
   foreach my $hl ($global::MS->{mta}->OriginalMsgHeaders($message)) {
     if ($hl =~ m/^X-SpamTagger-TrustedIPs: Ok/i) {
       my $string = 'sending IP is in Trusted IPs';

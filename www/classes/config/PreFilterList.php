@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 require_once("config/PreFilter.php");
 
 /**
@@ -18,13 +18,13 @@ class PreFilterList {
  * @var array
  */
  private $prefilters_ = array();
- 
+
 /**
  * flat positions list
  * @var array
  */
  private $positions_ = array();
- 
+
 /**
  * constructor
  */
@@ -36,11 +36,11 @@ public function __construct() {
  * @return     boolean  true on success, false on failure
  */
 public function load() {
-  
+
   $db_slaveconf = DM_SlaveConfig :: getInstance();
   $query = "SELECT name FROM prefilter WHERE set_id=1 ORDER BY position";
   $list = $db_slaveconf->getList($query);
-  
+
   $pos = 1;
   $nb = 0;
   foreach($list as $prefilter_name) {
@@ -52,7 +52,7 @@ public function load() {
       $pos++;
     }
   }
-    
+
   $this->nb_available_prefilters_ = $nb;
   return true;
 }
@@ -70,8 +70,8 @@ public function load() {
  	}
     return false;
  }
- 
- 
+
+
 /**
  * save datas to database
  * @return    string  'OKSAVED' on success, error message on failure
@@ -93,7 +93,7 @@ public function save() {
 public function getElementAtPosition($position) {
   if (isset($this->prefilters_[$position])) {
   	return $this->prefilters_[$position];
-  }	
+  }
   return null;
 }
 
@@ -109,7 +109,7 @@ public function getList($template, $form) {
   $ret = "";
   foreach ($this->prefilters_ as $pf) {
     $t = $template->getTemplate('MODULESSLIST');
-    
+
     $enable = false;
     if ($pf->getPref('active')) {
       $enable = true;
@@ -140,10 +140,10 @@ public function getList($template, $form) {
     $t = str_replace('__DOWN_ARROW__',  $downarrow, $t);
     $t = str_replace('__UPLINK__', $_SERVER['PHP_SELF']."?up&m=".$pf->getPref('position'), $t);
     $t = str_replace('__DOWNLINK__', $_SERVER['PHP_SELF']."?down&m=".$pf->getPref('position'), $t);
-   
+
     $t = str_replace('__NEG_DECISIVE__', $form->checkbox("neg_decisive_".$pf->getPref('position'), 1, $pf->getPref('neg_decisive'), '', $enable), $t);
     $t = str_replace('__POS_DECISIVE__', $form->checkbox("pos_decisive_".$pf->getPref('position'), 1, $pf->getPref('pos_decisive'), '', $enable), $t);
-    
+
     $ret .= $t;
   }
   return $ret;
@@ -156,7 +156,7 @@ public function getList($template, $form) {
  public function getNumberOfElements() {
    return count($this->prefilters_);
  }
- 
+
 /**
  * reorder one element (in fact, switch one element with the one in the given position)
  * @param  original int      original position

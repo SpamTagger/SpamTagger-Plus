@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * SNMP daemon settings
  */
 
@@ -15,16 +15,16 @@ class Default_Model_SnmpdConfig
          'community' => '',
          'allowed_ip' => '',
      );
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function setParam($param, $value) {
 		#if ($param == 'allowed_ip') {
 		#	$value = preg_replace('/\s+/', ':', $value);
@@ -33,14 +33,14 @@ class Default_Model_SnmpdConfig
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -48,7 +48,7 @@ class Default_Model_SnmpdConfig
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -72,7 +72,7 @@ class Default_Model_SnmpdConfig
         $this->getMapper()->find($id, $this);
         return $this;
     }
-   
+
     public function save()
     {
         return $this->getMapper()->save($this);

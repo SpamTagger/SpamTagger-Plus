@@ -69,7 +69,7 @@ sub initialise {
   	}
   }
   @TrustedSources::domainsToSPF_ = @a;
-  
+
   if ($TrustedSources::conf{useSPFOnLocal} && -f $TrustedSources::conf{localDomainSFile}) {
   	if (open (LOCALDOMAINS, $TrustedSources::conf{localDomainSFile})) {
       while(<LOCALDOMAINS>) {
@@ -84,7 +84,7 @@ sub initialise {
       close LOCALDOMAINS;
    	}
   }
-  
+
   if (-f $TrustedSources::conf{builtInDomainsFile}) {
   	if (open (BUILTIN, $TrustedSources::conf{builtInDomainsFile})) {
   	  while (<BUILTIN>) {
@@ -132,12 +132,12 @@ sub initialise {
       MailScanner::Log::InfoLog("$MODULE adding auth server: $tip");
     }
   }
-  
+
   $TrustedSources::conf{whiterbls} .= ' '.$TrustedSources::conf{spflists};
-  
+
   $TrustedSources::dnslists = new STDnsLists(\&MailScanner::Log::WarnLog, $TrustedSources::conf{debug});
-  $TrustedSources::dnslists->loadRBLs( $TrustedSources::conf{rblsDefsPath}, $TrustedSources::conf{whiterbls}, 'IPRWL SPFLIST', 
-                                '', '', 
+  $TrustedSources::dnslists->loadRBLs( $TrustedSources::conf{rblsDefsPath}, $TrustedSources::conf{whiterbls}, 'IPRWL SPFLIST',
+                                '', '',
                                 '', $MODULE);
 
   if ($TrustedSources::conf{'neg_decisive'} && ($TrustedSources::conf{'decisive_field'} eq 'neg_decisive' || $TrustedSources::conf{'decisive_field'} eq 'both')) {
@@ -149,11 +149,11 @@ sub initialise {
 
 sub Checks {
   my $this = shift;
-  my $message = shift; 
-  
+  my $message = shift;
+
   my $ham = 1;
   my $reason = "";
-  
+
   ## first fetch received server list
   my $h_id = 0;
   my %full_received;
@@ -190,14 +190,14 @@ sub Checks {
       $ip_received{$h_id} = $potential_ip;
 
       #print STDERR "Got IP 2 :".$ip_received{$h_id}."\n";
-      
+
       $twolines = 0;
       next;
     }
     #if (!defined($ip_received{$h_id}) && $hl =~ m/\(?\[?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]?\)?/i) {
     #  $ip_received{$h_id} = $1;
     #}
-    
+
     if ($hl =~ m/^\s+/ && $h_id>0) {
       $full_received{$h_id} .= $hl;
       next;
@@ -219,17 +219,17 @@ sub Checks {
   foreach my $h (sort keys %full_received) {
   	$full_received{$h} =~ s/\s+/ /g;
   }
- 
+
   my $useauthservers = $TrustedSources::conf{'useAuthServers'};
   my $usespf = $TrustedSources::conf{'useSPF'};
 
   my $self_auth_server = 0;
-  ## first check if we already are an authentfied relay 
+  ## first check if we already are an authentfied relay
   if ($full_received{1} =~ m/stage1 with [es]?smtps?a/) {
     $self_auth_server = 1;
     if ($TrustedSources::conf{debug}) {
       MailScanner::Log::InfoLog("$MODULE message authenticated by local SMTP (from: ".$ip_received{1}.")");
-    }   
+    }
   }
 
   ## then find out first untrusted server or authenticated server, whichever comes first
@@ -247,7 +247,7 @@ sub Checks {
     if ($TrustedSources::conf{debug}) {
       MailScanner::Log::InfoLog("$MODULE testing received IP: ".$ip_received{$h});
     }
-  	
+
     if ( ( $ip_received{$h} =~ /:/ && $TrustedSources::acidripv6->find($ip_received{$h}) ) ||
          ( $ip_received{$h} !~ /:/ && $TrustedSources::acidr->find($ip_received{$h}) ) ) {
       $auth_server = $h;
@@ -256,9 +256,9 @@ sub Checks {
   	  }
       next;
     }
-   
+
     if ( ( $ip_received{$h} =~ /:/ && ! $TrustedSources::tcidripv6->find($ip_received{$h}) ) ||
-         ( $ip_received{$h} !~ /:/ && ! $TrustedSources::tcidr->find($ip_received{$h}) ) ) { 
+         ( $ip_received{$h} !~ /:/ && ! $TrustedSources::tcidr->find($ip_received{$h}) ) ) {
       $first_untrusted = $h;
       if ($TrustedSources::conf{debug}) {
   	    MailScanner::Log::InfoLog("$MODULE untrusted server at: ".$ip_received{$h});
@@ -306,7 +306,7 @@ sub Checks {
 
     return 0;
   }
-  
+
   if ((! $message->{from} eq "") && $this->wantSPF($message) && ( $first_untrusted > 0)) {
     use Mail::SPF;
     my $spf_from = $this->validatedFrom($message);
@@ -333,14 +333,14 @@ sub Checks {
           $global::MS->{mta}->AddHeaderToOriginal($message, $TrustedSources::conf{'header'}, $TrustedSources::conf{'neg_text'}."is ham ($string) ".$TrustedSources::conf{'neg_text'});
         }
         $message->{prefilterreport} .= ", $MODULE ($string, ".$TrustedSources::conf{'neg_text'}.")";
-        $returnspf = 0;   
+        $returnspf = 0;
       }
     };
     if (!$returnspf) {
      return 0;
     }
   }
-  
+
   ## check DNS white lists
   my $continue = 1;
   my $wholeheader = '';
@@ -357,7 +357,7 @@ sub Checks {
 
     return 0;
   }
-  
+
   return 1;
 }
 
@@ -368,9 +368,9 @@ sub dispose {
 sub wantSPF {
   my $this = shift;
   my $message = shift;
-  
+
   my $from = $this->validatedFrom($message);
-  
+
   if ($TrustedSources::conf{useSPFOnGlobal}) {
   	return 1;
   }
@@ -379,12 +379,12 @@ sub wantSPF {
   }
   my $domain = $1;
   $domain = lc($domain);
-  
+
   my ($data, $hitcount, $header) = $TrustedSources::dnslists->check_dns($domain, 'SPFLIST', "$MODULE (".$message->{id}.")", 1);
   if ($hitcount) {
   	return 1;
   }
-   
+
   foreach my $d (@TrustedSources::domainsToSPF_) {
   	if ($domain =~ m/^$d$/i) {
   	  return 1;
@@ -399,10 +399,10 @@ sub wantSPF {
 sub validatedFrom {
 	my $this = shift;
 	my $message = shift;
-	
+
 	my $from = $message->{from};
 	my $res = $from;
-	if ($from =~ /^SRS\d=[^=@]+\=[^=@]+=([^=@]+)=([^=@]+)\@/i) {   
+	if ($from =~ /^SRS\d=[^=@]+\=[^=@]+=([^=@]+)=([^=@]+)\@/i) {
         $res = $2.'@'.$1;
         if ($TrustedSources::conf{debug}) {
           MailScanner::Log::InfoLog("$MODULE (".$message->{id}.") SRS encoded sender decoded to: ".$res. " (from ".$from.")");

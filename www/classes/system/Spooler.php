@@ -21,18 +21,18 @@ class Spooler {
                     'MTA2' => 2,
                     'MTA4' => 4
                     );
-                
+
    /**
     * the spool actually being processed
     * @var string
-    */    
+    */
    private $spool_ = "";
    /**
     * configuration file
     * @var string
     */
    private $conf_file_ = "";
-   
+
 /**
  * load the spool datas
  * @param $spool  string  spool to be fetched
@@ -141,7 +141,7 @@ private function dumpMessage($t, $images, $sid, $f, $i) {
     $ret = preg_replace("/__COLOR1__(\S{7})__COLOR2__(\S{7})/", "$1", $ret);
   } else {
     $ret = preg_replace("/__COLOR1__(\S{7})__COLOR2__(\S{7})/", "$2", $ret);
-  } 
+  }
 
   if (isset($f['status']) && $f['status'] != '') {
     $ret = str_replace('__STATUS__', $lang_->print_txt($f['status']), $ret);
@@ -166,7 +166,7 @@ private function dumpMessage($t, $images, $sid, $f, $i) {
  * @return   boolean  true on success, false on failure
  */
 public function runQueue() {
-  $cmd = "/opt/exim4/bin/exim -C ".$this->conf_file_." -qff > /dev/null & echo \$!";  
+  $cmd = "/opt/exim4/bin/exim -C ".$this->conf_file_." -qff > /dev/null & echo \$!";
   $ret = `$cmd`;
   $matches = array();
   if (preg_match('/^\s*(\d+)\s*$/', $ret, $matches)) {
@@ -205,7 +205,7 @@ public function queueRunStatus() {
       return $msg;
     }
   }
-  return ""; 
+  return "";
 }
 }
 

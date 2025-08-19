@@ -4,29 +4,29 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Logfile
  */
 
 class Default_Model_Logfile
-{	
+{
 	protected $_available_types = array(
 	      'exim_stage1' => array('basefile' => 'exim_stage1/mainlog', 'cat' => 'Message handling', 'name' => 'Incoming MTA', 'pos' => 1, 'nextId_regex' => 'R=filter_forward.*OK id=([0-9a-zA-Z]{6}-[0-9a-zA-Z]{6,11}-[0-9a-zA-Z]{2,4})'),
 	      'exim_stage2' => array('basefile' => 'exim_stage2/mainlog', 'cat' => 'Message handling', 'name' => 'Filtering MTA', 'pos' => 2, 'nextId_regex' => '\b([0-9a-zA-Z]{6}-[0-9a-zA-Z]{6,11}-[0-9a-zA-Z]{2,4})\b'),
 	      'exim_stage4' => array('basefile' => 'exim_stage4/mainlog', 'cat' => 'Message handling', 'name' => 'Outgoing MTA', 'pos' => 3, 'nextId_regex' => '\b([0-9a-zA-Z]{6}-[0-9a-zA-Z]{6,11}-[0-9a-zA-Z]{2,4})\b.*T=spam_store'),
-	
+
 	      'mailscanner' => array('basefile' => 'mailscanner/infolog', 'cat' => 'Filter engine', 'name' => 'Filtering engine', 'pos' => 1, 'nextId_regex' => '\b([0-9a-zA-Z]{6}-[0-9a-zA-Z]{6,11}-[0-9a-zA-Z]{2,4})\b'),
 	      'clamd' => array('basefile' => 'clamav/clamd.log', 'cat' => 'Filter engine', 'name' => 'Virus signatures engine', 'pos' => 4),
 	      'spamd' => array('basefile' => 'mailscanner/spamd.log', 'cat' => 'Filter engine', 'name' => 'SpamAssassin engine', 'pos' => 2),
 	      'clamspamd' => array('basefile' => 'clamav/clamspamd.log', 'cat' => 'Filter engine', 'name' => 'Spam signatures engine', 'pos' => 3),
 	      'spamhandler' => array('basefile' => 'spamtagger/SpamHandler.log', 'cat' => 'Filter engine', 'name' => 'Spam handling process', 'pos' => 5),
-	
+
 	      'freshclam' =>  array('basefile' => 'clamav/freshclam.log', 'cat' => 'Updates', 'name' => 'Antivirus engine', 'pos' => 1),
-	
+
 	      'apache' => array('basefile' => 'apache/access.log', 'cat' => 'Misc', 'name' => 'Web server', 'pos' => 1),
 	      'mysql_slave' => array('basefile' => 'mysql_slave/mysql.log', 'cat' => 'Misc', 'name' => 'Local database', 'pos' => 2),
 	);
-	
+
 	protected $_values = array(
  	      'file' => '',
 	      'linkname' => '',
@@ -38,9 +38,9 @@ class Default_Model_Logfile
 	      'name' => '',
 	      'shortfile' => ''
 	);
-	
+
 	protected $_delivery_log_order = array('exim_stage1', 'mailscanner','exim_stage4','spamhandler');
-	
+
 	public function getCategories() {
 		$ret = array();
 		foreach ($this->_available_types as $type => $t) {
@@ -87,12 +87,12 @@ class Default_Model_Logfile
 		}
 		$date = new Zend_Date($pdate, 'yyyyMMdd');
 		$today = new Zend_Date();
-		
+
 		$diff = $today->get(Zend_Date::TIMESTAMP) - $date->get(Zend_Date::TIMESTAMP);
 		$days = floor(($diff / 86400));
-		
+
 		echo "file: ".$filename;
-		
+
 		return $this;
 	}
 
@@ -101,7 +101,7 @@ class Default_Model_Logfile
 
 		$slave = new Default_Model_Slave();
         $slaves = $slave->fetchAll();
-        
+
         $params['files'] = array();
         foreach ($this->_available_types as $c => $v) {
         	$params['files'][] = $v['basefile'];
@@ -124,11 +124,11 @@ class Default_Model_Logfile
                 }
                 $l->setParam('link', preg_replace('/\//', '-', $l->getParam('file')));
                 $res[] = $l;
-            }           
+            }
         }
         return $res;
 	}
-	
+
 	public function getValueFromFile($cat, $value) {
 		foreach ($this->_available_types as $c) {
             if ($c['basefile'] == $cat) {
@@ -139,7 +139,7 @@ class Default_Model_Logfile
 	}
 	public function getSize() {
 		$size = $this->getParam('size');
-		
+
 		$t = Zend_Registry::get('translate');
 		$str = $size." ".$t->_('bytes');
 		if ($size > 1000*1000*1024) {
@@ -153,11 +153,11 @@ class Default_Model_Logfile
 		}
 		return $str;
 	}
-	
+
 	public function loadByFileName($logfilename) {
 		$filename = preg_replace('/-/', '/', $logfilename);
 		$filename = preg_replace('/\.\d+(\.gz)?$/', '', $filename);
-		
+
 		foreach ($this->_available_types as $ck => $c) {
 			if ($c['basefile'] == $filename) {
 				$this->setParam('type', $ck);
@@ -168,14 +168,14 @@ class Default_Model_Logfile
 			}
 		}
 	}
-	
+
 	public function getNextIdRegex() {
 		if (isset($this->_available_types[$this->getParam('type')]['nextId_regex'])) {
     		return $this->_available_types[$this->getParam('type')]['nextId_regex'];
 		}
 		return '';
 	}
-	
+
 	public function getNextLog() {
 		$ext = '';
 		if (preg_match('/(\.\d+(\.gz)?)$/', $this->getParam('file'), $matches)) {

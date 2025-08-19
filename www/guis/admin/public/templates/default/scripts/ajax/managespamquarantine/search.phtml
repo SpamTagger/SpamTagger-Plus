@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -7,13 +7,13 @@
  */
 ?>
 <?php if ($this->loading) {?>
- <table id="quarantinetable"> 
- 
+ <table id="quarantinetable">
+
    <tr id="quarantinebanner">
      <td colspan="<?php echo count($this->columns)?>"><img src="<?php echo $this->images_path;?>/logopmc.png" alt="SpamTagger Plus" />
      <p><strong><?php echo $this->t->_('In spam quarantine')?> :</strong></p></td>
    </tr>
-   
+
    <tr id="quarantineheader">
    <?php foreach ($this->columns as $cname => $c) {?>
       <td class="c_<?php echo $cname?> c_title"><?php echo $this->t->_($c['label'])?></td>
@@ -27,14 +27,14 @@
  </table>
 <?php } else {?>
 <table id="quarantinetable">
- 
+
    <tr id="quarantinebanner">
      <td colspan="<?php echo count($this->columns)?>"><img src="<?php echo $this->images_path;?>/logopmc.png" alt="SpamTagger Plus" />
-     <p><strong><?php echo $this->t->_('In spam quarantine')?> :</strong> 
+     <p><strong><?php echo $this->t->_('In spam quarantine')?> :</strong>
          <?php echo $this->nbspams?> <?php echo $this->t->_('messages')?>
          (<?php echo $this->t->_('sorted by')?> <?php echo $this->t->_($this->columns[$this->orderfield]['label2'])?>)</p></td>
    </tr>
-   
+
    <tr id="quarantineheader">
    <?php foreach ($this->columns as $cname => $c) {?>
       <td class="c_<?php echo $cname?> c_title<?php if ($cname == $this->orderfield) { echo " c_selected"; }?>">
@@ -45,14 +45,14 @@
           <?php if ($cname == $this->orderfield) {?>
           <img src="<?php echo $this->images_path?>/orderby_<?php echo $c['order']?>.png" alt="" />
           <?php }?>
-          
+
         <?php } else {?>
           <?php echo $this->t->_($c['label'])?>
         <?php }?>
       </td>
    <?php }?>
    </tr>
-   
+
 <?php $i=1; foreach ($this->spams as $spam) {?>
 <tr class="quarantine_content<?php if ($spam->getParam('forced')) { echo ' msgforced';}?>" onmouseover="highlightActionIcon('<?php echo $i?>', <?php echo $spam->getParam('forced')?>, '', '<?php echo $this->images_path?>'); return true;" onmouseout="highlightActionIcon('<?php echo $i?>', <?php echo $spam->getParam('forced')?>, '_off', '<?php echo $this->images_path?>'); return true;">
   <td class="c_action">
@@ -72,7 +72,7 @@
   </td>
 </tr>
 <?php $i++; }?>
-   
+
    <tr id="pagination">
        <td id="actual_page" colspan="2"><?php echo $this->t->_('Page')." ".$this->page." ".$this->t->_('of')." ".$this->nbpages?></td>
        <td id="pages_navigation" colspan="<?php echo count($this->columns)-2?>">
@@ -80,30 +80,30 @@
 <?php $nbprevnext = 5;?>
   <?php if ($this->nbpages > 1) {?>
     <?php if ($this->page > 1) {?>
-      <a href="javascript:setPage(1);"><img src="<?php echo $this->images_path;?>/pagefirst.png" alt="first" class="pagefirstimg" 
+      <a href="javascript:setPage(1);"><img src="<?php echo $this->images_path;?>/pagefirst.png" alt="first" class="pagefirstimg"
                     onmouseover="javascript:this.src='<?php echo $this->images_path;?>/pagefirsthover.png';"
                     onmouseout="javascript:this.src='<?php echo $this->images_path;?>/pagefirst.png';" /></a>
-      <a href="javascript:setPage(<?php echo $this->page-1?>);"><img src="<?php echo $this->images_path;?>/pageprevious.png" alt="previous" class="pagepreviousimg" 
+      <a href="javascript:setPage(<?php echo $this->page-1?>);"><img src="<?php echo $this->images_path;?>/pageprevious.png" alt="previous" class="pagepreviousimg"
                     onmouseover="javascript:this.src='<?php echo $this->images_path;?>/pageprevioushover.png';"
-                    onmouseout="javascript:this.src='<?php echo $this->images_path;?>/pageprevious.png';" /></a> 
+                    onmouseout="javascript:this.src='<?php echo $this->images_path;?>/pageprevious.png';" /></a>
     <?php }?>
-     
+
     <?php $i=$this->page-$nbprevnext; $c=0; while ($c++ < $nbprevnext) { if ($i > 0) { ?><a href="javascript:setPage(<?php echo $i?>);"><?php echo $i;?></a> |
     <?php }$i++;}?>
-        
+
     <?php echo $this->page?>
 
     <?php $i=$this->page; $c=0; while ($i++ < $this->nbpages && $c++ < $nbprevnext) { ?>
         | <a href="javascript:setPage(<?php echo $i?>);"><?php echo $i;?></a>
-    <?php }?>     
-      
+    <?php }?>
+
     <?php if ($this->page < $this->nbpages) {?>
-      <a href="javascript:setPage(<?php echo $this->page+1?>);"><img src="<?php echo $this->images_path;?>/pagenext.png" alt="next" class="pagepnextimg" 
+      <a href="javascript:setPage(<?php echo $this->page+1?>);"><img src="<?php echo $this->images_path;?>/pagenext.png" alt="next" class="pagepnextimg"
                     onmouseover="javascript:this.src='<?php echo $this->images_path;?>/pagenexthover.png';"
                     onmouseout="javascript:this.src='<?php echo $this->images_path;?>/pagenext.png';" /></a>
-      <a href="javascript:setPage(<?php echo $this->nbpages?>);"><img src="<?php echo $this->images_path;?>/pagelast.png" alt="last" class="pagelastimg" 
+      <a href="javascript:setPage(<?php echo $this->nbpages?>);"><img src="<?php echo $this->images_path;?>/pagelast.png" alt="last" class="pagelastimg"
                     onmouseover="javascript:this.src='<?php echo $this->images_path;?>/pagelasthover.png';"
-                    onmouseout="javascript:this.src='<?php echo $this->images_path;?>/pagelast.png';" /></a> 
+                    onmouseout="javascript:this.src='<?php echo $this->images_path;?>/pagelast.png';" /></a>
     <?php }?>
   <?php }?>
 

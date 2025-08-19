@@ -13,7 +13,7 @@ $txt['NEWSLETTERSSHORTHELP'] = "Tu môžete spravovať svoje informačné bullet
 $txt['NEWSLETTERSALLOW'] = "doručiť";
 $txt['NEWSLETTERACCEPT'] = "Akceptovať tento informačný bulletin";
 $txt['SPAM_WHITELIST_DISABLED'] = "Zoznam nieje aktivovaný pre túto doménu (Kontaktujte Vášho administrátora).";
-/* 
+/*
  * generic buttons
  */
 $txt['SUBMIT'] = "Potvrdiť";
@@ -435,7 +435,7 @@ $txt['KEEPBOUNCESINQUARANTINE'] = "Retain error messages";
 $txt['PARAMETERSSAVED'] = "Vaše nastavenia boli uložené.";
 $txt['NOTSAVED'] = "Vaše nastavenia nemohli byť uložené.";
 $txt['INVALIDSUMMARYTO'] = "The email address provided for the reports is invalid";
-/* 
+/*
  * quarantine  (new)
  */
 $txt['CONFIGQUARSHORTHELP'] = "The quarantine display can be customized (number of days and lines) to fit your needs and habits.";

@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the dynamic statistics display
  */
- 
+
  /**
   * require admin session and view
   */
@@ -37,26 +37,26 @@ $gcounts = array('msgs' => 0, 'spams' => 0, 'viruses' => 0);
 
 // get and check each slaves
 $slaves = $sysconf_->getSlaves();
-foreach ($slaves as $slave) { 
+foreach ($slaves as $slave) {
   // first decrease soap timeout
   $slave->setSoapTimeout(5);
   if (!$slave->isAvailable()) {
     $gstatus = 0;
     continue;
   }
-  
+
   // get processes status
   $status = $slave->getProcessesStatus();
   if (!SoapProcesses::isOK($status)) {
     $gstatus = 0;
   }
-  
+
   // get load values
   $load = $slave->getLoads();
   if ($load->avg15 > $gload) {
     $gload = $load->avg15;
   }
-  
+
   // get spools
   $spools = $slave->getSpoolsCount();
   if ($spools->incoming > $gspools['in']) {
@@ -68,9 +68,9 @@ foreach ($slaves as $slave) {
   if ($spools->outgoing > $gspools['out']) {
     $gspools['out'] = $spools->outgoing_;
   }
-  
+
   // get counts
-  $counts = $slave->getTodaysCounts(); 
+  $counts = $slave->getTodaysCounts();
   $gcounts['msgs'] += $counts->msg;
   $gcounts['spams'] += $counts->spam;
   $gcounts['viruses'] += $counts->virus;

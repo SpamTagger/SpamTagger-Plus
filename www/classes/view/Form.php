@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * This class will manage the html form elements
  */
@@ -25,7 +25,7 @@ class Form  {
    * @var string
    */
   private $action_ = '';
-  
+
   /**
    * array of checkboxes
    * @var array
@@ -76,7 +76,7 @@ public function close() {
  * @param  $name  string name of the field
  * @param  $value string value of the field
  * @return        string html field string
- */ 
+ */
 public function hidden($name, $value) {
   $fname = $this->name_."_".$name;
   return "<input type=\"hidden\" name=\"$fname\" value=\"".htmlentities($value)."\" />";
@@ -154,14 +154,14 @@ public function checkbox($name, $value, $selected, $js, $active) {
     case 'on':          $nvalue = 'off'; break;
     case 'off':         $nvalue = 'on'; break;
     case 'yes':         $nvalue = 'no'; break;
-    case 'no':          $nvalue = 'yes'; break;   
+    case 'no':          $nvalue = 'yes'; break;
   }
   $fname = $this->name_."_".$name;
   $fname = preg_replace('/-/', 'UUU', $fname);
   $fname = preg_replace('/\./', 'PPP', $fname);
   $ret = "<input type=\"checkbox\" class=\"checkbox\" name=\"".$fname."_cb\" id=\"".$fname."_cb\" value=\"$value\"";
-  if ($selected == $value) { 
-    $ret .= " checked=\"checked\""; 
+  if ($selected == $value) {
+    $ret .= " checked=\"checked\"";
   }
   $ret .= " onclick=\"javascript:if (window.document.forms['".$this->name_."'].".$fname."_cb.checked) { window.document.forms['".$this->name_."'].$fname.value='$value'; } else { window.document.forms['".$this->name_."'].$fname.value='$nvalue';}";
   if ($js != "") {
@@ -206,7 +206,7 @@ public function checkboxblock($name, $options, $selected) {
 public function radio($name, $value, $selected) {
   $fname = $this->name_."_".$name;
   $ret = "<input type=\"radio\" name=\"$fname\" class=\"radiobutton\" value=\"$value\"";
-  if ($selected == $value) { 
+  if ($selected == $value) {
     $ret .= " checked=\"checked\"";
   }
   $ret .= " />";

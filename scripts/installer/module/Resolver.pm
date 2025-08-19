@@ -73,11 +73,11 @@ sub ask {
      last if $ldns eq '';
     }
     $this->{dns}{$n} = $ldns;
-    last if $ldns eq ''; 
-  } 
+    last if $ldns eq '';
+  }
 
   ##############
-  ## get domain 
+  ## get domain
   $dlg->build('Please enter the DNS search domain name', $this->{domain});
   my $dom = ' none ';
   while( !module::Resolver::isDomainName($dom)  && (! $dom eq '' )) {

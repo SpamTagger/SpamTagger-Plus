@@ -34,10 +34,10 @@ require Mail::SpamAssassin::Timeout;
 sub create {
   my $class = shift;
   my $daemonname = shift;
-  my $conffilepath = shift; 
+  my $conffilepath = shift;
   my $conf = ReadConfig::getInstance();
   my $configfile = $conf->getOption('SRCDIR')."/".$conffilepath;
-  
+
   ## default values
   my $pidfile = $conf->getOption('VARDIR')."/run/$daemonname.pid";
   my $port = 10000;
@@ -49,7 +49,7 @@ sub create {
   my $prefork = 1;
   my $debug = 1;
   my %childrens;
-  
+
   my $this = {
   	     name => $daemonname,
          port => $port,
@@ -68,7 +68,7 @@ sub create {
          %childrens => (),
          time_to_die => 0,
          };
-  
+
   # replace with configuration file values
   if (open CONFFILE, $configfile) {
   	while (<CONFFILE>) {
@@ -77,12 +77,12 @@ sub create {
   		if (/^(\S+)\ ?\=\ ?(.*)$/) {
   		  if (defined($this->{$1})) {
   		  	$this->{$1} = $2;
-  		  }	
+  		  }
   		}
   	}
   	close CONFFILE;
   }
-  
+
   bless $this, $class;
   return $this;
 }
@@ -90,13 +90,13 @@ sub create {
 sub logMessage {
   my $this = shift;
   my $message = shift;
-  
+
   if ($this->{debug}) {
   	if ( !defined(fileno(LOGGERLOG))) {
   	   open LOGGERLOG, ">>/tmp/".$this->{logfile};
   	   $| = 1;
   	}
-    my $date=`date "+%Y-%m-%d %H:%M:%S"`; 
+    my $date=`date "+%Y-%m-%d %H:%M:%S"`;
     chop($date);
     print LOGGERLOG "$date: $message\n";
   }
@@ -107,7 +107,7 @@ sub logMessage {
 ######
 sub startDaemon {
   my $this = shift;
-  
+
   open LOGGERLOG, ">>".$this->{logfile};
 
   my $pid = fork();
@@ -119,12 +119,12 @@ sub startDaemon {
    } else {
      # Dameonize
      POSIX::setsid();
-          
+
      $this->logMessage("Starting Daemon");
 
      $SIG{INT} = $SIG{TERM} = $SIG{HUP} = $SIG{ALRM} = sub { $this->parentGotSignal(); };
-     
-     
+
+
      #alarm $this->{daemontimeout};
      $0 = $this->{'name'};
      $this->initDaemon();
@@ -137,14 +137,14 @@ sub startDaemon {
 
 sub parentGotSignal {
   my $this = shift;
-  
+
   $this->{time_to_die} = 1;
 }
 
 
 sub reaper {
    my $this = shift;
-   
+
    $this->logMessage("Got child death...");
    $SIG{CHLD} = sub { $this->reaper(); };
    my $pid = wait;
@@ -156,7 +156,7 @@ sub reaper {
    }
 }
 
-sub huntsMan {  
+sub huntsMan {
 	my $this = shift;
 	local($SIG{CHLD}) = 'IGNORE';
 	$this->{time_to_die} = 1;
@@ -176,13 +176,13 @@ sub initDaemon {
      or die "Couldn't be an udp server on port ".$this->{port}." : $@\n";
 
    $this->logMessage("Listening on port ".$this->{port});
-   
+
    return 0;
 }
 
 sub launchChilds {
   my $this = shift;
-	
+
   for (1 .. $this->{prefork}) {
   	$this->logMessage("Launching child ".$this->{children}." on ".$this->{prefork}."...");
   	$this->makeChild();
@@ -190,7 +190,7 @@ sub launchChilds {
   # Install signal handlers
   $SIG{CHLD} = sub { $this->reaper(); };
   $SIG{INT} = sub { $this->huntsMan(); };
-       
+
   while (1) {
 	sleep;
 	$this->logMessage("Child death... still: ".$this->{children});
@@ -201,10 +201,10 @@ sub launchChilds {
 }
 
 sub makeChild {
-  my $this = shift;	
+  my $this = shift;
   my $pid;
   my $sigset;
-	
+
   if ($this->{time_to_die} > 0) {
   	$this->logMessage("Not creating child because shutdown requested");
   	exit;
@@ -213,9 +213,9 @@ sub makeChild {
   $sigset = POSIX::SigSet->new(SIGINT);
   sigprocmask(SIG_BLOCK, $sigset)
         or die "Can't block SIGINT for fork: $!\n";
-    
+
   die "fork: $!" unless defined ($pid = fork);
-    
+
   if ($pid) {
      # Parent records the child's birth and returns.
      sigprocmask(SIG_UNBLOCK, $sigset)
@@ -227,11 +227,11 @@ sub makeChild {
    } else {
      # Child can *not* return from this subroutine.
      $SIG{INT} = sub { };
-    
+
      # unblock signals
      sigprocmask(SIG_UNBLOCK, $sigset)
             or die "Can't unblock SIGINT for fork: $!\n";
-   
+
      $this->logMessage("In child listening...");
      $this->listenForQuery();
      exit;
@@ -244,7 +244,7 @@ sub listenForQuery {
   my $message;
   my $serv = $this->{server};
   my $MAXLEN = 1024;
-  
+
   $this->{'lastdump'} = time();
   my $datas;
   while (my $cli = $serv->recv($datas, $MAXLEN)) {
@@ -255,20 +255,20 @@ sub listenForQuery {
 }
 
 sub manageClient {
-  my $this = shift;	
+  my $this = shift;
   my $cli = shift;
   my $cli_add = shift;
   my $datas = shift;
-     
+
   alarm $this->{daemontimeout};
-     
+
   #if ($cli_add ne "127.0.0.1") {
   #  close($cli);
   #  return;
   #}
-     
-  #$this->logMessage("Accepting connection");   
-  	
+
+  #$this->logMessage("Accepting connection");
+
   if ($datas =~ /^EXIT/) {
     $this->logMessage("Received EXIT command");
     $this->huntsMan();
@@ -282,7 +282,7 @@ sub manageClient {
   } elsif ($query =~ /^NULL/) {
     $this->{server}->send("\n");
     #$this->logMessage("Command NULL answered");
-  } else {	
+  } else {
     my $result = $this->processDatas($datas);
     $this->{server}->send("$result\n");
   }
@@ -294,26 +294,26 @@ sub manageClient {
 sub exec {
   my $this = shift;
   my $command = shift;
-  
+
   my $res = "NORESPONSE";
   my $t = Mail::SpamAssassin::Timeout->new({ secs => $this->{clienttimeout} });
   $t->run( sub { $res = $this->queryDaemon($command);  });
-  
+
   if ($t->timed_out()) { return "TIMEDOUT"; };
-  
+
   return $res;
 }
 
 sub queryDaemon {
   my $this = shift;
   my $query = shift;
-  
+
   my $socket;
    if ( $socket = IO::Socket::INET->new(
                               PeerAddr => '127.0.0.1',
                               PeerPort => $this->{port},
                               Proto    => "udp")) {
-                                	
+
     $socket->send($query."\n");
     my $MAXLEN  = 1024;
     my $response;
@@ -324,10 +324,10 @@ sub queryDaemon {
     if ($! !~ /^$/) {
     	return "NODAEMON";
     }
-    my $res = $response;   
+    my $res = $response;
     chop($res);
     return $res;
-   } 
+   }
    return "NODAEMON";
  }
 

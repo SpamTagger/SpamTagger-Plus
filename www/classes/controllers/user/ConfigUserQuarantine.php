@@ -4,28 +4,28 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the users interface settings
  */
- 
-/** 
+
+/**
  * user interface configuration page controller
- * 
+ *
  * @package SpamTagger Plus
  */
 class ConfigUserQuarantine {
- 
+
  private $form_;
  private $message_ = "";
- 
+
  public function __construct() {
  	$this->form_ = new Form('quar', 'post', $_SERVER['PHP_SELF']."?t=quar");
- }   
-    
+ }
+
  public function processInput() {
     global $lang_;
     global $user_;
-    	
+
     $posted = $this->form_->getResult();
     if ($this->form_->shouldSave()) {
       $this->message_ = 'NOTSAVED';
@@ -55,15 +55,15 @@ class ConfigUserQuarantine {
       }
     }
  }
- 
+
  public function addReplace($replace, $template) {
    global $lang_;
    global $user_;
-   
+
    if (!$this->form_) {
      return '';
    }
-   $nbspams_select = array('5' => '5', '10' => '10', '20' => '20', '50' => '50', '100' => '100'); 
+   $nbspams_select = array('5' => '5', '10' => '10', '20' => '20', '50' => '50', '100' => '100');
    $replace['__BEGIN_QUAR_FORM__'] = $this->form_->open();
    $replace['__END_QUAR_FORM__'] = $this->form_->close();
    //$user_ = new User();
@@ -75,9 +75,9 @@ class ConfigUserQuarantine {
    $replace['__INPUT_GROUPQUARANTINES__'] = $this->form_->checkbox('gui_group_quarantines', '1', $user_->getPref('gui_group_quarantines'), 'javascript=groupAddressesConfig();', 1);
    $replace['__SAVE_BUTTON__'] = $this->form_->submit('submit', $lang_->print_txt('SAVE'), '');
    $replace['__MESSAGE__'] = $lang_->print_txt($this->message_);
-   
+
    return $replace;
- }   
-    
+ }
+
 }
 ?>

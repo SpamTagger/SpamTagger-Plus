@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Firewall access mapper
  */
 
 class Default_Model_FirewallRuleMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_FirewallRuleMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_FirewallRule $config)
     {
         $result = $this->getDbTable()->find($id);
@@ -45,14 +45,14 @@ class Default_Model_FirewallRuleMapper
         	$config->setParam($key, $row[$key]);
         }
     }
-    
+
     public function findByService($service, Default_Model_FirewallRule $config) {
         $query = $this->getDbTable()->select();
         $query->where('service = ?', $service);
         $row = $this->getDbTable()->fetchRow($query);
         return $this->find($row['id'], $config);
     }
-    
+
     public function fetchAll()
     {
         $resultSet = $this->getDbTable()->fetchAll();
@@ -64,7 +64,7 @@ class Default_Model_FirewallRuleMapper
         }
         return $entries;
     }
-    
+
     public function save(Default_Model_FirewallRule $config) {
        $data = $config->getParamArray();
        $res = '';

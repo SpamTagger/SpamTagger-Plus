@@ -2,7 +2,7 @@ Subject: SpamTagger warn list hit
 
 Hello,
 
-You received this message because __SENDER__, which is placed on the __REASON__ 
+You received this message because __SENDER__, which is placed on the __REASON__
 warnlist, has sent you a message that was detected has a spam.
 
 If you think this is a mistake and still want to receive the original message,

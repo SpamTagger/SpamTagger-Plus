@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * File type mapper
  */
 
 class Default_Model_FileTypeMapper
 {
-	
+
     protected $_dbTable;
 
     public function setDbTable($dbTable)
@@ -32,7 +32,7 @@ class Default_Model_FileTypeMapper
         }
         return $this->_dbTable;
     }
-    
+
     public function find($id, Default_Model_FileType $f)
     {
         $result = $this->getDbTable()->find($id);
@@ -45,7 +45,7 @@ class Default_Model_FileTypeMapper
         	$f->setParam($key, $row[$key]);
         }
     }
-    
+
     public function fetchAll()
     {
         $resultSet = $this->getDbTable()->fetchAll($this->getDbTable()->select()->order('type ASC'));
@@ -57,8 +57,8 @@ class Default_Model_FileTypeMapper
         }
         return $entries;
      }
-        
-        
+
+
     public function save(Default_Model_FileType $f) {
        $data = $f->getParamArray();
        $res = '';
@@ -70,9 +70,9 @@ class Default_Model_FileTypeMapper
         }
         return $res;
     }
-    
+
     public function delete(Default_Model_FileType $f) {
     	$where = $this->getDbTable()->getAdapter()->quoteInto('id = ?', $f->getId());
-    	return $this->getDbTable()->delete($where);   	
+    	return $this->getDbTable()->delete($where);
     }
 }

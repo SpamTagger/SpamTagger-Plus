@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -12,18 +12,18 @@
   <table class="globalstatustableversion">
     <tr>
       <td class="globalstatuskey"><img src="<?php echo $this->images_path;?>/status_domains.gif" alt="domains" /></td>
-      <td class="globalstatusvalue"><strong><?php echo $this->domains?></strong> <?php echo $this->t->_('domains');?> 
+      <td class="globalstatusvalue"><strong><?php echo $this->domains?></strong> <?php echo $this->t->_('domains');?>
           <?php if ($this->domains != $this->distinctdomains) { ?> (<?php echo $this->distinctdomains?> <?php echo $this->t->_('distincts')?>) <?php } ?></td>
     </tr>
     <tr>
       <td class="globalstatuskey"><img src="<?php echo $this->images_path;?>/status_users.gif" alt="users" /></td>
       <td class="globalstatusvalue"><strong><?php echo $this->users?></strong> <?php echo $this->t->_('users');?></td>
-    </tr>   
+    </tr>
     <tr>
       <td class="globalstatuskey"><img src="<?php echo $this->images_path;?>/status_hosts.gif" alt="hosts" /></td>
       <td class="globalstatusvalue"><strong><?php echo $this->hosts?></strong> <?php echo $this->t->_('host(s) in cluster');?></td>
     </tr>
-    
+
   </table>
 </div>
 
@@ -40,9 +40,9 @@
       	 echo "status_critical.png";
       } ?>" alt="<?php echo $status['status'];?>" />
     </td>
-    
+
     <td class="globalstatusvalue">
-      <?php 
+      <?php
         echo $this->t->_($statusname.' status is ');
         if ($status['status'] == 'ok') {
           echo '<strong>'.$this->t->_($status['message']);
@@ -54,7 +54,7 @@
     </td>
   </tr>
   <?php }?>
-  
+
  </table>
 
 </div>

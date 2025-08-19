@@ -4,23 +4,23 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Setup base view variables
  */
 
 class SpamTagger_View_Helper_SubmitRow extends Zend_View_Helper_Abstract
 {
-	
+
     public $view;
- 
+
     public function setView(Zend_View_Interface $view)
     {
         $this->view = $view;
     }
-	
+
 	/*
 	 * possible params:
-	 * 
+	 *
 	 * cols: int
 	 * row_id : string
 	 * row_class: string
@@ -29,15 +29,15 @@ class SpamTagger_View_Helper_SubmitRow extends Zend_View_Helper_Abstract
 	 * field_classes: string
 	 * field_addclass: string
 	 */
-	
+
 	public function SubmitRow($element, $params = array())
 	{
 		$t = Zend_Registry::get('translate');
-		
+
 		$string = '';
-		
+
 		// tr
-		if ( (!isset($params['field_only']) || !$params['field_only']) ) {    
+		if ( (!isset($params['field_only']) || !$params['field_only']) ) {
     	    $string .= '<tr';
     	    if (isset($params['row_id'])) {
     	    	$string .= ' id="'.$params['row_id'].'"';
@@ -47,8 +47,8 @@ class SpamTagger_View_Helper_SubmitRow extends Zend_View_Helper_Abstract
             }
 	        $string .= ">\n";
 		}
-		
-		
+
+
 		// field
 		if (!isset($params['nobox']) || !$params['nobox']) {
         	$string .= '<td';
@@ -58,7 +58,7 @@ class SpamTagger_View_Helper_SubmitRow extends Zend_View_Helper_Abstract
                 $string .= ' class="fvalue fsubmit';
                 if (isset($params['field_addclass'])) {
                     $string .= ' '.$params['field_addclass'];
-                }          
+                }
             }
             $string .= '"';
 		    $string .= ' colspan="';
@@ -74,12 +74,12 @@ class SpamTagger_View_Helper_SubmitRow extends Zend_View_Helper_Abstract
         if (!isset($params['nobox']) || !$params['nobox']) {
      	    $string .= "\n</td>\n";
         }
-		
+
 		// /tr
 		if ( (!isset($params['field_only']) || !$params['field_only'])) {
 	        $string .= "</tr>\n";
-        } 
-        
+        }
+
 		return $string;
 	}
 }

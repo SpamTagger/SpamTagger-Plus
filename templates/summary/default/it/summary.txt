@@ -5,10 +5,10 @@ This is the SpamTagger report for the last ??NBDAYS days.
 
 For the address: ??ADDRESS
 
-The following summary lists all the messages that have been blocked by 
+The following summary lists all the messages that have been blocked by
 SpamTagger.
 
-If one of these messages should not have been blocked, you can force it to be 
+If one of these messages should not have been blocked, you can force it to be
 delivered by clicking on the link "Force:".
 
 The messages listed will be destroyed in ??SPAMNBDAYS days.

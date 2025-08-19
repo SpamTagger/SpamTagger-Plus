@@ -21,7 +21,7 @@
 #   This script will dump the domains configuration
 #
 #   Usage:
-#           dump_domains.pl 
+#           dump_domains.pl
 
 use v5.40;
 use warnings;
@@ -94,7 +94,7 @@ sub dumpArchivedDomains {
              }
           } else {
              # print "user ".$e->{'address'}." not added as domain: $edom already fully archived\n";
-          } 
+          }
       }
   }
 }
@@ -136,7 +136,7 @@ sub dumpCopyto {
              }
           } else {
              # print "user ".$e->{'address'}." not added as domain: $edom already fully archived\n";
-          } 
+          }
       }
   }
 }
@@ -154,7 +154,7 @@ sub dumpBypassFiltering {
        mkdir($bypassfiltering_path);
     }
     `rm $bypassfiltering_path/* >/dev/null 2>&1`;
-      
+
   }
 
   foreach my $e (@cemail) {
@@ -169,4 +169,4 @@ sub dumpBypassFiltering {
       }
    }
 }
-  
+

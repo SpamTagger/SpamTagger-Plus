@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * default antispam settings form
  */
 
@@ -12,26 +12,26 @@ class Default_Form_AntiSpam_Default extends ZendX_JQuery_Form
 {
 	protected $_viewscript = '';
 	protected $_module;
-	
+
 	public function getViewScriptFile() {
 		return $this->_viewscript;
 	}
-	
+
 	public function __construct($module) {
 		$this->_module = $module;
 		parent::__construct();
 	}
-	
+
 	public function init() {
-		
+
 	    $t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-    	
+
 		$this->setMethod('post');
-	           
+
 		$this->setAttrib('id', 'module_form');
-		
+
 		$active = new Zend_Form_Element_Checkbox('active', array(
 	        'label'   => $t->_('Enable module'). " :",
                 'title' => $t->_("Enable module detection"),
@@ -40,7 +40,7 @@ class Default_Form_AntiSpam_Default extends ZendX_JQuery_Form
 	              ));
 	    $active->setValue($this->_module->getParam('active'));
 	    $this->addElement($active);
-	    
+
 	    $decisive = new Zend_Form_Element_Checkbox('decisive', array(
 	        'label'   => $t->_('Module is decisive'). " :",
                 'title' => $t->_("The module's advice is taken into account"),
@@ -49,19 +49,19 @@ class Default_Form_AntiSpam_Default extends ZendX_JQuery_Form
 	              ));
 	    $decisive->setValue($this->_module->isDecisive());
 	    $this->addElement($decisive);
-	    
+
 	    $position = new Zend_Form_Element_Select('position', array(
             'label'      => $t->_('Position in filter chain')." :",
             'title' => $t->_("Rank of the filter in the execution order"),
             'required'   => false,
             'filters'    => array('StringTrim')));
-        
+
         for ($i = 1; $i <= count($this->_module->fetchAll()); $i++) {
         	$position->addMultiOption($i, $i);
         }
         $position->setValue($this->_module->getParam('position'));
         $this->addElement($position);
-	    
+
         $timeout = new  Zend_Form_Element_Text('timeOut', array(
 	        'label'    => $t->_('Maximum check time')." :",
                 'title' => $t->_("Timeout for the module"),
@@ -72,7 +72,7 @@ class Default_Form_AntiSpam_Default extends ZendX_JQuery_Form
 	    $timeout->setValue($this->_module->getParam('timeOut'));
         $timeout->addValidator(new Zend_Validate_Int());
 	    $this->addElement($timeout);
-	    
+
 	    $maxsize = new  Zend_Form_Element_Text('maxSize', array(
 	        'label'    => $t->_('Maximum message size')." :",
                 'title' => $t->_("Messages above this size limit are not analyzed"),
@@ -83,12 +83,12 @@ class Default_Form_AntiSpam_Default extends ZendX_JQuery_Form
 	    $maxsize->setValue($this->_module->getParam('maxSize'));
         $maxsize->addValidator(new Zend_Validate_Int());
 	    $this->addElement($maxsize);
-	    
+
 		$submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Submit')));
 		$this->addElement($submit);
 	}
-	
+
 	public function setParams($request, $module) {
 		$module->setParam('active', $request->getParam('active'));
 		$module->setParam('timeOut', $request->getParam('timeOut'));
@@ -96,5 +96,5 @@ class Default_Form_AntiSpam_Default extends ZendX_JQuery_Form
 		$module->setParam('position', $request->getParam('position'));
 		$module->setDecisive($request->getParam('decisive'));
 	}
-	
+
 }

@@ -4,10 +4,10 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller page that will redirect to the log page of the correct host
  */
- 
+
 require_once ("admin_objects.php");
 require_once ('view/Language.php');
 require_once ('config/Administrator.php');
@@ -45,17 +45,17 @@ if (!isset ($posted['date'])) {
 
 // replace statements
 $replace = array (
-                '__DOC_VIEWLOGS__' => $documentor->help_button('VIEWLOGS'), 
-                '__LANG__' => $lang_->getLanguage(), 
-                '__ERROR__' => $lang_->print_txt($error), 
-                '__MESSAGE__' => $lang_->print_txt($message), 
-                "__FORM_BEGIN_FILTER__" => $form->open(), 
-                "__FORM_CLOSE_FILTER__" => $form->close(), 
-                "__HOSTLIST__" => $form->select('host', $hosts, $posted['host'], ''), 
-                "__LOGLIST__" => $form->select('log', $logs_, $posted['log'], ''), 
-                "__DATELIST__" => $form->select('date', $dates_, $posted['date'], ''), 
-                "__REFRESH_BUTTON__" => $form->submit('submit', $lang_->print_txt('REFRESH'), ''), 
-                "__LOG_LINK__" => getLogPage($posted) 
+                '__DOC_VIEWLOGS__' => $documentor->help_button('VIEWLOGS'),
+                '__LANG__' => $lang_->getLanguage(),
+                '__ERROR__' => $lang_->print_txt($error),
+                '__MESSAGE__' => $lang_->print_txt($message),
+                "__FORM_BEGIN_FILTER__" => $form->open(),
+                "__FORM_CLOSE_FILTER__" => $form->close(),
+                "__HOSTLIST__" => $form->select('host', $hosts, $posted['host'], ''),
+                "__LOGLIST__" => $form->select('log', $logs_, $posted['log'], ''),
+                "__DATELIST__" => $form->select('date', $dates_, $posted['date'], ''),
+                "__REFRESH_BUTTON__" => $form->submit('submit', $lang_->print_txt('REFRESH'), ''),
+                "__LOG_LINK__" => getLogPage($posted)
                );
 // display page
 $template_->output($replace);
@@ -81,7 +81,7 @@ function getLogPage($posted) {
     if ($sid == "SOAPERRORCANNOTEXECUTE") {
         return "";
     }
-    
+
     $query = http_build_query(array('sid' => $sid, 'l' => $log, 'd' => $date));
      if ($host == '127.0.0.1' || $host == 'localhost') {
         return "logs.php?".$query;

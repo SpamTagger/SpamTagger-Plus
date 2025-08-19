@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Email mapper
  */
 
@@ -70,15 +70,15 @@ class Default_Model_EmailMapper
         }
         return $ret;
     }
-    
-    
+
+
     public function fetchAllName($params)
     {
         $entries   = array();
         if (!$params['domain']){
             return $entries;
         }
-        
+
         $str = '';
         if (isset($params['address'])) {
             $str = preg_replace('/\*/', '%', $params['address']);
@@ -101,11 +101,11 @@ class Default_Model_EmailMapper
             } else {
                 $query->order('address ASC');
             }
-             
+
             if (isset($params['limit']) && is_array($params['limit'])) {
                 $query->limit($params['limit'][0], $params['limit'][1]);
             }
-             
+
             if (isset($params['address'])) {
                 $query->where('address LIKE ?', $str."%@".$params['domain']);
             }
@@ -119,8 +119,8 @@ class Default_Model_EmailMapper
         }
         return $entries;
     }
-     
-     
+
+
     public function save(Default_Model_Email $email) {
         $data = $email->getParamArray();
         $res = '';

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for spam quarantine page
  */
 
@@ -24,14 +24,14 @@ class ManagespamquarantineController extends Zend_Controller_Action
 			$params['orderfield'] = $matches[1];
 			$params['orderorder'] = $matches[2];
 		}
-		
+
 		$todateO = Zend_Date::now();
 	    $fromdateO = Zend_Date::now();
         $fromdateO->sub('1', Zend_Date::DAY, Zend_Registry::get('Zend_Locale')->getLanguage());
-        
-        $todate = Zend_Locale_Format::getDate($todateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));      
+
+        $todate = Zend_Locale_Format::getDate($todateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));
         $fromdate = Zend_Locale_Format::getDate($fromdateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));
-        
+
         foreach ( array('fd' => 'day', 'fm' => 'month') as $tk => $tv) {
         	if  (!isset($params[$tk]) || !$params[$tk]) {
         	    $params[$tk] = $fromdate[$tv];
@@ -47,7 +47,7 @@ class ManagespamquarantineController extends Zend_Controller_Action
         if ($params['tm'] < $params['fm']) {
         	$params['fy']--;
         }
-        
+
 		return $params;
 	}
 
@@ -70,7 +70,7 @@ class ManagespamquarantineController extends Zend_Controller_Action
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
-		 
+
 		$request = $this->getRequest();
 		$form    = new Default_Form_SpamQuarantine($this->getSearchParams());
 		$form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'managespamquarantine'));
@@ -85,9 +85,9 @@ class ManagespamquarantineController extends Zend_Controller_Action
 		$layout->disableLayout();
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'managespamquarantine', NULL, array());
-		 
+
 		$request = $this->getRequest();
-		 
+
 		$loading = 1;
 		if (! $request->getParam('load')) {
 			sleep(1);
@@ -95,14 +95,14 @@ class ManagespamquarantineController extends Zend_Controller_Action
 		}
 		$view->loading = $loading;
 		$view->params = $this->getSearchParams();
-		 
+
 		$nbspams = 0;
 		$orderfield = 'date';
 		$orderorder = 'desc';
 		$nbpages = 0;
 		$page = 0;
 		$spams = array();
-		 
+
 		$columns = array(
     	  'action' => array('label' => 'Action'),
     	  'date' => array('label' => 'Date', 'label2' => 'date', 'order' => 'desc'),
@@ -119,12 +119,12 @@ class ManagespamquarantineController extends Zend_Controller_Action
 				$columns[$orderfield]['order'] = $orderorder;
 			}
 		}
-		 
+
 		if ($request->getParam('domain') != "") {
 			$spam = new Default_Model_QuarantinedSpam();
 			$params = $this->getSearchParams();
 			$nbspams = $spam->fetchAllCount($params);
-			 
+
 			if ($nbspams > 0) {
 				$spams = $spam->fetchAll($params);
 				$nbpages = $spam->getNbPages();
@@ -133,7 +133,7 @@ class ManagespamquarantineController extends Zend_Controller_Action
 		}
 		$view->page = $page;
 		$view->spams = $spams;
-		 
+
 		$view->columns = $columns;
 		$view->nbspams = $nbspams;
 		$view->orderfield = $orderfield;

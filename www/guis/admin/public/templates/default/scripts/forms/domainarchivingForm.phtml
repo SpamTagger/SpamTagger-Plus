@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -11,12 +11,12 @@
        <?php echo $this->InputRow($this->form->getElement('panel'),array('field_only'=>true,'nobox'=>true));?>
        <?php echo $this->InputRow($this->form->getElement('name'),array('field_only'=>true,'nobox'=>true));?>
        <table class="ftable">
-       
+
          <?php if ($this->form->canArchive()) {
            echo $this->InputRow($this->form->getElement('archive_mail'));?>
            <tr><td colspan="2"><hr /></td></tr>
          <?php  }?>
-       
+
           <?php echo $this->InputRow($this->form->getElement('copyto_mail'));?>
 
           <?php echo $this->SubmitRow($this->form->getElement('submit'));?>

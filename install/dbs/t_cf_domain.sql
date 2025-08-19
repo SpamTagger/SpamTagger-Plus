@@ -17,8 +17,8 @@ CREATE TABLE domain (
   relay_smarthost                tinyint(1) NOT NULL DEFAULT '0',
   destination_smarthost          char(200) NOT NULL DEFAULT '',
   prefs				int(11) NOT NULL DEFAULT 1,
-  PRIMARY KEY (id, name) 
+  PRIMARY KEY (id, name)
 );
 
 -- create default preferences set
-INSERT INTO domain SET name='__global__', prefs=1; 
+INSERT INTO domain SET name='__global__', prefs=1;

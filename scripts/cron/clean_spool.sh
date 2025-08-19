@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #!/bin/bash
 
 SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)

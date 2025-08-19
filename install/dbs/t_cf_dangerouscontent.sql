@@ -8,7 +8,7 @@ CREATE TABLE dangerouscontent (
   allow_passwd_archives		 enum('yes', 'no') DEFAULT 'no',
   allow_partial			 enum('yes', 'no') DEFAULT 'no',
   allow_external_bodies		 enum('yes', 'no') DEFAULT 'no',
- 
+
   allow_iframe			 enum('yes', 'no', 'disarm') DEFAULT 'no',
   silent_iframe			 enum('yes', 'no') DEFAULT 'yes',
   allow_form			 enum('yes', 'no', 'disarm') DEFAULT 'yes',
@@ -27,6 +27,6 @@ CREATE TABLE dangerouscontent (
 );
 
 -- create default preferences set
-INSERT INTO dangerouscontent SET set_id=1; 
+INSERT INTO dangerouscontent SET set_id=1;
 
- 
+

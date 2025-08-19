@@ -34,13 +34,13 @@ sub new {
    my $class = shift;
    my $paramsh = shift;
    my @params = @{$paramsh};
-   
+
    my $this = {
    	    'last_message' => '',
    	    'useable' => 1,
         'default_on_error' => 1 ## we accept in case of any failure, to avoid false positives
          };
-         
+
   bless $this, $class;
   return $this;
 }
@@ -55,13 +55,13 @@ sub verify {
 
 sub isUseable {
 	my $this = shift;
-	
+
 	return $this->{useable};
 }
 
 sub lastMessage {
 	my $this = shift;
-	
+
 	return $this->{last_message};
 }
 

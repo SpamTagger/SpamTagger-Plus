@@ -15,5 +15,5 @@ $report
 
 Information de repérage: $hostname: $datenumber/$id
 
----------- 
+----------
 SpamTagger

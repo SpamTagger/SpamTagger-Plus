@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Pending alias request
  */
 
@@ -26,16 +26,16 @@ class Default_Model_RRDGraphicElement
 	   'draw_format' => '8.0lf',
 	   'draw_unit' => ''
     );
-    
+
     protected $_graphic;
 	protected $_mapper;
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		$ret = null;
 		if (array_key_exists($param, $this->_values)) {
@@ -46,13 +46,13 @@ class Default_Model_RRDGraphicElement
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
-		
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
@@ -60,7 +60,7 @@ class Default_Model_RRDGraphicElement
 	public function setGraphic($graphic) {
 		$this->_graphic = $graphic;
 	}
-		
+
     public function setMapper($mapper)
     {
         $this->_mapper = $mapper;
@@ -80,16 +80,16 @@ class Default_Model_RRDGraphicElement
         $this->getMapper()->find($elementid, $this);
         return $this;
     }
-        
+
     public function fetchAll($params = NULL) {
     	return $this->getMapper()->fetchAll($params);
     }
-      
+
     public function save()
-    {	
+    {
         return $this->getMapper()->save($this);
     }
-    
+
     public function delete()
     {
     	return $this->getMapper()->delete($this);
@@ -98,13 +98,13 @@ class Default_Model_RRDGraphicElement
     private function getMinValue() {
         return 0;
     }
-      
+
 	public function getDEFParamString($e) {
-	
+
         $name = $this->getParam('name');
         $nocdefname = 'nocdef'.$name;
         $str = '';
-        
+
 		if (preg_match('/([*])(\d+)/', $this->getParam('draw_factor'), $matches)) {
 			$str = "DEF:$nocdefname=\"".$this->getRRDArchiveFile()."\":$name:".$this->getParam('function');
 			$str .= " CDEF:$name=$nocdefname,".$matches[2].",".$matches[1];
@@ -113,10 +113,10 @@ class Default_Model_RRDGraphicElement
 		}
         return $str;
 	}
-	
+
 	public function getPlotParamString($e) {
 		# 'LINE:refused#FF0000:Refused '
-		
+
 		## find out colors
 		$c = $this->_graphic->getColors();
         $colorname = $this->getParam('name');
@@ -124,7 +124,7 @@ class Default_Model_RRDGraphicElement
             $colorname = $matches[1];
         }
         $color = sprintf('#%02x%02x%02x',$c[$colorname]['R'],$c[$colorname]['G'],$c[$colorname]['B']);
-        
+
         ## get text with alignment (padding)
         $padding = 20;
         if ($this->_graphic->getType == 'count') {
@@ -134,18 +134,18 @@ class Default_Model_RRDGraphicElement
         $str = strtoupper($this->getParam('draw_style')).":".$this->getParam('name').$color.":".$text;
         return "'".$str."'";
 	}
-	
+
 	public function getDrawUnit() {
                 return $this->getParam('draw_unit');
 	}
-	
+
 	public function getPrintParamString($e) {
-		
+
 		$fullstr = '';
 		$t = Zend_Registry::get('translate');
-		
+
 		$name = $this->getParam('name');
-		
+
 		if ($this->_graphic->getType() == 'frequency') {
 			$current = "GPRINT:".$name.":LAST:\"".$t->_(last)."\:%".$this->getParam('draw_format')." ".$this->getDrawUnit()."\"";
 			$average = "GPRINT:".$name.":AVERAGE:\"".$t->_(average)."\:%".$this->getParam('draw_format')." ".$this->getDrawUnit()."\"";
@@ -156,14 +156,14 @@ class Default_Model_RRDGraphicElement
 			$maximum = "GPRINT:".$name.":MAX:\"".$t->_(maximum)."\:%".$this->getParam('draw_format')." ".$this->getDrawUnit()."\"";
 			$fullstr = $current." ".$maximum;
 		}
-		
+
 		return $fullstr;
 		#$newname = 'n'.$name;
 	    #$cdefstr = 'CDEF:'.$newname.'='.$name.',1024,/';
 	    #$name = $newname;
-		#	
+		#
 		#if ($this->getParam('type') == 'COUNTER' || $this->getParam('type') == 'DERIVE') {
-		#    
+		#
 		#    ## last value
 		#    $lastname = $name."last";
 		#    $vdefstr .= 'VDEF:'.$lastname.'='.$name.',LAST';
@@ -176,7 +176,7 @@ class Default_Model_RRDGraphicElement
         #
 		#    $str = 'GPRINT:'.$lastname.':'.$t->_(last).'\: %3.2lf';
 		#    $avgstr = 'GPRINT:'.$avgname.':'.$t->_(average).'\: %3.2lf';
-		#    $maxstr = 'GPRINT:'.$maxname.':'.$t->_(maximum).'\: %3.2lf';	
+		#    $maxstr = 'GPRINT:'.$maxname.':'.$t->_(maximum).'\: %3.2lf';
 		#    return "'".$cdefstr."' '".$vdefstr."' "."'".$str."' "."'".$vdefstravg."' "."'".$avgstr."' "."'".$vdefstrmax."' "."'".$maxstr."' ";
 		#} else {
     	#	    $str = 'GPRINT:'.$name.':LAST:%10.0lf';
@@ -184,13 +184,13 @@ class Default_Model_RRDGraphicElement
 		#}
 		#return '';
 	}
-	
+
 	private function getRRDArchiveFile() {
 	        $config = SpamTagger_Config::getInstance();
     	        $file = $config->getOption('VARDIR').'/spool/newrrds/'.$this->_graphic->getName().'_'.$this->_graphic->getType().'/'.$this->_graphic->getHost().'.rrd';
                 return $file;
 	}
-	
+
 	public function getLegend() {
 		$t = Zend_Registry::get('translate');
 		return $t->_($this->getParam('draw_name'));

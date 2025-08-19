@@ -23,7 +23,7 @@ function redimAndForce(msgid, storeid, news) {
 
 function redim(width, height) {
 	  window.resizeTo(width, height);
-	  
+
 	  // workaround for ie7 resizeTo
 	  var cp = document.createElement("div");
 	  cp.style.position = "absolute";
@@ -36,7 +36,7 @@ function redim(width, height) {
 	  var current_height = cp.offsetTop;
 	  var dw = popup_width - current_width;
 	  var dh = popup_height - current_height;
-	  document.body.removeChild(cp);  
+	  document.body.removeChild(cp);
 	  window.resizeBy(dw, dh);
 	  // end workaround
 

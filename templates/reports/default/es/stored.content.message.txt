@@ -13,5 +13,5 @@ $report
 
 Nota para el departamento de soporte: $hostname:$datenumber/$id
 
----------- 
+----------
 SpamTagger

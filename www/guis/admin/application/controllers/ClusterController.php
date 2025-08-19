@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for cluster configuration
  */
 
@@ -22,9 +22,9 @@ class ClusterController extends Zend_Controller_Action
     	$main_menus = Zend_Registry::get('main_menu')->findOneBy('id', 'subconfig_Cluster')->class = 'submenuelselected';
     	$view->selectedSubMenu = 'Cluster';
     }
-    
+
     public function indexAction() {
-  	
+
     }
 
 }

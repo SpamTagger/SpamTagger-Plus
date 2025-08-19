@@ -7,17 +7,17 @@
 class Default_Form_DomainAdvanced extends Zend_Form {
 	protected $_domain;
 	protected $_panelname = 'advanced';
-	
+
 	public function __construct($domain) {
 	    $this->_domain = $domain;
 
 	    parent::__construct();
 	}
-	
-	
+
+
 	public function init() {
 		$this->setMethod('post');
-			
+
 		$t = Zend_Registry::get('translate');
 		$user_role = Zend_Registry::get('user')->getUserType();
 
@@ -50,7 +50,7 @@ class Default_Form_DomainAdvanced extends Zend_Form {
 		$domainname->setValue($this->_domain->getParam('name'));
 		require_once('Validate/DomainName.php');
 		$domainname->addValidator(new Validate_DomainName());
-		$this->addElement($domainname);	
+		$this->addElement($domainname);
 
 		$wwelement = new Default_Model_WWElement();
 		require_once('Validate/IpList.php');
@@ -126,7 +126,7 @@ class Default_Form_DomainAdvanced extends Zend_Form {
 			$submit->setAttrib('disabled', true);
 			$submit->setAttrib('readonly', true);
 		}
-		$this->addElement($submit);	
+		$this->addElement($submit);
 	}
 
 	public function setParams($request, $domain) {

@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is as list
  */
@@ -14,19 +14,19 @@ require_once('helpers/ListManager.php');
 /**
  * This will takes care of fetching list of filtered domains
  */
-class DomainList extends ListManager 
+class DomainList extends ListManager
 {
-    
+
 /**
  * load domains from database
  * @return  boolean  true on success, false on failure
- */ 
+ */
 public function Load() {
   require_once('helpers/DM_SlaveConfig.php');
   $db_slaveconf = DM_SlaveConfig :: getInstance();
-  
+
   global $admin_;
-  
+
   $query = "SELECT name FROM domain WHERE name != '__global__'";
   $row = $db_slaveconf->getList($query);
   foreach( $row as $domain) {

@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**************************
  ** TO DO
  **   Delete $grafix
@@ -16,7 +16,7 @@
 $help['NOSUBJECT'] = "help for this topic is not available";
 
 /**********************
-$grafix = 
+$grafix =
 "analyse.gif    	<img src=\"images/analyse.gif\" ><br/>
 apply.gif      	<img src=\"images/apply.gif\" ><br/>
 asc.gif        	<img src=\"images/asc.gif\" ><br/>
@@ -44,7 +44,7 @@ top_back.gif   	<img src=\"images/top_back.gif   \" ><br/>
  * View and Manage Domains
  ****************************/
 
-### Verified 
+### Verified
 $help['DOMAINLISTTITLE'] = "<h1>List of filtered domains</h1>
 This is the list of the domain names accepted and forwarded by SpamTagger.<br/><br/>
 The first column, Domain Names, lists the currently filtered domain names.<br/>
@@ -58,7 +58,7 @@ delete (<img src=\"images/erase.gif\">) domains.
 
 
 ### Verified
-$help['DOMAINNAME'] = 
+$help['DOMAINNAME'] =
 "<h1>Domain name</h1>
 This is the name of the domain you wish to be filtered by SpamTagger.<br/><br/>
 You can add as many domains as you wish, each one with its own behavior and settings.<br/>
@@ -87,7 +87,7 @@ of this domain.
 
 
 ### Verified
-$help['DOMAINDELIVERY'] = 
+$help['DOMAINDELIVERY'] =
 "<h1>Delivery settings</h1>
 These settings define how messages will be handled once they have been
 processed by SpamTagger.<br/><br/>
@@ -128,7 +128,7 @@ configured on your destination mail server. Therefore, by default, it accepts
 all messages destined for the configured domains, regardless of the name part
 of the address. This leads to a great deal of unnecessary load on the
 SpamTagger server, since it must process messages for nonexistent recipients
-only to have these messages rejected afterward by the destination mail server.<p> 
+only to have these messages rejected afterward by the destination mail server.<p>
 If you enable the SMTP callout option, SpamTagger will first check the validity of the
 recipient address by doing an SMTP callout to your destination mail server.<br/> This
 may considerably reduce the load on your system if you are prone to dictionary
@@ -138,7 +138,7 @@ callout requests. But SpamTagger keeps the results of such requests in cache,
 thereby minimizing such traffic as much as possible.<br/> This option is not
 recommended if your destination mail server acts as a gateway and does not
 refuse nonexistent addresses during the SMTP dialog (i.e.  MS Exchange Server <=
-5.5) 
+5.5)
 
 <h2>Enable LDAP/AD callout:</h2>
 This option is similar to SMTP callout, except that it uses LDAP/Active
@@ -148,8 +148,8 @@ Directory to validate addresses. <br/>To use this option, you must configure
 ";
 
 
-### Verified 
-$help['DOMAINFILTERING'] = 
+### Verified
+$help['DOMAINFILTERING'] =
 "<h1>Email filtering</h1>
 These settings allow the administrator to enable or disable the fundamental
 SpamTagger components. They also allow the administrator to define the default
@@ -165,7 +165,7 @@ filter against the X-SpamTagger headers in the final mail server or mail
 client if need be.)
 <h2>Dangerous content tag:</h2>
 Similar to Virus tags, this is the tag that will prefix the subject of the
-message if dangerous content has been detected and removed from the message. 
+message if dangerous content has been detected and removed from the message.
 <h2>Antispam:</h2>
 Enable or disable the spam detection engine of SpamTagger.
 <h2>Tag:</h2>
@@ -177,8 +177,8 @@ be overridden by users in their preference settings.
 ";
 
 
-### Verified 
-$help['DOMAINPREFERENCES'] = 
+### Verified
+$help['DOMAINPREFERENCES'] =
 "<h1>Domain preferences</h1>
 These are the default values for user preferences. They can be overridden by
 individuals via the user web interface.
@@ -203,14 +203,14 @@ analyzed.
 ";
 
 
-### Verified 
-$help['USERAUTHENTICATION'] = 
+### Verified
+$help['USERAUTHENTICATION'] =
 "<h1>User authentication</h1>
 SpamTagger can authenticate users in a variety of ways.<br/><br/>
 Instead of storing user credentials locally on SpamTagger, you can use the different mechanisms (connectors) in order to authenticate against your existing credential database.  <br/>
 This allows your users to access the user interface to consult their quarantine
 and set their preferences without the superfluous overhead of yet another
-password database. 
+password database.
 <h2>Connector: </h2>
 This is the mechanism used for authentication.
 <ul>
@@ -271,7 +271,7 @@ username to connect the LDAP directory.
 
 $help['WHITEWARNLIST'] =
 "<h1>Whitelists and warnlists</h1>
-<b>Whitelists</b> let users set up a list of sender that will never be flagged as spam or put in quarantine. 
+<b>Whitelists</b> let users set up a list of sender that will never be flagged as spam or put in quarantine.
 Although this option may be convenient, it is also very dangerous as spammers tend to forge the sender address to fake someone you know.
 <br>With many entries in whitelists, your filter may become less efficient and being open to smart spam campains.
 <br><br>
@@ -284,7 +284,7 @@ Althoug it is always better to avoid any kind of list, it is advised for the adm
 <br>Now if you really want to enable whitelists for the whole domain, you have been warned !
  ";
 
-### Verified 
+### Verified
 $help['DOMAINTEMPLATES'] =
 "<h1>Templates</h1>
 <h2>User web interface</h2>If there is more than one user interface template installed, you can choose the template here that determines the look of the user web interface.
@@ -298,7 +298,7 @@ $help['DOMAINTEMPLATES'] =
  ****************************/
 
 ### Added
-$help['EMAILLISTTITLE'] = 
+$help['EMAILLISTTITLE'] =
 "<h1>Administration by e-mail address</h1>
 SpamTagger handles address and user administration separately, even though these two entities are tightly related. This is because a single user can have many e-mail addresses; However, an e-mail address is not necessarily associated with a user.<p>
 That being said, the majority of interesting options are found under address administration.
@@ -352,7 +352,7 @@ Restores the current address's settings to the domain default settings.
  ****************************/
 
 ### Verified
-$help['USERLISTTITLE'] = 
+$help['USERLISTTITLE'] =
 "<h1>Registered users list</h1>
 This is the list of users known by SpamTagger for the selected domain. This list is based on users who have logged on at least once--unless LDAP is used, in which case the list can be based on LDAP lookup.<br/><br/>
 <h2>Search: </h2>
@@ -363,7 +363,7 @@ Click on the desired address to edit its properties.
 
 
 ### Verified
-$help['USERSETTINGS'] = 
+$help['USERSETTINGS'] =
 "<h1>User Settings</h1>
 <h2>Language: </h2>
 Set the language for the user interface for this user. Note that the login page will remain the default language of the SpamTagger installation.
@@ -381,13 +381,13 @@ This will delete the user profile, including all associations with e-mail addres
  ****************************/
 
 ### Added
-$help['SPAMFILTERTITLE'] = 
+$help['SPAMFILTERTITLE'] =
 "<h1>Spam quarantine</h1>
 This interface gives you a bird's eye view of the spam quarantine for the entire SpamTagger installation. It is intended to allow you to investigate when a user reports unusual or erroneous behavior by the mail system. From the listing, you can :
 <ul>
-<li>force a message to be delivered (<img src=\"images/force.gif\" border=\"0\">) to the final user, 
-<li>view the list of criteria that were used to identify the message as spam (<img src=\"images/info.gif\" border=\"0\">), or 
-<li>forward the message to the Analysis Center (<img src=\"images/analyse.gif\" border=\"0\">). 
+<li>force a message to be delivered (<img src=\"images/force.gif\" border=\"0\">) to the final user,
+<li>view the list of criteria that were used to identify the message as spam (<img src=\"images/info.gif\" border=\"0\">), or
+<li>forward the message to the Analysis Center (<img src=\"images/analyse.gif\" border=\"0\">).
 </ul>
 The fields to filter the results of a search are self-evident, with two exceptions:
 <h2>Mask forced</h2>
@@ -402,7 +402,7 @@ If enabled, the results do not include Non-Delivery Reports (NDRs) sent automati
  ****************************/
 
 ### Added
-$help['CONTENTFILTERTITLE'] = 
+$help['CONTENTFILTERTITLE'] =
 "<h1>Content quarantine</h1>
 This interface allows you to view or force the
 delivery of a message that was quarantined because
@@ -435,7 +435,7 @@ before finding it.
  ****************************/
 
 ### Added
-$help['DEFAULTSTITLE'] = 
+$help['DEFAULTSTITLE'] =
 "<h1>Configuration of default values</h1>
 These defaults are system-wide default values for all domains in the SpamTagger installation.
 ";
@@ -443,7 +443,7 @@ These defaults are system-wide default values for all domains in the SpamTagger 
 
 ### Added
 ### Incomplete - still waiting on "Default Domain" info
-$help['DEFAULTSDOMAINS'] = 
+$help['DEFAULTSDOMAINS'] =
 "<h1>Configuration of default values</h1>
 <h2>Language: </h2>
 This is the default language for the user interface logon screen as well as all automated e-mails.
@@ -452,7 +452,7 @@ This is the default language for the user interface logon screen as well as all 
 
 
 ### Added
-$help['DEFAULTSADDRESSES'] = 
+$help['DEFAULTSADDRESSES'] =
 "<h1>Addresses</h1>
 <h2>Report spam address: </h2>This address is the recipient when users request an analysis of a message in quarantine.
 <h2>System sender address</h2>This is the Sender address used with all outgoing automated messages.
@@ -460,7 +460,7 @@ $help['DEFAULTSADDRESSES'] =
 
 
 ### Added
-$help['DEFAULTSQUARANTINES'] = 
+$help['DEFAULTSQUARANTINES'] =
 "<h1>Configuration of quarantine defaults</h1>
 <h2>Days to keep spam: </h2>Spam will be deleted after being held in quarantine for this number of days. A default value of 60 is suggested.
 <h2>Days to keep viruses/content: </h2>Quarantined viruses and dangerous content will be deleted after being held in quarantine for this number of days.
@@ -468,7 +468,7 @@ $help['DEFAULTSQUARANTINES'] =
 
 
 ### Added
-$help['DEFAULTSTASKS'] = 
+$help['DEFAULTSTASKS'] =
 "<h1>Configuration of periodic task defaults</h1>
 <h2>Daily tasks run at: </h2>At the selected time, all scheduled daily maintenance will be executed. Daily maintenance includes sending daily spam reports, deleting expired spam, viruses, and dangerous content from the quarantine (see <a href=\"help.php?s=DEFAULTSQUARANTINES\">Quarantine defaults</a>), and rotating logs.
 <h2>Weekly tasks run on: </h2>On this day of the week, at the time given in the Daily Tasks field, scheduled weekly maintenance will be executed. This includes sending weekly spam reports.
@@ -482,7 +482,7 @@ $help['DEFAULTSTASKS'] =
 
 ### Added
 ### ?? dns and search list space-delimited?
-$help['BASENETCONFIG'] = 
+$help['BASENETCONFIG'] =
 "<h1>Network configuration</h1>
 <b>Warning:</b> Please be certain of what you are doing before changing these settings. An error could disable the SpamTagger server's network connectivity!
 <h2>Network interface: </h2>If the server has more than one network interface installed, you can choose which interface to use. <tt>eth0</tt> is the first interface, and the one used by default.
@@ -498,7 +498,7 @@ component of the search path in turn until a match is found. If there is more th
 
 
 ### Added
-$help['BASEDATETIMECONFIG'] = 
+$help['BASEDATETIMECONFIG'] =
 "<h1>Date and time configuration</h1>
 If your network security policy permits it, the SpamTagger servers can have their time set automatically via NTP. To use NTP, enable the \"<b>Use network time server</b>\" option and enter one or more time servers in the pertaining field. Multiple servers should be separated by a comma.<p>
 If you do not enable NTP, please verify that the given date and time are correct.
@@ -506,7 +506,7 @@ If you do not enable NTP, please verify that the given date and time are correct
 
 
 ### Added
-$help['BASEPROXIESCONFIG'] = 
+$help['BASEPROXIESCONFIG'] =
 "<h1>Proxy configuration</h1>
 If your network topology does not allow your SpamTagger installation direct access to the Internet on ports 80 and 443, it is necessary to provide a web proxy for SpamTagger updates.<br/>
 Likewise, if SpamTagger must send external mail (e.g., Non Delivery Reports or similar routing errors), and it cannot directly access port 25 on the Internet, you must provide a valid SMTP gateway.
@@ -514,7 +514,7 @@ Likewise, if SpamTagger must send external mail (e.g., Non Delivery Reports or s
 
 
 ### Added
-$help['BASEROOTPASS'] = 
+$help['BASEROOTPASS'] =
 "<h1>Root password</h1>
 The root account is the main administrator account for the SpamTagger server. You are advised to change the root password to a long, secure password here.
 ";
@@ -525,7 +525,7 @@ The root account is the main administrator account for the SpamTagger server. Yo
  ****************************/
 
 ### Added
-$help['SMTPACCESS'] = 
+$help['SMTPACCESS'] =
 "<h1>SMTP access</h1>
 <h2>Allow relay from hosts: </h2> Machines listed here are permitted to use SpamTagger as a relay to send outbound mail. Note: These hosts must also be included in \"Allow connection from hosts\".
 <h2>Allow connection from hosts: </h2>SpamTagger will only accept SMTP connections from these hosts. By default, the asterisk allows open access.
@@ -537,31 +537,31 @@ $help['SMTPACCESS'] =
 
 
 ### Added
-$help['SMTPLDAPCALLOUT'] = 
+$help['SMTPLDAPCALLOUT'] =
 "<h1>LDAP/AD callout configuration</h1>
-These settings are global to the SpamTagger installation. They apply to all domains which have <a href=\"help.php?s=DOMAINDELIVERY\">\"Enable LDAP/AD callout\"</a> enabled. 
+These settings are global to the SpamTagger installation. They apply to all domains which have <a href=\"help.php?s=DOMAINDELIVERY\">\"Enable LDAP/AD callout\"</a> enabled.
 ";
 
 ### Added
-$help['GREYLISTCONFIG'] = 
+$help['GREYLISTCONFIG'] =
 "<h1>Greylisting  daemon configuration</h1>
-These settings are global to the SpamTagger installation. They apply to all domains which have <a href=\"help.php?s=DOMAINDELIVERY\">\"Enable greylisting\"</a> enabled. 
+These settings are global to the SpamTagger installation. They apply to all domains which have <a href=\"help.php?s=DOMAINDELIVERY\">\"Enable greylisting\"</a> enabled.
 ";
 
 ### Added
-$help['SMTPADVANCEDCONFIG'] = 
+$help['SMTPADVANCEDCONFIG'] =
 "<h1>Advanced Configuration</h1>
 
 <h2>Stage:</h2>
-In SpamTagger, messages pass through three general stages: 
+In SpamTagger, messages pass through three general stages:
 <nl>
-<li> A <i>pre-filtering</i> MTA process receives all messages to be analyzed and places them in a queue. 
+<li> A <i>pre-filtering</i> MTA process receives all messages to be analyzed and places them in a queue.
 <li> The messages are filtered for viruses and spam.
 <li> Clean messages are passed to an outgoing queue, which are then delivered by a <i>post-filtering</i> MTA process.
 </nl>
 You can choose to view/alter the settings below for the pre-filtering (incoming) or post-filtering (outgoing) stage.<br/>
 
-<h2>Connection timeout: </h2>This sets a timeout value for SMTP reception. If a line of input (either an SMTP command or a data line) is not received within this time, the SMTP connection is dropped and the message is abandoned. 
+<h2>Connection timeout: </h2>This sets a timeout value for SMTP reception. If a line of input (either an SMTP command or a data line) is not received within this time, the SMTP connection is dropped and the message is abandoned.
 
 <h2>Maximum simultaneous connections: </h2>
 This option specifies the maximum number of simultaneous incoming SMTP calls that the MTA process will accept. If the value is set to zero, no limit is applied.
@@ -589,7 +589,7 @@ target=\"_blank\">The exim documentation</a> for more information.
  ****************************/
 
 ### Added
-$help['ADMINTITLE'] = 
+$help['ADMINTITLE'] =
 "<h1>Administration</h1>
 This is the list of SpamTagger administrators. These administrators are able to log on to the SpamTagger administrative web interface.<p>
 You can edit (<img src=\"images/pencil.gif\" border=\"0\">)each administrator's rights or delete (<img src=\"images/erase.gif\" border=\"0\">) the administrator altogether.<br/>
@@ -598,14 +598,14 @@ To add an administrator, click on <img src=\"images/plus.gif\" border=\"0\">.
 
 
 ### Added
-$help['ADMINACCESS'] = 
+$help['ADMINACCESS'] =
 "<h1>Access</h1>
 Set this administrator's web interface password.
 ";
 
 
 ### Added
-$help['ADMINAUTHORIZATIONS'] = 
+$help['ADMINAUTHORIZATIONS'] =
 "<h1>Authorizations</h1>
 <h2>Manageable domains: </h2>These are the domains that this administrator is authorized to manage. For all domains, enter an asterisk. For multiple domains names, enter a comma-separated list.
 <h2>Can manage domains: </h2>If enabled, the administrator can modify top-level settings for the domains listed in the previous field.
@@ -620,7 +620,7 @@ $help['ADMINAUTHORIZATIONS'] =
  ****************************/
 
 ### Added
-$help['ANTISPAMSETTINGS'] = 
+$help['ANTISPAMSETTINGS'] =
 "<h1>Antispam settings</h1>
 This panel give you control over generic settings of the antispam engine.<br/><br/>
 <h2>Friendly languages:</h2>These are the languages that are most likely to be
@@ -629,7 +629,7 @@ spoken by your users. Messages in other languages will be slightly penalized
 <h2>Trusted IPs/Networks:</h2>Put here the network or IP addresses (separated by spaces) of any host in your infrastructure that could eventually handle mail before SpamTagger.
 Don't hesitate to also put here the public address of the SpamTagger. This setting will let SpamTagger know how to find the first external host that addresses the messages. This is important for some antispam checks.
 <h2>Enable whitelists:</h2>This is the main switch to enable/disable whitelists. Whitelisting can be dangerous and may be exploited by spammers. Use this option with caution.
-<h2>Enable blacklists:</h2>This is the main switch to enable/disable blacklists. 
+<h2>Enable blacklists:</h2>This is the main switch to enable/disable blacklists.
 <h2>Enable warnlists:</h2>This is the main switch to enable/disable warnlists. Warnlists are less dangerous than whitelists. Using it before enabling whitelists is generally a good idea.
 <h2>Use Syslog logging:</h2>If activated and if a syslog server has been set up in 'Defaults' panel, engine logs will be copied and sent to it.
 ";
@@ -671,7 +671,7 @@ Don't hesitate to also put here the public address of the SpamTagger. This setti
 
 
 ### Added
-$help['SANETWORK'] = 
+$help['SANETWORK'] =
 "<h1>Antispam settings: Network checks</h1>
 These SpamTagger modules require Internet access. They primarily use
 Internet-based databases.<br/><br/>
@@ -701,7 +701,7 @@ target=\"_blank\">www.rhyolite.com/anti-spam/dcc/</a>)</i>
  ****************************/
 
 ### Added
-$help['ANTIVIRUSSCANNERS'] = 
+$help['ANTIVIRUSSCANNERS'] =
 "<h1>Antivirus: Scanners</h1>
 SpamTagger can work with a variety of different antivirus programs; by default, it is installed with ClamAV. If you choose to use another supported antivirus program, you must enable the corresponding option here. In such a case, it is necessary to confirm that the given path is correct.
 ";
@@ -709,7 +709,7 @@ SpamTagger can work with a variety of different antivirus programs; by default, 
 
 ### Added
 ### Reread
-$help['ANTIVIRUSSETTINGS'] = 
+$help['ANTIVIRUSSETTINGS'] =
 "<h1>Antivirus: Settings</h1>
 SpamTagger uses antivirus software to verify that attachments
 do not contain known viruses. All the same, even if an
@@ -794,14 +794,14 @@ module. The timeout duration can be modified here.
  ****************************/
 
 ### Verified
-$help['DANGEROUSTITLE'] = 
+$help['DANGEROUSTITLE'] =
 "<h1>Dangerous content protection settings</h1>
 <i>Dangerous content</i> is content that is not identified as virus-related, but is suspicious in nature. This can include executable or dubiously named files, HTML that includes code which could execute upon the opening of a message, and improperly formatted messages. This page allows you to control in detail the way that SpamTagger handles such messages.
 ";
 
 
 ### Verified
-$help['DANGEROUSHTMLCHECKS'] = 
+$help['DANGEROUSHTMLCHECKS'] =
 "<h1>HTML content checks</h1>
 These settings cover often-used html code that can be used maliciously. Most of these technologies are used regularly on Internet web sites for legitimate reasons. However, by the nature of being web-based technologies, they were not designed for use in e-mail messages. Therefore, their presence in messages can signal abuse.<br/>
 For these options, check the \"Set as Silent\" box to prevent the user from receiving a warning when messages are blocked by each of these criteria.<br/>
@@ -815,7 +815,7 @@ SpamTagger can disarm Web Bugs so that the message can be safely opened without 
 
 
 ### Recycled
-$help['DANGEROUSFORMATCHECKS'] = 
+$help['DANGEROUSFORMATCHECKS'] =
 "<h1>Message format checks</h1>
 <h2>Password archives: </h2>Archive files (i.e., .ZIP, .RAR) that are protected by a password. This is commonly used to propagate viruses, since antivirus programs cannot decrypt such files in order to verify their contents. The virus writer simply puts the password in plain text in the message body to dupe the user into opening the malicious archive.
 <h2>Partial messages: </h2>A Message that is sent as fragments over many messages. The user's mail client could re-assemble the message, including a malicious attachment.
@@ -827,11 +827,11 @@ $help['DANGEROUSFORMATCHECKS'] =
 
 
 ### Verified
-$help['DANGEROUSATTACHCHECKS'] = 
+$help['DANGEROUSATTACHCHECKS'] =
 "<h1>Attachment checks</h1>
 Today, viruses and worms are the most prevalent form of dangerous file attachment. But antivirus software alone is not enough to deal with dangerous attachments. Antivirus software is ineffective in two areas: in the brief period when a new virus, or a new variant of a known virus, is first released in the wild; and when dealing with malicious code (scripts or embedded Visual Basic code, for example) that specifically targets a user or group of users.<br/> <br/>
 In order to complement antivirus software when protecting users from malicious attachments, SpamTagger quarantines attachments that are suspiciously named or of a particularly vulnerable file type (for example, self-executing files). In this case, the administrator must release the file in question. The administrator can customize SpamTagger to be more or less restrictive as need be.<br/><br/>
-<h2>Filename control: </h2>This list shows all file types that SpamTagger is configured to handle, as well as the action to take for each file type (allow or deny). 
+<h2>Filename control: </h2>This list shows all file types that SpamTagger is configured to handle, as well as the action to take for each file type (allow or deny).
 <h3>Action: </h3>If \"deny\", this file type is automatically quarantined.
 <h3>Rule: </h3>The definition that the file name must satisfy in order to fall into this rule. These rules follow <a href=\"http://www.perl.com/doc/manual/html/pod/perlre.html\" target=\"_blank\"><i>Perl Regular Expression</i></a> syntax.
 <h3>Name: </h3>A short name for the file extension. This will be used in the log files.
@@ -849,7 +849,7 @@ This list behaves much like the previous list with one significant exception: Th
 
 ### Added
 ### EMPTY
-$help['ACCESSTITLE'] = 
+$help['ACCESSTITLE'] =
 "<h1>External access configuration (firewall)</h1>
 These settings allow you to limit access to the various Internet-based services that run on SpamTagger.<br/>
 Multiple IP addresses or ranges must be separated by colons (:). To open to all addresses, use \"0.0.0.0/0\". <br/>
@@ -860,7 +860,7 @@ If you would like to connect to SpamTagger's database, add the machines of your 
 <h2>SNMP access  (port(s) 161, UDP): </h2>
 If you wish to implement SNMP, specify the IP address(es) of your SNMP client(s) here.
 <h2>SSH access  (port(s) 22, TCP): </h2>
-SSH is used primarily for support. 
+SSH is used primarily for support.
 <h2>Mail access  (port(s) 25, TCP): </h2>
 Unless SpamTagger is behind a mail gateway, mail access must remain open to everyone in order to properly receive mail.
 <h2>Web services  (port(s) 5132, TCP): </h2>
@@ -873,7 +873,7 @@ Web services are used primarily for synchronization between servers in a multi-s
  ****************************/
 
 ### Added
-$help['MONGLOBALHOSTID'] = 
+$help['MONGLOBALHOSTID'] =
 "The status page gives you a bird's eye view of every SpamTagger server in your SpamTagger installation.
 <h1>ID</h1>
 The ID number of the SpamTagger server. The master server is #1. In a single server installation, you will only see #1.
@@ -881,21 +881,21 @@ The ID number of the SpamTagger server. The master server is #1. In a single ser
 
 
 ### Added
-$help['MONGLOBALHOST'] = 
+$help['MONGLOBALHOST'] =
 "<h1>Host</h1>
 The name or IP address of the SpamTagger server. This value cannot be changed.
 ";
 
 
 ### Added
-$help['MONGLOBALPROCESSES'] = 
+$help['MONGLOBALPROCESSES'] =
 "<h1>Processes</h1>
 This list of SpamTagger server processes gives you the current status of each process as well as the possibility to stop and start it. Generally, all processes should be <font color=\"green\">\"RUNNING\"</font>. If technical support, or common sense, advises you to do so, you can stop and restart processes using this interface.
 ";
 
 
 ### Added
-$help['MONGLOBALSPOOLS'] = 
+$help['MONGLOBALSPOOLS'] =
 "<h1>Spools</h1>
 The spools are the queues of messages that await processing by the main
 SpamTagger stages. Every message passes through each spool in turn.<br/>
@@ -915,7 +915,7 @@ page to force delivery of all messages in the spool.
 
 
 ### Added
-$help['MONGLOBALLOAD'] = 
+$help['MONGLOBALLOAD'] =
 "<h1>Load average</h1>
 The load average is an indication of the number of active processes--that is, the number of processes waiting for processor time. High load averages generally mean that the system is being used heavily. In general, load averages less than or equal to 3are satisfactory. Higher figures could indicate that the server is too heavily loaded.<br/>
 Averages are given for the last five minutes, ten minutes, and fifteen minutes.
@@ -923,28 +923,28 @@ Averages are given for the last five minutes, ten minutes, and fifteen minutes.
 
 
 ### Added
-$help['MONGLOBALDISKUSAGE'] = 
+$help['MONGLOBALDISKUSAGE'] =
 "<h1>Disk usage</h1>
 SpamTagger servers have two disk partitions: One for the system, and one for the data, including all spools, logs, and quarantines. Disk usage informs you of the percentage of space that has been used on each partition.
 ";
 
 
 ### Added
-$help['MONGLOBALMEMORYUSAGE'] = 
+$help['MONGLOBALMEMORYUSAGE'] =
 "<h1>Memory usage</h1>
 \"Total memory\" and \"Free memory\" refer to the physical RAM that is installed on the server. \"Total swap\" and \"Free swap\" refer to the swap memory, or virtual memory, that has been allocated for the server. If the free swap is consistently very small relative to the total swap, this could indicate that the server is too heavily loaded.
 ";
 
 
 ### Added
-$help['MONGLOBALLASTPATCH'] = 
+$help['MONGLOBALLASTPATCH'] =
 "<h1>Last patch</h1>
 This is the name of the latest patch that was downloaded by, and applied to, the server. The name is based on the date of the patch, in the form YYYYMMDDpp, where pp is the patch ID of the given date.
 ";
 
 
 ### Added
-$help['MONGLOBALTODAYSCOUNTS'] = 
+$help['MONGLOBALTODAYSCOUNTS'] =
 "<h1>Today's counts</h1>
 This is a quick summary of the number of spam, viruses, and dangerous content that have been filtered since midnight today, as well as a count of the total messages that have been received by the server.
 ";
@@ -955,18 +955,18 @@ This is a quick summary of the number of spam, viruses, and dangerous content th
  ****************************/
 
 ### Added
-$help['STATSTITLE'] = 
+$help['STATSTITLE'] =
 "<h1>Statistics</h1>
 These graphs give you a visual summary of the performance of each or all of your SpamTagger servers. You can choose to view the statistics graphs of one server or all of them, for one particular type of statistic or all of them, and for a daily, weekly, monthly, or annual view.
 ";
 
-$help['MESSAGES'] = 
+$help['MESSAGES'] =
 "<h1>Message counts</h1>" .
 "This graphic displays the count of the different type of messages detected by SpamTagger.<br> These can be viruses, dangerous contents, spams or clean messages.<br><br>" .
 "The priority of types is : virus, dangerous content, spam and clean.<br> That is when a message is detected as both a virus and a spam, it is counted as a virus.".
 "<br><br>This is a daily count, so it get reset avery day.";
 
-$help['PMESSAGES'] = 
+$help['PMESSAGES'] =
 "<h1>Message type</h1>".
 "This graphic displays the nature of the messages that were filtered by SpamTagger.<br>" .
 "You will see the percentage of each detected type here: viruses, dangerous contents, spams and cleans.";
@@ -1014,7 +1014,7 @@ $help['NETWORK'] =
 "This graphic will display the average bandwidth used by the SpamTagger host.".
 "<br><br>In a normal situation, both incoming and outgoing traffic should be quite identical and follow the same trends.";
 
-$help['DISK'] = 
+$help['DISK'] =
 "<h1>Disk usage</h1>".
 "This graphic will display the amount of hard drive storage used by your system.".
 "<br><br>The base system partition (\"/\" or root) should not vary. But the data one (\"/var\") may slowly increase the first days of production or whenever your users base increase.".
@@ -1026,7 +1026,7 @@ $help['DISK'] =
  ****************************/
 
 ### Added
-$help['VIEWLOGS'] = 
+$help['VIEWLOGS'] =
 "<h1>Logs</h1>
 This page allows you to drill down to any of the logs from any server for any recent date. The fields are self-explanatory.
 ";

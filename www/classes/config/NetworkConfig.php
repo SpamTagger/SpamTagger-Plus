@@ -35,7 +35,7 @@ class NetworkConfig
                       'search_domains' => ""
                    );
 
- 
+
   /**
    * actually configured interface (in order not to restart all interfaces)
    * @var  string
@@ -56,7 +56,7 @@ class NetworkConfig
     }
     return false;
   }
-   
+
   /**
    * get a preference value
    * @param  $pref  string preference name
@@ -68,7 +68,7 @@ class NetworkConfig
     }
     return "";
   }
-  
+
   /**
    * set the interface that has just been configured
    * @param $if  string  interface name
@@ -81,7 +81,7 @@ class NetworkConfig
     }
     return false;
   }
-  
+
   /**
    * add an interface
    * @param  $iface  string  interface name
@@ -91,15 +91,15 @@ class NetworkConfig
     if (!is_string($iface)) {
       return false;
     }
-      
+
     $this->interfaces_[$iface] = new Iface($iface);
     $this->interfaces_[$iface]->load();
     return true;
   }
-   
+
   /**
    * get the interface object given by name
-   * @param  $iface  string  interface name 
+   * @param  $iface  string  interface name
    * @return         IFace   interface object
    */
   public function getInterface($iface) {
@@ -108,13 +108,13 @@ class NetworkConfig
     }
     return null;
   }
-  
+
   /**
    * load all interfaces available
    * @return  boolean  true on success, false on failure
    */
   public function load() {
-    
+
     // search for available interfaces
     $lines = file(IFACE_DEV_FILE);
     $matches = array();
@@ -140,10 +140,10 @@ class NetworkConfig
     $this->setProperty('search_domains', $search_domains);
     $this->setProperty('dns_servers', $dns_servers);
   }
- 
+
   /**
    * save the network configuration
-   * @return   string  OKSAVED on success, error code on failure 
+   * @return   string  OKSAVED on success, error code on failure
    */
   public function save() {
     $res_a = array();
@@ -162,26 +162,26 @@ class NetworkConfig
         return "CANNOTBRINGINTERFACEDOWN";
       }
     }
-    
+
     // then edit the interfaces file
     $file = fopen(INTERFACE_FILE, 'w');
-    if (!$file) { 
-      return "CANNOTOPENINTERFACESFILE"; 
+    if (!$file) {
+      return "CANNOTOPENINTERFACESFILE";
     }
     fwrite($file, "auto lo\n");
     fwrite($file, "iface lo inet loopback\n");
 
     // add configuration for each active interfaces
     foreach($this->interfaces_ as $k => $v) {
-      $str = "\n".$this->interfaces_[$k]->getConfigString(); 
+      $str = "\n".$this->interfaces_[$k]->getConfigString();
       fwrite($file, $str);
     }
     fclose($file);
 
     // edit the resolv file
     $file = fopen(RESOLV_FILE, 'w');
-    if (!$file) { 
-      return "CANNOTOPENRESOLVFILE"; 
+    if (!$file) {
+      return "CANNOTOPENRESOLVFILE";
     }
     // and add search domains
     foreach($this->getProperty('search_domains') as $sd => $active) {
@@ -230,7 +230,7 @@ class NetworkConfig
     $ret = rtrim($ret, '\,');
     return $ret;
   }
-  
+
   /**
    * return the search domains list, comma separated list
    * @return  string  search domains list
@@ -272,7 +272,7 @@ class NetworkConfig
         break;
     }
   }
-  
+
   /**
    * set the dns server from the posted string (comma separated)
    * @param  $servers  string  the posted servers string
@@ -306,9 +306,9 @@ class NetworkConfig
        $doms[trim($s)] = true;
      }
      $this->setProperty('search_domains', $doms);
-     return true; 
+     return true;
   }
-  
+
   /**
    * return the interfaces as an array
    * @return   array  interfaces
@@ -316,7 +316,7 @@ class NetworkConfig
   public function getInterfaces() {
     $ret = array();
     foreach ($this->interfaces_ as $if => $o) {
-      $ret[$if] = $if;  
+      $ret[$if] = $if;
     }
     return $ret;
   }

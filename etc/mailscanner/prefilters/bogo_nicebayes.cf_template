@@ -1,7 +1,7 @@
 bogofilter_dir=__VARDIR__/spool/bogofilter/database/
 db_transaction=no
 spam_header_name=X-Bogosity
-stats_in_header=Yes	
+stats_in_header=Yes
 db_cachesize=25
 db_log_autoremove=yes
 #timestamp=Yes

@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this is a preference handler
  */
@@ -30,9 +30,9 @@ abstract class PreFilter extends PrefHandler {
                       'timeOut' => 10,
                       'maxSize' => 500000,
                       'putSpamHeader' => 1,
-                      'putHamHeader' => 0, 
+                      'putHamHeader' => 0,
 	                 );
-                     
+
     protected $where_clause_ = "";
 
 public static function factory($name) {
@@ -56,7 +56,7 @@ public static function factory($name) {
 public function __construct() {
     $this->addPrefSet('prefilter', 'p', $this->pref_);
     $this->addSpecPrefs();
-    
+
     $this->subload();
 }
 

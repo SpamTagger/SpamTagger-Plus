@@ -14,19 +14,19 @@ $(document).ready(function(){
 	$("#sname").keyup(function(event) {
 		loadsearch($("#sname").val(), 1);
 	});
-	
+
 	if ($("#sname").val() == '') {
         $("#sname").attr('class', 'searchempty');
 	    $("#sname").val(defaultsearchstring);
 	}
 
-	
+
 	$("#sname").click(function(event) {
 		$("#sname").attr('class', '');
 		$("#sname").val('');
 	});
 
-	
+
 	$("#domainpanel").change(function(event){
 		loadDomainPanel($("#domainpanel").val());
     });
@@ -56,9 +56,9 @@ $(document).ready(function(){
     });
 
 	$("#sname").attr('autocomplete', 'off');
-	
+
 	setLocalHandlers();
-	
+
 	if (message != '' && domainaddurl !='') {
 		loadsearch($("#sname").val(), page);
 		//loadsearchurl(domainsearchurl+domainaddurl);
@@ -70,7 +70,7 @@ function setLocalHandlers() {
 		setBATVKey();
 	});
 	setBATVKey();
-	
+
 	$("#dkim_signature").change(function(event) {
 		setDKIMFields();
 	});
@@ -139,7 +139,7 @@ function setSMTPFields() {
 
 function loadsearch(searchstring, page) {
   if ($("#domainname").html() != '') {
-	domainname = $("#domainname").html();  
+	domainname = $("#domainname").html();
   }
   if ((!domainname || domainname == '') && $("#username").val() != '') {
     domainname = $("#username").val();
@@ -191,7 +191,7 @@ function loadDomainPanel(panel) {
           }
 		});
 	});
-	
+
 	panellinkrequest = $.ajax({
 		  type: "GET",
 		  url: domainpanellinkurl+'/panel/'+panel+'/name/'+$("#name").val(),
@@ -223,7 +223,7 @@ function testDestinationSMTP(domain, reset) {
         error: function() {
       	  $("#settingstest").html('jserror');
         }
-		
+
 	});
 	if (stopreloadtest < 1) {
         setTimeout("testDestinationSMTP('"+domain+"', 0)", 2000);
@@ -247,7 +247,7 @@ function testCallout(domain, reset) {
         error: function() {
       	  $("#settingstest").html('jserror');
         }
-		
+
 	});
 	if (stopreloadtest < 1) {
         setTimeout("testCallout('"+domain+"', 0)", 2000);
@@ -257,7 +257,7 @@ function testCallout(domain, reset) {
 function testUserauth(domain) {
 	gusername = $("#testusername").val();
 	gpassword = $("#testpassword").val();
-	
+
 	$("#settingstest").show();
 	$("#settingstestwaiting").show();
 	$("#settingstestwaiting").html(loadingimg);

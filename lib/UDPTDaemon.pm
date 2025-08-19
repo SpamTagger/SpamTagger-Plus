@@ -40,29 +40,29 @@ sub new {
   my $config = shift;
   my $spec_thish = shift;
   my %spec_this = %$spec_thish;
-   
+
   my $udpspec_this = {
      server => '',
      port => -1,
      tid => 0,
-     
+
      read_set => '',
      write_set => '',
   };
   # add specific options of child object
   foreach my $sk (keys %spec_this) {
      $udpspec_this->{$sk} = $spec_this{$sk};
-  } 
-  
+  }
+
   my $this = $class->SUPER::create($class, $config, $udpspec_this);
-     
+
   bless $this, $class;
   return $this;
 }
 
 sub preForkHook() {
    my $this = shift;
-   
+
    ## bind to UDP port
    $this->{server} = IO::Socket::INET->new(
    								  LocalAddr => '127.0.0.1',
@@ -72,22 +72,22 @@ sub preForkHook() {
      or die "Couldn't be an udp server on port ".$this->{port}." : $@\n";
    $this->{server}->autoflush ( 1 ) ;
    $this->logMessage("Listening on port ".$this->{port});
-   
+
    return 1;
 }
 
 sub mainLoopHook() {
   my $this = shift;
   require Mail::SpamAssassin::Timeout;
-   
+
   $this->logMessage("In UDPTDaemon main loop");
-  
+
   my $read_set = new IO::Select;
-  $read_set->add($this->{server}); 
- 
+  $read_set->add($this->{server});
+
   my $t = threads->self;
   $this->{tid} = $t->tid;
-  
+
   my $data;
   while ($this->{server}->recv($data, 1024)) {
       my($port, $ipaddr) = sockaddr_in($this->{server}->peername);
@@ -98,7 +98,7 @@ sub mainLoopHook() {
   }
 #  while(1) {
 #    my ($r_ready, $w_ready, $error) =  IO::Select->select($read_set, undef, undef, 5);
-#    
+#
 #    foreach my $sock (@$r_ready) {
 #      if ($sock == $this->{server}) {
 #        my $new_sock = $sock->accept();
@@ -120,13 +120,13 @@ sub mainLoopHook() {
 #    }
 #      }
 #  }
-   
+
   return 1;
 }
 
 sub exitHook() {
   my $this = shift;
- 
+
   close ($this->{server});
   $this->logMessage("Listener socket closed");
   return 1;

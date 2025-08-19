@@ -4,17 +4,17 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Date and time settings
  */
 
 class Default_Model_DateAndTime
-{	
+{
 	protected $_datearray = array('hour' => 0, 'minute' => 0, 'second' => 0);
-	
+
 	public function __construct() {
 	}
-    
+
 	public function load() {
 		$currentdate = new Zend_Date();
         $this->_datearray = $currentdate->toArray();
@@ -28,7 +28,7 @@ class Default_Model_DateAndTime
 			$this->_datearray['year'] = $year;
 		}
 	}
-	
+
 	public function getMonth() {
 		return $this->_datearray['month'];
 	}
@@ -37,7 +37,7 @@ class Default_Model_DateAndTime
 			$this->_datearray['month'] = $month;
 		}
 	}
-	
+
 	public function getDay() {
 		return $this->_datearray['day'];
 	}
@@ -46,7 +46,7 @@ class Default_Model_DateAndTime
 			$this->_datearray['day'] = $day;
 		}
 	}
-	
+
 	public function getHour() {
 		return $this->_datearray['hour'];
 	}
@@ -55,7 +55,7 @@ class Default_Model_DateAndTime
 			$this->_datearray['hour'] = $hour;
 		}
 	}
-	
+
     public function getMinute() {
 		return $this->_datearray['minute'];
 	}
@@ -64,7 +64,7 @@ class Default_Model_DateAndTime
 			$this->_datearray['minute'] = $minute;
 		}
 	}
-	
+
     public function getSecond() {
 		return $this->_datearray['second'];
 	}
@@ -73,7 +73,7 @@ class Default_Model_DateAndTime
 			$this->_datearray['second'] = $second;
 		}
 	}
-	
+
 	public function setDate($string) {
 		if (preg_match('/(\d+)\/(\d+)\/(\d+)/', $string, $matches)) {
 			$this->setMonth($matches[1]);
@@ -81,21 +81,21 @@ class Default_Model_DateAndTime
 			$this->setYear($matches[3]);
 		}
 	}
-	
+
 	public function getDate() {
 		return $this->getMonth()."/".$this->getDay()."/".$this->getYear();
 	}
-	
+
 	public function getFullSystemString() {
 		$str = sprintf('%02d%02d%02d%02d%04d.%02d',
-		               $this->getMonth(), $this->getDay(), $this->getHour(), 
+		               $this->getMonth(), $this->getDay(), $this->getHour(),
 		               $this->getMinute(), $this->getYear(), $this->getSecond());
 		return $str;
 	}
-	
+
     public function save()
     {
     	return Default_Model_Localhost::sendSoapRequest('Config_saveDateTime', $this->getFullSystemString());
     }
-    	
+
 }

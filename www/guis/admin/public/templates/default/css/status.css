@@ -4,7 +4,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 .hoststatusbloc {
   margin-left: 16px;
   margin-right: 16px;
@@ -47,7 +47,7 @@
   height: 48px;
   background-image:url(../images/quar_contentheader_bg.png);
   overflow: hidden;
-  white-space: nowrap; 
+  white-space: nowrap;
   text-align: left;
   margin: 0px;
   padding: 0px;
@@ -124,7 +124,7 @@
     vertical-align: middle;
     margin-bottom: 1px;
 }
-	
+
 .diskusagebar {
    display: block;
    clear: none;
@@ -166,7 +166,7 @@
 .graprowrescp {
     font-weight: bold;
 }
-	
+
 .statusvaluesrow td {
    border-bottom: 0px !important;
 }

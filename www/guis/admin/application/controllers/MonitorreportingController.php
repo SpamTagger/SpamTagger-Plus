@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * controller for reporting page
  */
 
@@ -19,7 +19,7 @@ class MonitorreportingController extends Zend_Controller_Action
 				$params[$param] = $request->getParam($param);
 			}
 		}
-		
+
 		if ($params['top'] == '') {
 			$params['top'] = 10;
 		}
@@ -38,14 +38,14 @@ class MonitorreportingController extends Zend_Controller_Action
 				}
 			}
 		}
-		
+
 		$todateO = Zend_Date::now();
 	    $fromdateO = Zend_Date::now();
         $fromdateO->sub('4', Zend_Date::DAY, Zend_Registry::get('Zend_Locale')->getLanguage());
-        
-        $todate = Zend_Locale_Format::getDate($todateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));      
+
+        $todate = Zend_Locale_Format::getDate($todateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));
         $fromdate = Zend_Locale_Format::getDate($fromdateO, array('date_format' => Zend_Locale_Format::STANDARD, 'locale' => Zend_Registry::get('Zend_Locale')->getLanguage()));
-       
+
         foreach ( array('fd' => 'day', 'fm' => 'month', 'fy' => 'year') as $tk => $tv) {
         	if  (!isset($params[$tk]) || !$params[$tk]) {
         	    $params[$tk] = $fromdate[$tv];
@@ -62,13 +62,13 @@ class MonitorreportingController extends Zend_Controller_Action
         #	$params['fy']--;
         #}
 
-        if (intval($params['fm']) > $todateO->toValue(Zend_Date::MONTH) || 
-             (intval($params['fm']) == $todateO->toValue(Zend_Date::MONTH) && intval($params['fd']) > $todateO->toValue(Zend_Date::DAY)) && 
+        if (intval($params['fm']) > $todateO->toValue(Zend_Date::MONTH) ||
+             (intval($params['fm']) == $todateO->toValue(Zend_Date::MONTH) && intval($params['fd']) > $todateO->toValue(Zend_Date::DAY)) &&
              intval($params['fy']) >= $todateO->toValue(Zend_Date::YEAR)) {
             $params['fy']--;
         }
         if (intval($params['tm']) > $todateO->toValue(Zend_Date::MONTH) ||
-             (intval($params['tm']) == $todateO->toValue(Zend_Date::MONTH) && intval($params['td']) > $todateO->toValue(Zend_Date::DAY)) && 
+             (intval($params['tm']) == $todateO->toValue(Zend_Date::MONTH) && intval($params['td']) > $todateO->toValue(Zend_Date::DAY)) &&
              intval($params['ty']) >= $todateO->toValue(Zend_Date::YEAR)) {
             $params['ty']--;
         }
@@ -83,7 +83,7 @@ class MonitorreportingController extends Zend_Controller_Action
                   $params['t'.$key] = $tmp['f'.$key];
                }
         }
-        
+
         $params['datefrom'] = sprintf("%04d%02d%02d",$params['fy'],$params['fm'],$params['fd']);
         $params['dateto'] = sprintf("%04d%02d%02d",$params['ty'],$params['tm'],$params['td']);
         if ($params['datefrom'] > $params['dateto']) {
@@ -110,12 +110,12 @@ class MonitorreportingController extends Zend_Controller_Action
     	$main_menus = Zend_Registry::get('main_menu')->findOneBy('id', 'submonitor_Reporting')->class = 'submenuelselected';
     	$view->selectedSubMenu = 'Reporting';
     }
-    
+
     public function indexAction() {
   	    $t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
-		 
+
 		$request = $this->getRequest();
 		$form    = new Default_Form_Reporting($this->getSearchParams());
 		$form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'monitorreporting'));
@@ -130,9 +130,9 @@ class MonitorreportingController extends Zend_Controller_Action
 		$layout->disableLayout();
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 		$view->thisurl = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('index', 'monitorreporting', NULL, array());
-		 
+
 		$request = $this->getRequest();
-		 
+
 		$loading = 1;
 		if (! $request->getParam('load')) {
 			sleep(1);
@@ -141,9 +141,9 @@ class MonitorreportingController extends Zend_Controller_Action
 		$view->loading = $loading;
 		$params = $this->getSearchParams();
 		$view->params = $params;
-		
+
         $session = new Zend_Session_Namespace('SpamTagger');
-        
+
         $element = new Default_Model_ReportingStats();
         $elements = array();
 
@@ -152,7 +152,7 @@ class MonitorreportingController extends Zend_Controller_Action
 			$elements = $element->abortFetchAll($params);
 			$session->search_id = 0;
 		}
-		
+
         if (isset($session->search_id) && $session->search_id) {
 			$params['search_id'] = escapeshellcmd($session->search_id);
 			$res = $element->getStatusFetchAll($params);
@@ -182,14 +182,14 @@ class MonitorreportingController extends Zend_Controller_Action
 		$view->elements = $elements;
             $view->global_users = $global_users;
     }
-    
+
     public function graphAction() {
 		$this->_helper->viewRenderer->setNoRender();
-		
+
     	$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
 		$layout->disableLayout();
-		
+
 		$request = $this->getRequest();
 		$graph = new Default_Model_RRDGraphic($request->getParam('h'));
 		if ($request->getParam('t') != '') {

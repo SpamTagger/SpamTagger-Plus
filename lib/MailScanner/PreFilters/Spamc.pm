@@ -76,8 +76,8 @@ sub Checks {
     $message->{prefilterreport} .= ", Spamc (too big)";
     $global::MS->{mta}->AddHeaderToOriginal($message, $Spamc::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
     return 0;
-  } 
-      
+  }
+
 
   my @WholeMessage;
   push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
@@ -101,7 +101,7 @@ sub Checks {
   my $res = "";
   my @lines;
 
-  $t->run(sub {  
+  $t->run(sub {
      use IPC::Run3;
      my $out;
      my $err;
@@ -121,8 +121,8 @@ sub Checks {
   my %rules;
 
 ## analyze result
- 
-  @lines = split '\n', $res; 
+
+  @lines = split '\n', $res;
   foreach my $line (@lines) {
     if ($line =~ m/^\s*(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\s*$/ ) {
       $score = $1;

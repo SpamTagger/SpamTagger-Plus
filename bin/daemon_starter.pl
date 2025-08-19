@@ -1,4 +1,4 @@
-#!/usr/bin/env perl 
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -71,8 +71,7 @@ my $path;
 if ( $0 =~ m/(\S*)\/\S+.pl$/ ) {
 	$path = $1 . "/../lib";
 	unshift( @INC, $path );
-}
-else {
+} else {
 	show_usage('no daemon available');
 }
 if ( !-f $path . "/" . $daemon . ".pm" ) {
@@ -84,17 +83,14 @@ my $daemon = new $daemon( \%options );
 
 if ( $action eq 'start' ) {
 	$daemon->initDaemon();
-}
-elsif ( $action eq 'stop' ) {
+} elsif ( $action eq 'stop' ) {
 	$daemon->exitDaemon();
-}
-elsif ( $action eq 'restart' ) {
+} elsif ( $action eq 'restart' ) {
     print "  Stopping... ";
 	$daemon->exitDaemon();
     print "stopped\n  Starting...";
 	$daemon->initDaemon();
-}
-elsif ( $action eq 'status' ) {
+} elsif ( $action eq 'status' ) {
 	my $res = $daemon->status();
     if ( $res =~ /^_/ ) {
 		print "No status available (" . $res . ")\n";

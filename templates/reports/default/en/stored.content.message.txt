@@ -10,5 +10,5 @@ card numbers.
 At $date the content filters said:
 $report
 Note to Administrator: $hostname in $datenumber/$id
----------- 
+----------
 SpamTagger

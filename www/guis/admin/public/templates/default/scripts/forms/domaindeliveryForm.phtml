@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -12,7 +12,7 @@
        <?php echo $this->InputRow($this->form->getElement('name'),array('field_only'=>true,'nobox'=>true));?>
        <table class="ftable">
           <?php echo $this->InputRow($this->form->getElement('servers'),array('label_addclass'=>'flabeltextarea'));?>
-          
+
           <?php foreach (array('port', 'multipleaction', 'usemx') as $f) {?>
              <?php echo $this->InputRow($this->form->getElement($f));?>
           <?php }?>

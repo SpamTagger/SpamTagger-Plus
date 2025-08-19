@@ -27,11 +27,10 @@ my $PROFILE = 1;
 my (%prof_start, %prof_res) = ();
 profile_start('init');
 
-my %config = readConfig("/etc/spamtagger.conf"); 
+my %config = readConfig("/etc/spamtagger.conf");
 use SpamLogger;
 use Email;
 use Net::SMTP;
-
 
 ### Global variables
 my $msg = "";
@@ -85,38 +84,36 @@ profile_stop('fetchPref');
 #print "\nin warnlist returned: $warnlisted\n";
 ## if WHITELISTED, then go through, no tag
 if ($whitelisted) {
-	print " is whitelisted ($whitelisted) ";
-	sendAnyway($whitelisted);
+  print " is whitelisted ($whitelisted) ";
+  sendAnyway($whitelisted);
 } else {
   ## DROP
   if ( $delivery_type == 3 ) {
-	print " want drop";
-  }
+  print " want drop";
   ## if QUARANTINE but WARNLISTED, then send the warning
-  elsif ( $delivery_type == 2 && $warnlisted) {
-  	print " is warnlisted ($warnlisted) ";
-  	if ( !put_in_quarantine() ) {
-		print " ** could not put in quarantine!";
-		sendAnyway(0);
-	}
-  	if ( !$email->sendWarnlistHit($sender, $warnlisted, $exim_id) ) {
-  	   print " ** could not send warning!";
-  	   sendAnyway(0);
-  	};
-  	sendNotice();
-  ## if QUARANTINE or BOUNCE then save message
-  } elsif ($delivery_type == 2 || $is_bounce) {  	
-	print " want quarantine";
-	if ($is_bounce) { print " (bounce)"; }
-	if ( !put_in_quarantine() ) {
-		print " ** could not put in quarantine!";
-		sendAnyway(0);
-	}
+  } elsif ( $delivery_type == 2 && $warnlisted) {
+    print " is warnlisted ($warnlisted) ";
+    if ( !put_in_quarantine() ) {
+    print " ** could not put in quarantine!";
+    sendAnyway(0);
   }
+    if ( !$email->sendWarnlistHit($sender, $warnlisted, $exim_id) ) {
+       print " ** could not send warning!";
+       sendAnyway(0);
+    };
+    sendNotice();
+  ## if QUARANTINE or BOUNCE then save message
+  } elsif ($delivery_type == 2 || $is_bounce) {
+  print " want quarantine";
+  if ($is_bounce) { print " (bounce)"; }
+    if ( !put_in_quarantine() ) {
+      print " ** could not put in quarantine!";
+      sendAnyway(0);
+    }
   ## TAG
-  else {
-	print " want tag";
-	sendAnyway(0);
+  } else {
+  print " want tag";
+  sendAnyway(0);
   }
 }
 
@@ -142,16 +139,16 @@ sub parseInputMessage {
   my $in_header      = 1;
   while (<>) {
 
-	# just to remove garbage line before the real headers
-	if ( $start_msg != 1 && /^[A-Z][a-z]*\:\ .*/ ) {
-		$start_msg = 1;
-	}
-	
+  # just to remove garbage line before the real headers
+  if ( $start_msg != 1 && /^[A-Z][a-z]*\:\ .*/ ) {
+    $start_msg = 1;
+  }
+
     if ( $start_msg && $in_header && /^\s+$/) {
       $in_header = 0;
     }
 
-	$line = $_;
+  $line = $_;
 
     if ($in_header) {
       # parse if it is a bounce
@@ -196,20 +193,20 @@ sub parseInputMessage {
             foreach my $rbltag (@rbl_tags) {
               if ($tag =~ m/^$rbltag/) {
                 $rbls .= ", $rbltag";
-          	   }
+               }
             }
             foreach my $pretag (@prefiltertags) {
               if ($tag =~ m/^$pretag/) {
-          	     $prefilters .= ", $pretag";
-          	     if (defined($prefilterscores{$pretag})) {
-          	       $globalscore += $prefilterscores{$pretag};
-          	     }
-          	   }
+                 $prefilters .= ", $pretag";
+                 if (defined($prefilterscores{$pretag})) {
+                   $globalscore += $prefilterscores{$pretag};
+                 }
+               }
             }
             if ($tag =~ m/^score=(\S+)/) {
-           	  $score = $1;
+               $score = $1;
             }
-          }      	
+          }
         }
       }
       # parse for score
@@ -219,7 +216,7 @@ sub parseInputMessage {
         if (int($score) >= 7) { $globalscore++; }
         if (int($score) >= 10) { $globalscore++; }
         if (int($score) >= 15) { $globalscore++; }
-	  }
+    }
     }
     if ( $start_msg > 0 ) {
       # save the message in a variable
@@ -241,19 +238,18 @@ sub parseInputMessage {
 #####
 ## cleanVariables
 #####
-sub cleanVariables { 
+sub cleanVariables {
   $to_domain = clean($to_domain);
   $to_local  = clean($to_local);
   $sender    = clean($sender);
 
   if ( $is_bounce > 0 ) {
-	$sender = "*";
-	if ( $bounced_add !~ /^$/ ) {
-		$sender .= "(" . clean($bounced_add) . ") ";
-	}
-	else {
-		$sender .= clean($header_from);
-	}
+    $sender = "*";
+    if ( $bounced_add !~ /^$/ ) {
+      $sender .= "(" . clean($bounced_add) . ") ";
+    } else {
+      $sender .= clean($header_from);
+    }
   }
   $exim_id = clean($exim_id);
   $subject = clean($subject);
@@ -265,89 +261,88 @@ sub cleanVariables {
 #####
 sub sendAnyway {
     profile_start('sendAnyway');
-	my $whitelisted = shift;
-	my $smtp;
-	
-	my %level = (1 => 'system', 2 => 'domain', 3 => 'user');
+  my $whitelisted = shift;
+  my $smtp;
+
+  my %level = (1 => 'system', 2 => 'domain', 3 => 'user');
 
     if (! $whitelisted) {
       my $tag = $email->getPref( 'spam_tag', '{Spam?}');
-	  if ( $tag =~ /\-1/ ) {
-		$tag = "{Spam?}";
-	  }
+    if ( $tag =~ /\-1/ ) {
+    $tag = "{Spam?}";
+    }
 
-	  if ( $tag !~ /^$/) {
-		$msg =~ s/Subject:\ /Subject: $tag /i;
-	  }
+    if ( $tag !~ /^$/) {
+    $msg =~ s/Subject:\ /Subject: $tag /i;
+    }
     } else {
         $msg =~ s/X-SpamTagger-SpamCheck: spam,/X-SpamTagger-SpamCheck: spam, whitelisted by $level{$whitelisted},/i;
     }
 
-	unless ( $smtp = Net::SMTP->new('localhost:2525') ) {
-		print " ** cannot connect to outgoing smtp server !\n";
-		exit 0;
-	}
-	$err = 0;
-	$err = $smtp->code();
-	if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
+  unless ( $smtp = Net::SMTP->new('localhost:2525') ) {
+    print " ** cannot connect to outgoing smtp server !\n";
+    exit 0;
+  }
+  $err = 0;
+  $err = $smtp->code();
+  if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
 
-	#$smtp->debug(3);
-	if ( $is_bounce > 0 ) {
-		$smtp->mail($bounced_add);
-	}
-	else {
-		$smtp->mail($sender);
-	}
-	$err = $smtp->code();
-	if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
-	$smtp->to($to);
-	$err = $smtp->code();
-	if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
-	$smtp->data();
-	$err = $smtp->code();
-	if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
-	profile_start('dataSend');
-	$smtp->datasend($msg);
-	$err = $smtp->code();
-	if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
-	$smtp->dataend();
-	profile_stop('dataSend');
-	$err = $smtp->code();
-	if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
-	
-	if ($whitelisted) {
-	  sendNotice();
-	}
-	profile_stop('sendAnyway');
+  #$smtp->debug(3);
+  if ( $is_bounce > 0 ) {
+    $smtp->mail($bounced_add);
+  } else {
+    $smtp->mail($sender);
+  }
+  $err = $smtp->code();
+  if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
+  $smtp->to($to);
+  $err = $smtp->code();
+  if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
+  $smtp->data();
+  $err = $smtp->code();
+  if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
+  profile_start('dataSend');
+  $smtp->datasend($msg);
+  $err = $smtp->code();
+  if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
+  $smtp->dataend();
+  profile_stop('dataSend');
+  $err = $smtp->code();
+  if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
+
+  if ($whitelisted) {
+    sendNotice();
+  }
+  profile_stop('sendAnyway');
 }
 
 ##########################################
 
 sub put_in_quarantine {
     profile_start('putInQuar');
-	if ( !-d $config{'VARDIR'} . "/spam/" . $to_domain ) {
-		mkdir( $config{'VARDIR'} . "/spam/" . $to_domain );
-	}
-	if ( !-d $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to ) {
-		mkdir( $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to );
-	}
+  if ( !-d $config{'VARDIR'} . "/spam/" . $to_domain ) {
+    mkdir( $config{'VARDIR'} . "/spam/" . $to_domain );
+  }
+  if ( !-d $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to ) {
+    mkdir( $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to );
+  }
 
-	## save the spam file
-	my $filename =
-	  $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to . "/" . $exim_id;
-	if ( !open( MSGFILE, ">" . $filename ) ) {
-		print " cannot open quarantine file $filename for writing";
-		return 0;
-	}
-	print MSGFILE $msg;
-	close MSGFILE;
+  ## save the spam file
+  my $filename =
+    $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to . "/" . $exim_id;
+  if ( !open( MSGFILE, ">" . $filename ) ) {
+    print " cannot open quarantine file $filename for writing";
+    return 0;
+  }
+  print MSGFILE $msg;
+  close MSGFILE;
 
-	if ( $store_id < 0 ) {
-		print " error, store id less than 0 ";
-		return 0;
-	}
+  if ( $store_id < 0 ) {
+    print " error, store id less than 0 ";
+    return 0;
+  }
     profile_stop('putInQuar');
-    
+
     profile_start('logSpam');
     my $logger = SpamLogger->new("Client", "etc/exim/spamlogger.conf");
     my $res = $logger->logSpam($exim_id, $to_local, $to_domain, $sender, $subject, $score, $rbls, $prefilters, $globalscore);
@@ -356,7 +351,7 @@ sub put_in_quarantine {
       print " WARNING, logging is weird ($res)";
     }
     profile_stop('logSpam');
-	return 1;
+  return 1;
 }
 
 ##########################################
@@ -371,46 +366,46 @@ sub sendNotice {
 ##########################################
 
 sub panic_log_msg {
-	my $filename =
-	  $config{'VARDIR'} . "/spool/exim_stage4/paniclog/" . $exim_id;
-	print " **WARNING, cannot send message ! saving mail to: $filename\n";
+  my $filename =
+    $config{'VARDIR'} . "/spool/exim_stage4/paniclog/" . $exim_id;
+  print " **WARNING, cannot send message ! saving mail to: $filename\n";
 
-	open PANICLOG, ">" . $filename or return;
-	print PANICLOG $msg;
-	close PANICLOG;
+  open PANICLOG, ">" . $filename or return;
+  print PANICLOG $msg;
+  close PANICLOG;
 }
 ##########################################
 
 sub clean {
-	my $str = shift;
+  my $str = shift;
 
-	$str =~ s/\\/\\\\/g;
-	$str =~ s/\'/\\\'/g;
+  $str =~ s/\\/\\\\/g;
+  $str =~ s/\'/\\\'/g;
 
-	return $str;
+  return $str;
 }
 
 ##########################################
 
 sub readConfig {    # Reads configuration file given as argument.
-	my $configfile = shift;
-	my %config;
-	my ( $var, $value );
+  my $configfile = shift;
+  my %config;
+  my ( $var, $value );
 
-	open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-	while (<CONFIG>) {
-		chomp;       # no newline
-		s/#.*$//;                # no comments
-        s/^\*.*$//;             # no comments
-        s/;.*$//;                # no comments
-		s/^\s+//;    # no leading white
-		s/\s+$//;    # no trailing white
-		next unless length;    # anything left?
-		my ( $var, $value ) = split( /\s*=\s*/, $_, 2 );
-		$config{$var} = $value;
-	}
-	close CONFIG;
-	return %config;
+  open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
+  while (<CONFIG>) {
+    chomp;       # no newline
+    s/#.*$//;    # no comments
+    s/^\*.*$//;  # no comments
+    s/;.*$//;    # no comments
+    s/^\s+//;    # no leading white
+    s/\s+$//;    # no trailing white
+    next unless length;    # anything left?
+    my ( $var, $value ) = split( /\s*=\s*/, $_, 2 );
+    $config{$var} = $value;
+  }
+  close CONFIG;
+  return %config;
 }
 
 ############################################
@@ -419,7 +414,6 @@ sub profile_start {
   return unless $PROFILE;
   my $var = shift;
   $prof_start{$var} = [gettimeofday];
-  
 }
 
 sub profile_stop {
@@ -434,7 +428,7 @@ sub profile_output {
   return unless $PROFILE;
   my $out = "";
   foreach my $var (keys %prof_res) {
-  	$out .= " ($var:".$prof_res{$var}."s)";
+    $out .= " ($var:".$prof_res{$var}."s)";
   }
   print $out;
 }

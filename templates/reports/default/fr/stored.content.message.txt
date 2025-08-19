@@ -19,5 +19,5 @@ Contactez $localpostmaster pour plus d'informations.
 
 Information de repérage: $hostname:$datenumber/$id
 
----------- 
+----------
 SpamTagger

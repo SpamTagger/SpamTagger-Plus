@@ -11,7 +11,7 @@
   <link rel="stylesheet" type="text/css" href="css/main.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="css/navigation.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="css/quarantine.css" media="screen" />
-  
+
       <link rel="stylesheet" href="templates/default/newsletters/js/jquery-ui.min.css">
     <link rel="stylesheet" href="templates/default/newsletters/css/newsletters.css">
     <script src="templates/default/newsletters/js/external/jquery/jquery.js"></script>
@@ -22,12 +22,12 @@
    var fmtext = '__LANGJS_FORCEMESSAGE__';
    var satext = '__LANGJS_ANALYSEREQUESTV__';
    var vitext = '__LANGJS_MESSAGEPREVIEW__';
-   
+
    var force_icon = template_path+"/images/release";
    var forced_icon = template_path+"/images/released";
    var info_icon = template_path+"/images/info";
    var analyse_icon = template_path+"/images/analyse";
-   
+
    var popup_width = 500;
    var popup_height = 251;
    var info_width = 500;
@@ -39,7 +39,7 @@
    var mask_forced = '__MASK_FORCED__';
    var spam_only= 0;
    var newsl_only= 0;
-   
+
   __INCLUDE_JS_SCRIPTS__
   </script>
   <script src="scripts/quarantine.js" type="text/javascript" charset="utf-8"></script>
@@ -52,7 +52,7 @@
     color: #FFFFFF;
     background-color: #e93a00;
     }
-    
+
     .c___ORDER_FIELD__ {
       font-weight: bold !important;
     }
@@ -82,15 +82,15 @@
       text-align: left;
    }
   </style>
-    
- 
+
+
 <!--[if gt IE 5]>
 <link rel="stylesheet" type="text/css" href="css/ie.css" media="screen" />
 <![endif]-->
 <!--[if lt IE 7]>
 <link rel="stylesheet" type="text/css" href="css/ie6.css" media="screen" />
 <![endif]-->
-     
+
  </head>
 <body>
 
@@ -136,7 +136,7 @@ __DEFAULT__ DESC_IMG = <img src="images/orderby_desc.png" alt="" />
 
 <div id="quarantine">
  <table id="quarantinetable">
-   
+
 __IF__ filtered
    <tr id="quarantinebanner">
      <td colspan="6"><img src="images/searchheader.png" alt="SpamTagger Plus" /><p>__SEARCH_SUMMARY__ &mdash; <strong>__LANG_CRITERIAS__</strong> :
@@ -156,8 +156,8 @@ __FI__ filtered
 __TMPL_CRITERIAS_START__
 __FILTERNAME__ = "__FILTERVALUE__"
 __TMPL_CRITERIAS_STOP__
-__DEFAULT__ CRITERIAS_SEP =, 
-   
+__DEFAULT__ CRITERIAS_SEP =,
+
    <tr id="quarantineheader">
       <td class="c_action c_title">__LANG_ACTION__</td>
       <td class="c_date c_title"><a href="__LINK_ORDERDATE__">__LANG_DATE__ __ASCDESC_DATE_IMG__</a></td>
@@ -168,7 +168,7 @@ __FI__ group_quarantines
       <td class="c_subject c_title"><a href="__LINK_ORDERSUBJECT__">__LANG_SUBJECT__ __ASCDESC_SUBJECT_IMG__</a></td>
       <td class="c_globalscore c_title"><a href="__LINK_ORDERSCORE__">__LANG_SCORE__ __ASCDESC_SCORE_IMG__</a></td>
    </tr>
-   	   
+
 __DEFAULT__ BULLETEMPTY_IMG = <img src="images/dot_off.png" alt="" class="bullet_off" />
 __DEFAULT__ BULLETFILLED_IMG = <img src="images/dot_on.png" alt="" class="bullet_on" />
 __DEFAULT__ FORCE_IMG = images/release_off.png

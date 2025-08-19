@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Domain preferences
  */
 
@@ -60,39 +60,39 @@ class Default_Model_DomainPref
         'require_outgoing_tls' => 0,
         'archive_mail' => 0,
         'copyto_mail' => '',
-        
+
         ### newsl
         'allow_newsletters' => '0',
     );
-	
+
 	protected $_mapper;
-	
+
 	public function setId($id) {
-	   $this->_id = $id;	
+	   $this->_id = $id;
 	}
 	public function getId() {
 		return $this->_id;
 	}
-	
+
 	public function copy($prefs) {
 		foreach ($this->_values as $key => $value) {
 			$this->setParam($key, $prefs->getParam($key));
 		}
 	}
-	
+
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
 			$this->_values[$param] = $value;
 		}
 	}
-	
+
 	public function getParam($param) {
 		if (array_key_exists($param, $this->_values)) {
 			return $this->_values[$param];
 		}
 		return null;
 	}
-	
+
 	public function getAvailableParams() {
 		$ret = array();
 		foreach ($this->_values as $key => $value) {
@@ -100,7 +100,7 @@ class Default_Model_DomainPref
 		}
 		return $ret;
 	}
-	
+
 	public function getParamArray() {
 		return $this->_values;
 	}
@@ -127,12 +127,12 @@ class Default_Model_DomainPref
         $this->getMapper()->find($id, $this);
         return $this;
     }
-   
+
     public function save($global = false)
     {
         return $this->getMapper()->save($this, $global);
     }
- 
+
     public function delete() {
     	return $this->getmapper()->delete($this);
     }

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * File name
  */
 
@@ -14,25 +14,25 @@ class Default_Model_PKI
 	private $_publicKey;
 	private $_certificate;
 	private $_type = 'dsa';
-	
+
 	private $OPENSSLCOMMAND = '/usr/bin/openssl';
 	private $KEYTYPES = array('dsa' => 'gendsa', 'rsa' => 'genrsa', 'ecdsa' => 'genecdsa');
-	
-	
+
+
 	public function getPrivateKey() {
 		return $this->_privateKey;
 	}
 	public function getPrivateKeyNoPEM() {
 		return $this->removePEMHeaders($this->_privateKey);
 	}
-	
+
     public function getPublicKey() {
         return $this->_publicKey;
     }
     public function getPublicKeyNoPem() {
         return $this->removePEMHeaders($this->_publicKey);
     }
-    
+
     public function setPrivateKey($pkey) {
     	if (preg_match('/[^-+\/=|A-Za-z0-9\s\r\n\t]/', $pkey, $matches)) {
     		var_dump($matches);
@@ -42,27 +42,27 @@ class Default_Model_PKI
     	$this->_privateKey = $pkey;
     	$this->getPublicKeyFromPrivateKey();
     }
-    
+
     public function setCertificate($cert) {
     	$this->_certificate = $cert;
     }
-    
+
 	public function createKey($params) {
-		
+
 	    if (!isset($params)) {
 	    	return false;
 	    }
-	    
+
 		$type = 'rsa';
 		$length = '2048';
-		
+
 		if ( isset($params['type']) and array_key_exists(strtolower($params['type']), $this->KEYTYPES) ) {
 			$type = strtolower($params['type']);
 		}
 	    if ( isset($params['length']) and is_numeric($params['length']) ) {
             $length = $params['length'];
         }
-		
+
         $tmpfile = "/tmp/".uniqid().".tmp";
         switch ($type) {
         	case 'ecdsa':
@@ -77,24 +77,24 @@ class Default_Model_PKI
         }
         $res = `$cmd`;
         $this->_privateKey = trim(file_get_contents($tmpfile));
-        
+
         $this->_type = $type;
         $this->getPublicKeyFromPrivateKey();
         unlink($tmpfile);
         return true;
 	}
-	
+
 	static public function removePEMHeaders($key) {
 		$nkey = preg_replace('/-----[ A-Z]+-----\s*/', '', $key);
 		$nkey = preg_replace('/[\n\r]/', '', $nkey);
 		return trim($nkey);
 	}
-	
+
 	private function getPublicKeyFromPrivateKey() {
 		$tmpfile = "/tmp/".uniqid().".tmp";
 		$tmppubfile = "/tmp/".uniqid().".tmp";
 		file_put_contents($tmpfile, $this->_privateKey);
-		
+
 		$cmd = $this->OPENSSLCOMMAND." ".$this->_type." -in ".$tmpfile." -out ".$tmppubfile." -pubout -outform PEM";
         `$cmd`;
 		if (file_exists($tmppubfile)) {
@@ -105,7 +105,7 @@ class Default_Model_PKI
           unlink($tmpfile);
 		}
 	}
-	
+
 	public function checkPrivateKey() {
 		$tmpfile = "/tmp/".uniqid().".tmp";
 		file_put_contents($tmpfile, $this->_privateKey);
@@ -117,9 +117,9 @@ class Default_Model_PKI
 		}
 		return 0;
 	}
-	
+
 	public function getCertificateData() {
-		
+
 	    $data = array('valid'=>0, 'issuer'=>'', 'until'=>'', 'subject'=>'', 'error'=>'', 'selfsigned'=>0, 'expired'=>0);
 	    $tmpfile = "/tmp/".uniqid().".tmp";
 	    file_put_contents($tmpfile, $this->_certificate);
@@ -147,7 +147,7 @@ class Default_Model_PKI
 	    	$data['selfsigned'] = 1;
 	    }
 	    if (!$data['valid']) {
-            $data['error'] = $res[0];    	
+            $data['error'] = $res[0];
 	    }
         if ($data['until'] != '') {
             $date_until = new Zend_Date($data['until'], "MMM d HH:mm:ss yyyy ZZ");
@@ -159,7 +159,7 @@ class Default_Model_PKI
         }
 	    return $data;
 	}
-	
+
 	public function checkCertificate() {
 		$data = $this->getCertificateData();
 		if ($data['valid']) {

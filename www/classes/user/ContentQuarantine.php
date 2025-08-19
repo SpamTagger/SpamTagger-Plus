@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
-  
+
 /**
  * a quarantine is filled with content objects
  */
 require_once("user/Content.php");
- 
+
 /**
  * this is a quarantine
  */
@@ -43,7 +43,7 @@ class ContentQuarantine extends Quarantine {
                       'page'          => 1,
                       'msg_per_page'  => DEFAULT_MSGS
                     );
-                  
+
   /**
    * allowed orders with corresponding column names
    * @var array
@@ -55,11 +55,11 @@ class ContentQuarantine extends Quarantine {
                      'from'       => 'from_address',
                      'subject'    => 'subject',
                     );
-                    
+
   /**
    * images that could be used in the quarantine html display
    * @var  array
-   */            
+   */
   private  $images_ = array();
 
 
@@ -70,7 +70,7 @@ class ContentQuarantine extends Quarantine {
 private function isAllowed() {
    global $admin_;
    global $log_;
-   
+
    // at least domain should be set
    if ($this->getFilter('to_domain') == "") {
      return false;
@@ -79,10 +79,10 @@ private function isAllowed() {
    if ( (! $admin_ instanceof Administrator) ) {
      return false;
    }
-   
+
    // if admin, then admin must have right to manage users and to manage this domain
    if ( (! $admin_->checkPermissions(array('can_manage_users'))) || (! $admin_->canManageDomain($this->getFilter('to_domain')))) {
-     $log_->log('-- admin not allowed to access quarantine', PEAR_LOG_WARNING); 
+     $log_->log('-- admin not allowed to access quarantine', PEAR_LOG_WARNING);
      return false;
    }
    return true;
@@ -96,14 +96,14 @@ public function load() {
    global $sysconf_;
    global $admin_;
    global $log_;
-   
+
    // First, we do some checks...
    if (!$this->isAllowed()) {
     return false;
    }
-   
+
    $log_->log('-- searching content quarantine', PEAR_LOG_INFO);
-   
+
    // first, if we are given the id directly, no need to search in database
    $matches = array();
    if (preg_match('/(\S{8})\/(\S{16})/', $this->getFilter('searchid'), $matches)) {
@@ -115,7 +115,7 @@ public function load() {
       $this->setNbElements(1);
       return true;
    }
- 
+
    // required here for sanity checks
    require_once ('helpers/DM_Custom.php');
    $slaves = $sysconf_->getSlaves();
@@ -129,7 +129,7 @@ public function load() {
      $slaves = $sysconf_->getSlaves();
      $slave = $slaves[0];
      $slave_id = 1;
-   } 
+   }
    $db = DM_Custom :: getInstance($this->getFilter('slave'), $slave[0], 'spamtagger', $slave[1], 'st_stats');
    // now we clean up the filter criteria
    // now we clean up the filter criteria
@@ -142,16 +142,16 @@ public function load() {
    foreach ($this->filters_ as $key => $value) {
      $clean_filters[$key] = $db->sanitize($value);
    }
-   
-   // next build query 
+
+   // next build query
    $where .= " quarantined=1";
- 
+
    // destination address
    $where .= " AND to_address LIKE '%".$clean_filters['to_local']."%@".$clean_filters['to_domain']."'";
-   
+
    // nb days filter
    $where .= " AND (TO_DAYS(NOW())-TO_DAYS(date) < ".$this->getFilter('days').")";
-   
+
    // sender filter
    if ($clean_filters['from'] != "") {
      $where .= " AND from_address LIKE '%".$clean_filters['from']."%'";
@@ -160,18 +160,18 @@ public function load() {
    if ($clean_filters['subject'] != "") {
      $where .= " AND subject LIKE '%".$clean_filters['subject']."%'";
    }
-   
+
    // get the number of content found
    $count_query = "SELECT COUNT(*) as count FROM maillog WHERE $where";
    $count_row = $db->getHash($count_query);
    if (isset($count_row['count']) && is_numeric($count_row['count'])) {
       $this->setNbElements($count_row['count']);
    }
-   
+
    // get the content themselves
    $query = "SELECT timestamp, id, from_address, to_address, subject, isspam, virusinfected, nameinfected, otherinfected, report, date, time, content_forced FROM maillog WHERE ";
    $query .= $where;
-   
+
    // set the sorting order wanted
    $order = $this->getFilter('order');
    $order_query = $this->ordered_fields_[$order[0]]." ".$order[1];
@@ -180,7 +180,7 @@ public function load() {
    }
    $order_query .= ", ".$this->ordered_fields_['time']." ".$order[1];
    $query .= " ORDER BY ".$order_query;
-   
+
    // set the page limit
    $limit = "";
    if (! is_numeric($clean_filters['page'])) {
@@ -191,7 +191,7 @@ public function load() {
      $limit = " LIMIT ".$start.",".$clean_filters['msg_per_page'];
    }
    $query .= $limit;
-   
+
    // populate internal spam list
    $content_list = $db->getListOfHash($query);
    foreach ($content_list as $content) {
@@ -199,7 +199,7 @@ public function load() {
      $this->elements_[$content['id']]->setDatas($content);
      $this->elements_[$content['id']]->slave_ = $slave_id;
    }
-   
+
    if ($this->getFilter('page') > $this->getNBPages()) {
     $this->setFilter('page', 1);
    }

@@ -8,7 +8,7 @@
 
 /**
  * this list contains FileName objects
- */ 
+ */
 require_once("config/FileName.php");
 
 /**
@@ -21,7 +21,7 @@ class FileNameList {
    * @var array
    */
   private $filenames_ = array();
-  
+
   /**
    * keep which rule is selected
    * @var numeric
@@ -34,10 +34,10 @@ class FileNameList {
  * @return   boolean  true on success, false on failure
  */
 public function load() {
-    
+
   $query = "SELECT id FROM filename";
   $db_slaveconf = DM_SlaveConfig :: getInstance();
-  
+
   unset($this->filenames_);
   $this->filenames_ = array();
   $list = $db_slaveconf->getList($query);
@@ -87,7 +87,7 @@ public function getFileName($filename) {
  * @param  $filename  numeric  filename rule id
  * @param  $p         string   preference name
  * @param  $v         mixed    preference value
- * @return            boolean  true on success, false on failure   
+ * @return            boolean  true on success, false on failure
  */
 public function setFilenamePref($filename, $p, $v) {
   if (isset($this->filenames_[$filename])) {
@@ -107,7 +107,7 @@ public function save() {
       return $ret;
     }
   }
-  return $retok; 
+  return $retok;
 }
 
 
@@ -170,7 +170,7 @@ private function ifnot_selected($s, $id) {
   }
   return "";
 }
-    
+
 
 /**
  * get the form beginning for the selected element
@@ -204,7 +204,7 @@ private function drawCloseEdit($f, $id) {
  * @param  $f      Form     html form
  * @param  $id     numeric  id of the rule
  * @param  $size   numeric  size of the input text field
- * @return         string   html string for the field 
+ * @return         string   html string for the field
  */
 private function drawField($field, $f, $id, $size) {
   if ($this->getSelected() == $id) {

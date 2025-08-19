@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -7,9 +7,9 @@
  */
 ?>
 <?php echo $this->doctype() ?>
-<html xmlns="http://www.w3.org/1999/xhtml"> 
-<head>  
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <?php echo $this->headTitle() ?>
   <?php echo $this->headLink() ?>
 
@@ -44,9 +44,9 @@
    //]]>
   </script>
   <?php echo $this->jQuery(); ?>
-  
+
   <?php echo $this->headScript() ?>
-</head> 
+</head>
 <body>
 <!-- flyover box -->
 <div id="tooltip">
@@ -59,7 +59,7 @@
 
  <div id="informational">
  </div>
- 
+
  <div id="mainheader">
   <a href="<?php echo $this->indexurl?>"><img id="stlogo" src="<?php echo $this->images_path; ?>/logo_name.png" alt="SpamTagger Plus, Open Source Spam Filtering" /></a>
   <?php if (!$this->is_slave) { ?>
@@ -68,7 +68,7 @@
   <a href="#"><img id="statusreloadimg" src="<?php echo $this->images_path;?>/reload.gif" alt="reload" /></a>
   <?php } ?>
  </div>
- 
+
 <div id="main_navigation">
  <div id="navigation">
    <ul id="buttonmenu">
@@ -83,7 +83,7 @@
  <div id="subnavigation">
   <?php foreach ($this->main_menu as $submenu) {?>
   <div id="submenu_<?php echo $submenu->label;?>" class="submenu<?php if ($submenu->label != $this->selectedMenu) { echo " submenuhidden"; }?>">
-    <?php $i=0; foreach ($submenu as $page) { 
+    <?php $i=0; foreach ($submenu as $page) {
       if ($i) { echo " | "; }?>
       <span class="submenuel <?php echo $page->class?>"><a href="<?php echo $page->getHref()?>" id="submenu_<?php echo $page->id?>"><?php echo $page->label;?></a></span>
     <?php $i++; }?>

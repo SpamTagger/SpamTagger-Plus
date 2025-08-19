@@ -15,7 +15,7 @@ ixhash_pureperl		1
 #ixhash_md5sum_path      "/usr/bin/md5sum"
 
 body		GENERIC_IXHASH eval:ixhashtest('generic.ixhash.net')
-describe 	GENERIC_IXHASH iXhash found @ generic.ixhash.net 
+describe 	GENERIC_IXHASH iXhash found @ generic.ixhash.net
 tflags		GENERIC_IXHASH net
 # adjust as you seem fit
 score		GENERIC_IXHASH 1.1

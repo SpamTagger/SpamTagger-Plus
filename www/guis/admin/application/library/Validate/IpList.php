@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Validate a list of IP addresses
  */
 
@@ -17,9 +17,9 @@ class Validate_IpList extends Zend_Validate_Abstract
         self::MSG_IPLIST => "'%value%' is not a valid IP address list",
         self::MSG_BADIP => "'%ip%' is not a valid IP address"
     );
-    
+
     public $ip = '';
-    
+
     protected $_messageVariables = array(
         'ip' => 'ip'
     );
@@ -27,7 +27,7 @@ class Validate_IpList extends Zend_Validate_Abstract
     public function isValid($value)
     {
         $this->_setValue($value);
-        
+
         $validator = new Zend_Validate_Ip();
 
         if ($value == '*') {

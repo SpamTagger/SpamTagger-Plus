@@ -5,12 +5,12 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * This class is only a settings wrapper for the apache configuration
  */
 class HTTPDConfig extends PrefHandler {
-    
+
   /**
    * httpd settings
    * @var array

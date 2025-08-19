@@ -31,23 +31,23 @@ our $VERSION    = 1.0;
 
 
 sub create {
- 
+
   my $this = {
      my %prefs => (),
      my %field_email => (),
   };
-           
+
   bless $this, "ElementMappers::EmailMapper";
   $this->{prefs}{'address'} = '';
   $this->{field_email} = {'address' => 1, 'user' => 1, 'is_main' => 1};
-  
+
   return $this;
 }
 
 sub setNewDefault {
   my $this = shift;
   my $defstr = shift;
- 
+
   foreach my $data (split('\s', $defstr)) {
     if ($data =~ m/(\S+):(\S+)/) {
       #print "setting: $1 => $2\n";
@@ -59,7 +59,7 @@ sub setNewDefault {
 sub checkElementExistence {
   my $this = shift;
   my $address = shift;
-  
+
   my $check_query = "SELECT address, pref FROM email WHERE address='$address'";
   my %check_res = $this->{db}->getHashRow($check_query);
   if (defined($check_res{'prefs'})) {
@@ -73,13 +73,13 @@ sub processElement {
   my $address = shift;
   my $flags = shift;
   my $params = shift;
-  
+
   my $update = 1;
   if ($flags && $flags =~ m/noupdate/ ) {
    $update = 0;
-  } 
+  }
   $this->{prefs}{'address'} = lc($address);
- 
+
   my $pref = 0;
   $pref = $this->checkElementExistence($this->{prefs}{'address'});
   if ($pref > 0 && $update) {
@@ -93,14 +93,14 @@ sub updateElement {
   my $this = shift;
   my $address = shift;
   my $pref = shift;
-  
+
   my $set_prefquery = $this->getPrefQuery();
   if (! $set_prefquery eq '') {
    my $prefquery = "UPDATE user_pref SET ".$set_prefquery." WHERE id=".$pref;
    $this->{db}->execute($prefquery);
    print $prefquery."\n";
   }
-  
+
   my $set_emailquery = $this->getEmailQuery();
   if (! $set_emailquery eq '') {
     my $email_query = "UPDATE email SET ".$set_emailquery." WHERE address='$address'";
@@ -111,7 +111,7 @@ sub updateElement {
 
 sub getPrefQuery() {
   my $this = shift;
-  
+
   my $set_prefquery = '';
   foreach my $datak (keys %{$this->{prefs}}) {
     if (! defined($this->{field_email}{$datak})) {
@@ -124,7 +124,7 @@ sub getPrefQuery() {
 
 sub getEmailQuery() {
   my $this = shift;
-  
+
   my $set_emailquery = '';
   foreach my $datak (keys %{$this->{prefs}}) {
     if (defined($this->{field_email}{$datak})) {
@@ -154,7 +154,7 @@ sub addNewElement {
    return;
  }
  my $prefid = $res{'id'};
- 
+
  my $set_emailquery = $this->getEmailQuery();
  my $query  = "INSERT INTO email SET pref=".$prefid;
  if (! $set_emailquery eq '') {

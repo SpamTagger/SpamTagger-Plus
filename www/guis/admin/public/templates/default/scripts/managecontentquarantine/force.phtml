@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -7,16 +7,16 @@
  */
 ?>
 <?php echo $this->doctype() ?>
-<html xmlns="http://www.w3.org/1999/xhtml"> 
-<head>  
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <?php echo $this->headTitle() ?>
   <?php echo $this->headLink() ?>
-    
+
   <?php echo $this->jQuery(); ?>
-  
+
   <?php echo $this->headScript() ?>
-</head> 
+</head>
 <body>
 <div id="container">
 <div id="popupheader">
@@ -24,13 +24,13 @@
 </div>
 
  <div id="text">
-  <p><?php echo $this->release_status?></p>  
+  <p><?php echo $this->release_status?></p>
  </div>
- 
+
  <div id="buttons">
    <input type="button" class="button" id="close" onclick="javascript:window.close();" value="<?php echo $this->t->_('close')?>" />
  </div>
- 
+
 </div>
 </body>
 </html>

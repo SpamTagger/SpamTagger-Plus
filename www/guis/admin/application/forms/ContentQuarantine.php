@@ -4,44 +4,44 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Content quarantine form
  */
 
 class Default_Form_ContentQuarantine extends ZendX_JQuery_Form
-{	
+{
 	protected $_params = array();
-	
+
 	public function __construct($params) {
-		
+
 		$this->_params = $params;
 		parent::__construct();
 	}
-	
-	
+
+
 	public function init()
 	{
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	$view=$layout->getView();
-    	
+
 		$this->setMethod('post');
-	           
+
 		$this->setAttrib('id', 'filter_form');
-		
+
 		$reference = new  Zend_Form_Element_Text('$reference', array(
 		    'label' =>  $t->_('Message ID')." : ",
 		    'size' => 24,
 		    'required' => false));
 	    $reference->setValue($this->_params['reference']);
 	    $this->addElement($reference);
-	    
-	    
+
+
 		$search = new  Zend_Form_Element_Text('search', array(
 		    'required' => false));
 	    $search->setValue($this->_params['search']);
 	    $this->addElement($search);
-	    
+
 	    $domainField = new  Zend_Form_Element_Select('domain', array(
 		    'required' => false));
 	    $domain = new Default_Model_Domain();
@@ -52,19 +52,19 @@ class Default_Form_ContentQuarantine extends ZendX_JQuery_Form
 	    }
 	    $domainField->setValue($this->_params['domain']);
 	    $this->addElement($domainField);
-	    
+
 	    $sender = new  Zend_Form_Element_Text('sender', array(
             'label' => $t->_('Sender')." : ",
 		    'required' => false));
 	    $sender->setValue($this->_params['sender']);
 	    $this->addElement($sender);
-	    
+
 	    $subject = new  Zend_Form_Element_Text('subject', array(
             'label' => $t->_('Subject')." : ",
 		    'required' => false));
 	    $subject->setValue($this->_params['subject']);
 	    $this->addElement($subject);
-	    
+
 	    $months = array('Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.');
 	    $fd = new Zend_Form_Element_Select('fd', array(
 		    'required' => true));
@@ -75,7 +75,7 @@ class Default_Form_ContentQuarantine extends ZendX_JQuery_Form
             $fd->setValue($this->_params['fd']);
 	    }
 	    $this->addElement($fd);
-	    
+
 	    $fm = new Zend_Form_Element_Select('fm', array(
 		    'required' => true));
 	    $i = 1;
@@ -86,7 +86,7 @@ class Default_Form_ContentQuarantine extends ZendX_JQuery_Form
             $fm->setValue($this->_params['fm']);
 	    }
 	    $this->addElement($fm);
-	    
+
 	    $td = new Zend_Form_Element_Select('td', array(
 		    'required' => true));
 	    for ($d = 1; $d <= 31; $d++) {
@@ -106,13 +106,13 @@ class Default_Form_ContentQuarantine extends ZendX_JQuery_Form
             $tm->setValue($this->_params['tm']);
 	    }
 	    $this->addElement($tm);
-	    
-	    
+
+
 	    $mpps = array(5, 10, 20, 50, 100);
 	    $mpp = new Zend_Form_Element_Select('mpp', array(
 	        'label' => $t->_('Number of lines displayed').' : ',
 		    'required' => true));
-	    
+
 	    foreach ($mpps as $m) {
 	    	$mpp->addMultiOption($m, $m);
 	    }
@@ -121,9 +121,9 @@ class Default_Form_ContentQuarantine extends ZendX_JQuery_Form
             $mpp->setValue($this->_params['mpp']);
 	    }
 	    $this->addElement($mpp);
-	    
-	    
-	    
+
+
+
 	    $submit = new Zend_Form_Element_Submit('submit', array(
 		     'label'    => $t->_('Refresh'),
 	         'onclick' => 'javascript:launchSearch();return false;'));

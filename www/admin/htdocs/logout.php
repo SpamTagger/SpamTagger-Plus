@@ -6,7 +6,7 @@
  * @copyright 2025, SpamTagger
  * @abstract This is the admin logout page controller
  */
- 
+
 /**
  * requires admin session
  */

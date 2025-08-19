@@ -1,6 +1,6 @@
 function showBar() {
   var elems = getElementsByStyleClass('bargraph');
-  
+
   for (var ei in elems) {
     var elem = elems[ei];
     if (elem.style) {
@@ -8,9 +8,9 @@ function showBar() {
       elem.style.visibility = 'visible';
     }
   }
-  
+
   var elems = getElementsByStyleClass('piegraph');
-  
+
   for (var ei in elems) {
     var elem = elems[ei];
     if (elem.style) {
@@ -22,7 +22,7 @@ function showBar() {
 
 function showPie() {
   var elems = getElementsByStyleClass('piegraph');
-  
+
   for (var ei in elems) {
     var elem = elems[ei];
     if (elem.style) {
@@ -30,9 +30,9 @@ function showPie() {
       elem.style.visibility = 'visible';
     }
   }
-  
+
   var elems = getElementsByStyleClass('bargraph');
-  
+
   for (var ei in elems) {
     var elem = elems[ei];
     if (elem.style) {
@@ -56,7 +56,7 @@ function useDateSearchType (type) {
  if (type == 'date') {
    window.document.getElementById('filter_datetype_period').checked=false;
    window.document.getElementById('filter_datetype_date').checked=true;
-   
+
    window.document.getElementById('filter_period').disabled=true;
    window.document.getElementById('filter_startday').disabled=false;
    window.document.getElementById('filter_startmonth').disabled=false;
@@ -77,5 +77,5 @@ function useDateSearchType (type) {
    window.document.getElementById('filter_stopyear').disabled=true;
 
   }
- 
+
 }

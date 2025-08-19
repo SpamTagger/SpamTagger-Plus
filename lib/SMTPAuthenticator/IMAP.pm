@@ -34,12 +34,12 @@ sub create {
    my $server = shift;
    my $port = shift;
    my $params = shift;
-   
+
    my $use_ssl = 0;
    if ($params =~ /^[01]$/) {
      $use_ssl = $params;
    }
-   
+
    if ($port < 1 ) {
      $port = 143;
    }
@@ -50,7 +50,7 @@ sub create {
            port => $port,
            use_ssl => $use_ssl
          };
-         
+
   bless $this, "SMTPAuthenticator::IMAP";
   return $this;
 }
@@ -75,9 +75,9 @@ sub authenticate {
      $this->{'error_text'} = $imap->errstr;
      return 1;
   }
-  
+
   if (!$imap) {
-     $this->{'error_text'} = "Could not connect to ".$this->{server}.":".$this->{port}." ssl:".$this->{use_ssl};  
+     $this->{'error_text'} = "Could not connect to ".$this->{server}.":".$this->{port}." ssl:".$this->{use_ssl};
   } else {
      $this->{'error_text'} = $imap->errstr;
   }

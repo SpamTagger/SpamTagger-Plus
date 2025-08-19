@@ -4,13 +4,13 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the administrator configuration page
  */
 
 /**
  * require admin session, view and Administrator objects
- */ 
+ */
 require_once("admin_objects.php");
 require_once("view/Template.php");
 require_once("view/Form.php");
@@ -42,8 +42,8 @@ if (isset($_GET['m']) && ( $_GET['m'] == 'd' || $_GET['m'] == 'a' ) ) {
 
 // create the administrator edition form
 $aform = new Form('administrator', 'post', $_SERVER['PHP_SELF']);
-$aposted = $aform->getResult(); 
-  
+$aposted = $aform->getResult();
+
 // create the search list and form
 $sform = new Form('search', 'post', $_SERVER['PHP_SELF']);
 $sposted = $sform->getResult();
@@ -69,7 +69,7 @@ if ($mode == 'd') {
     $deleted_msg = $lang_->print_txt('DELETEERROR')."(".$deleted.")";
   }
 }
-  
+
 // save/add administrator
 if ($aform->shouldSave()) {
   foreach( $aposted as $k => $v) {
@@ -77,7 +77,7 @@ if ($aform->shouldSave()) {
   }
   $admin->setPasswordConfirmation($aposted['confirm']);
   $asaved = $admin->save();
-  $selected_admin = $admin->getPref('username');  
+  $selected_admin = $admin->getPref('username');
   if ($asaved == 'OKSAVED') {
     $asaved_msg = $lang_->print_txt('SAVESUCCESSFULL');
   } elseif ($asaved == 'OKADDED') {
@@ -89,7 +89,7 @@ if ($aform->shouldSave()) {
   $selected_admin = $admin->getPref('username');
 }
 
-// get the administrator list 
+// get the administrator list
 $admin_list = new AdminList();
 $admin_list->setForm($sform->getName());
 $admin_list->load();
@@ -118,7 +118,7 @@ $replace = array(
         "__PAGE_SEP__" => $admin_list->getPageSeparator($sep),
         "__PREVIOUS_PAGE__" => $admin_list->getPreviousPageLink(),
         "__NEXT_PAGE__" => $admin_list->getNextPageLink(),
-        "__PAGE_JS__" => $admin_list->getJavaScript(),   
+        "__PAGE_JS__" => $admin_list->getJavaScript(),
         "__REMOVE_FULLLINK__" => $_SERVER['PHP_SELF']."?m=d&a=",
         "__LINK_ADDADMIN__" => $_SERVER['PHP_SELF']."?m=a",
         "__FORM_BEGIN_ADMINEDIT__" => $aform->open().$aform->hidden('selected', $selected_admin),
@@ -150,6 +150,6 @@ function getAdminName($admin, $form) {
   if ($admin->isNew()) {
     return $form->input('username', 20, $admin->getPref('username'));
   }
-  return $admin->getPref('username'); 
+  return $admin->getPref('username');
 }
 ?>

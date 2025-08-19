@@ -5,21 +5,21 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * requires PEAR's Auth class
  */
 require_once("Auth.php");
 require_once("connector/settings/SQLSettings.php");
- 
+
 /**
  * This is the AdminAuthenticator class
  * This will take care of authenticate administrative users
  * @package SpamTagger Plus
  */
 class AdminAuthenticator extends AuthManager {
-    
-    
+
+
     function create($domain) {
        // go with local default settings
        $settings = new SQLSettings('');
@@ -27,7 +27,7 @@ class AdminAuthenticator extends AuthManager {
        $settings->setSetting('crypt_type', 'crypt');
        $settings->setSetting('port', '3307');
        $dsn = $settings->getDSN();
-       
+
        $funct = array ("LoginDialog", "loginFunction");
        $params = array (
                         "dsn"   => $dsn,

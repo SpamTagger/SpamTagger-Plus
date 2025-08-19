@@ -26,8 +26,8 @@ use utf8;
 require Exporter;
 
 use NetSNMP::agent;
-use NetSNMP::OID (':all'); 
-use NetSNMP::agent (':all'); 
+use NetSNMP::OID (':all');
+use NetSNMP::agent (':all');
 use NetSNMP::ASN (':all');
 use lib qw(/usr/rrdtools/lib/perl/);
 use ReadConfig;
@@ -75,24 +75,24 @@ my %processes_tmpl = (
 
 sub initAgent() {
    doLog('Agent Status initializing', 'status', 'debug');
-   
+
    $conf = ReadConfig::getInstance();
-   
+
    populateProcesses();
-   
+
    return $mib_root_position;
 }
 
 
 sub getMIB() {
-   return \%mib_status;	
+   return \%mib_status;
 }
 
 sub doLog() {
 	my $message = shift;
 	my $cat = shift;
 	my $level = shift;
-	
+
 	SNMPAgent::doLog($message, $cat, $level);
 }
 
@@ -102,7 +102,7 @@ sub getFullVersion {
 	my ($editiontype, $edition) = getEdition();
 	my ($versiontype, $version) = getVersion();
 	my ($patchtype, $patchlevel) = getPatchLevel();
-	
+
 	my $fullstring = 'SpamTagger '.$edition." ".$version." (".$patchlevel.")";
     return (ASN_OCTET_STR, $fullstring);
 }
@@ -110,7 +110,7 @@ sub getEdition {
 	my $edition = 'Unknown';
 	my $file = $conf->getOption('SRCDIR')."/etc/edition.def";
 	my $f;
-	
+
 	if (open($f, $file)) {
 		while (<$f>) {
 			$edition = $_;
@@ -125,7 +125,7 @@ sub getVersion {
 	my $version = 'Unknown';
     my $file = $conf->getOption('SRCDIR')."/etc/spamtagger/version.def";
     my $f;
-    
+
     if (open($f, $file)) {
         while (<$f>) {
             $version = $_;
@@ -137,7 +137,7 @@ sub getVersion {
 }
 
 sub getPatchLevel {
-	
+
 	my $patch = 'Unknown';
 
         my $patchfile = $conf->getOption('SRCDIR').'/etc/spamtagger/patchlevel.def';
@@ -173,7 +173,7 @@ sub getPatchLevel {
 sub getSpool {
 	my $oid = shift;
 	my @oid = $oid->to_array();
-    
+
     my $spool = pop(@oid);
     if ($spool !~ /^[124]$/) {
     	$spool = 1;
@@ -188,18 +188,18 @@ sub getSpool {
 sub populateProcesses {
     foreach my $p (sort { $a <=> $b} keys %processes_tmpl ) {
         SNMPAgent::doLog("Added process: $p: ".$processes_tmpl{$p}->{'name'},'status','debug');
-        
+
         $mib_processes_index{1}{$p} = \&getProcessIndex;
         $mib_processes_index{2}{$p} = \&getProcessName;
         $mib_processes_index{3}{$p} = \&getProcessCount;
         $mib_processes_index{4}{$p} = \&getProcessStatus;
-    }        
+    }
 }
 
 sub getRealProcessCount {
 	my $procIndex = shift;
 	my $count = 0;
-	
+
 	if (!defined($processes_tmpl{$procIndex})) {
 		return $count;
 	}
@@ -208,7 +208,7 @@ sub getRealProcessCount {
 	my $t = new Proc::ProcessTable;
 	foreach my $p ( @{ $t->table } ) {
 		if ($p->cmndline =~ /$str/) {
-            $count++;			
+            $count++;
 		}
 	}
 	return $count;
@@ -217,7 +217,7 @@ sub getRealProcessCount {
 sub getProcessIndex {
 	my $oid = shift;
     my @oid = $oid->to_array();
-    
+
     #my $field = pop(@oid);
     my $proc = pop(@oid);
     return (ASN_INTEGER, int($proc));
@@ -225,7 +225,7 @@ sub getProcessIndex {
 sub getProcessName {
     my $oid = shift;
     my @oid = $oid->to_array();
-    
+
     #my $field = pop(@oid);
     my $proc = pop(@oid);
     return (ASN_OCTET_STR, $processes_tmpl{$proc}->{'name'});
@@ -233,7 +233,7 @@ sub getProcessName {
 sub getProcessCount {
     my $oid = shift;
     my @oid = $oid->to_array();
-    
+
     #my $field = pop(@oid);
     my $proc = pop(@oid);
     my $count = getRealProcessCount($proc);

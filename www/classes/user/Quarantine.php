@@ -5,14 +5,14 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
-  
+
 
 /**
  * This is a quarantine template class
  * Takes car of storing elements, generating filters and pagination
  */
 class Quarantine {
-  
+
   /**
    * filter criteria
    * @var  array
@@ -23,25 +23,25 @@ class Quarantine {
                           'msg_per_page' => 20,
                           'page'         => 1,
                           );
-                  
+
   /**
    * allowed orders with corresponding column names
    * @var array
    */
   protected $ordered_fields_ = array();
-                    
+
  /**
   * the total number of elements found according to filters
   * @var  numeric
-  */                 
+  */
   private $nb_elements_ = 0;
-  
+
   /**
    * the actual list of elements (only those present in the actual displayed page)
    * @var  array
    */
   protected $elements_ = array();
-  
+
 /**
  * set a filter criteria
  * @param  $criteria string  filter criteria name
@@ -54,22 +54,22 @@ public function setFilter($criteria, $value) {
     if (preg_match('/(\S+)_(asc|desc)/', $value, $matches)) {
       if (isset($this->ordered_fields_[$matches[1]])) {
        $this->filters_['order'] = array($matches[1], $matches[2]);
-       return true; 
+       return true;
       }
     }
     return false;
-  }  
+  }
   if ($criteria == 'page' && $value == "") {
     $value = 1;
   }
-  
+
   if (isset($this->filters_[$criteria])) {
     $this->filters_[$criteria] = $value;
     return true;
   }
-  return false;   
+  return false;
 }
- 
+
 /**
  * get a filter criteria
  * @param  $criteria  string  filter criteria name
@@ -87,7 +87,7 @@ public function getFilter($criteria) {
  * @return  string  search address
  */
  public function getSearchAddress() {
-   return $this->getFilter('to_local')."@".$this->getFilter('to_domain');  
+   return $this->getFilter('to_local')."@".$this->getFilter('to_domain');
  }
 /**
  * set the full search address.
@@ -102,7 +102,7 @@ public function getFilter($criteria) {
    }
    return false;
  }
- 
+
 /**
  * set the filter criteria given an array.
  * This is usefull when given a request array for exemple
@@ -182,7 +182,7 @@ public function getNbElements() {
 public function getNBPages() {
     if ( $this->nb_elements_ > 0 && $this->getFilter('msg_per_page') > 0) {
       $nb_pages = ceil($this->nb_elements_/$this->getFilter('msg_per_page'));
-      return $nb_pages; 
+      return $nb_pages;
     }
     return 1;
 }
@@ -195,14 +195,14 @@ public function getNextPageLink() {
   global $lang_;
   $page = $this->getFilter('page');
   if ($page < $this->getNBPages()) {
-     return "<a class=\"pagelink\" href=\"javascript:page(".($page + 1).");\">".$lang_->print_txt('NEXTPAGE')."</a>"; 
+     return "<a class=\"pagelink\" href=\"javascript:page(".($page + 1).");\">".$lang_->print_txt('NEXTPAGE')."</a>";
   }
-  return "";   
+  return "";
 }
 
 public function getPagesLinks($limit) {
   $ret = "";
-  
+
   if ($this->getNBPages() < 2) {
   	return "";
   }
@@ -216,7 +216,7 @@ public function getPagesLinks($limit) {
   } else {
     $start = 1;
     $stop = $nbpages;
-  
+
     $left = round($nbpages / 2);
     $right = round($nbpages / 2);
     $start = $middle - $left;
@@ -229,7 +229,7 @@ public function getPagesLinks($limit) {
       $start = $start - ($stop - $this->getNBPages());
       $stop = $this->getNBPages();
     }
-  
+
     $page = $start;
   }
   for ($i=$start; $i <= $stop; $i++) {
@@ -244,7 +244,7 @@ public function getPagesLinks($limit) {
     }
   }
   $ret = ltrim($ret, $sep);
-  
+
   if ($start > 1) {
   	$ret = "&nbsp;<a class=\"pagelink\" href=\"javascript:page(1);\">1</a>&nbsp;...".$ret;
   }
@@ -277,7 +277,7 @@ public function getPagesSeparator($sep) {
   if ($page > 1 && $page<$this->getNBPages()) {
     return $sep;
   }
-  return "";   
+  return "";
 }
 
 /**
@@ -293,12 +293,12 @@ public function getOrderLink($field) {
     } else {
       $o = 'asc';
     }
-    if ( $field == $order[0]) { 
+    if ( $field == $order[0]) {
       $o = 'desc';
       if ($order[1] == 'desc') {
         $o = 'asc';
       }
-    } 
+    }
     return "javascript:order('$field"."_".$o."');";
    }
    return "";
@@ -312,7 +312,7 @@ public function getOrderLink($field) {
  * @return           string  correct image link
  */
 public function getOrderImage($asc_img, $desc_img, $field) {
-  if (isset($this->ordered_fields_[$field])) { 
+  if (isset($this->ordered_fields_[$field])) {
     $order = $this->getFilter('order');
     if ($order[0] == $field) {
       if ($order[1] == 'asc') {
@@ -321,7 +321,7 @@ public function getOrderImage($asc_img, $desc_img, $field) {
       return $desc_img;
     }
   }
-  return "";    
+  return "";
 }
 
 protected function getQuarantineOrderTag($tags) {

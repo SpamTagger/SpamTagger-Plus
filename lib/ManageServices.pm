@@ -32,7 +32,7 @@ our %defaultActions = (
 	#TODO
 	'start'		=> {
 		'desc'		=> 'start service or report if already running',
-		'cmd'		=> sub { 
+		'cmd'		=> sub {
 			my $self = shift;
 			return $self->start();
 		},
@@ -54,7 +54,7 @@ our %defaultActions = (
 	},
 	'status'	=> {
 		'desc'		=> 'get current status',
-		'cmd'		=> sub { 
+		'cmd'		=> sub {
 			my $self = shift;
 			return $self->status(0);
 		},
@@ -100,7 +100,7 @@ our %defaultActions = (
 	}
 );
 
-sub new 
+sub new
 {
 	my $self = shift;
 	my %params = @_;
@@ -108,7 +108,7 @@ sub new
 	my $conf = ReadConfig::getInstance();
 
 	require Proc::ProcessTable;
-	$self = { 
+	$self = {
 		'initDir' 	=> $params{'initDir'} || $initDir,
 		'restartDir' 	=> $params{'restartDir'} || $restartDir,
 		'processTable' 	=> Proc::ProcessTable->new(),
@@ -301,7 +301,7 @@ sub loadModule
 			);
 		}
 	}
-	
+
 	if ( defined($self->{'module'}->{'syslog_facility'}) &&
 		$self->{'module'}->{'syslog_facility'} ne '' )
 	{
@@ -313,14 +313,14 @@ sub loadModule
 	unless (defined($self->{'module'}->{'state'})) {
 		$self->{'module'}->{'state'} = 0;
 	}
-	
+
 	return $self;
 }
-	
+
 sub getConfig
 {
 	my $self = shift;
-	
+
 	unless (defined $self->{'module'}) {
 		die "must first loadModule('service')";
 	}
@@ -359,7 +359,7 @@ sub getConfig
 			$self->{'module'}->{$key} = 1;
 		}
 	}
-			
+
 	return 1;
 }
 
@@ -437,7 +437,7 @@ sub pids
 
 	return @pids;
 }
-	
+
 sub createModule
 {
 	my $self = shift;
@@ -471,7 +471,7 @@ sub createModule
 	}
 	return $module;
 }
-	
+
 sub status
 {
 	my $self = shift;
@@ -489,7 +489,7 @@ sub status
   	if (defined($self->{'services'}->{$self->{'service'}})) {
 		if ( -e $self->{'restartDir'}.'/'.$self->{'service'}.".disabled" ) {
 			if ($running) {
-				$running = $self->stop(); 
+				$running = $self->stop();
 				if ( $running =~ /[02]/ ) {
 					return $self->clearFlags(7);
 				} else {
@@ -510,7 +510,7 @@ sub status
 				} elsif ( $i > 3 &&
 					( stat($self->{'restartDir'} .
 					'/' . $self->{'service'} . "." .
-					$self->{'codes'}->{$i}->{'suffix'}))[9] 
+					$self->{'codes'}->{$i}->{'suffix'}))[9]
 					< (time() - 60) )
 				{
 					if ($autoStart) {
@@ -549,7 +549,7 @@ sub start
 	}
 
 	$self->doLog( 'starting ' . $self->{'service'} . '...', 'daemon' );
-	
+
 	if ($self->{'module'}->{'state'} =~ m/^[0235]$/) {
 		$self->clearFlags(5);
 	} else {
@@ -560,7 +560,7 @@ sub start
 		$self->doLog( $self->{'service'} . ' already running.', 'daemon' );
 		$self->clearFlags(1);
 		return 1;
-	} 
+	}
 
 	$self->setup();
 
@@ -578,8 +578,8 @@ sub start
 			my @remaining = ();
 			foreach my $testing ( @pids ) {
 				foreach ( @{ $self->{'processTable'}->table } ) {
-					if ($_->{'pid'} == $testing && 
-						$_->{'cmndline'} =~ m#$self->{'module'}->{'cmndline'}#i ) 
+					if ($_->{'pid'} == $testing &&
+						$_->{'cmndline'} =~ m#$self->{'module'}->{'cmndline'}#i )
 					{
 						if ($_->{'pid'} == $pid) {
 							$self->doLog( 'Started successfully',
@@ -606,23 +606,23 @@ sub start
 			return $self->{'module'}->{'state'};
 		} else {
 			if ( $self->{'module'}->{'gid'} ) {
-				$) = $self->{'module'}->{'gid'} || 
+				$) = $self->{'module'}->{'gid'} ||
 					die "failed to set gid\n";
 				unless ( grep( $), split( ' ', $self->{'module'}->{'gid'} ) ) ) {
-					print STDERR "Can't set GID " . 
-						$self->{'module'}->{'gid'} . 
+					print STDERR "Can't set GID " .
+						$self->{'module'}->{'gid'} .
 						" (" . $( . " " . $) . ")\n";
 					return 0;
 				}
 			}
-			$self->doLog('Set GID to ' . $self->{'module'}->{'group'} . 
+			$self->doLog('Set GID to ' . $self->{'module'}->{'group'} .
 				" (" . $( . ")", 'daemon');
 
 			if ( $self->{'module'}->{'uid'} ) {
 				$> = $self->{'module'}->{'uid'};
 				unless ($> == $self->{'module'}->{'uid'}) {
 					print STDERR "Can't set UID " .
-						$self->{'module'}->{'uid'} . 
+						$self->{'module'}->{'uid'} .
 						" (" . $< . " " . $> . ")\n";
 					return 0;
 				}
@@ -639,10 +639,10 @@ sub start
 	} else {
 		$self->writePidFile( ($$) );
 	}
-	
+
 	$self->preFork();
 	if (defined($self->{'module'}->{'forks'}) && $self->{'module'}->{'forks'} > 0) {
-		$self->forkChildren();	
+		$self->forkChildren();
 	} else {
 		my $ret = $self->mainLoop();
 		$self->clearFlags($ret);
@@ -676,7 +676,7 @@ sub stop
 		$self->doLog( $self->{'service'} . ' is disabled. Looking for remaining processes.', 'daemon' );
 		$disabled = 1;
 	}
-	
+
 	my @pids = $self->pids();
 	my $pidstillhere = 1;
 	my $start_ps = [gettimeofday];
@@ -704,7 +704,7 @@ sub stop
 			@pids = $self->pids();
 		}
 	}
-	
+
 	if ($self->findProcess()) {
 		return $self->clearFlags(1);
 	} else {
@@ -734,8 +734,8 @@ sub restart
 			$self->{'codes'}->{$self->{'module'}->{'state'}}->{'suffix'} )
 		{
 			if ( (stat($self->{'restartDir'} . '/' . $self->{'service'} . "." .
-				$self->{'codes'}->{$self->{'module'}->{'state'}}->{'suffix'} 
-				))[9] < (time() - 60) ) 
+				$self->{'codes'}->{$self->{'module'}->{'state'}}->{'suffix'}
+				))[9] < (time() - 60) )
 			{
 				$self->clearFlags(3);
 			} else {
@@ -757,7 +757,7 @@ sub restart
 	}
 	return $self->start();
 }
-	
+
 sub enable
 {
 	my $self = shift;
@@ -802,33 +802,33 @@ sub checkAll
 sub setup
 {
 	my $self = shift;
-	
+
 	$self->doLog( 'Setting up ' . $self->{'service'} . '...', 'daemon' );
 	if ($self->{'module'}->setup($self)) {
 		$self->doLog( 'Setup complete', 'daemon' );
 	} else {
 		$self->doLog( 'No Setup defined for ' . $self->{'service'} . '...', 'daemon' );
 	}
-		
+
 }
 
 sub preFork
 {
 	my $self = shift;
-	
+
 	$self->doLog( 'Running PreFork for ' . $self->{'service'} . '...', 'daemon' );
 	if ($self->{'module'}->preFork($self)) {
 		$self->doLog( 'PreFork complete', 'daemon' );
 	} else {
 		$self->doLog( 'No PreFork defined for ' . $self->{'service'} . '...', 'daemon' );
 	}
-		
+
 }
 
 sub mainLoop
 {
 	my $self = shift;
-	
+
 	$self->doLog( 'Running MainLoop for ' . $self->{'service'} . '...', 'daemon' );
 	if ($self->{'module'}->mainLoop($self)) {
 		$self->doLog( 'MainLoop complete', 'daemon' );
@@ -887,7 +887,7 @@ sub forkChildren
 		$self->doLog( "Threads all stopped, cleaning...", 'daemon' );
 		exit();
 	};
-	
+
 	my $leaving = 0;
 	while (!$leaving) {
 		my $thread_count = threads->list(threads::running);
@@ -964,7 +964,7 @@ sub clearFlags
 {
 	my $self = shift;
 	my $status = shift;
-	
+
 	if ($status == 0 && !$self->{'services'}->{$self->{'service'}}->{'critical'}) {
 		$status = 2;
 	}
@@ -990,23 +990,23 @@ sub clearFlags
 	}
 
 	if ( defined($self->{'codes'}->{$status}->{'suffix'}) ) {
-		if ( $status < 3 || 
+		if ( $status < 3 ||
 			$status > 6 ||
 			( !-e $self->{'restartDir'} . '/' .
 			$self->{'service'} . '.' .
 			$self->{'codes'}->{$status}->{'suffix'} ) )
  		{
-			open(my $fh, '>', 
-				$self->{'restartDir'} . '/' . 
+			open(my $fh, '>',
+				$self->{'restartDir'} . '/' .
 				$self->{'service'} . '.' .
 				$self->{'codes'}->{$status}->{'suffix'}
 			);
 			close($fh);
 		}
-	} 
+	}
 	return $status;
 }
-	
+
 sub usage
 {
 	my $self = shift;
@@ -1017,7 +1017,7 @@ sub usage
 		foreach my $action (keys %{$self->{'module'}->{'actions'}}) {
 			if (defined($self->{'module'}->{'actions'}->{$action}->{'cmd'})) {
 				unless (defined($self->{'module'}->{'actions'}->{$action}->{'desc'})) {
-					$self->{'module'}->{'actions'}->{$action}->{'desc'} = 
+					$self->{'module'}->{'actions'}->{$action}->{'desc'} =
 						'No description';
 				}
 				push(@actions,$action);
@@ -1118,7 +1118,7 @@ sub writeLog
 sub getThreadID
 {
 	my $self = shift;
-	
+
 	my $thread = threads->self;
 	return $thread->tid();
 }
@@ -1192,7 +1192,7 @@ universal ones, will be loaded into the 'module' member as an 'actions' has
 
 	foreach my $action (keys(%{$manager->{'module'}->{'actions'}) {
 		print "Action: " . $action . "\n";
-		print "Description: " . 
+		print "Description: " .
 			$manager->{'module'}->{'actions'}->{$action}->{'desc'} . "\n";
 	}
 

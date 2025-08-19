@@ -6,14 +6,14 @@
  * @copyright 2025, SpamTagger
  */
 
-class STSoap_Status 
+class STSoap_Status
 {
-	
+
   static private function getMcStatusElement($element) {
   	$ret = '';
-  	
+
   	require_once('SpamTagger/Config.php');
-  	
+
     $config = new SpamTagger_Config();
     $statusfile = $config->getOption('VARDIR').'/run/spamtagger.status';
 
@@ -28,7 +28,7 @@ class STSoap_Status
 		    return $val[1];
 		}
 	}
-	
+
 	if ( preg_match('/^loadavg(05|10|15)/', $element, $matches)) {
 		$cmdres = `/bin/cat /proc/loadavg`;
 		if (preg_match('/^([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)/', $cmdres, $cmdmatches)) {
@@ -43,13 +43,13 @@ class STSoap_Status
             }
 		}
 	}
-	
+
 	if ($element == 'disksusage') {
 		$data = array();
 		$cmdres = `/bin/df -lP`;
 		foreach (preg_split("/\n/", $cmdres) as $line ) {
 			if (preg_match('/^(\/\S+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)%\s+(\S+)/', $line, $matches)) {
-				$data[] = array( 'dev' => $matches[1], 
+				$data[] = array( 'dev' => $matches[1],
 				                 'size' => $matches[2],
 				                 'used' => $matches[3],
 				                 'free' => $matches[4],
@@ -59,7 +59,7 @@ class STSoap_Status
 		}
 		return $data;
 	}
-	
+
 	if ($element == 'memoryusage') {
 		$data = array();
 		$cmdres = `/usr/bin/free -o`;
@@ -80,7 +80,7 @@ class STSoap_Status
 		}
 		return $data;
 	}
-	
+
 	if ($element == 'spools') {
 		$data = array();
 		$cmd = $config->getOption('SRCDIR')."/bin/check_spools.sh";
@@ -92,17 +92,17 @@ class STSoap_Status
 		}
 		return $data;
 	}
-	
+
 	if ($element == 'processes') {
 		$data = array();
 		$cmd = $config->getOption('SRCDIR')."/bin/get_status.pl -s";
-		$order = array('exim_stage1', 'exim_stage2', 'exim_stage4', 'apache', 'mailscanner', 'mysql_master', 'mysql_slave', 'snmpd', 
+		$order = array('exim_stage1', 'exim_stage2', 'exim_stage4', 'apache', 'mailscanner', 'mysql_master', 'mysql_slave', 'snmpd',
 		               'greylistd', 'cron', 'preftdaemon', 'spamd', 'clamd', 'clamspamd', 'spamhandler', 'newsld', 'firewall');
 		$reg = str_repeat('\|([0-9])', count($order));
 		$cmdres = `$cmd`;
 		$data['cmd'] = $cmdres;
 		$data['reg'] = $reg;
-                
+
 		if (preg_match('/'.$reg.'/', $cmdres, $matches)) {
 			$i = 1;
 			foreach ($order as $key) {
@@ -112,18 +112,18 @@ class STSoap_Status
 		return $data;
 	}
 	return $ret;
-  
+
   }
-  
+
   /**
    * This function will gather status
-   * 
+   *
    * @param  array
    * @return array
    */
    static public function Status_getStatusValues($params) {
    	  $res = array('data' => array());
-   	  
+
    	  $data = array();
    	  foreach ($params as $param) {
    	  	$data[$param] = STSoap_Status::getMcStatusElement($param);
@@ -131,7 +131,7 @@ class STSoap_Status
    	  $res['data'] = $data;
    	  return $res;
    }
-    
+
   /**
    * This function simply answer with the question
    *
@@ -140,19 +140,19 @@ class STSoap_Status
 	static public function Status_getProcessesStatus() {
 		return STSoap_Status::getMcStatusElement('processes');
 	}
-	
+
    /**
     * This function return the current load of the system (*100)
-    * 
+    *
     * @return float
     */
 	static public function Status_getSystemLoad() {
 		return STSoap_Status::getMcStatusElement('load');
 	}
-	
+
    /**
     * This function return the current hardware status
-    * 
+    *
     * @return array
     */
 	static public function Status_getHardwareHealth() {
@@ -160,21 +160,21 @@ class STSoap_Status
 		$swap =  STSoap_Status::getMcStatusElement('swap');
 		return array();
 	}
-	
+
 	/**
 	 * This function will fetch today's stats
-	 * 
+	 *
 	 * @return array
 	 */
 	static public function Status_getTodayStats($params) {
 		$res = array('data' => array());
-		
-		$data = array( 'bytes' => 0, 'msgs' => 0, 'spams' => 0, 'pspam' => 0, 'viruses' => 0, 'pvirus' => 0, 
+
+		$data = array( 'bytes' => 0, 'msgs' => 0, 'spams' => 0, 'pspam' => 0, 'viruses' => 0, 'pvirus' => 0,
 		              'contents' => 0, 'pcontent' => 0, 'cleans' => 0, 'pclean' => 0);
 		$order = array('bytes', 'msgs', 'spams', 'pspam', 'viruses', 'pvirus', 'contents', 'pcontent', 'users', 'cleans', 'pclean');
-		
+
 		require_once('SpamTagger/Config.php');
-    
+
         $config = new SpamTagger_Config();
         $cmd = $config->getOption('SRCDIR')."/bin/get_today_stats.pl -A";
         $cmdres = `$cmd`;
@@ -188,7 +188,7 @@ class STSoap_Status
         }
         return $res;
 	}
-	
+
 	/**
      * This function will fetch messages in spool
      *
@@ -197,10 +197,10 @@ class STSoap_Status
      */
     static public function Status_getSpool($params) {
        $ret = array('message' => 'OK','msgs' => array(), 'nbmsgs' => 0);
-       
+
        require_once('SpamTagger/Config.php');
        $config = new SpamTagger_Config();
-       
+
        $available_spools = array(1, 2, 4);
        $spool = 1;
        if (isset($params['spool']) && in_array($params['spool'], $available_spools)) {
@@ -208,7 +208,7 @@ class STSoap_Status
        }
        $cmd = "/opt/exim4/bin/exipick --spool ".$config->getOption('VARDIR')."/spool/exim_stage".$spool." -flatq --show-vars deliver_freeze,dont_deliver,first_delivery,warning_count,shown_message_size,message_age";
        $cmd_res = `$cmd`;
-       
+
        $limit = 200;
        if (isset($params['limit']) && is_numeric($params['limit'])) {
        	 $limit = $params['limit'];
@@ -217,15 +217,15 @@ class STSoap_Status
        if (isset($params['offset']) && is_numeric($params['offset'])) {
          $offset = $params['offset'];
        }
-            
+
        $totallines = preg_split('/[\n\r]+/', $cmd_res, -1, PREG_SPLIT_NO_EMPTY);
        $ret['nbmsgs'] = count($totallines);
        $ret['page'] = floor($offset / $limit) + 1;
        $ret['pages'] = ceil($ret['nbmsgs'] / $limit);
-       
+
        $lines = array_splice($totallines, $offset, $limit);
        unset($totallines);
-       
+
        foreach ($lines as $line) {
        	 if (preg_match('/\s*(\d+[mhdy])\s+(\S+)\s+(\S+)\s+(<[^>]*>)\s+(.*)/', $line, $m)) {
        	 	$message = array(
@@ -242,7 +242,7 @@ class STSoap_Status
        	 	      'sending' => 0,
        	 	      'first_delivery' => 0
        	 	);
-       	 	
+
        	 	if (preg_match('/deliver_freeze=\'1\'/', $message['flags'])) {
        	 		$message['frozen'] = 1;
        	 	}
@@ -263,14 +263,14 @@ class STSoap_Status
             foreach ($tos_lines as $line) {
               array_push($message['to'], utf8_encode($line));
             }
-       	    
+
        	    ## check if message is being forced
        	    $pscmd = "/bin/ps aux | grep ".$message['id']." | grep -v grep";
        	    $psres = `$pscmd`;
        	    if ($psres != '') {
        	    	$message['sending'] = 1;
        	    }
-       	    
+
        	    ## got msglogs
        	    $msglogpath = $config->getOption('VARDIR')."/spool/exim_stage".$spool."/msglog";
        	    $msglogfile = '';
@@ -284,7 +284,7 @@ class STSoap_Status
        	    if ($msglogfile != '') {
        	    	$logcmd = "/usr/bin/tail -n2 $msglogfile";
        	    	$log = `$logcmd`;
-       	    	
+
        	    	if ($log != '') {
        	    		$msglog = preg_split('/[\n\r]+/', $log, -1, PREG_SPLIT_NO_EMPTY);
        	    	}
@@ -300,14 +300,14 @@ class STSoap_Status
                 $message[$key] = utf8_encode($value);
               }
             }
-       	 	
+
        	    array_push($ret['msgs'], $message);
        	 }
        }
        return $ret;
     }
-    
-    
+
+
     /**
      * This function will delete messages in spool
      *
@@ -315,22 +315,22 @@ class STSoap_Status
      * @return array
      */
     static public function Status_spoolDelete($params) {
-    	
+
     	$ret = array('message' => 'OK','msgsdeleted' => array(), 'errors' => array());
-    	
+
     	$msgs = array();
     	if (is_array($params['msg'])) {
     		$msgs = $params['msg'];
     	} else {
     		$msgs = array($params['msg']);
     	}
-    	
+
         $available_spools = array(1, 2, 4);
         $spool = 1;
         if (isset($params['spool']) && in_array($params['spool'], $available_spools)) {
           $spool = $params['spool'];
         }
-        
+
         require_once('SpamTagger/Config.php');
         $config = new SpamTagger_Config();
         require_once('Zend/Validate/Abstract.php');
@@ -346,7 +346,7 @@ class STSoap_Status
         }
         return $ret;
     }
-    
+
     /**
      * This function will try to send messages in spool
      *
@@ -354,9 +354,9 @@ class STSoap_Status
      * @return array
      */
     static public function Status_spoolTry($params) {
-    	
+
     	$ret = array('message' => 'OK','msgstried' => array(), 'errors' => array());
-    	
+
     	$msgs = array();
         if (is_array($params['msg'])) {
             $msgs = $params['msg'];
@@ -369,7 +369,7 @@ class STSoap_Status
         if (isset($params['spool']) && in_array($params['spool'], $available_spools)) {
           $spool = $params['spool'];
         }
-        
+
         require_once('SpamTagger/Config.php');
         $config = new SpamTagger_Config();
         require_once('Zend/Validate/Abstract.php');
@@ -385,7 +385,7 @@ class STSoap_Status
         }
         return $ret;
     }
-    
+
     /**
      * This function will return all informational messages of the host
      *
@@ -394,13 +394,13 @@ class STSoap_Status
      */
     static public function Status_getInformationalMessages($params) {
     	require_once('InformationalMessage.php');
-    	
+
     	$messages = array();
-    	
+
     	## we need to check here:
     	# - registration
     	# - services restart
-    
+
     	require_once('InformationalMessage/Registration.php');
     	$reg = new Default_Model_InformationalMessage_Registration();
     	$reg->check();

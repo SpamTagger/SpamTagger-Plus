@@ -9,7 +9,7 @@
  */
 class STSoap_Config
 {
-	
+
   /**
    * This function simply copy temporary interfaces file to system one
    *
@@ -17,7 +17,7 @@ class STSoap_Config
    */
 	static public function Config_saveInterfaceConfig() {
 		$tmpfile = "/tmp/st_initerfaces.tmp";
-		
+
 		if (!file_exists($tmpfile)) {
 			return 'NOK notempfile';
 		}
@@ -29,7 +29,7 @@ class STSoap_Config
 			return 'NOK '.$res;
 		}
    }
-   
+
    /**
    * This function restart networking services
    *
@@ -45,7 +45,7 @@ class STSoap_Config
           if (!is_dir ($rundir) ) {
               mkdir($rundir);
           }
-          
+
       ## shut down all existing interfaces
       $ifconfig = `/sbin/ifconfig`;
       foreach (preg_split("/\n/", $ifconfig) as $line) {
@@ -61,17 +61,17 @@ class STSoap_Config
              echo $downcmd."<br />";
           }
       }
-          	  
+
 #      $cmd = 'invoke-rc.d networking stop 2> /dev/null; sleep 2; invoke-rc.d networking start 2> /dev/null && /etc/init.d/ssh restart 2> /dev/null && echo done.';
       $cmd = '/etc/init.d/networking restart 2>/dev/null && /etc/init.d/ssh restart 2> /dev/null && echo done.';
       $res = `$cmd`;
       $status = 'OK networkingrestarted';
-   	  
+
       $res = preg_replace('/\n/', '', $res);
    	  if (! preg_match('/done\./', $res)) {
    	  	return "NOK $res";
    	  }
-   	  
+
    	  require_once('NetworkInterface.php');
    	  require_once('NetworkInterfaceMapper.php');
    	  $ifs = new Default_Model_NetworkInterface();
@@ -88,8 +88,8 @@ class STSoap_Config
           `$cmd >/dev/null 2>&1`;
    	  return $status;
    }
-   
-   
+
+
   /**
    * This function simply copy temporary resolv.conf file to system one
    *
@@ -98,7 +98,7 @@ class STSoap_Config
 	static public function Config_saveDnsConfig() {
 		$tmpfile = "/tmp/st_resolv.tmp";
 		$status = 'OK';
-		
+
 		if (!file_exists($tmpfile)) {
 			return 'NOK notempfile';
 		}
@@ -109,7 +109,7 @@ class STSoap_Config
 		} else {
 			$status = 'NOK '.$res;
 		}
-		
+
 		if (file_exists('/etc/init.d/nscd')) {
 			$cmd = '/etc/init.d/nscd restart';
 			$res = `$cmd`;
@@ -120,10 +120,10 @@ class STSoap_Config
 		        $status = 'OK settingapplied';
    	        }
 		}
-		
+
 		return $status;
    }
-   
+
    /**
    * This function set up the time zone
    *
@@ -133,7 +133,7 @@ class STSoap_Config
 	    $timezonefile = '/etc/timezone';
 	    $zoneinfodir = '/usr/share/zoneinfo';
 	    $localtimefile = '/etc/localtime';
-	
+
 	    $data = preg_split('/\//', $zone);
 	    if (!isset($data[0]) || !isset($data[1])) {
 	    	return 'NOK bad locale format';
@@ -143,7 +143,7 @@ class STSoap_Config
         if (! file_exists($fullfile)) {
         	return 'NOK unknown locale ';
         }
-	    
+
 	    $written = file_put_contents($timezonefile, $zone);
 	    if (!$written) {
 	    	return 'NOK could not same timezone';
@@ -155,7 +155,7 @@ class STSoap_Config
            # `/usr/spamtagger/etc/init.d/apache restart`;
              return 'OK saved';
 	}
-	
+
 
   /**
    * This function apply the ntp config
@@ -183,8 +183,8 @@ class STSoap_Config
 		} else {
 		    $status = 'NOK '.$res;
 		}
-		
-	
+
+
 		if (file_exists($starter)) {
 		    $cmd = "$starter stop";
 		    $res = `$cmd`;
@@ -194,7 +194,7 @@ class STSoap_Config
 		    if (!preg_match('/ntp/', $res)) {
 		    	return 'NOK cannotstopntp ';
 		    }
-		
+
 		    if ($sync) {
 		    	# fetch server to sync
 		    	$content = file($configfile);
@@ -207,7 +207,7 @@ class STSoap_Config
 		    	if (count($servers) < 1) {
 		    		return 'NOK not server to sync with';
 		    	}
-		    	
+
 			    $cmd = '/usr/sbin/ntpdate '.$servers[0]." 2>&1";
 			    $res = `$cmd`;
 		        $full .= preg_replace('/\n/', '', $res)."<br />";
@@ -216,7 +216,7 @@ class STSoap_Config
 			    	$res = preg_replace('/\n/', '', $res);
 			    	return "NOK could not sync <br />($res)";
 			    }
-			    
+
 		        $cmd = "$starter start";
 		        $res = `$cmd`;
 		        $full .= preg_replace('/\n/', '', $res)."<br />";
@@ -233,8 +233,8 @@ class STSoap_Config
 		}
 		return 'OK saved';
 	}
-	
-	
+
+
   /**
    * This function apply the provided time and date
    *
@@ -247,7 +247,7 @@ class STSoap_Config
 		$res = preg_replace('/\n/', '', $res);
 		return 'OK saved';
 	}
-	
+
   /**
    * This function will save some SpamTagger config option
    *
@@ -256,7 +256,7 @@ class STSoap_Config
    */
 	static public function Config_saveSTConfigOption($options) {
 		$configfile = '/etc/spamtagger.conf';
-		
+
 		$txt = '';
 		$found = array();
 		if (file_exists($configfile)) {
@@ -276,7 +276,7 @@ class STSoap_Config
 				$txt .= $okey." = ".$oval."\n";
 			}
 		}
-	
+
 	    $written = file_put_contents($configfile, $txt);
 	    if (!$written) {
 	    	return 'NOK could not same config file';

@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * User mapper
  */
 
@@ -37,20 +37,20 @@ class Default_Model_UserMapper
     public function findById($id, Default_Model_User $user) {
       if (!$id) {
       	return;
-      }	
+      }
       $result = $this->getDbTable()->find($id);
       if (0 == count($result)) {
           return;
       }
       $row = $result->current();
-        
+
       $user->setId($id);
       foreach ($user->getAvailableParams() as $key) {
       	$user->setParam($key, $row->$key);
       }
     }
-    
-    
+
+
     public function find($username, $domain, Default_Model_User $user)
     {
         if ($username == '' || $domain == '') {
@@ -125,8 +125,8 @@ class Default_Model_UserMapper
         }
         return $entries;
     }
-     
-     
+
+
     public function save(Default_Model_User $user) {
         $data = $user->getParamArray();
         $res = '';

@@ -1,10 +1,10 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * MessageSniffer form
  */
 
@@ -12,18 +12,18 @@ class Default_Form_AntiSpam_MessageSniffer extends Default_Form_AntiSpam_Default
 {
 	protected $_viewscript = 'forms/antispam/MessageSnifferForm.phtml';
 	public $_rbl_checks = array();
-	
+
 	public function getViewScriptFile() {
 		return $this->_viewscript;
 	}
-	
+
 	public function __construct($module) {
 		parent::__construct($module);
 	}
-	
+
 	public function init() {
 		parent::init();
-		
+
 		$as = new Default_Model_Antispam_MessageSniffer();
 		$as->find(1);
 
@@ -35,7 +35,7 @@ class Default_Form_AntiSpam_MessageSniffer extends Default_Form_AntiSpam_Default
                             'size' => 10,
                             'filters'    => array('StringTrim')));
                 $licenseid->setValue($as->getParam('licenseid'));
-                $this->addElement($licenseid);     
+                $this->addElement($licenseid);
 
                 $authentication = new  Zend_Form_Element_Text('authentication', array(
                             'label'   => $t->_('Authentication')." :",
@@ -44,23 +44,23 @@ class Default_Form_AntiSpam_MessageSniffer extends Default_Form_AntiSpam_Default
                             'filters'    => array('StringTrim')));
                 $authentication->setValue($as->getParam('authentication'));
                 $this->addElement($authentication);
-		
+
 		$t = Zend_Registry::get('translate');
 		$layout = Zend_Layout::getMvcInstance();
     	        $view=$layout->getView();
-		
+
 	}
-	
+
 	public function setParams($request, $module) {
 		parent::setParams($request, $module);
-		
+
 		$as = new Default_Model_Antispam_MessageSniffer();
 		$as->find(1);
 
                 $as->setparam('licenseid', $request->getParam('licenseid'));
                 $as->setparam('authentication', $request->getParam('authentication'));
-		
+
 		$as->save();
 	}
-	
+
 }

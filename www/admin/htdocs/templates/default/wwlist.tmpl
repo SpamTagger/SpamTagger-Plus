@@ -18,9 +18,9 @@
     function rowOutEffect(object) {
       if (object.className == 'dataTableRowSelected') object.className = type;
     }
-    
+
     function confirm_delete(id, name) {
-       if (confirm("__LANG_WWENTRY__: "+ name + 
+       if (confirm("__LANG_WWENTRY__: "+ name +
                "\n__LANG_CONFIRMWWENTRYDELETE__ ")) {
          str = "__REMOVE_FULLLINK__"+id;
          window.location.replace(str);
@@ -70,7 +70,7 @@ __FORM_BEGIN_WWENTRYADD__
  <td class="dataTableContent" width="100px"><nobr>__FORM_INPUTSTATUS__</nobr></td>
  <td class="dataTableContent"><nobr>__FORM_INPUTCOMMENT__</nobr></td>
  <td class="dataTableContent" align="right" width="100px"><img onClick="__FORM_INPUTSUBMIT__" src="templates/default/images/dosearch.gif" border="0"></td>
-</tr> 
+</tr>
 __FORM_CLOSE_WWENTRYADD__
 
 __DEFAULT__ sep = |

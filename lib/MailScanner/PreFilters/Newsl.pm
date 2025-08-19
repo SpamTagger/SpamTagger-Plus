@@ -83,7 +83,7 @@ sub initialise {
   }
 }
 
-  
+
 
 sub Checks {
   my $this = shift;
@@ -99,8 +99,8 @@ sub Checks {
        $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
        MailScanner::Log::InfoLog("$MODULE module checking 3.....");
      return 0;
-  } 
-  
+  }
+
   my @WholeMessage;
   push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   if ($message->{infected}) {
@@ -122,7 +122,7 @@ sub Checks {
   my $res = "";
   my @lines;
 
-  $t->run(sub {  
+  $t->run(sub {
      use IPC::Run3;
      my $out;
      my $err;
@@ -143,8 +143,8 @@ sub Checks {
   my $rulesum = "NONE";
 
 ## analyze result
- 
-  @lines = split '\n', $res; 
+
+  @lines = split '\n', $res;
   foreach my $line (@lines) {
     if ($line =~ m/^(.*)\/(.*)$/ ) {
       $score = $1;

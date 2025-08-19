@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -11,38 +11,38 @@
  <fieldset id="defaultssettings">
        <table class="ftable">
           <?php echo $this->InputRow($this->form->getElement('max_attachments_per_message'));?>
-          
+
           <?php echo $this->InputRow($this->form->getElement('max_attach_size'),array(
-               'post_field_text'=>  $this->t->_('bytes') . 
+               'post_field_text'=>  $this->t->_('bytes') .
                            $this->InputRow($this->form->getElement('max_attach_size_enable'), array('field_only'=>true,'nobox'=>true)) .
                            $this->InputRow($this->form->getElement('max_attach_size_enable'), array('label_only'=>true,'nobox'=>true))
-          
+
           ));?>
           <?php echo $this->InputRow($this->form->getElement('max_archive_depth'),array(
-               'post_field_text'=>  
+               'post_field_text'=>
                            $this->InputRow($this->form->getElement('max_archive_depth_disable'), array('field_only'=>true,'nobox'=>true)) .
                            $this->InputRow($this->form->getElement('max_archive_depth_disable'), array('label_only'=>true,'nobox'=>true))
-          
+
           ));?>
-                    
+
           <tr>
             <td colspan="2"><hr /></td>
           </tr>
-          
+
           <?php foreach (array('expand_tnef', 'deliver_bad_tnef', 'usetnefcontent') as $f) {?>
             <?php echo $this->InputRow($this->form->getElement($f));?>
           <?php }?>
-          
+
           <tr>
             <td colspan="2"><hr /></td>
           </tr>
-          
+
           <?php foreach (array('send_notices', 'notices_to') as $f) {?>
             <?php echo $this->InputRow($this->form->getElement($f));?>
           <?php }?>
-          
+
           <?php echo $this->SubmitRow($this->form->getElement('submit'));?>
-          
+
        </table>
      </fieldset>
  </form>

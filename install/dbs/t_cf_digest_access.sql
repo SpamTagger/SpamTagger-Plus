@@ -9,4 +9,4 @@ CREATE TABLE digest_access (
   date_expire date NOT NULL,
   address char(250) NOT NULL,
   PRIMARY KEY  (id)
-); 
+);

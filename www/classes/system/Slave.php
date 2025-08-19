@@ -5,7 +5,7 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
+
 /**
  * this contains preferences
  */
@@ -33,21 +33,21 @@ class Slave extends PrefHandler
 		              'password' => '',
 		              'ssh_pub_key' => ''
 	               );
-                   
+
      /**
       * soap connector to the slave
       * @var Soaper
       */
      private $soaper_;
-     
+
     /**
      * last soap error
      * @var strong
      */
      private $soap_error_;
-     
+
      private $soap_timeout_ = 20;
-                   
+
 /**
  * constructor
  */
@@ -93,24 +93,24 @@ private function connect() {
   if ($this->soaper_ instanceof Soaper) {
     return true;
   }
-  
+
   #if (!isset($admin_) || (! $admin_ instanceof Administrator)) {
   #  $this->soap_error_ = 'NOADMINAVAILABLE';
   #  return false;
   #}
-  
+
   $this->soaper_ = new Soaper();
   if (! $this->soaper_ instanceof Soaper) {
     $this->soap_error_ = 'CANNOTINSTANCIATESOAPER';
     return false;
   }
-  
+
   $ret = $this->soaper_->load($this->getPref('hostname'), $this->soap_timeout_);
   if ($ret != 'OK') {
     $this->soap_error_ = $ret;
     return false;
   }
-  
+
   return true;
 }
 
@@ -130,7 +130,7 @@ public function isAvailable() {
    if (!$this->connect()) {
      return $this->getLastSoapError();
    }
-   return 'OK'; 
+   return 'OK';
 }
 
 /**
@@ -187,7 +187,7 @@ public function setProcessToBeRestarted($process) {
   if (!$this->connect()) {
     return false;
   }
-  
+
   $value = $this->soaper_->queryParam('setRestartStatus', array($process, 1));
   $status = $value;
   if (isset($value->enc_value)) {
@@ -210,7 +210,7 @@ public function setProcessToBeRestarted($process) {
  */
 public function showProcesses($t, $colors, $nr, $rh, $rw) {
   global $lang_;
-    
+
   $status = $this->getProcessesStatus();
   if (! is_object($status) ) {
     return $this->getLastSoapError();
@@ -261,7 +261,7 @@ private function needRestart($nr, $p) {
   if (!$this->connect()) {
     return false;
   }
-  
+
   $params = array($p);
   $value = $this->soaper_->queryParam('processNeedsRestart', $params);
   $status = $value;
@@ -408,7 +408,7 @@ private function getDiskUsage() {
  */
 public function showDiskUsage($t) {
   global $lang_;
-  
+
   $status = $this->getDiskUsage();
   if (!is_object($status)) {
     return $this->getLastSoapError();
@@ -446,12 +446,12 @@ private function getMemoryUsage() {
  */
 public function showMemUsage($t, $colors) {
   global $lang_;
-          
+
   $status = $this->getMemoryUsage();
   if (!is_object($status)) {
     return $this->getLastSoapError();
   }
-  
+
   $mems = array(
              'TOTALMEMORY' => $status->total,
              'FREEMEMORY' => $status->free,
@@ -462,7 +462,7 @@ public function showMemUsage($t, $colors) {
     $tmpl = str_replace('__VALUE__', $this->format_size($soapvalue), $t);
     $ret .= str_replace('__NAME__', $lang_->print_txt($tag), $tmpl);
   }
-  return $ret; 
+  return $ret;
  }
 
 
@@ -503,7 +503,7 @@ public function getStats($what, $start, $stop) {
   if (!$this->connect()) {
     return null;
   }
-  
+
   $values = $this->soaper_->queryParam('getStats', array($what, $start, $stop));
   if (isset($values->enc_value)) {
     return $values->enc_value;
@@ -519,17 +519,17 @@ public function getStats($what, $start, $stop) {
  */
 public function showTodaysCounts($t, $colors) {
   global $lang_;
-   
+
   $status = $this->getTodaysCounts();
   if (!is_object($status)) {
     return $this->getLastSoapError();
-  }     
+  }
   $types = array(
                   'MESSAGES' => $status->msg,
                   'SPAMS' => $status->spam,
                   'VIRUSES' => $status->virus,
                   'CONTENT' => $status->content
-               );       
+               );
   foreach ($types as $tag => $soapvalue) {
     $tmpl =   str_replace('__VALUE__', "<font color=\"".$colors[$tag]."\">".$soapvalue."</font>", $t);
     $ret .=   str_replace('__NAME__', "<font color=\"".$colors[$tag]."\">".$lang_->print_txt($tag)."</font>", $tmpl);
@@ -550,7 +550,7 @@ static private function format_size($s) {
     $ret = sprintf("%.2f ".$lang_->print_txt('GB'), $s/(1000.0*1000.0));
   } elseif ($s > 1000) {
     $ret = sprintf("%.2f ".$lang_->print_txt('MB'), $s/(1024.0));
-  } else { 
+  } else {
     $ret = $s." ".$lang_->print_txt('BYTES');
   }
   return $ret;

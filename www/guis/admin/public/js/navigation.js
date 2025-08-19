@@ -8,19 +8,19 @@
 $(document).ready(function(){
 	var onsub = 0;
 	var t;
-	
+
 	$("li.menubutton").hover(
 	  function(){
 		 var id=$(this).attr('id');
 		 clearTimeout(t);
-		 
+
 		 var doit=1;
 			$(".submenu:visible").each( function() {
 			  if (this.id == "sub"+id) {
 			  		doit=0;
 			  }
 		 });
-		 if (doit) {	
+		 if (doit) {
     		 $("div.submenu").hide();
 	    	 $("a.menuselected").attr('class', 'menubutton');
              $("a#link"+id).attr('class', 'menuselected');
@@ -28,20 +28,20 @@ $(document).ready(function(){
 		 }
 	  }
 	);
-	
+
 	$("div.submenu").hover(function() { clearTimeout(t); });
-	
+
 	$("#main_navigation").hover(
 	    function(){
 	    	clearTimeout(t);
 	    },
-	    
+
 	    function(){
 	    	t = setTimeout('resetMenu()', 1000);
 	    }
-	    
+
 	);
-	
+
 	$("#flashmessage").click(
 	   function() {
 		   $("#flashmessage").stop();
@@ -54,7 +54,7 @@ $(document).ready(function(){
 			$("#flashmessage").fadeOut(20000);
 		} else if ($("#flashmessage").hasClass('fmWAIT')) {
 			loadwaiting(waiturl);
-			
+
 		} else {
 			$("#flashmessage").fadeOut(4000);
 		}
@@ -72,7 +72,7 @@ $(document).ready(function(){
         }
 });
 
-$(window).bind('beforeunload', function(){ 
+$(window).bind('beforeunload', function(){
 	$('#informational').slideUp('fast');
 });
 
@@ -96,7 +96,7 @@ function resizePanel(toresize, fromresize) {
 	   var h = 0;
 	   var marginbottom = 23;
 	   var margintop = 0;
-	      
+
 	   for (el in fromresize) {
 	     h = h + document.getElementById(fromresize[el]).offsetHeight -1;
 	   }
@@ -104,7 +104,7 @@ function resizePanel(toresize, fromresize) {
 
 	   document.getElementById(toresize).style.height = h+'px';
 	}
-	 
+
 function goTo(link) {
 	document.location = link;
 }
@@ -138,8 +138,8 @@ function getInformationalMessage() {
                   type: "GET",
                   url: baseurl+'/status/informational',
                   dataType: "html",
-                   success: function(msg) { 
-                           if (msg != '') {  
+                   success: function(msg) {
+                           if (msg != '') {
                               $('#informational').html(msg);
                               $('#informational').slideToggle();
                            }

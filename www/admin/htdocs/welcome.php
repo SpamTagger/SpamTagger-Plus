@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * This is the controller for the welcome page
  */
 
@@ -16,7 +16,7 @@ require_once("view/Template.php");
 require_once("system/Integrator.php");
 /**
  * session globals
- */ 
+ */
 global $lang_;
 global $sysconf_;
 
@@ -48,7 +48,7 @@ $template_->output($replace);
 function isMaster() {
   global $lang_;
   global $sysconf_;
- 
+
   if ($sysconf_->ismaster_ < 1) {
     return $lang_->print_txt('ISNOTAMASTER');
   }

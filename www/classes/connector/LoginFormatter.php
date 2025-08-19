@@ -5,16 +5,16 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  */
- 
- 
+
+
 /**
  * This class is the mother of the Login Formatters.
  * These are used to modify and reformat the login entered by the user in order to be correctly passed to the autentication server
  * @package SpamTagger Plus
  */
 abstract class LoginFormatter {
- 
- 
+
+
  /**
   * List of available connector with corresponding classes
   * @var array
@@ -24,21 +24,21 @@ abstract class LoginFormatter {
                                      'at_add' => array('username@domain', 'DomainAddFormatter'),
                                      'percent_add'  => array('username%domain', 'DomainAddFormatter')
                                      );
-                           
+
   /**
    * internal type of formatter
    * @var  string
    */
    private $type_ = 'username_only';
-            
+
    /**
     * constructor
     * @param  $type  string  internal formatter type
-    */         
+    */
    public function __construct($type) {
         $this->type_ = $type;
    }
-                    
+
   /**
    * Formatter factory
    */
@@ -54,7 +54,7 @@ abstract class LoginFormatter {
     }
     return null;
   }
-    
+
  /**
   * Main formatting method
   * @param  $login_given  string  this is the username string entered by the user
@@ -62,8 +62,8 @@ abstract class LoginFormatter {
   * @return               string  reformatted login name
   */
  abstract public function format($login_given, $domain_name);
- 
- 
+
+
  /**
   * get the internal formatter type
   * @return  string  internal formatter type
@@ -71,7 +71,7 @@ abstract class LoginFormatter {
   public function getType() {
     return $this->type_;
   }
-    
+
   /**
    * get the list available formatters
    * @return   array  list of available formatters
@@ -83,5 +83,5 @@ abstract class LoginFormatter {
      }
      return $ret;
    }
-} 
+}
 ?>

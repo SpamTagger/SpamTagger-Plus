@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * DNS lists
  */
 
@@ -13,12 +13,12 @@ class Default_Model_DnsLists
 
 	protected $_config_path = 'etc/rbls';
 	protected $_all_lists = array();
-	
+
 	public function __construct() {
 		$conf = SpamTagger_Config::getInstance();
 		$this->_config_path = $conf->getOption('SRCDIR')."/etc/rbls";
 	}
-	
+
 	public function load() {
 		if (is_dir($this->_config_path)) {
 			if ($dh = opendir($this->_config_path)) {
@@ -30,7 +30,7 @@ class Default_Model_DnsLists
             }
 		}
 	}
-	
+
 	protected function addRBLConfig($file) {
 		$path = $this->_config_path."/".$file;
 		if (! file_exists($path)) {
@@ -50,7 +50,7 @@ class Default_Model_DnsLists
 		$name = $fields['name'];
 	    $this->_all_lists[$name] = $fields;
 	}
-	
+
 	public function getRBLs($type) {
 		$ret = array();
 		$types = preg_split("/\s/", $type);
@@ -61,5 +61,5 @@ class Default_Model_DnsLists
 		}
 		return $ret;
 	}
-	
+
 }

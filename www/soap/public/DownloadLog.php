@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html
  * @package SpamTagger Plus
@@ -38,15 +38,15 @@ if (!file_exists($file)) {
 
 $handle = fopen($file, "r");
 
-header("Content-Type: application/octet-stream; "); 
-header("Content-Transfer-Encoding: binary"); 
-header("Content-Length: " . filesize($file) ."; "); 
-header("filename=\"".$fileparam."\"; "); 
+header("Content-Type: application/octet-stream; ");
+header("Content-Transfer-Encoding: binary");
+header("Content-Length: " . filesize($file) ."; ");
+header("filename=\"".$fileparam."\"; ");
 flush();
 
 while(!feof($handle)) {
 	$data = fread($handle, 8192);
-	
+
 	echo $data;
 	flush();
 }

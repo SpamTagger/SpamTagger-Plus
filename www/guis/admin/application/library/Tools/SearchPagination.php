@@ -4,7 +4,7 @@
  * @package SpamTagger Plus
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
- * 
+ *
  * Help with pagination calculations
  */
 
@@ -15,8 +15,8 @@ class Tools_SearchPagination
     {
        $view->elementscount = count($elements);
        $view->lastpage = ceil($view->elementscount / $nbelperpage);
-       
-    	
+
+
        $page = 1;
        if ($currentpage && is_numeric($currentpage) && $currentpage > 0) {
     		if ($currentpage > $view->lastpage) {
