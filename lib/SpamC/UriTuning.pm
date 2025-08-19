@@ -1,4 +1,10 @@
+#!/usr/bin/env perl
+
 package UriTuning;
+
+use v5.40;
+use warnings;
+use utf8;
 
 use Mail::SpamAssassin::Plugin;
 

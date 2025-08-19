@@ -1,8 +1,11 @@
+#!/usr/bin/env perl
 
 package MailScanner::TrustedIPs;
 
-use strict 'vars';
-use strict 'refs';
+use v5.40;
+use warnings;
+use utf8;
+
 no  strict 'subs'; # Allow bare words for parameter %'s
 
 use IO;

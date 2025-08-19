@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2018 SpamTagger <support@spamtagger.org>
@@ -24,7 +24,10 @@
 #   Usage:
 #           add_to_blacklist.pl msg_dest msg_sender
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 if ($0 =~ m/(\S*)\/\S+.pl$/) {
   my $path = $1."/../lib";
   unshift (@INC, $path);

@@ -1,8 +1,11 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
-package          PreForkDaemon;
+package PreForkDaemon;
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 use POSIX;
 use Sys::Hostname;
 use Socket;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
@@ -35,7 +35,10 @@
 #           3 = called by daily script
 #   nb_days is the number of days contained in the summary
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 if ($0 =~ m/(\S*)\/\S+.pl$/) {
   my $path = $1."/../lib";
   unshift (@INC, $path);

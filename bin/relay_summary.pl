@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2020 John Mertz <git@john.me.tz>
@@ -17,13 +17,15 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #   This script will generate outbound relaying summaries to assist in the
 #   diagnosing of outbound blacklisting or other unexpected relaying behaviour
 #
 #   See Usage mene below or by running with the --help option
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 use warnings;
 use Module::Load::Conditional qw| check_install |;
 

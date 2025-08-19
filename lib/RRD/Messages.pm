@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -19,10 +19,13 @@
 #
 #
 
-package          RRD::Messages;
-require          Exporter;
+package RRD::Messages;
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
+require Exporter;
 use lib qw(/usr/rrdtools/lib/perl/);
 require RRD::Generic;
 

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2021 John Mertz <git@john.me.tz>
@@ -20,6 +20,10 @@
 #
 #   This script will output the count of messages/spams/viruses for a domain/user or globaly for a given period
 
+use v5.40;
+use warnings;
+use utf8;
+
 sub usage
 {
 	print "\nUsage: $0 [a|aaaa|mx|spf] domain <ip>\n
@@ -32,9 +36,6 @@ sub usage
 	exit();
 	
 }
-
-use strict;
-use warnings;
 
 if ($0 =~ m/(\S*)\/\S+.pl$/) {
   my $path = $1."/../lib";

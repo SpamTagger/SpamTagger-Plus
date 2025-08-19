@@ -1,6 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 use File::Copy;
 use File::Path;
 if ($0 =~ m/(\S*)\/\S+.pl$/) {

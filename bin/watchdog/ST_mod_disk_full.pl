@@ -1,5 +1,9 @@
-#!/usr/bin/perl -w
-use strict;
+#!/usr/bin/env perl
+
+use v5.40;
+use warnings;
+use utf8;
+
 use File::Basename;
 
 my $alarm_limit = 85;

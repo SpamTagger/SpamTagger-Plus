@@ -1,7 +1,10 @@
+#!/usr/bin/env perl
 package          ManageServices;
 
-use strict;
+use v5.40;
 use warnings;
+use utf8;
+
 no warnings 'uninitialized';
 use lib '/usr/spamtagger/lib/ManageServices';
 use threads ();

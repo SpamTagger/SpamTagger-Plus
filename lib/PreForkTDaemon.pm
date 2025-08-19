@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -28,13 +28,15 @@
 ##         statusHook: code expected to log or output some status data.
 ##    Threads termination is thrown by a TERM signal. 
 ##    Threads signal handling should be implemented in the mainLoopHook() of the children class.
-#
 
 package          PreForkTDaemon;
 
+use v5.40;
+use warnings;
+use utf8;
+
 use threads ();
 use threads::shared;
-use strict;
 use POSIX;
 use Sys::Syslog;
 require ReadConfig;

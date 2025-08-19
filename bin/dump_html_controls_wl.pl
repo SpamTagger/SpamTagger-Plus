@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2020 MailCleaner
@@ -17,14 +17,15 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #   This script will dump the ssh key files
 #
 #   Usage:
 #           dump_html_controls_wl.pl
 
+use v5.40;
+use warnings;
+use utf8;
 
-use strict;
 use DBI();
 
 my %config = readConfig("/etc/spamtagger.conf");

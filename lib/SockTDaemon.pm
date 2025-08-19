@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -24,14 +24,15 @@
 ##         initThreadHook: thread initialization implementation
 ##         exitThreadHook: thread exiting implementation. Cleanup on TERM signal.
 ##         dataRead: action on data received by socket. Expect answer to send back to client.
-##
-#
-
 
 package          SockTDaemon;
+
+use v5.40;
+use warnings;
+use utf8;
+
 use threads;
 use threads::shared;
-use strict;
 use IO::Socket;
 use IO::Select;
 use Time::HiRes qw(gettimeofday tv_interval);

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -29,8 +29,10 @@
 #        g = output overall stats since selected day (today - nb_days)
 #        d = output stats for every days until now
 
+use v5.40;
+use warnings;
+use utf8;
 
-use strict;
 use DBI();
 
 my %config = readConfig("/etc/spamtagger.conf");

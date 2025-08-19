@@ -16,14 +16,14 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #   Newsl prefilter module for MailScanner (Custom version for SpamTagger)
-#
 
 package MailScanner::Newsl;
 
-use strict 'vars';
-use strict 'refs';
+use v5.40;
+use warnings;
+use utf8;
+
 no  strict 'subs'; # Allow bare words for parameter %'s
 #use English; # Needed for $PERL_VERSION to work in all versions of Perl
 

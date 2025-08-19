@@ -1,7 +1,9 @@
 package GetDNS;
 
-use strict;
+use v5.40;
 use warnings;
+use utf8;
+
 no warnings qw ( portable overflow ); # Avoid warnings for the temporary use of >64bit numbers
 use Net::DNS;
 use Net::CIDR qw( cidradd cidr2range range2cidr );

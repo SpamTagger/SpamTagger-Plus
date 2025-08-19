@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -16,14 +16,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 use Net::SMTP;
 
 my %config = readConfig("/etc/spamtagger.conf"); 
 
-use strict;
 use Time::HiRes qw(gettimeofday tv_interval);
 my $stime = [gettimeofday];
 unshift (@INC, $config{'SRCDIR'}."/lib");

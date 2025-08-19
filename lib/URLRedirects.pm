@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2022 John Mertz <git@john.me.tz>
@@ -22,8 +22,10 @@
 
 package URLRedirects;
 
-use strict;
+use v5.40;
 use warnings;
+use utf8;
+
 use URI::Escape;
 
 sub new

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -17,7 +17,6 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #   This script will fetch the scores and rules given by SpamAssassin.
 #
 #   Usage:
@@ -26,7 +25,9 @@
 #   destination is the email address of the original recipient
 #   and language is the language of the output (rules description)
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
 
 my %config = readConfig("/etc/spamtagger.conf");
 

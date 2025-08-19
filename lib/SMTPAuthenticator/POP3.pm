@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -18,9 +18,13 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-package          SMTPAuthenticator::POP3;
-require          Exporter;
-use strict;
+package SMTPAuthenticator::POP3;
+
+use v5.40;
+use warnings;
+use utf8;
+
+require Exporter;
 use Mail::POP3Client;
 
 our @ISA        = qw(Exporter);

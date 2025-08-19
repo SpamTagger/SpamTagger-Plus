@@ -1,6 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 use DBI();
 use Term::ReadKey;
 
@@ -13,7 +16,6 @@ if (!$slave_dbh) {
 	exit 1;
 }
 
-		view_slaves();
 sub view_slaves {
 	my $sth =  $slave_dbh->prepare("SELECT id, hostname, port, ssh_pub_key  FROM slave") or die ("error in SELECT");
 	$sth->execute() or die ("error in SELECT");
@@ -45,3 +47,4 @@ sub readConfig {       # Reads configuration file given as argument.
         return %config;
 }
 
+view_slaves();

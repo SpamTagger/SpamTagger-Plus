@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -17,23 +17,24 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #   This module will just read the configuration file
-#
 
 package          Email;
+
+use v5.40;
+use warnings;
+use utf8;
+
 require          Exporter;
 require          ReadConfig;
 require			 SystemPref;
 require          Domain;
 require          PrefClient;
 require          User;
-use strict;
 
 our @ISA        = qw(Exporter);
 our @EXPORT     = qw(create getPref);
 our $VERSION    = 1.0;
-
 
 sub create {
   my $address = shift;

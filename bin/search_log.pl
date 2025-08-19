@@ -1,6 +1,9 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 if ($0 =~ m/(\S*)\/\S+.pl$/) {
   my $path = $1."/../lib";
   unshift (@INC, $path);

@@ -23,7 +23,10 @@
 #
 #   See Usage menu below or by running with the --help option
 
-use strict;
+use v5.40;
+use warnings;
+use utf8;
+
 use warnings;
 use Time::Piece;
 use Time::Seconds qw( ONE_DAY );

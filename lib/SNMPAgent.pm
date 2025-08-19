@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
@@ -22,9 +22,13 @@
 #
 
 package          SNMPAgent;
+
+use v5.40;
+use warnings;
+use utf8;
+
 require          Exporter;
 use DB;
-use strict;
 use NetSNMP::agent;
 use NetSNMP::OID (':all'); 
 use NetSNMP::agent (':all'); 
