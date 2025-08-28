@@ -47,7 +47,7 @@ CREATE TABLE user_pref (
   summary_type                   varchar(20) NOT NULL DEFAULT 'NOTSET',
   summary_to                     varchar(200),
   spam_tag                       varchar(20) NOT NULL DEFAULT '{Spam?}',
-  quarantine_bounces 		 tinyint(1) NOT NULL DEFAULT '0',
+  quarantine_bounces             tinyint(1) NOT NULL DEFAULT '0',
   has_whitelist                  tinyint(1) NOT NULL DEFAULT '0',
   has_warnlist                   tinyint(1) NOT NULL DEFAULT '0',
   has_blacklist                  tinyint(1) NOT NULL DEFAULT '0',

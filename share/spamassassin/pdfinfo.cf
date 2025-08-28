@@ -42,9 +42,9 @@
 
 # The follow tags can be defined in an add_header line
 #
-# _PDFCOUNT_	- total number of pdf mime parts in the email
-# _PDFIMGCOUNT_	- total number of images found inside pdf mime parts
-# _PDFVERSION_ 	- PDF Version, space separated if there are > 1 pdf attachments
+# _PDFCOUNT_    - total number of pdf mime parts in the email
+# _PDFIMGCOUNT_ - total number of images found inside pdf mime parts
+# _PDFVERSION_  - PDF Version, space separated if there are > 1 pdf attachments
 # _PDFNAME_     - Filenames as found in the mime headers of PDF parts
 # _PDFPRODUCER_ - Producer/Application that created the PDF(s)
 # _PDFAUTHOR_   - Author of the PDF

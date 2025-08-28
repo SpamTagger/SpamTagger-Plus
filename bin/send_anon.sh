@@ -22,7 +22,7 @@
 #   in Configuration > Base system > Registration
 #
 #   Usage:
-#		send_anon.sh
+#    send_anon.sh
 
 # TODO: teporarily disable for spamtagger transition
 echo "Feature not currently supported by SpamTagger"

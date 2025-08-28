@@ -3,12 +3,12 @@ use st_config;
 DROP TABLE IF EXISTS rrd_stats;
 
 CREATE TABLE rrd_stats (
-  id			int(11) NOT NULL DEFAULT 1,
-  name          varchar(255),
-  type          enum('count', 'frequency'),
-  family        varchar(255) DEFAULT 'default',
-  base          int(11) DEFAULT 1,
-  min_yvalue    int(11) DEFAULT 0,
+  id         int(11) NOT NULL DEFAULT 1,
+  name       varchar(255),
+  type       enum('count', 'frequency'),
+  family     varchar(255) DEFAULT 'default',
+  base       int(11) DEFAULT 1,
+  min_yvalue int(11) DEFAULT 0,
   PRIMARY KEY (id)
 );
 

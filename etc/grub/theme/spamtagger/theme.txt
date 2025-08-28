@@ -13,22 +13,22 @@ message-font: "Courier Regular 16"
 
 # Show the boot menu
 + boot_menu {
-		left = 212
-		width = 600
-		top = 360
-		height = 230
-		item_font = "Arial Regular 18"
-		selected_item_font = "Arial Regular 18"
-		item_color = "#000000"
-		selected_item_color = "#F04F11"
-		item_height = 72
-		item_padding = 20
-		item_spacing = 8
-		icon_width = 69
-		icon_height = 80
-		item_icon_space = 20
-		menu_pixmap_style = "menu_bkg_*.png"
-		scrollbar = false
+    left = 212
+    width = 600
+    top = 360
+    height = 230
+    item_font = "Arial Regular 18"
+    selected_item_font = "Arial Regular 18"
+    item_color = "#000000"
+    selected_item_color = "#F04F11"
+    item_height = 72
+    item_padding = 20
+    item_spacing = 8
+    icon_width = 69
+    icon_height = 80
+    item_icon_space = 20
+    menu_pixmap_style = "menu_bkg_*.png"
+    scrollbar = false
 }
 
 + circular_progress
@@ -47,9 +47,9 @@ message-font: "Courier Regular 16"
 
 # Show an informational message.
 + hbox {
-		top = 100%-22
-		left = 5
-		+ label {text = "SpamTagger Plus" font = "Arial Regular 12" color = "#333333" align = "left"}
+    top = 100%-22
+    left = 5
+    + label {text = "SpamTagger Plus" font = "Arial Regular 12" color = "#333333" align = "left"}
 }
 
 + hbox {

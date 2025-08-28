@@ -28,7 +28,7 @@ export TEXTDOMAINDIR=${prefix}/share/locale
 
 CLASS="--class gnu-linux --class gnu --class os"
 
-if [ "x${GRUB_DISTRIBUTOR}" = "x" ] ; then
+if [ "x${GRUB_DISTRIBUTOR}" = "x" ]; then
   OS=GNU/Linux
 else
   OS="${GRUB_DISTRIBUTOR} GNU/Linux"
@@ -38,26 +38,25 @@ fi
 # loop-AES arranges things so that /dev/loop/X can be our root device, but
 # the initrds that Linux uses don't like that.
 case ${GRUB_DEVICE} in
-  /dev/loop/*|/dev/loop[0-9])
-    GRUB_DEVICE=`losetup ${GRUB_DEVICE} | sed -e "s/^[^(]*(\([^)]\+\)).*/\1/"`
+/dev/loop/* | /dev/loop[0-9])
+  GRUB_DEVICE=$(losetup ${GRUB_DEVICE} | sed -e "s/^[^(]*(\([^)]\+\)).*/\1/")
   ;;
 esac
 
-if [ "x${GRUB_DEVICE_UUID}" = "x" ] || [ "x${GRUB_DISABLE_LINUX_UUID}" = "xtrue" ] \
-    || ! test -e "/dev/disk/by-uuid/${GRUB_DEVICE_UUID}" \
-    || uses_abstraction "${GRUB_DEVICE}" lvm; then
+if [ "x${GRUB_DEVICE_UUID}" = "x" ] || [ "x${GRUB_DISABLE_LINUX_UUID}" = "xtrue" ] ||
+  ! test -e "/dev/disk/by-uuid/${GRUB_DEVICE_UUID}" ||
+  uses_abstraction "${GRUB_DEVICE}" lvm; then
   LINUX_ROOT_DEVICE=${GRUB_DEVICE}
 else
   LINUX_ROOT_DEVICE=UUID=${GRUB_DEVICE_UUID}
 fi
 
-linux_entry ()
-{
+linux_entry() {
   os="$1"
   version="$2"
   recovery="$3"
   args="$4"
-  if ${recovery} ; then
+  if ${recovery}; then
     title="$(gettext_quoted "%s, with Linux %s (recovery mode)")"
   else
     title="$(gettext_quoted "%s, with Linux %s")"
@@ -68,8 +67,8 @@ linux_entry ()
   # Use ELILO's generic "efifb" when it's known to be available.
   # FIXME: We need an interface to select vesafb in case efifb can't be used.
   if [ "x$GRUB_GFXPAYLOAD_LINUX" != x ]; then
-	  cat << EOF
-	set gfxpayload=$GRUB_GFXPAYLOAD_LINUX
+    cat <<EOF
+  set gfxpayload=$GRUB_GFXPAYLOAD_LINUX
 EOF
   fi
 
@@ -78,46 +77,46 @@ EOF
   fi
   printf '%s\n' "${prepare_boot_cache}"
   message="$(gettext_printf "Loading Linux %s ..." ${version})"
-  cat << EOF
-	linux	${rel_dirname}/${basename} root=${linux_root_device_thisversion} ro ${args}
+  cat <<EOF
+  linux  ${rel_dirname}/${basename} root=${linux_root_device_thisversion} ro ${args}
 EOF
-  if test -n "${initrd}" ; then
+  if test -n "${initrd}"; then
     message="$(gettext_printf "Loading initial ramdisk ...")"
-    cat << EOF
-	initrd	${rel_dirname}/${initrd}
+    cat <<EOF
+  initrd  ${rel_dirname}/${initrd}
 EOF
   fi
-  cat << EOF
+  cat <<EOF
 }
 EOF
 }
 
-list=`for i in /boot/vmlinu[zx]-* /vmlinu[zx]-* ; do
-        if grub_file_is_not_garbage "$i" ; then echo -n "$i " ; fi
-      done`
+list=$(for i in /boot/vmlinu[zx]-* /vmlinu[zx]-*; do
+  if grub_file_is_not_garbage "$i"; then echo -n "$i "; fi
+done)
 prepare_boot_cache=
 
-while [ "x$list" != "x" ] ; do
-  linux=`version_find_latest $list`
+while [ "x$list" != "x" ]; do
+  linux=$(version_find_latest $list)
   echo "Found linux image: $linux" >&2
-  basename=`basename $linux`
-  dirname=`dirname $linux`
-  rel_dirname=`make_system_path_relative_to_its_root $dirname`
-  version=`echo $basename | sed -e "s,^[^0-9]*-,,g"`
-  alt_version=`echo $version | sed -e "s,\.old$,,g"`
+  basename=$(basename $linux)
+  dirname=$(dirname $linux)
+  rel_dirname=$(make_system_path_relative_to_its_root $dirname)
+  version=$(echo $basename | sed -e "s,^[^0-9]*-,,g")
+  alt_version=$(echo $version | sed -e "s,\.old$,,g")
   linux_root_device_thisversion="${LINUX_ROOT_DEVICE}"
 
   initrd=
   for i in "initrd.img-${version}" "initrd-${version}.img" \
-	   "initrd-${version}" "initramfs-${version}.img" \
-	   "initrd.img-${alt_version}" "initrd-${alt_version}.img" \
-	   "initrd-${alt_version}" "initramfs-${alt_version}.img"; do
-    if test -e "${dirname}/${i}" ; then
+    "initrd-${version}" "initramfs-${version}.img" \
+    "initrd.img-${alt_version}" "initrd-${alt_version}.img" \
+    "initrd-${alt_version}" "initramfs-${alt_version}.img"; do
+    if test -e "${dirname}/${i}"; then
       initrd="$i"
       break
     fi
   done
-  if test -n "${initrd}" ; then
+  if test -n "${initrd}"; then
     echo "Found initrd image: ${dirname}/${initrd}" >&2
   else
     # "UUID=" magic is parsed by initrds.  Since there's no initrd, it can't work here.
@@ -125,11 +124,11 @@ while [ "x$list" != "x" ] ; do
   fi
 
   linux_entry "${OS}" "${version}" false \
-      "${GRUB_CMDLINE_LINUX} ${GRUB_CMDLINE_LINUX_DEFAULT}"
+    "${GRUB_CMDLINE_LINUX} ${GRUB_CMDLINE_LINUX_DEFAULT}"
   if [ "x${GRUB_DISABLE_LINUX_RECOVERY}" != "xtrue" ]; then
     linux_entry "${OS}" "${version}" true \
-	"single ${GRUB_CMDLINE_LINUX}"
+      "single ${GRUB_CMDLINE_LINUX}"
   fi
 
-  list=`echo $list | tr ' ' '\n' | grep -vx $linux | tr '\n' ' '`
+  list=$(echo $list | tr ' ' '\n' | grep -vx $linux | tr '\n' ' ')
 done

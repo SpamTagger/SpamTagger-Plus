@@ -9,7 +9,7 @@
 
 # This next line gives an example of how you might enable this option for
 # a frequent customer of yours.
-#From:		yourcustomer.com	yes
+#From:    yourcustomer.com  yes
 
 # Under no circumstances should this be changed to "yes".
-FromOrTo:	default			no
+FromOrTo:  default      no

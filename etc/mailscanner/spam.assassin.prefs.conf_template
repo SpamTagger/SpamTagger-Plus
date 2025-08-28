@@ -1,6 +1,6 @@
 dns_available yes
 
-ok_locales		all
+ok_locales    all
 
 ifplugin Mail::SpamAssassin::Plugin::Bayes
 use_bayes __USE_BAYES__
@@ -51,7 +51,7 @@ trusted_networks __SYSTEMIP__ __TRUSTEDIPS__
 use_auto_whitelist 0
 
 ifplugin Mail::SpamAssassin::Plugin::DNSEval
-skip_rbl_checks	__SKIP_RBLS__
+skip_rbl_checks  __SKIP_RBLS__
 rbl_timeout __RBLS_TIMEOUT__
 endif
 

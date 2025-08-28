@@ -26,7 +26,7 @@ Message ID: ??ID
         Data: ??DATE
         Temat: ??SUBJECT
         Dostarcz: ??FORCEURL/fm.php?id=3D??ID&a=3D??ADDRESS&s=3D??STOREID&lang=3D??LANGUAGE
-	??NEWSLETTER_TXT
+  ??NEWSLETTER_TXT
 ??END_LIST
 
 ------------------------------------------------------

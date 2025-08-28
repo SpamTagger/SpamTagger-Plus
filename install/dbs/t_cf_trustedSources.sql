@@ -2,7 +2,7 @@ USE st_config;
 DROP TABLE IF EXISTS trustedSources;
 
 CREATE TABLE trustedSources (
-  set_id			int(11) NOT NULL DEFAULT 1,
+  set_id           int(11) NOT NULL DEFAULT 1,
   use_alltrusted   int(1) NOT NULL DEFAULT 1,
   use_authservers  int(1) NOT NULL DEFAULT 1,
   useSPFOnLocal    int(1) NOT NULL DEFAULT 1,

@@ -17,45 +17,45 @@
 #
 #   General Newsletter rules: language independent rules
 
-uri		ST_NEWS_URINEWSL	/\bnewsletter?\b/i
-score		ST_NEWS_URINEWSL	2.00
+uri      ST_NEWS_URINEWSL  /\bnewsletter?\b/i
+score    ST_NEWS_URINEWSL  2.00
 
-uri		ST_NEWS_URIUNSUB	/unsubscribe/i
-score		ST_NEWS_URIUNSUB	2.00
+uri      ST_NEWS_URIUNSUB  /unsubscribe/i
+score    ST_NEWS_URIUNSUB  2.00
 
-uri		ST_NEWS_URILISTMNG	/list-manage/i
-score		ST_NEWS_URILISTMNG	2.00
+uri      ST_NEWS_URILISTMNG  /list-manage/i
+score    ST_NEWS_URILISTMNG  2.00
 
-uri		ST_NEWS_URICAMPAIGN	/campaign/i
-score		ST_NEWS_URICAMPAIGN	2.00
+uri      ST_NEWS_URICAMPAIGN  /campaign/i
+score    ST_NEWS_URICAMPAIGN  2.00
 
-uri		ST_NEWS_URIPHPLIST	/php?list/i
-score		ST_NEWS_URIPHPLIST	2.00
+uri      ST_NEWS_URIPHPLIST  /php?list/i
+score    ST_NEWS_URIPHPLIST  2.00
 
-header		ST_NEWS_HSBJNEWS	Subject =~ /\bnews\b/i
-score		ST_NEWS_HSBJNEWS	2.0
+header   ST_NEWS_HSBJNEWS  Subject =~ /\bnews\b/i
+score    ST_NEWS_HSBJNEWS  2.0
 
-header		ST_NEWS_HFRMNEWSL	From =~ /newsletter/i
-score		ST_NEWS_HFRMNEWSL	3.0
+header   ST_NEWS_HFRMNEWSL  From =~ /newsletter/i
+score    ST_NEWS_HFRMNEWSL  3.0
 
-header		ST_NEWS_HFRMNEWS	From =~ /news/i
-score		ST_NEWS_HFRMNEWS	2.0
+header   ST_NEWS_HFRMNEWS  From =~ /news/i
+score    ST_NEWS_HFRMNEWS  2.0
 
-header		ST_NEWS_HFRMNOREPLY	From =~ /no?reply/i
-score		ST_NEWS_HFRMNOREPLY	2.0
+header   ST_NEWS_HFRMNOREPLY  From =~ /no?reply/i
+score    ST_NEWS_HFRMNOREPLY  2.0
 
-header		ST_NEWS_HLISTUNSUB1	List-Unsubscribe =~ /mailto:/i
-score		ST_NEWS_HLISTUNSUB1	1.0
+header   ST_NEWS_HLISTUNSUB1  List-Unsubscribe =~ /mailto:/i
+score    ST_NEWS_HLISTUNSUB1  1.0
 
-header		ST_NEWS_HLISTUNSUB2	List-Unsubscribe =~ /https?:/i
-score		ST_NEWS_HLISTUNSUB2	1.0
+header   ST_NEWS_HLISTUNSUB2  List-Unsubscribe =~ /https?:/i
+score    ST_NEWS_HLISTUNSUB2  1.0
 
-header		ST_NEWS_HREPLYTO	Reply-To =~ /no?reply@/i
-score		ST_NEWS_HREPLYTO	2.0
+header   ST_NEWS_HREPLYTO  Reply-To =~ /no?reply@/i
+score    ST_NEWS_HREPLYTO  2.0
 
-header		ST_NEWS_HSBJANSWERS	Subject =~ /^(RE|SV|Antw|VS|AW|R|RIF|SV|YNT):/i
-score		ST_NEWS_HSBJANSWERS	-3.0
+header   ST_NEWS_HSBJANSWERS  Subject =~ /^(RE|SV|Antw|VS|AW|R|RIF|SV|YNT):/i
+score    ST_NEWS_HSBJANSWERS  -3.0
 
-header		ST_NEWS_HSBJFORWARD	Subject =~ /^(FWD|FW|VS|Doorst|VL|TR|WG|I|FS|TRS|VS|VB|RV|ENC|PD):/i
-score		ST_NEWS_HSBJFORWARD	-3.0
+header   ST_NEWS_HSBJFORWARD  Subject =~ /^(FWD|FW|VS|Doorst|VL|TR|WG|I|FS|TRS|VS|VB|RV|ENC|PD):/i
+score    ST_NEWS_HSBJFORWARD  -3.0
 

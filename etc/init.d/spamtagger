@@ -11,9 +11,9 @@
 
 APACHE_RESTART=1
 if [ ! -z $2 ]; then
-    if [ "$2" = "no-apache" ]; then
-       APACHE_RESTART=0
-    fi
+  if [ "$2" = "no-apache" ]; then
+    APACHE_RESTART=0
+  fi
 fi
 
 SRCDIR=`grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3`
@@ -64,9 +64,9 @@ case "$1" in
 
     ## checking for opt binaries
     for i in mysql4 mysql5 MailScanner bogofilter clamav exim4 spamtagger php5; do
-     if [ ! -d /opt/$i ]; then
-      ln -s /usr/$i /opt/$i >/dev/null 2>&1
-     fi
+      if [ ! -d /opt/$i ]; then
+        ln -s /usr/$i /opt/$i >/dev/null 2>&1
+      fi
     done
     if [ ! -d /opt/apache2 ]; then
       ln -s /usr/apache /opt/apache2 >/dev/null 2>&1
@@ -90,7 +90,7 @@ case "$1" in
     $INITDIR/$EXIM1 start
     $INITDIR/$GREYLISTD start
     if [ $APACHE_RESTART -eq 1 ]; then
-        $INITDIR/$APACHE start
+      $INITDIR/$APACHE start
     fi
 
     FIRSTUPDATE_LOG="${VARDIR}/log/spamtagger/first-start.log"
@@ -99,35 +99,35 @@ case "$1" in
     FIRSTUPDATE_FLAG_RUNNING="${FIRSTUPDATE_FLAG_DIR}/updater4st-running"
 
     if [ ! -f "${FIRSTUPDATE_FLAG_RAN}" ]; then
-        if [ ! -f "${FIRSTUPDATE_FLAG_RUNNING}" ]; then
-            echo "Needs update" >> ${FIRSTUPDATE_LOG}
-            ping -c 1 cvs.spamtagger.org > /dev/null
-            net_status=$?
-            if [ ${net_status} -eq 0 ]; then
-                touch ${FIRSTUPDATE_FLAG_RUNNING}
-                echo "Updating..." >> ${FIRSTUPDATE_LOG}
-                mkdir -p ${FIRSTUPDATE_FLAG_DIR}
-                /root/Updater4ST/updater4mc.sh || rm -f ${FIRSTUPDATE_FLAG_RUNNING}  # If error during upgrade, it will try again every time
-                ${SRCDIR}/bin/internal_access --generate --propagate --install &>> ${FIRSTUPDATE_LOG}
-                touch ${FIRSTUPDATE_FLAG_RAN}
-                echo "Finished update" >> ${FIRSTUPDATE_LOG}
-                rm -f ${FIRSTUPDATE_FLAG_RUNNING}
-            else
-                echo "WARNING: SpamTagger has not been updated on first launch." >> ${FIRSTUPDATE_LOG}
-                echo "Ensure you have a running connection and restart SpamTagger." >> ${FIRSTUPDATE_LOG}
-            fi
+      if [ ! -f "${FIRSTUPDATE_FLAG_RUNNING}" ]; then
+        echo "Needs update" >> ${FIRSTUPDATE_LOG}
+        ping -c 1 cvs.spamtagger.org > /dev/null
+        net_status=$?
+        if [ ${net_status} -eq 0 ]; then
+          touch ${FIRSTUPDATE_FLAG_RUNNING}
+          echo "Updating..." >> ${FIRSTUPDATE_LOG}
+          mkdir -p ${FIRSTUPDATE_FLAG_DIR}
+          /root/Updater4ST/updater4mc.sh || rm -f ${FIRSTUPDATE_FLAG_RUNNING}  # If error during upgrade, it will try again every time
+          ${SRCDIR}/bin/internal_access --generate --propagate --install &>> ${FIRSTUPDATE_LOG}
+          touch ${FIRSTUPDATE_FLAG_RAN}
+          echo "Finished update" >> ${FIRSTUPDATE_LOG}
+          rm -f ${FIRSTUPDATE_FLAG_RUNNING}
+        else
+          echo "WARNING: SpamTagger has not been updated on first launch." >> ${FIRSTUPDATE_LOG}
+          echo "Ensure you have a running connection and restart SpamTagger." >> ${FIRSTUPDATE_LOG}
         fi
+      fi
     fi
     # Wait in case Fail2Ban is still starting
     wait
-     ;;
+    ;;
   stop)
     if [ ! -z "$(find $VARDIR/run/ -name *.rs)" ]; then
-        rm $VARDIR/run/*.rs
+      rm $VARDIR/run/*.rs
     fi
     echo "Stopping $NAME: "
     if [ $APACHE_RESTART -eq 1 ]; then
-       $INITDIR/$APACHE stop
+      $INITDIR/$APACHE stop
     fi
     $INITDIR/$EXIM1 stop
     $INITDIR/$EXIM2 stop
@@ -140,11 +140,11 @@ case "$1" in
     $INITDIR/$SPAMLOGGER stop
     $INITDIR/$MYSLAVE stop
     $INITDIR/$MYMASTER stop
-      ;;
+    ;;
   restart)
-	$0 stop $2
-	sleep 4
-	$0 start $2
+    $0 stop $2
+    sleep 4
+    $0 start $2
     ;;
 
   *)

@@ -24,11 +24,11 @@
 #
 #   Options:
 #
-#   -h,	Display help.
-#   -x,	Delete found counts file.
-#   -d,	ex: 'a*' or '*' - Filter Domains following the glob a*
-#   -u,	ex: '[a-C]' - Filter User Directory following the pattern ^[a-C].*$
-#   -o,	Filter file older than X days.
+#   -h,  Display help.
+#   -x,  Delete found counts file.
+#   -d,  ex: 'a*' or '*' - Filter Domains following the glob a*
+#   -u,  ex: '[a-C]' - Filter User Directory following the pattern ^[a-C].*$
+#   -o,  Filter file older than X days.
 #
 
 PROGNAME='st_counts-cleaner'
@@ -40,11 +40,11 @@ usage() {
 
   Options:
 
-  -h,	Display help.
-  -x,	Delete found counts file.
-  -d,	ex: 'a*' or '*' - Filter Domains following the glob a*
-  -u,	ex: '[a-C]' - Filter User Directory following the pattern ^[a-C].*$
-  -o,	Filter file older than X days.
+  -h,  Display help.
+  -x,  Delete found counts file.
+  -d,  ex: 'a*' or '*' - Filter Domains following the glob a*
+  -u,  ex: '[a-C]' - Filter User Directory following the pattern ^[a-C].*$
+  -o,  Filter file older than X days.
 
 _EOF_
 }

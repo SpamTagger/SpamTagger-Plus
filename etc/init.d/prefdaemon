@@ -24,17 +24,14 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/prefdaemon$/) {
-  my $path = $1."/../../lib";
-  unshift (@INC, $path);
-}
+use lib '/usr/spamtagger/lib/';
 require ReadConfig;
 require DB;
 require PrefDaemon;
 
 my $command = shift;
 if (!defined($command)) {
- printUsage();
+ print_usage();
 }
 
 if ($command eq "start") {
@@ -51,12 +48,10 @@ if ($command eq "start") {
   }
   exit();
 } else {
-  printUsage();
+  print_usage();
 }
 
-
-
-sub printUsage {
+sub print_usage {
   print "Usage:\n";
   print "prefdaemon (stop|start)\n";
   exit 1;

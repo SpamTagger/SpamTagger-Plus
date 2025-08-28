@@ -21,7 +21,7 @@
 #   quarantine
 #
 #   Usage:
-# 	release_batch_emails.sh <sender>
+#   release_batch_emails.sh <sender>
 
 VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then

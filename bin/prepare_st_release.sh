@@ -25,8 +25,8 @@
 #
 #   Options:
 #   -h, Help: Usage
-#   -i,	ST ID
-#   -d,	Date
+#   -i,  ST ID
+#   -d,  Date
 #   -t, Time
 #   -r, Reason
 #   -m, Mode Dev: true or false - delete logs or not and some others things
@@ -59,8 +59,8 @@ usage() {
   Options (Not really here...) :
 
   -h,   Help: Usage
-  -i,	ST ID
-  -d,	Date
+  -i,   ST ID
+  -d,   Date
   -t,   Time
   -r,   Reason
   -m,   Mode Dev: true OR false OR test - delete logs or not and some others things
@@ -136,9 +136,9 @@ crontab - <<EOF
 0,15,30,45 * * * *  /usr/spamtagger/scripts/cron/spamtagger_cron.pl &> /dev/null
 0-59/5 * * * * /usr/spamtagger/bin/collect_rrd_stats.pl &> /dev/null
 30 0 * * * /usr/spamtagger/bin/st_wrapper_auto-counts-cleaner
-0-59/10 * * * * /usr/spamtagger/bin/watchdog/watchdogs.pl dix
-0 6,13,20 * * * /usr/spamtagger/bin/watchdog/watchdogs.pl oneday
-0-59/15 * * * * /usr/spamtagger/bin/watchdog/watchdogs_report.sh
+0-59/10 * * * * /usr/spamtagger/bin/watchdogs.pl dix
+0 6,13,20 * * * /usr/spamtagger/bin/watchdogs.pl oneday
+0-59/15 * * * * /usr/spamtagger/bin/watchdogs_report.sh
 30 2 * * * /root/Updater4ST/updater4mc.sh &> /dev/null
 EOF
 

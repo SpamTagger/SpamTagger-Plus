@@ -23,12 +23,10 @@
 #   Usage:
 #           test_pyzor.sh
 
-
-RESULT=`/usr/bin/pyzor ping | cut -f2`
+RESULT=$(/usr/bin/pyzor ping | cut -f2)
 
 if [ "$RESULT" = "(200, 'OK')" ]; then
-	echo "PYZOROK"
+  echo "PYZOROK"
 else
-	echo "PYZORERROR"
+  echo "PYZORERROR"
 fi
-

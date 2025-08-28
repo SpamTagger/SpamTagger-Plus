@@ -2,7 +2,7 @@ USE st_config;
 DROP TABLE IF EXISTS PreRBLs;
 
 CREATE TABLE PreRBLs (
-  set_id			int(11) NOT NULL DEFAULT 1,
+  set_id           int(11) NOT NULL DEFAULT 1,
   spamhits         int(5) NOT NULL DEFAULT 1,
   highspamhits     int(5) NOT NULL DEFAULT 3,
   lists            varchar(255) DEFAULT 'SPAMCOP SORBS BACKSCATTERER',

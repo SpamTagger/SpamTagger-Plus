@@ -21,7 +21,6 @@ BRAND=
 DCC_INFO_LOG_FACILITY=
 DCC_ERROR_LOG_FACILITY=
 
-
 # used to start dccm
 DCCM_ENABLE=on
 #   a common value is
@@ -72,26 +71,25 @@ DBCLEAN_LOGDAYS=
 # used to start dbclean, including -e and -E
 DBCLEAN_ARGS=
 
-
 # ensure that the log facilities include levels and that $DCC_LOGGER
 #   has a default.
 if test ! -z "$DCC_INFO_LOG_FACILITY"; then
-    if expr "$DCC_INFO_LOG_FACILITY" : '.*\..*' >/dev/null; then
-	:
-    else
-	DCC_INFO_LOG_FACILITY="$DCC_INFO_LOG_FACILITY.notice"
-    fi
-    DCC_LOG_ARGS="$DCC_LOG_ARGS -Linfo,$DCC_INFO_LOG_FACILITY"
+  if expr "$DCC_INFO_LOG_FACILITY" : '.*\..*' >/dev/null; then
+    :
+  else
+    DCC_INFO_LOG_FACILITY="$DCC_INFO_LOG_FACILITY.notice"
+  fi
+  DCC_LOG_ARGS="$DCC_LOG_ARGS -Linfo,$DCC_INFO_LOG_FACILITY"
 fi
 if test -z "$DCC_ERROR_LOG_FACILITY"; then
-    # for $DCC_LOGGER
-    DCC_ERROR_LOG_FACILITY=mail.err
+  # for $DCC_LOGGER
+  DCC_ERROR_LOG_FACILITY=mail.err
 else
-    if expr "$DCC_ERROR_LOG_FACILITY" : '.*\..*' >/dev/null; then
-	:
-    else
-	DCC_ERROR_LOG_FACILITY="$DCC_ERROR_LOG_FACILITY.err"
-    fi
-    DCC_LOG_ARGS="$DCC_LOG_ARGS -Lerror,$DCC_ERROR_LOG_FACILITY"
+  if expr "$DCC_ERROR_LOG_FACILITY" : '.*\..*' >/dev/null; then
+    :
+  else
+    DCC_ERROR_LOG_FACILITY="$DCC_ERROR_LOG_FACILITY.err"
+  fi
+  DCC_LOG_ARGS="$DCC_LOG_ARGS -Lerror,$DCC_ERROR_LOG_FACILITY"
 fi
 DCC_LOGGER="logger -s -p ${DCC_ERROR_LOG_FACILITY-mail.err} -t DCC"

@@ -3,7 +3,7 @@ use st_config;
 DROP TABLE IF EXISTS rrd_stats_element;
 
 CREATE TABLE rrd_stats_element (
-  id			int(11) AUTO_INCREMENT NOT NULL,
+  id            int(11) AUTO_INCREMENT NOT NULL,
   stats_id      int(11) NOT NULL,
   name          varchar(255),
   type          enum('GAUGE','COUNTER','DERIVE','ABSOLUTE','COMPUTE') DEFAULT 'COUNTER',

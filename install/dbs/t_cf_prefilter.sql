@@ -3,7 +3,7 @@ use st_config;
 DROP TABLE IF EXISTS prefilter;
 
 CREATE TABLE prefilter (
-  id		   int(11) NOT NULL AUTO_INCREMENT,
+  id               int(11) NOT NULL AUTO_INCREMENT,
   set_id           int(11) NOT NULL DEFAULT 1,
   name             char(200) NOT NULL,
   active           int(1) NOT NULL DEFAULT 1,
