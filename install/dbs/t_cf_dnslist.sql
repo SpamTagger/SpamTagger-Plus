@@ -2,11 +2,11 @@ USE st_config;
 DROP TABLE IF EXISTS dnslist;
 
 CREATE TABLE dnslist (
-  name				 varchar(40) NOT NULL UNIQUE,
-  url				 varchar(250) NOT NULL,
-  type              varchar(20) NOT NULL DEFAULT 'blacklist',
-  active            tinyint(1) NOT NULL DEFAULT '1',
-  comment           blob,
+  name    varchar(40) NOT NULL UNIQUE,
+  url     varchar(250) NOT NULL,
+  type    varchar(20) NOT NULL DEFAULT 'blacklist',
+  active  tinyint(1) NOT NULL DEFAULT '1',
+  comment blob,
   PRIMARY KEY (name)
 );
 

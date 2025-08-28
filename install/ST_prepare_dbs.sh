@@ -24,21 +24,6 @@ if [ "$CLIENTORG" = "" ]; then
 fi
 VARDIR_SANE=$(echo $VARDIR | perl -pi -e 's/\//\\\//g')
 
-##
-# purge
-
-#if [ "$INTERACTIVE" = "Y" ]; then
-#  echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-#  echo "!! this will scratch all your spamtagger databases !!"
-#  echo "are you sur you want to continue ? [Y/n]"
-#  read confirm
-#
-#  if [ "$confirm" = "n" ]; then
-#	echo "aborted.. nothing has been touched."
-#	exit
-#  fi
-#fi
-
 echo "-- removing previous mysql databases and stopping mysql"
 $SRCDIR/etc/init.d/mysql_slave stop 2>&1
 $SRCDIR/etc/init.d/mysql_master stop 2>&1
@@ -51,7 +36,6 @@ rm -rf $VARDIR/run/mysql_slave/* 2>&1
 
 ##
 # first, ask for the mysql admin password
-
 if [ "$MYROOTPWD" = "" ]; then
   echo -n "enter mysql root password: "
   read -s MYROOTPWD
@@ -63,11 +47,6 @@ if [ "$MYSPAMTAGGERPWD" = "" ]; then
   read -s MYSPAMTAGGERPWD
   echo ""
 fi
-
-##
-# next generate databases
-#
-# slave:
 
 $SRCDIR/bin/dump_mysql_config.pl 2>&1
 

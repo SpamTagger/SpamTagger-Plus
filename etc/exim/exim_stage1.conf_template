@@ -445,7 +445,7 @@ __IF__ __LISTS_PER_DOMAIN__
           !condition    = ${if eq{$acl_m0}{true}{yes}{no}}
 __FI__
           condition     = ${perl{prevent_domain_from}{$domain}{$sender_address_domain}}
-	  !spf		= pass
+          !spf  = pass
           message       = This domain does not accept mail from itself (spoofing)
           set acl_c8    = smtp:refused:refused_spoofing
           set acl_c9    = STATSADD
@@ -756,7 +756,7 @@ __FI__
          logwrite      = DEBUG - refused, invalid recipient (LDAP): $local_part@$domain- smtp:refused,smtp:refused:callout
  __FI__
 
- warn	 authenticated = *
+ warn    authenticated = *
          set   acl_c1  = authenticated
 
  accept  domains       = +relay_to_domains
@@ -844,31 +844,31 @@ __IF__ LOG_ATTACHMENTS
 __FI__
 
   ## Block .js and .jse in attachments and in zip/rar
-  deny	message = Detected forbidden filetype (Security reasons).
-	log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-	condition = ${if exists{/var/spamtagger/spool/spamtagger/st-experimental-jsinzip}{true}{false}}
-	condition = ${if match{$mime_filename}{\N(?i)\.(zip|rar)$\N}}
-	decode = default
-	condition = ${if match{${run,preexpand{/usr/bin/unzip -l \
-				$mime_decoded_filename}}}\
-				{\N(?i)\.(js|jse)\n\N}}
-	set acl_c8    = smtp:relayed:virus
-	set acl_c9    = STATSADD
-	set acl_c8    = smtp:relayed:refused
-	set acl_c9    = STATSADD
+  deny message  = Detected forbidden filetype (Security reasons).
+  log_message   = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
+  condition     = ${if exists{/var/spamtagger/spool/spamtagger/st-experimental-jsinzip}{true}{false}}
+  condition     = ${if match{$mime_filename}{\N(?i)\.(zip|rar)$\N}}
+  decode        = default
+  condition     = ${if match{${run,preexpand{/usr/bin/unzip -l \
+                  $mime_decoded_filename}}}\
+                  {\N(?i)\.(js|jse)\n\N}}
+  set acl_c8    = smtp:relayed:virus
+  set acl_c9    = STATSADD
+  set acl_c8    = smtp:relayed:refused
+  set acl_c9    = STATSADD
 
-  deny	message = Detected forbidden filetype (Security reasons).
-	log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
-	condition = ${if exists{/var/spamtagger/spool/spamtagger/st-experimental-jsinzip}{true}{false}}
-	condition = ${if match{$mime_filename}{\N(?i)\.(rar|zip)$\N}}
-	decode = default
-	condition = ${if match{${run,preexpand{/usr/bin/rar lb \
-				$mime_decoded_filename}}}\
-				{\N(?i)\.(js|jse)\n\N}}
-	set acl_c8    = smtp:relayed:virus
-	set acl_c9    = STATSADD
-	set acl_c8    = smtp:relayed:refused
-	set acl_c9    = STATSADD
+  deny  message = Detected forbidden filetype (Security reasons).
+  log_message   = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
+  condition     = ${if exists{/var/spamtagger/spool/spamtagger/st-experimental-jsinzip}{true}{false}}
+  condition     = ${if match{$mime_filename}{\N(?i)\.(rar|zip)$\N}}
+  decode        = default
+  condition     = ${if match{${run,preexpand{/usr/bin/rar lb \
+                  $mime_decoded_filename}}}\
+                  {\N(?i)\.(js|jse)\n\N}}
+  set acl_c8    = smtp:relayed:virus
+  set acl_c9    = STATSADD
+  set acl_c8    = smtp:relayed:refused
+  set acl_c9    = STATSADD
 
   deny message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
@@ -883,7 +883,7 @@ __FI__
   deny  message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
         condition = ${if exists{/var/spamtagger/spool/spamtagger/st-experimental-docm}{true}{false}}
-	condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/spamtagger/domains_to_prevent_docm.list}}
+        condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/spamtagger/domains_to_prevent_docm.list}}
         condition = ${if match{$mime_filename}{\N(?i)\.(zip|rar)$\N}}
         decode = default
         condition = ${if match{${run,preexpand{/usr/bin/unzip -l \
@@ -897,7 +897,7 @@ __FI__
   deny  message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
         condition = ${if exists{/var/spamtagger/spool/spamtagger/st-experimental-docm}{true}{false}}
-	condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/spamtagger/domains_to_prevent_docm.list}}
+        condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/spamtagger/domains_to_prevent_docm.list}}
         condition = ${if match{$mime_filename}{\N(?i)\.(rar|zip)$\N}}
         decode = default
         condition = ${if match{${run,preexpand{/usr/bin/rar lb \
@@ -911,7 +911,7 @@ __FI__
   deny message = Detected forbidden filetype (Security reasons).
         log_message = Detected forbidden filetype (Security reasons): filename=$mime_filename, recipients=$recipients.
         condition = ${if exists{/var/spamtagger/spool/spamtagger/st-experimental-docm}{true}{false}}
-	condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/spamtagger/domains_to_prevent_docm.list}}
+        condition = ${if ! match_domain {${domain:${address:$header_to:}}}{VARDIR/spool/tmp/spamtagger/domains_to_prevent_docm.list}}
         condition = ${if match{$mime_filename}{\N(?i)\.(docm|dotm)$\N}}
         set acl_c8    = smtp:relayed:virus
         set acl_c9    = STATSADD
@@ -959,14 +959,14 @@ __FI__
 acl_check_data:
 
 __IF__ USETLS
-  warn	  !encrypted = *
+  warn    !encrypted = *
           remove_header = X-SpamTagger-TLS-Client-Certificate
           add_header = X-SpamTagger-TLS-Client-Certificate: not encrypted
  __IF__ DEBUG
           logwrite = Message not encrypted with TLS.
  __FI__
 
-  warn	  encrypted = *
+  warn    encrypted = *
           !verify = certificate
           condition = ${if def:tls_in_peerdn {yes}{no}}
           remove_header = X-SpamTagger-TLS-Client-Certificate
@@ -975,7 +975,7 @@ __IF__ USETLS
           logwrite = Invalid TLS client certificate presented (${tls_peerdn}).
  __FI__
 
-  warn	  encrypted = *
+  warn    encrypted = *
           !verify = certificate
           condition = ${if def:tls_in_peerdn {no}{yes}}
           remove_header = X-SpamTagger-TLS-Client-Certificate
@@ -984,8 +984,8 @@ __IF__ USETLS
           logwrite = No TLS client certificate presented.
  __FI__
 
-  warn	  encrypted = *
-	  verify = certificate
+  warn    encrypted = *
+          verify = certificate
           remove_header = X-SpamTagger-TLS-Client-Certificate
           add_header = X-SpamTagger-TLS-Client-Certificate: valid
 __FI__

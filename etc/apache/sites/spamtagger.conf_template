@@ -13,9 +13,6 @@ Listen __HTTPSPORT__
 <VirtualHost *:__HTTPPORT__>
     AssignUserId spamtagger spamtagger
 
-#    <If "! -f '__SRCDIR__/etc/apache/sites/configurator.conf.disabled'">
-#    	Redirect / http://__SERVERNAME__:4242/
-#    </If>
     Redirect / https://__SERVERNAME__/
 
     RewriteEngine On
@@ -28,10 +25,6 @@ SSLSessionCacheTimeout 300
 SSLCompression off
 <VirtualHost *:__HTTPSPORT__>
     AssignUserId spamtagger spamtagger
-
-#    <If "! -f '__SRCDIR__/etc/apache/sites/configurator.conf.disabled'">
-#    	Redirect / http://__SERVERNAME__:4242/
-#    </If>
 
     SSLEngine on
     SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1

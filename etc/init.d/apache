@@ -31,15 +31,15 @@ fi
 # to controlling Apache.  Written by Marc Slemko, 1997/08/23
 #
 # The exit codes returned are:
-#	0 - operation completed successfully
-#	1 -
-#	2 - usage error
-#	3 - httpd could not be started
-#	4 - httpd could not be stopped
-#	5 - httpd could not be started during a restart
-#	6 - httpd could not be restarted during a restart
-#	7 - httpd could not be restarted during a graceful restart
-#	8 - configuration syntax error
+#  0 - operation completed successfully
+#  1 -
+#  2 - usage error
+#  3 - httpd could not be started
+#  4 - httpd could not be stopped
+#  5 - httpd could not be started during a restart
+#  6 - httpd could not be restarted during a restart
+#  7 - httpd could not be restarted during a graceful restart
+#  8 - configuration syntax error
 #
 # When multiple arguments are given, only the error from the _last_
 # one is reported.  Run "apachectl help" for usage info

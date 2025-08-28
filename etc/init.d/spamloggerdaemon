@@ -25,16 +25,13 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/spamloggerdaemon$/) {
-  my $path = $1."/../../lib";
-  unshift (@INC, $path);
-}
+use lib '/usr/spamtagger/lib/';
 require ReadConfig;
 require SpamLogger;
 
 my $command = shift;
 if (!defined($command)) {
- printUsage();
+ print_usage();
 }
 
 if ($command eq "start") {
@@ -48,7 +45,7 @@ if ($command eq "start") {
 #  $daemon->getPref('HELO', 'starter');
 } elsif ($command eq "stop") {
   my $daemon = SpamLogger->new('SpamLogger', 'etc/exim/spamlogger.conf');
-  my $res = $daemon->exec('EXIT');
+  my $res = $daemon->exec_call('EXIT');
   my $pids = `pgrep -f SpamLogger`;
   exit if (!defined($pids) || $pids eq "");
   foreach my $pid (split(/\n/, $pids)) {
@@ -56,12 +53,12 @@ if ($command eq "start") {
   }
   exit();
 } else {
-  printUsage();
+  print_usage();
 }
 
 
 
-sub printUsage {
+sub print_usage {
   print "Usage:\n";
   print "spamloggerdaemon (stop|start)\n";
   exit 1;

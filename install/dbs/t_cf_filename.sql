@@ -2,12 +2,11 @@ USE st_config;
 DROP TABLE IF EXISTS filename;
 
 CREATE TABLE filename (
-  id				 int(11) NOT NULL AUTO_INCREMENT,
-  status			 enum('allow', 'deny') DEFAULT 'deny',
-  rule				 varchar(50) NOT NULL UNIQUE,
-  name				 varchar(150),
-  description			 varchar(150),
-
+  id           int(11) NOT NULL AUTO_INCREMENT,
+  status       enum('allow', 'deny') DEFAULT 'deny',
+  rule         varchar(50) NOT NULL UNIQUE,
+  name         varchar(150),
+  description  varchar(150),
   PRIMARY KEY (id)
 );
 

@@ -26,7 +26,7 @@ if [ -e UpdateReady.txt ] && [ ! -e UpdateReady.lck ]; then
   #       Uncomment the following line if more than one process might
   #       launch this script. Leave it commented out if this script will
   #       normally be run by the <update-script/> mechanism in SNFServer.
-  #	touch UpdateReady.lck
+  #       touch UpdateReady.lck
 
   curl http://www.sortmonster.net/Sniffer/Updates/$LICENSE_ID.snf --output $LICENSE_ID.new --compressed --user sniffer:ki11sp8m --remote-time --fail
 

@@ -2,7 +2,7 @@
 
 usage() {
   echo "Usage: $0 public_chain private_key [-R]"
-  echo "	-R  Don't restart services"
+  echo "  -R  Don't restart services"
   exit
 }
 

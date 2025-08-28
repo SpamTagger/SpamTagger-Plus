@@ -19,7 +19,7 @@
 
 dns_available yes
 
-ok_locales		fr en de it es
+ok_locales    fr en de it es
 
 envelope_sender_header X-SpamTagger-From
 

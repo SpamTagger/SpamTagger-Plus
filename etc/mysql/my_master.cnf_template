@@ -1,7 +1,7 @@
 [mysqld]
-tmpdir		= /tmp
-port		= 3306
-user		= mysql
+tmpdir  = /tmp
+port    = 3306
+user    = mysql
 expire-logs-days = __BINARY_LOG_KEEP__
 
 skip-external-locking
