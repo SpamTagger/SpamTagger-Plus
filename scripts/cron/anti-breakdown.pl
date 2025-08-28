@@ -26,16 +26,17 @@ use warnings;
 use utf8;
 
 # TODO: teporarily disable for spamtagger transition
-echo "Feature not currently supported by SpamTagger"
-exit
+die "Feature not currently supported by SpamTagger";
 
+=pod Ignore for perlcritic
 push(@INC, '/usr/spamtagger/lib/');
-use Net::DNS;
-use Net::Ping;
-use File::Touch;
-use DBI;
-require 'lib_utils.pl';
+use Net::DNS();
+use Net::Ping();
+use File::Touch();
+use DB();
+use ReadConfig();
 
+our $config = ReadConfig::get_instance();
 my $max_host_failed = 2;
 my $nb_tests = 3;
 my $is_dns_ok = 0;
@@ -53,86 +54,7 @@ my %rbl_field = (
   'antispam' => 'sa_rbls'
 );
 
-
-my %config = readConfig("/etc/spamtagger.conf");
-
-sub readConfig {
-  my $configfile = shift;
-  my %config;
-  my ($var, $value);
-
-  open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-  while (<CONFIG>) {
-    chomp;                  # no newline
-    s/#.*$//;               # no comments
-    s/^\*.*$//;             # no comments
-    s/;.*$//;               # no comments
-    s/^\s+//;               # no leading white
-    s/\s+$//;               # no trailing white
-    next unless length;     # anything left?
-    my ($var, $value) = split(/\s*=\s*/, $_, 2);
-    $config{$var} = $value;
-  }
-  close CONFIG;
-
-  return %config;
-}
-
-sub get_master_config
-{
-  my %mconfig;
-  my $dbh;
-  $dbh = DBI->connect(
-    "DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-    "spamtagger",
-    "$config{MYSPAMTAGGERPWD}",
-    {RaiseError => 0, PrintError => 0}
-  ) or die("CANNOTCONNECTDB", $dbh->errstr);
-
-  my $sth = $dbh->prepare("SELECT hostname, port, password FROM master");
-  $sth->execute() or die("CANNOTEXECUTEQUERY", $dbh->errstr);
-
-  if ($sth->rows < 1) {
-    return;
-  }
-  my $ref = $sth->fetchrow_hashref() or return;
-
-  $stonfig{'__MYMASTERHOST__'} = $ref->{'hostname'};
-  $stonfig{'__MYMASTERPORT__'} = $ref->{'port'};
-  $stonfig{'__MYMASTERPWD__'} = $ref->{'password'};
-
-  $sth->finish();
-  $dbh->disconnect();
-  return %mconfig;
-}
-
-sub getIPAddresses {
-  my ($cname, $type) = @_;
-
-  my $res   = Net::DNS::Resolver->new;
-  $res->tcp_timeout( 10 );
-  my $reply = $res->search($cname, $type);
-  my @teams = ();
-
-  if ($reply) {
-    foreach my $rr ($reply->answer) {
-      push @teams, $rr->address if $rr->can('address');
-    }
-  }
-  if ( ! @teams ) {
-    my @teams_tmp = `dig $cname $type +short`;
-    foreach (@teams_tmp) {
-      $_ =~s/\s//g;
-      push @teams, $_ if ($_ =~ m/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/);
-    }
-  }
-
-  return @teams;
-}
-
-sub checkHost {
-  my ($host, $port) = @_;
-
+sub check_host ($host, $port) {
   my $p = Net::Ping->new('tcp', 5);
   $p->port_number($port);
   my $res = $p->ping($host);
@@ -143,10 +65,8 @@ sub checkHost {
 }
 
 
-sub is_dns_service_available {
-  my ($host) = @_;
-
-  my $res = new Net::DNS::Resolver(
+sub is_dns_service_available ($host) {
+  my $res = Net::DNS::Resolver->new(
     tcp_timeout => 5,
     retry       => 3,
     retrans     => 1,
@@ -164,8 +84,7 @@ sub is_dns_service_available {
 }
 
 # retourne false si 3 tentatives KO
-sub is_port_ok {
-  my ($step, $port, @hosts) = @_;
+sub is_port_ok ($step, $port, @hosts) {
   my $nb_failed_host = 0;
 
   foreach my $host (@hosts) {
@@ -173,7 +92,7 @@ sub is_port_ok {
       if ( ! is_dns_service_available($host) ) {
         $nb_failed_host++;
       }
-    } elsif ( ! checkHost($host, $port) ) {
+    } elsif ( ! check_host($host, $port) ) {
       $nb_failed_host++;
     }
   }
@@ -194,15 +113,13 @@ sub remove_and_save_ST_RBLs {
   my $sth;
   my $reboot_service = 0;
 
-  my %master_conf = get_master_config();
-  my $master_dbh = DBI->connect("DBI:mysql:database=st_config;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
-    "spamtagger", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0});
+  my $master_dbh = DB->db_connect('master', 'st_config');
   if ( ! defined($master_dbh) ) {
     warn "CANNOTCONNECTMASTERDB\n", $master_dbh->errstr;
     return 0;
   }
 
-  open FH, '>', $rbl_sql_file;
+  open(my $FH, '>', $rbl_sql_file);
 
   foreach my $table (keys %rbl_field) {
     my $field = $rbl_field{$table};
@@ -217,8 +134,8 @@ sub remove_and_save_ST_RBLs {
 
     my $nw;
     foreach my $w (@rbls) {
-      if ( is_into($w, @rbls_to_disable) ) {
-        print FH "update $table set $field = concat($field, ' $w');\n";
+      if ( scalar( grep {/$w/} @rbls_to_disable) > 0 ) {
+        print $FH "update $table set $field = concat($field, ' $w');\n";
       } else {
         $nw .= "$w ";
       }
@@ -231,10 +148,10 @@ sub remove_and_save_ST_RBLs {
       $reboot_service = 1;
     }
   }
+  close $FH;
 
-  close FH;
   $sth->finish() if ( defined($sth) );
-  $master_dbh->disconnect();
+  $master_dbh->db_disconnect();
 
   if ($reboot_service) {
     system('/usr/spamtagger/etc/init.d/mailscanner', 'restart');
@@ -248,24 +165,22 @@ sub handle_dns_ok {
     my $sth;
 
     # Database connexion
-    my %master_conf = get_master_config();
-    my $master_dbh = DBI->connect("DBI:mysql:database=st_config;host=$master_conf{'__MYMASTERHOST__'}:$master_conf{'__MYMASTERPORT__'}",
-      "spamtagger", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0});
+    my $master_dbh = DB->db_connect('master', 'st_config');
     if ( ! defined($master_dbh) ) {
       warn "CANNOTCONNECTMASTERDB\n", $master_dbh->errstr;
       return 0;
     }
 
     # The file contains the SQL statements ready to be excuted
-    open FH, $rbl_sql_file or warn "Cannot open $rbl_sql_file: $!\n";
-    while (<FH>) {
+    open(my $FH, $rbl_sql_file or warn "Cannot open $rbl_sql_file: $!\n";
+    while (<$FH>) {
       $sth = $master_dbh->prepare($_);
       $sth->execute();
     }
+    close $FH;
 
-    close FH;
     $sth->finish() if ( defined($sth) );
-    $master_dbh->disconnect();
+    $master_dbh->db_disconnect();
 
     # Restarting associated services
     system('/usr/spamtagger/etc/init.d/mailscanner', 'restart');
@@ -285,7 +200,7 @@ sub handle_dns_ko {
   touch($dns_ko_file);
 
   # Removes and saves the RBLs hosted by SpamTagger then restarts associated services
-  remove_and_save_ST_RBLs();
+  remove_and_save_st_rbls();
 }
 
 # SpamTagger servers used for updating scripts and data are offline
@@ -298,39 +213,4 @@ sub handle_data_ko {
 sub handle_data_ok {
   unlink $data_ko_file;
 }
-
-
-##########################################################################################
-# Exit if not registered
-if ( ! defined($config{'REGISTERED'}) || $config{'REGISTERED'} != 1 ) {
-  exit;
-}
-
-my $rc = create_lockfile('anti-breakdown', undef, time+10*60, 'anti-breakdown');
-if ($rc == 0) {
-  exit;
-}
-
-# Getting IPs for cvs.spamtagger.org
-my @teams = getIPAddresses('cvs.spamtagger.org', 'A');
-
-if ( @teams) {
-  $is_dns_ok  = is_port_ok(0, 53, @teams);
-  $is_data_ok  = is_port_ok(0, 22, @teams);
-} else {
-  $is_dns_ok  = 0;
-  $is_data_ok  = 0;
-}
-
-if ($is_dns_ok)  {
-  handle_dns_ok();
-} else {
-  handle_dns_ko();
-}
-if ($is_data_ok) {
-  handle_data_ok();
-} else {
-  handle_data_ko();
-}
-
-remove_lockfile('anti-breakdown');
+=cut

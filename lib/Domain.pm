@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -19,52 +20,35 @@
 #
 #   This module will just read the configuration file
 
-package          Domain;
+package Domain;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-require          ReadConfig;
-require          PrefClient;
-require          SystemPref;
-require          ConfigTemplate;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(create getPref);
-our $VERSION    = 1.0;
+use lib "/usr/spamtagger/lib/";
+use DB();
+use ReadConfig();
+use PrefClient();
+use SystemPref();
+use ConfigTemplate();
 
-sub create {
-  my $name = shift;
-  my %prefs;
-#-#  my $pref_daemon = PrefDaemon::create();
-
+sub new ($class, $name) {
   my $this = {
-         name => $name,
-         prefs => \%prefs,
-#-#         prefdaemon => $pref_daemon,
-         };
+    name => $name,
+    prefs => {},
+  };
 
-  bless $this, "Domain";
+  bless $this, $class;
   return $this;
 }
 
-sub getPref {
-  my $this = shift;
-  my $pref = shift;
-  my $default = shift;
-
-  if (!defined($this->{prefs}) || !defined($this->{prefs}{$pref})) {
-  	## get domain prefs
- #-# 	my $cachedpref = $this->{prefdaemon}->getPref('PREF', '@'.$this->{name}." ".$pref);
- #-# 	if ($cachedpref !~ /^(BADPREF|NOTFOUND|NOCACHE|TIMEDOUT|NODAEMON)/ ) {
- #-# 	  $this->{prefs}->{$pref} = $cachedpref;
- #-# 	  return $cachedpref;
- #-# 	}
- #-# 	if ($cachedpref =~ /^(NOCACHE|TIMEDOUT|NODAEMON)/) {
- #-# 	  $this->loadPrefs();
- #-# 	}
+sub get_pref ($this, $pref, $default) {
+  unless (defined($this->{prefs}) && defined($this->{prefs}{$pref})) {
 
     my $prefclient = PrefClient->new();
     $prefclient->setTimeout(2);
@@ -76,41 +60,31 @@ sub getPref {
       $this->{prefs}->{$pref} = $dpref;
       return $dpref;
     }
-    ## fallback loading
     $this->loadPrefs();
   }
 
-  if (defined($this->{prefs}->{$pref})) {
-    return $this->{prefs}->{$pref};
-  }
-  if (defined($default)) {
-    return $default;
-  }
+  return $this->{prefs}->{$pref} if (defined($this->{prefs}->{$pref}));
+  return $default if (defined($default));
   return "";
 }
 
-sub loadPrefs {
-  my $this = shift;
-
+sub load_prefs ($this) {
   my $conf = ReadConfig::getInstance();
   my $preffile = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$this->{name}."/prefs.list";
 
   my @dlist = ($this->{name}, '*', '_joker', '_global');
 
   ## try to load from db
-  require DB;
-  my $db = DB::connect('slave', 'st_config', 0);
+  my $db = DB->db_connect('slave', 'st_config', 0);
 
   my %res;
   if ($db && $db->ping()) {
     for my $d ( @dlist ) {
-	  my $query = "SELECT p.* FROM domain d, domain_pref p WHERE d.prefs=p.id AND d.name='".$d."'";
-	  %res = $db->getHashRow($query);
+      my $query = "SELECT p.* FROM domain d, domain_pref p WHERE d.prefs=p.id AND d.name='".$d."'";
+      %res = $db->get_hash_row($query);
       if ( %res && $res{id} ) {
-        foreach my $p (keys %res) {
-	      $this->{prefs}->{$p} = $res{$p};
-	    }
-	    return 1;
+        $this->{prefs}->{$_} = $res{$_} foreach (keys(%res));
+        return 1;
       }
     }
   }
@@ -118,66 +92,52 @@ sub loadPrefs {
   ## finaly try to find a valid preferences file
   my $found = 0;
   for my $d ( @dlist ) {
-    $preffile = 	$conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$d."/prefs.list";
+    $preffile =   $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$d."/prefs.list";
     if ( -f $preffile) {
       $found = 1;
       last;
     }
   }
-  if (!$found) {
-    return 0;
+  return 0 unless ($found);
+  return 0 unless (open(my $PREFFILE, '<', $preffile));
+  while (<$PREFFILE>) {
+    $this->{prefs}->{$1} = $2 if (/^(\S+)\s+(.*)$/);
   }
-  if (! open PREFFILE, $preffile) {
-   return 0;
-  }
-  while (<PREFFILE>) {
-    if (/^(\S+)\s+(.*)$/) {
-      $this->{prefs}->{$1} = $2;
-
-    }
-  }
-  close PREFFILE;
+  close $PREFFILE;
+  return;
 }
 
-sub dumpPrefs {
-  my $this = shift;
-  my $slave_db = shift;
-
-  require DB;
-
-  if (!$slave_db) {
-     $slave_db = DB::connect('slave', 'st_config');
-  }
-  my $query = "SELECT d.id, p.viruswall, p.spamwall, p.virus_subject, p.content_subject, p.spam_tag,
-                       p.language, p.report_template, p.support_email, p.delivery_type,
-                       p.enable_whitelists, p.enable_warnlists, p.enable_blacklists, p.notice_wwlists_hit, p.warnhit_template
-               FROM domain d, domain_pref p WHERE d.prefs=p.id AND d.name='".$this->{name}."'";
+sub dump_prefs ($this, $slave_db) {
+  $slave_db = DB->db_connect('slave', 'st_config') unless ($slave_db);
+  my $query =
+    "SELECT d.id, p.viruswall, p.spamwall, p.virus_subject, p.content_subject, p.spam_tag,
+    p.language, p.report_template, p.support_email, p.delivery_type,
+    p.enable_whitelists, p.enable_warnlists, p.enable_blacklists, p.notice_wwlists_hit, p.warnhit_template
+    FROM domain d, domain_pref p WHERE d.prefs=p.id AND d.name='".$this->{name}."'";
 
   my %res = $slave_db->getHashRow($query);
 
   $this->dumpPrefsFromRow(\%res);
+  return;
 }
 
-sub dumpPrefsFromRow {
-  my $this = shift;
-  my $row = shift;
+sub dump_prefs_from_row ($this, $row) {
   my %res = %{$row};
-
-  if (!%res || !defined($res{id})) {
-    print "CANNOTFINDPREFS";
-  }
+  print "CANNOTFINDPREFS" unless (%res && defined($res{id}));
   my $conf = ReadConfig::getInstance();
   my $prefdir = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$this->{name};
   my $preffile = $prefdir."/prefs.list";
 
   my $stuid = getpwnam('SpamTagger');
 
-  my @prefs_to_dump = ('viruswall', 'report_template', 'virus_subject', 'enable_whitelists', 'language',
-          'warnhit_template', 'support_email', 'spamwall', 'enable_warnlists', 'content_subject',
-          'notice_wwlists_hit', 'spam_tag', 'delivery_type');
+  my @prefs_to_dump = (
+    'viruswall', 'report_template', 'virus_subject', 'enable_whitelists', 'language',
+    'warnhit_template', 'support_email', 'spamwall', 'enable_warnlists', 'content_subject',
+    'notice_wwlists_hit', 'spam_tag', 'delivery_type'
+  );
 
-  if (! -d $prefdir ) {
-    if (! mkdir($prefdir)) {
+  unless ( -d $prefdir ) {
+    unless ( mkdir($prefdir)) {
       print "CANNOTMAKEPREFDIR ($prefdir)";
       return 0;
     }
@@ -185,19 +145,19 @@ sub dumpPrefsFromRow {
     my $gid = getgrnam( 'SpamTagger' );
     chown $uid, $gid, $prefdir;
   }
-  if (! open PREFFILE, ">".$preffile) {
-  	print "CANNOTWRITEPREFFILE";
-  	return 0;
+
+  unless (open(my $PREFFILE, ">", $preffile)) {
+    print "CANNOTWRITEPREFFILE";
+    return 0;
   }
+
   foreach my $k (keys %res) {
-    if (grep $_ eq $k, @prefs_to_dump) {
-  	  if (! defined($res{$k})) {
-  	    $res{$k} = "";
-  	  }
-      print PREFFILE "$k ".$res{$k}."\n";
+    if (grep { $k  } @prefs_to_dump) {
+      $res{$k} = "" unless ( defined($res{$k}));
+      print $PREFFILE "$k ".$res{$k}."\n";
     }
   }
-  close PREFFILE;
+  close $PREFFILE;
   chown $stuid, $stuid, $preffile;
 
   ## dump ldap callout file
@@ -212,9 +172,10 @@ sub dumpPrefsFromRow {
      print "specific ldap config\n";
     }
 
-    my $template = ConfigTemplate::create(
-                                 "etc/exim/ldapcallout_template",
-                                 $conf->getOption('VARDIR')."/spool/spamtagger/callout/".$this->getPref('name').".ldapcallout");
+    my $template = ConfigTemplate->new(
+      "etc/exim/ldapcallout_template",
+      $conf->getOption('VARDIR')."/spool/spamtagger/callout/"
+        . $this->getPref('name').".ldapcallout");
 
     my %rep;
     $rep{'__AD_BINDDN__'} = $ad_binddn;
@@ -224,9 +185,7 @@ sub dumpPrefsFromRow {
 
     my $specserver = $this->getPref('ldapcalloutserver');
     my $specparams = $this->getPref('ldapcalloutparam');
-    if ($specserver ne '') {
-      $rep{'__AD_SERVERS__'} = $specserver;
-    }
+    $rep{'__AD_SERVERS__'} = $specserver if ($specserver ne '');
     if ($specserver ne '' && $specparams =~ m/^([^:]+):([^:]*):([^:]*)$/) {
       $rep{'__AD_BINDDN__'} = $2;
       $rep{'__AD_PASS__'} = $3;
@@ -234,40 +193,33 @@ sub dumpPrefsFromRow {
       $rep{'__AD_BASEDN__'} = $1;
     }
     $template->setReplacements(\%rep);
-    my $ret = $template->dump();
-
+    my $ret = $template->dumpFile();
   }
+  return;
 }
 
-sub dumpLocalAddresses {
-  my $this = shift;
-  my $slave_db = shift;
-
+sub dump_local_addresses ($this, $slave_db) {
   my $stuid = getpwnam('SpamTagger');
-  require DB;
-
   my $conf = ReadConfig::getInstance();
 
-  if (!$slave_db) {
-     $slave_db = DB::connect('slave', 'st_config');
-  }
-  my $query = "SELECT e.address
-               FROM email e WHERE e.address LIKE '%@".$this->{name}."'";
+  $slave_db = DB->db_connect('slave', 'st_config') unless ($slave_db);
+
+  my $query = "SELECT e.address FROM email e WHERE e.address LIKE '%@".$this->{name}."'";
 
   my $file = $conf->getOption('VARDIR')."/spool/spamtagger/addresses/".$this->{name}.".addresslist";
-  if ( !open(OUTFILE, ">".$file) ) {
-      if (-e $file) { ## in case we cannot write to file, try to remove it
-          unlink($file);
-      }
-      return 0;
+  unless (open(my $OUTFILE, ">", $file)) {
+    unlink($file) if (-e $file); ## in case we cannot write to file, try to remove it
+    return 0;
   }
   my @res = $slave_db->getListOfHash($query);
   foreach my $addrow (@res) {
-      if (defined($addrow->{'address'}) && $addrow->{'address'} =~ m/(\S+)\@/) {
-        print OUTFILE $1."\n";
-      }
+    if (defined($addrow->{'address'}) && $addrow->{'address'} =~ m/(\S+)\@/) {
+      print OUTFILE $1."\n";
+    }
   }
   close OUTFILE;
   chown $stuid, $file;
+  return;
 }
+
 1;

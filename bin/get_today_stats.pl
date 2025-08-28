@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -16,7 +17,6 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
 #
 #   This script will output the count of messages/spams/viruses for today
 #
@@ -43,12 +43,9 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require StatsClient;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use StatsClient();
 
 my $mode_given = shift;
 my $spec = shift;
@@ -88,37 +85,27 @@ my $percentclean = 0;
 my $client = StatsClient->new();
 
 my $bytes = $client->query('GET global:size');
-if ( ! defined ($bytes)  || $bytes =~ /^_/) {
-  $bytes=0;
-}
+$bytes = 0 if ( ! defined ($bytes)  || $bytes =~ /^_/);
 $total_bytes = $bytes;
 
 my $msgs = $client->query('GET global:msg');
-if ($msgs =~ /^_/) {
-  $msgs=0;
-}
+$msgs = 0 if ($msgs =~ /^_/);
 $total_msg = $msgs;
 
 my $spams = $client->query('GET global:spam');
-if ($spams =~ /^_/) {
-  $spams = 0;
-}
+$spams = 0 if ($spams =~ /^_/);
 $total_spam = $spams;
 
 my $viruses = $client->query('GET global:virus');
-if ($viruses =~ /^_/) {
-  $viruses = 0;
-}
+$viruses = 0 if ($viruses =~ /^_/);
 $total_virus = $viruses;
 
 my $names = $client->query('GET global:name');
-if ($names =~ /^_/) {
-  $names = 0;
-}
+$names = 0 if ($names =~ /^_/);
+
 my $others = $client->query('GET global:other');
-if ($others =~ /^_/) {
-  $others = 0;
-}
+$others = 0 if ($others =~ /^_/);
+
 $total_content = $names + $others;
 if ($total_msg > 0) {
   $percentspam = int(((100/$total_msg) * $total_spam)*100)/100;
@@ -131,9 +118,8 @@ if ($total_msg > 0) {
 }
 
 my $cleans = $client->query('GET global:clean');
-if ($cleans =~ /^_/) {
-  $cleans = 0;
-}
+$cleans = 0 if ($cleans =~ /^_/);
+
 $total_clean = $cleans;
 if ($total_msg > 0) {
   $percentclean = int(((100/$total_msg) * $total_clean)*100)/100;
@@ -142,27 +128,22 @@ if ($total_msg > 0) {
 }
 
 my $users = $client->query('GET global:user');
-if ($users =~ /^_/) {
-  $users = 0;
-}
+$users = 0 if ($users =~ /^_/);
 $user_count = $users;
 
 my $domains = $client->query('GET global:domain');
-if ($domains =~ /^_/) {
-  $domains = 0;
-}
+$domains = 0 if ($domains =~ /^_/);
 $domain_count = $domains;
 
-if ( ! defined ($total_bytes) ) {
-  $total_bytes = 0;
-}
+$total_bytes = 0 unless (defined($total_bytes));
+
 if ($mode eq "a") {
-	print "total bytes:   $total_bytes\n";
-	print "total msgs:    $total_msg\n";
-	print "total spams:   $total_spam ($percentspam%)\n";
-	print "total viruses: $total_virus ($percentvirus%)\n";
-	print "total content: $total_content ($percentcontent%)\n";
-	print "total clean:   $total_clean ($percentclean%)\n";
+  print "total bytes:   $total_bytes\n";
+  print "total msgs:    $total_msg\n";
+  print "total spams:   $total_spam ($percentspam%)\n";
+  print "total viruses: $total_virus ($percentvirus%)\n";
+  print "total content: $total_content ($percentcontent%)\n";
+  print "total clean:   $total_clean ($percentclean%)\n";
 }
 elsif ($mode eq "A") { print("$total_bytes|$total_msg|$total_spam|$percentspam|$total_virus|$percentvirus|$total_content|$percentcontent|$user_count|$total_clean|$percentclean|$domain_count");}
 elsif ($mode eq "B") { print("$total_bytes|$total_msg|$total_spam|$percentspam|$total_virus|$percentvirus|$total_content|$percentcontent|$total_clean|$percentclean");}

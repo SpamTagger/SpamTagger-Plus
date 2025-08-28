@@ -27,75 +27,59 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/collect_rrd_stats\.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require DB;
-require RRDStats;
-require RRDArchive;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use DB();
+use RRDStats();
+use RRDArchive();
 
 my $mode = shift;
 my $m = '';
-if (defined($mode) && $mode eq 'daily') {
- $m = 'daily';
+$m = 'daily' if (defined($mode) && $mode eq 'daily');
+
+my $conf = ReadConfig::get_instance();
+exit 0 unless ($conf->get_option('ISMASTER') =~ /^[Yy]$/);
+
+unless (-d $conf->get_option('VARDIR')."/spool/rrdtools") {
+  mkdir $conf->get_option('VARDIR')."/spool/rrdtools";
 }
 
-my $conf = ReadConfig::getInstance();
-if ($conf->getOption('ISMASTER') !~ /^[Yy]$/) {
-  # not a master, so no more processing
-  exit 0;
-}
-
-if (! -d $conf->getOption('VARDIR')."/spool/rrdtools") {
-  mkdir $conf->getOption('VARDIR')."/spool/rrdtools";
-}
-
-$conf->getOption('SRCDIR');
+$conf->get_option('SRCDIR');
 
 # get stats to plot
 my @stats = ('cpu', 'load', 'network', 'memory', 'disks', 'messages', 'spools');
 
 # get hosts to query
-my $slave_db = DB::connect('slave', 'st_config');
-my @hosts = $slave_db->getListOfHash("SELECT id, hostname FROM slave");
+my $slave_db = DB->db_connect('slave', 'st_config');
+my @hosts = $slave_db->get_list_of_hash("SELECT id, hostname FROM slave");
 
 ## main hosts loops
 foreach my $host (@hosts) {
   my $hostname = $host->{'hostname'};
-  my $host_stats = RRDStats::New($host->{'hostname'});
-  #print "processing: $hostname\n";
+  my $host_stats = RRDStats::new($host->{'hostname'});
 
   for my $stattype (@stats) {
-  	if ($m eq 'daily') {
-  	  $host_stats->createRRD($stattype);
-  	  $host_stats->plot($stattype, 'daily');
-  	} else {
-      $host_stats->createRRD($stattype);
-  	  $host_stats->collect($stattype);
-  	  $host_stats->plot($stattype, '');
-  	}
-   }
+    if ($m eq 'daily') {
+      $host_stats->create_rrd($stattype);
+      $host_stats->plot($stattype, 'daily');
+    } else {
+      $host_stats->create_rrd($stattype);
+      $host_stats->collect($stattype);
+      $host_stats->plot($stattype, '');
+    }
+  }
 }
-
 
 ## new rrd collecting scheme
 my %collections;
-my @collections_list = $slave_db->getListOfHash("SELECT id, name, type FROM rrd_stats");
+my @collections_list = $slave_db->get_list_of_hash("SELECT id, name, type FROM rrd_stats");
 my %dynamic_oids;
 foreach my $collection (@collections_list) {
-	my $c = RRDArchive::New($collection->{'id'}, $collection->{'name'}, $collection->{'type'});
-	if (keys %dynamic_oids < 1) {
-		$c->getDynamicOids(\%dynamic_oids);
-
-	}
-	my @elements = $slave_db->getListOfHash("SELECT name, type, function, oid, min, max FROM rrd_stats_element WHERE stats_id=".$collection->{'id'}." order by draw_order");
-	foreach my $element (@elements) {
-		$c->addElement($element);
-	}
-
-	$c->collect(\%dynamic_oids);
+  my $c = RRDArchive::new($collection->{'id'}, $collection->{'name'}, $collection->{'type'});
+  $c->get_dynamic_oids(\%dynamic_oids) if (keys %dynamic_oids < 1);
+  my @elements = $slave_db->get_list_of_hash("SELECT name, type, function, oid, min, max FROM rrd_stats_element WHERE stats_id=".$collection->{'id'}." order by draw_order");
+  $c->add_element($_) foreach (@elements);
+  $c->collect(\%dynamic_oids);
 }
 
 $slave_db->disconnect();

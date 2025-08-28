@@ -4,6 +4,7 @@
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,232 +22,201 @@
 #
 #   This module will just read the configuration file
 
-package          SpamHandler;
+package SpamHandler;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-require PreForkTDaemon;
-require SpamHandler::Batch;
-require DB;
-use threads;
-use threads::shared;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA = "PreForkTDaemon";
+use lib "/usr/spamtagger/lib/";
+use SpamHandler::Batch();
+use DB();
+use threads();
+use threads::shared();
+use STDnsLists();
+
+use parent qw(PreForkTDaemon);
 
 my %processed_ids : shared;
 
-sub new {
-    my $class        = shift;
-    my $myspec_thish = shift;
-    my %myspec_this;
-    if ($myspec_thish) {
-        %myspec_this = %$myspec_thish;
+sub new ($class = "SpamHandler", $myspec_this = {}) {
+  my $conf     = ReadConfig::get_instance();
+  my %dbs      = ();
+  my %prepared = ();
+
+  my $spec_this = {
+    interval => 3,
+    spamdir  => $conf->get_option('VARDIR') . '/spool/exim_stage4/spamstore',
+    maxbatchsize         => 100,
+    reportspamtodnslists => 0,
+    reportrbls           => '',
+    rblsDefsPath         => $conf->get_option('SRCDIR') . "/etc/rbls/",
+    whitelistDomainsFile => $conf->get_option('SRCDIR')
+      . "/etc/rbls/whitelisted_domains.txt",
+    TLDsFiles => $conf->get_option('SRCDIR')
+      . "/etc/rbls/two-level-tlds.txt "
+      . $conf->get_option('SRCDIR')
+      . "/etc/rbls/tlds.txt",
+    localDomainsFile => $conf->get_option('VARDIR')
+      . "/spool/tmp/spamtagger/domains.list",
+    maxurisreports => 10,
+    configfile     => $conf->get_option('SRCDIR')
+      . "/etc/spamtagger/spamhandler.conf",
+    pidfile    => $conf->get_option('VARDIR') . "/run/spamhandler.pid",
+
+    %dbs       => (),
+    %prepared  => (),
+    storeslave => $conf->get_option('HOSTID'),
+    clean_thread_exit    => 1,
+  };
+
+  # add specific options of child object
+  $spec_this->{$_} = $myspec_this->{$_} foreach ( keys(%{$myspec_this}) );
+
+  my $this = $class->SUPER->new('SpamHandler', undef, $spec_this);
+  foreach my $key ( keys %{$this} ) {
+    $this->{$key} =~ s/%([A-Z]+)%/$conf->get_option($1)/eg;
+  }
+  return bless $this, $class;
+}
+
+sub clear_cache ($this, $nosh, $type) {
+  lock(%processed_ids);
+  delete $processed_ids{$_} foreach (keys(%processed_ids));
+  %processed_ids = ();
+  return 1;
+}
+
+sub pre_fork_hook ($this) {
+  return 1;
+}
+
+sub main_loop_hook ($this) {
+  $this->do_log( "In SpamHandler mainloop", 'spamhandler' );
+
+  $SIG{'INT'} = $SIG{'KILL'} = $SIG{'TERM'} = sub {
+    my $t = threads->self;
+    $this->{tid} = $t->tid;
+
+    $this->do_log(
+      "Thread " . $t->tid . " got TERM! Proceeding to shutdown thread...",
+      'daemon'
+    );
+
+    threads->detach();
+    $this->do_log( "Thread " . $t->tid . " detached.", 'daemon' );
+    threads->exit();
+    $this->do_log(
+      "Huho... Thread " . $t->tid . " still working though...",
+      'daemon', 'error'
+    );
+  };
+
+  ## first prepare databases access for loggin ('_Xname' are for order)
+  $this->connect_databases();
+
+  my $spamdir = $this->{spamdir};
+
+  if ( $this->{reportspamtodnslists} > 0 ) {
+    $this->{dnslists} =
+      STDnsLists->new( sub { my $msg = shift; $this->do_log($msg, 'spamhandler'); },
+      $this->{debug} );
+    $this->{dnslists}->load_rbls(
+      $this->{rblsDefsPath}, $this->{reportrbls},
+      'URIRBL',              $this->{whitelistDomainsFile},
+      $this->{TLDsFiles},    $this->{localDomainsFile},
+      'dnslists'
+    );
+  }
+
+  while (1) {
+    my $batch = SpamHandler::Batch->new($spamdir, $this);
+    unless ($batch) {
+      $this->do_log(
+        "Cannot create spam batch ($spamdir) ! sleeping for 10 seconds...",
+        'spamhandler', 'error'
+      );
+      sleep 10;
+      return 0;
     }
 
-	my $conf     = ReadConfig::getInstance();
-	my %dbs      = ();
-	my %prepared = ();
+    $batch->prepare_run();
+    $batch->get_messages_to_process();
+    $batch->run();
+    sleep $this->{prefork} * $this->{interval};
+  }
+  $this->do_log( "Error, in thread neverland !", 'spamhandler', 'error' );
+  return 1;
+}
 
-	my $spec_this = {
-		interval => 3,
-		spamdir  => $conf->getOption('VARDIR') . '/spool/exim_stage4/spamstore',
-		maxbatchsize         => 100,
-		reportspamtodnslists => 0,
-		reportrbls           => '',
-		rblsDefsPath         => $conf->getOption('SRCDIR') . "/etc/rbls/",
-		whitelistDomainsFile => $conf->getOption('SRCDIR')
-		  . "/etc/rbls/whitelisted_domains.txt",
-		TLDsFiles => $conf->getOption('SRCDIR')
-		  . "/etc/rbls/two-level-tlds.txt "
-		  . $conf->getOption('SRCDIR')
-		  . "/etc/rbls/tlds.txt",
-		localDomainsFile => $conf->getOption('VARDIR')
-		  . "/spool/tmp/spamtagger/domains.list",
-		maxurisreports => 10,
-		configfile     => $conf->getOption('SRCDIR')
-		  . "/etc/spamtagger/spamhandler.conf",
-        pidfile    => $conf->getOption('VARDIR') . "/run/spamhandler.pid",
+sub connect_databases ($this) {
+  my @databases = ( 'slave', 'realmaster' );
 
-		%dbs       => (),
-		%prepared  => (),
-		storeslave => $conf->getOption('HOSTID'),
-        clean_thread_exit    => 1,
-	};
-
-	# add specific options of child object
-    foreach my $sk ( keys %myspec_this ) {
-        $spec_this->{$sk} = $myspec_this{$sk};
+  foreach my $db (@databases) {
+    if ( !defined( $this->{dbs}{$db} ) || !$this->{dbs}{$db}->ping() ) {
+      $this->do_log( "Connecting to database $db", 'spamhandler' );
+      $this->{dbs}{$db} = DB->db_connect( $db, 'st_spool', 0 );
     }
-	my $this = $class->SUPER::create( 'SpamHandler', undef, $spec_this );
-	foreach my $key ( keys %{$this} ) {
-		$this->{$key} =~ s/%([A-Z]+)%/$conf->getOption($1)/eg;
-	}
-	bless $this, $class;
 
-	return $this;
+    if ( !defined( $this->{dbs}{$db} ) || !$this->{dbs}{$db}->ping() ) {
+      $this->do_log( "Error, could not connect to db $db ",
+        'spamhandler', 'error' );
+      delete( $this->{dbs}{$db} );
+    }
+  }
+
+  ## and prepare statements
+  foreach my $dbname ( keys %{ $this->{dbs} } ) {
+    ## desable autocommit
+    $this->{dbs}{$dbname}->set_auto_commit(0);
+    my $db = $this->{dbs}{$dbname};
+    foreach my $t (
+      (
+        'a', 'b', 'c',    'd', 'e', 'f', 'g', 'h',
+        'i', 'j', 'k',    'l', 'm', 'n', 'o', 'p',
+        'q', 'r', 's',    't', 'u', 'v', 'w', 'x',
+        'y', 'z', 'misc', 'num'
+      )
+      )
+    {
+      my %db_prepare = ();
+      $this->{prepared}{$dbname}{$t} = $db->prepare(
+        'INSERT IGNORE INTO spam_' . $t
+          . ' (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_master, store_slave, is_newsletter)
+        VALUES(NOW(),   NOW(),     ?,         ? ,     ? ,       ?,      ?,      ?,        ?,          ?,             ?,      \'0\',     ?,'
+          . $this->{storeslave} . ', ?)'
+      );
+
+      if ( !$this->{prepared}{$dbname}{$t} ) {
+        $this->do_log( "Error in preparing statement $dbname, $t!",
+          'spamhandler', 'error' );
+      }
+    }
+  }
+
+  return 1;
 }
 
-sub clearCache {
-	my $this = shift;
-	my $nosh = shift;
-	my $type = shift;
-
-	lock(%processed_ids);
-	foreach my $id ( keys %processed_ids ) {
-		delete $processed_ids{$id};
-	}
-	%processed_ids = ();
-	return 1;
+sub delete_lock ($this, $id) {
+  lock(%processed_ids);
+  delete $processed_ids{$id} if (defined($processed_ids{$id}));
+  return 1;
 }
 
-sub preForkHook() {
-	my $this = shift;
-
-	return 1;
+sub add_lock ($this, $id) {
+  lock(%processed_ids);
+  $processed_ids{$id} = 1;
+  return 1;
 }
 
-sub mainLoopHook() {
-	my $this = shift;
-	$this->doLog( "In SpamHandler mainloop", 'spamhandler' );
-
-    $SIG{'INT'} = $SIG{'KILL'} = $SIG{'TERM'} = sub {
-    	my $t = threads->self;
-        $this->{tid} = $t->tid;
-
-        $this->doLog(
-            "Thread " . $t->tid . " got TERM! Proceeding to shutdown thread...",
-            'daemon'
-        );
-
-        threads->detach();
-        $this->doLog( "Thread " . $t->tid . " detached.", 'daemon' );
-        #$this->disconnect();
-        threads->exit();
-        $this->doLog( "Huho... Thread " . $t->tid . " still working though...",
-            'daemon', 'error' );
-    };
-
-	## first prepare databases access for loggin ('_Xname' are for order)
-	$this->connectDatabases();
-
-	my $spamdir = $this->{spamdir};
-
-	if ( $this->{reportspamtodnslists} > 0 ) {
-		require STDnsLists;
-		$this->{dnslists} =
-		  new STDnsLists( sub { my $msg = shift; $this->doLog($msg, 'spamhandler'); },
-			$this->{debug} );
-		$this->{dnslists}->loadRBLs(
-			$this->{rblsDefsPath}, $this->{reportrbls},
-			'URIRBL',              $this->{whitelistDomainsFile},
-			$this->{TLDsFiles},    $this->{localDomainsFile},
-			'dnslists'
-		);
-	}
-
-	while (1) {
-
-		my $batch = SpamHandler::Batch::new( $spamdir, $this );
-		if ( !$batch ) {
-			$this->doLog(
-"Cannot create spam batch ($spamdir) ! sleeping for 10 seconds...",
-				'spamhandler', 'error'
-			);
-			sleep 10;
-			return 0;
-		}
-
-		$batch->prepareRun();
-		$batch->getMessagesToProcess();
-		$batch->run();
-		sleep $this->{prefork} * $this->{interval};
-	}
-	$this->doLog( "Error, in thread neverland !", 'spamhandler', 'error' );
-	return 1;
-}
-
-sub connectDatabases {
-	my $this = shift;
-
-	my @databases = ( 'slave', 'realmaster' );
-
-	foreach my $db (@databases) {
-		if ( !defined( $this->{dbs}{$db} ) || !$this->{dbs}{$db}->ping() ) {
-			$this->doLog( "Connecting to database $db", 'spamhandler' );
-			$this->{dbs}{$db} = DB::connect( $db, 'st_spool', 0 );
-		}
-
-		if ( !defined( $this->{dbs}{$db} ) || !$this->{dbs}{$db}->ping() ) {
-			$this->doLog( "Error, could not connect to db $db ",
-				'spamhandler', 'error' );
-			delete( $this->{dbs}{$db} );
-		}
-	}
-
-	## and prepare statements
-	foreach my $dbname ( keys %{ $this->{dbs} } ) {
-		## desable autocommit
-		$this->{dbs}{$dbname}->setAutoCommit(0);
-		my $db = $this->{dbs}{$dbname};
-		foreach my $t (
-			(
-				'a', 'b', 'c',    'd', 'e', 'f', 'g', 'h',
-				'i', 'j', 'k',    'l', 'm', 'n', 'o', 'p',
-				'q', 'r', 's',    't', 'u', 'v', 'w', 'x',
-				'y', 'z', 'misc', 'num'
-			)
-		  )
-		{
-			my %db_prepare = ();
-			$this->{prepared}{$dbname}{$t} = $db->prepare(
-				    'INSERT IGNORE INTO spam_' . $t
-				  . ' (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_master, store_slave, is_newsletter)
-                                                                        VALUES(NOW(),   NOW(),     ?,         ? ,     ? ,       ?,      ?,      ?,        ?,          ?,             ?,      \'0\',     ?,'
-				  . $this->{storeslave} . ', ?)'
-			);
-
-			if ( !$this->{prepared}{$dbname}{$t} ) {
-				$this->doLog( "Error in preparing statement $dbname, $t!",
-					'spamhandler', 'error' );
-			}
-		}
-	}
-
-	return 1;
-}
-
-sub deleteLock {
-	my $this = shift;
-	my $id   = shift;
-
-	lock(%processed_ids);
-	if ( defined( $processed_ids{$id} ) ) {
-		delete $processed_ids{$id};
-	}
-	return 1;
-}
-
-sub addLock {
-	my $this = shift;
-	my $id   = shift;
-
-	lock(%processed_ids);
-	$processed_ids{$id} = 1;
-	return 1;
-}
-
-sub isLocked {
-	my $this = shift;
-	my $id   = shift;
-
-	lock(%processed_ids);
-	if ( exists( $processed_ids{$id} ) ) {
-		return $processed_ids{$id};
-	}
-	return 0;
+sub is_locked ($this, $id) {
+  lock(%processed_ids);
+  return $processed_ids{$id} if ( exists( $processed_ids{$id} ) );
+  return 0;
 }
 
 1;

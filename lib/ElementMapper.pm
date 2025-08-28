@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,33 +24,30 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-require SystemPref;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(getElementMapper setNewDefault addNewElement);
-our $VERSION    = 1.0;
+use lib "/usr/spamtagger/lib/";
+use SystemPref();
 
-
-sub getElementMapper {
-  my $what = shift;
-
+sub get_element_mapper ($what) {
   my $el;
 
   if ($what eq "domain") {
     require ElementMappers::DomainMapper;
-    $el = ElementMappers::DomainMapper::create();
+    $el = ElementMappers::DomainMapper->new();
   }
   if ($what eq "email") {
     require ElementMappers::EmailMapper;
-    $el = ElementMappers::EmailMapper::create();
+    $el = ElementMappers::EmailMapper->new();
   }
 
-   $el->{db} = DB::connect('master', 'st_config', 0);
-   if (! $el->{db}->ping()) {
-  	 print "Cannot connect to configuration database";
-  	 return;
-   }
+  $el->{db} = DB->db_connect('master', 'st_config', 0);
+  if (! $el->{db}->ping()) {
+    print "Cannot connect to configuration database";
+    return;
+  }
 
   return $el;
 }

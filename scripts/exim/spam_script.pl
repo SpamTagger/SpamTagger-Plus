@@ -21,12 +21,14 @@ use v5.40;
 use warnings;
 use utf8;
 
-use DBI();
+push(@INC, '/usr/spamtagger/lib');
+use DB();
 use Net::SMTP;
+use ReadConfig;
 
-#DBI->trace(2,'/tmp/dbitrace.log');
-
-my %config = readConfig("/etc/spamtagger.conf");
+our $config = ReadConfig::get_instance();
+our $VARDIR = $config->get_option('VARDIR');
+our $CLIENTID = $config->get_option('CLIENTID');
 
 my $exim_id   = shift;
 my $to_local  = shift;
@@ -39,13 +41,10 @@ my $test_address_mode =
 
 my $msg = "";
 
-my $master_dbh;
-my $slave_dbh;
-my $config_dbh;
 my $err = 0;
 
 my $tag = "";
-my $store_id = $config{'HOSTID'};
+my $store_id = $config->get_option('HOSTID');
 
 my $DEBUG = 0;
 
@@ -71,7 +70,7 @@ while (<>) {
   $line = $_;
 
   # parse if message is forced
-  if (/^X\-SpamTagger\:\ message\ forced\ $config{'CLIENTID'}$/i) {
+  if (/^X\-SpamTagger\:\ message\ forced\ $CLIENTID$/i) {
     $has_forced_tag = 1;
     next;
   }
@@ -140,13 +139,9 @@ $exim_id = clean($exim_id);
 $subject = clean($subject);
 
 ## connect to local slave configuration database as we need it a lot of time from now
-$config_dbh = DBI->connect(
-"DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
-  "spamtagger",
-  "$config{'MYSPAMTAGGERPWD'}",
-  { RaiseError => $DEBUG, PrintError => $DEBUG }
-);
+our $config_dbh = DB->db_connect('slave', 'st_config');
 $config_dbh->{mysql_auto_reconnect} = 1;
+
 my $delivery_type = get_delivery_type();
 if ( $delivery_type == 2 ) {
   print "want quarantine";
@@ -161,9 +156,7 @@ if ( $delivery_type == 2 ) {
   send_anyway();
 }
 
-if ( defined $config_dbh ) {
-  $config_dbh->disconnect();
-}
+$config_dbh->db_disconnect();
 
 exit 0;
 
@@ -210,31 +203,27 @@ sub send_anyway {
   $smtp->dataend();
   $err = $smtp->code();
   if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
+  return;
 }
 
 ##########################################
 
 sub get_tag_prefs {
   get_pref( 'spam_tag', '{Spam?}', 0 );
+  return;
 }
 
 ##########################################
 
 sub get_delivery_type {
-
   # delivery types are: 1=tag, 2=quarantine, 3=drop, default is tag
   get_pref( 'delivery_type', 1, 0 );
+  return;
 }
 
 ##########################################
 
-sub get_pref {
-
-  # parameters: pref_name, default_value, verbose_mode
-  my $pref    = shift;
-  my $default = shift;
-  my $verbose = shift;
-
+sub get_pref ($pref, $defa, $verbose) {
   if ( defined $config_dbh ) {
     my $sth =
       $config_dbh->prepare(
@@ -272,29 +261,28 @@ sub get_pref {
 ##########################################
 
 sub put_in_quarantine {
-
   if ( $test_address_mode > 0 ) {
     if ( no_such_address( $to, $to_domain ) ) {
       print " no such address - not putting in quarantine";
       return 1;
     }
   }
-  if ( !-d $config{'VARDIR'} . "/spam/" . $to_domain ) {
-    mkdir( $config{'VARDIR'} . "/spam/" . $to_domain );
+  if ( !-d $VARDIR . "/spam/" . $to_domain ) {
+    mkdir( $VARDIR . "/spam/" . $to_domain );
   }
-  if ( !-d $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to ) {
-    mkdir( $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to );
+  if ( !-d $VARDIR . "/spam/" . $to_domain . "/" . $to ) {
+    mkdir( $VARDIR . "/spam/" . $to_domain . "/" . $to );
   }
 
   ## save the spam file
   my $filename =
-    $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to . "/" . $exim_id;
-  if ( !open( MSGFILE, ">" . $filename ) ) {
+    $VARDIR . "/spam/" . $to_domain . "/" . $to . "/" . $exim_id;
+  unless (open(my $MSGFILE, ">", $filename ) ) {
     print " cannot open quarantine file $filename for writing";
     return 0;
   }
-  print MSGFILE $msg;
-  close MSGFILE;
+  print $MSGFILE $msg;
+  close $MSGFILE;
 
   if ( $store_id < 0 ) {
     print " error, store id less than 0 ";
@@ -334,11 +322,8 @@ sub put_in_quarantine {
 }
 
 ##########################################
-sub no_such_address {
-  my $to     = shift;
-  my $domain = shift;
-
-  if ( -d $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to ) {
+sub no_such_address ($to, $domain) {
+  if ( -d $VARDIR . "/spam/" . $to_domain . "/" . $to ) {
     return 0;
   }
 
@@ -366,24 +351,15 @@ sub no_such_address {
   if ( ( $err == 550 ) ) {
     $smtp->close();
     return 1;
-  } else {
-    $smtp->close();
-    return 0;
   }
+  $smtp->close();
+  return 0;
 }
 
 ##########################################
 
-sub log_in_master {
-  my $host     = shift;
-  my $port     = shift;
-  my $password = shift;
-
-  my $master_dbh = DBI->connect(
-    "DBI:mysql:database=st_spool;host=$host;port=$port",
-    "spamtagger", "$password",
-    { RaiseError => $DEBUG, PrintError => $DEBUG }
-  ) or return 0;
+sub log_in_master ($host, $port, $password) {
+  my $master_dbh = DB->db_connect('master', 'st_spool');
   $master_dbh->{mysql_auto_reconnect} = 1;
 
   my $table = "misc";
@@ -400,22 +376,16 @@ sub log_in_master {
   my $master_sth = $master_dbh->prepare($query) or return 0;
   $master_sth->execute() or return 0;
   $master_sth->finish()  or return 0;
-  $master_dbh->disconnect();
+  $master_dbh->db_disconnect();
 
   return 1;
 }
 
 ##########################################
 
-sub log_in_slave {
-  my $in_master = shift;
+sub log_in_slave ($in_master) {
 
-  my $slave_dbh = DBI->connect(
-    "DBI:mysql:database=st_spool;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
-    "spamtagger",
-    "$config{'MYSPAMTAGGERPWD'}",
-    { RaiseError => $DEBUG, PrintError => $DEBUG }
-  ) or return 0;
+  my $slave_dbh = DB->db_connect('slave', 'st_spool') or return 0;
   $slave_dbh->{mysql_auto_reconnect} = 1;
 
   my $table = "misc";
@@ -433,7 +403,7 @@ sub log_in_slave {
   my $slave_sth = $slave_dbh->prepare($query) or return 0;
   $slave_sth->execute() or return 0;
   $slave_sth->finish()  or return 0;
-  $slave_dbh->disconnect();
+  $slave_dbh->db_disconnect();
 
   return 1;
 }
@@ -441,46 +411,19 @@ sub log_in_slave {
 ##########################################
 
 sub panic_log_msg {
-  my $filename =
-    $config{'VARDIR'} . "/spool/exim_stage4/paniclog/" . $exim_id;
+  my $filename = $VARDIR."/spool/exim_stage4/paniclog/".$exim_id;
   print " **WARNING, cannot send message ! saving mail to: $filename\n";
 
-  open PANICLOG, ">" . $filename or return;
-  print PANICLOG $msg;
-  close PANICLOG;
+  open(my $PANICLOG, ">", $filename) or return;
+  print $PANICLOG $msg;
+  close $PANICLOG;
+  return;
 }
 ##########################################
 
-sub clean {
-  my $str = shift;
-
+sub clean ($str) {
   $str =~ s/\\/\\\\/g;
   $str =~ s/\'/\\\'/g;
 
   return $str;
 }
-
-##########################################
-
-sub readConfig {    # Reads configuration file given as argument.
-  my $configfile = shift;
-  my %config;
-  my ( $var, $value );
-
-  open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-  while (<CONFIG>) {
-    chomp;       # no newline
-    s/#.*$//;    # no comments
-    s/^\*.*$//;  # no comments
-    s/;.*$//;    # no comments
-    s/^\s+//;    # no leading white
-    s/\s+$//;    # no trailing white
-    next unless length;    # anything left?
-    my ( $var, $value ) = split( /\s*=\s*/, $_, 2 );
-    $config{$var} = $value;
-  }
-  close CONFIG;
-  return %config;
-}
-
-############################################

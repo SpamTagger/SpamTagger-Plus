@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,15 +24,16 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-require ReadConfig;
-require	SockClient;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = "SockClient";
+use lib "/usr/spamtagger/lib/";
+use ReadConfig();
 
-sub new {
-  my $class = shift;
+use parent qw(SockClient);
 
+sub new ($class) {
   my %msgs = ();
 
   my $spec_this = {
@@ -43,8 +45,8 @@ sub new {
      get_timeout => 120,
   };
 
-  my $conf = ReadConfig::getInstance();
-  $spec_this->{socketpath} = $conf->getOption('VARDIR')."/run/statsdaemon.sock";
+  my $conf = ReadConfig::get_instance();
+  $spec_this->{socketpath} = $conf->get_option('VARDIR')."/run/statsdaemon.sock";
 
   my $this = $class->SUPER::new($spec_this);
 
@@ -52,71 +54,54 @@ sub new {
   return $this;
 }
 
-sub getValue {
-	my $this = shift;
-	my $element = shift;
-
-	$this->{timeout} = $this->{get_timeout};
-	my $ret = $this->query('GET '.$element);
-	return $ret;
+sub get_value ($this, $element) {
+  $this->{timeout} = $this->{get_timeout};
+  my $ret = $this->query('GET '.$element);
+  return $ret;
 }
 
-sub addValue {
-	my $this = shift;
-	my $element = shift;
-	my $value = shift;
-
-    $this->{timeout} = $this->{set_timeout};
-	my $ret = $this->query('ADD '.$element.' '.$value);
-	return $ret;
+sub add_value ($this, $element, $value) {
+  $this->{timeout} = $this->{set_timeout};
+  my $ret = $this->query('ADD '.$element.' '.$value);
+  return $ret;
 }
 
-sub addMessageStats {
-    my $this = shift;
-    my $element = shift;
-    my $valuesh = shift;
-    my %values = %{$valuesh};
+# TODO: This appears to be unused...
+sub add_message_stats ($this, $element, $values) {
+  my $final_ret = 'ADDED';
+  my $nbmessages = 0;
+  $values->{'msg'} = 1;
+  $values->{'clean'} = 1;
 
-    my $final_ret = 'ADDED';
-    my $nbmessages = 0;
-    $values{'msg'} = 1;
-    $values{'clean'} = 1;
+  my @dirtykeys = ('spam', 'highspam', 'virus', 'name', 'other', 'content');
+  foreach my $ckey (@dirtykeys) {
+    if (defined($values->{$ckey}) && $values->{$ckey} > 0) {
+        $values->{'clean'} = 0;
+        last;
+    }
+  }
 
-    my @dirtykeys = ('spam', 'highspam', 'virus', 'name', 'other', 'content');
-    foreach my $ckey (@dirtykeys) {
-      if (defined($values{$ckey}) && $values{$ckey} > 0) {
-         $values{'clean'} = 0;
-         last;
+  foreach my $key (%{$values}) {
+    if ($values->{$key}) {
+      my $ret = $this->add_value($element.":".$key, $values->{$key});
+      if ($key eq 'msg' && $ret =~ /^ADDED\s+(\d+)/) {
+        $nbmessages = $1;
+      }
+      if ($ret !~ /^ADDED/) {
+        $final_ret = $ret;
       }
     }
-
-    foreach my $key (%values) {
-      if ($values{$key}) {
-        my $ret = $this->addValue($element.":".$key, $values{$key});
-        if ($key eq 'msg' && $ret =~ /^ADDED\s+(\d+)/) {
-          $nbmessages = $1;
-        }
-        if ($ret !~ /^ADDED/) {
-          $final_ret = $ret;
-    	}
-      }
-     }
-
-     return $final_ret." ".$nbmessages;
+  }
+  return $final_ret." ".$nbmessages;
 }
 
-sub setTimeout {
-   my $this = shift;
-   my $timeout = shift;
-
+sub set_timeout ($this, $timeout) {
    return 0 if ($timeout !~ m/^\d+$/);
    $this->{timeout} = $timeout;
    return 1;
 }
 
-sub logStats {
-   my $this = shift;
-
+sub log_stats ($this) {
    my $query = 'STATS';
    return $this->query($query);
 }

@@ -4,14 +4,9 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-
-require ConfigTemplate;
-require DB;
-require Email;
+use lib '/usr/spamtagger/lib/';
+use DB();
+use Email();
 
 my @column_names = qw/id sender recipient type comments/;
 my @type_order = qw/black white wnews warn/;
@@ -36,11 +31,7 @@ print_result(\@column_names, $final_list);
 
 ## ------
 
-sub sort_by {
-  my $entries = shift;
-  my $sort_order_arg = shift;
-  my $sort_hash = shift;
-
+sub sort_by ($entries, $sort_order_arg, $sort_hash) {
   my @sort_order = @$sort_order_arg;
 
   my @output;
@@ -66,12 +57,9 @@ sub sort_by {
   return \@output;
 }
 
-sub get_wlist_matches {
-  my $sender = shift;
-  my $recipient = shift;
-  my $column_names = shift;
+sub get_wlist_matches ($sender, $recipient, $column_names) {
 
-  my $db = DB::connect('slave', 'st_config');
+  my $db = DB->db_connect('slave', 'st_config');
   my $query_cols = join(",", @$column_names);
 
   my @recipients = @{get_possible_recipients($recipient)};
@@ -83,16 +71,16 @@ sub get_wlist_matches {
 
   my @matches;
   while(my $res = $query->fetchrow_hashref()){
-    if (Email::listMatch($res->{"sender"}, $sender) && Email::listMatch($res->{"recipient"}, $recipient)){
+    if (Email::list_match($res->{"sender"}, $sender) && Email::list_match($res->{"recipient"}, $recipient)){
       my $entry_with_level = get_wlist_level($res);
       push(@matches, $entry_with_level);
     }
   }
+  $db->db_disconnect;
   return \@matches;
 }
 
-sub get_possible_recipients {
-  $recipient = shift;
+sub get_possible_recipients ($recipient) {
   my @recipients;
   push @recipients, $recipient;
   push @recipients, $recipient =~ m/^.+(@.+\..+)$/;
@@ -100,8 +88,7 @@ sub get_possible_recipients {
   return \@recipients;
 }
 
-sub get_wlist_level {
-  my $entry = shift;
+sub get_wlist_level ($entry) {
   my $entry_with_level = $entry;
   if ($entry->{recipient} =~ m/^.+@.+\..+$/){
     $entry_with_level->{level} = "user";
@@ -116,37 +103,26 @@ sub get_wlist_level {
   return $entry_with_level;
 }
 
-sub check_column_width {
-  my $column_name = shift;
-  my $column_value = shift // "";
-  my $columns_widths = shift;
+sub check_column_width ($column_name, $column_value = "", $columns_widths = undef) {
   if (not exists($columns_widths->{$column_name})) {
     $columns_widths->{$column_name} = length($column_value);
-    return
-  }
-  if (length($column_value) > $columns_widths->{$column_name}){
+  } elsif (length($column_value) > $columns_widths->{$column_name}){
     $columns_widths->{$column_name} = length($column_value);
   }
+  return;
 }
 
-sub get_columns_widths {
-  my $columns_names = shift;
-  my $entries_list = shift;
-  my $columns_widths = shift;
-
+sub get_columns_widths ($columns_names, $entries_list, $columns_widths) {
   foreach my $column (@$columns_names){
     check_column_width($column, $column, $columns_widths);
     foreach my $entry (@$entries_list){
       check_column_width($column, $entry->{$column}, $columns_widths);
     }
   }
+  return;
 }
 
-sub format_entry {
-  my $entry = shift;
-  my $columns_widths = shift;
-  my $columns_names = shift;
-
+sub format_entry ($entry, $columns_widths, $columns_names) {
   my $format_string = "| %*s ";
   my $return_string = "";
   foreach my $column (@$columns_names){
@@ -159,11 +135,7 @@ sub format_entry {
   return $return_string;
 }
 
-sub print_result {
-  my $column_names = shift;
-  my $entries = shift;
-  my %columns_widths;
-
+sub print_result ($column_names, $entries, %columns_widths) {
   get_columns_widths($column_names, $entries, \%columns_widths);
 
   my %header_entry = map {$_ => $_} @$column_names;
@@ -174,4 +146,5 @@ sub print_result {
     print(format_entry($entry, \%columns_widths, $column_names));
   }
   print("\n");
+  return;
 }

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,18 +24,16 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
 my @statdata_ = ('spam', 'highspam', 'virus', 'name', 'other', 'clean', 'bytes');
 
-sub new {
-  my $class = shift;
-
+sub new ($class) {
   my $this = {};
 
-  foreach my $st (@statdata_) {
-    $this->{$st} = 0;
-  }
+  $this->{$_} = 0 foreach (@statdata_);
 
   $this->{'msgs'} = 1;
 
@@ -42,72 +41,61 @@ sub new {
   return $this;
 }
 
-sub setStatus {
-  my ($this, $isspam, $ishigh, $virusinfected, $nameinfected, $otherinfected, $size) = @_;
-
-  if ($isspam) { $this->setAsSpam(); }
-  if ($ishigh) { $this->setAsHighSpam(); }
-  if ($virusinfected) { $this->setAsVirus(); }
-  if ($nameinfected) { $this->setAsName(); }
-  if ($otherinfected) { $this->setAsOther(); }
-  $this->setBytes($size);
+sub set_status ($this, $isspam, $ishigh, $virusinfected, $nameinfected, $otherinfected, $size) {
+  $this->set_as_spam() if ($isspam);
+  $this->set_as_high_spam() if ($ishigh);
+  $this->set_as_virus() if ($virusinfected);
+  $this->set_as_name() if ($nameinfected);
+  $this->set_as_other() if ($otherinfected);
+  $this->set_bytes($size);
+  return;
 }
 
-sub setAsSpam {
-  my $this = shift;
-
+sub set_as_spam ($this) {
   $this->{'spam'} = 1;
+  return;
 }
-sub setAsHighSpam {
-  my $this = shift;
 
+sub set_as_high_spam ($this) {
   $this->{'highspam'} = 1;
+  return;
 }
-sub setAsVirus {
-  my $this = shift;
 
+sub set_as_virus ($this) {
   $this->{'virus'} = 1;
+  return;
 }
-sub setAsName {
-  my $this = shift;
 
+sub set_as_name ($this) {
   $this->{'name'} = 1;
+  return;
 }
-sub setAsOther {
-  my $this = shift;
 
+sub set_as_other ($this) {
   $this->{'other'} = 1;
+  return;
 }
-sub setBytes {
-  my $this = shift;
-  my $bytes = shift;
 
+sub set_bytes ($this, $bytes) {
   $this->{'bytes'} = $bytes;
+  return;
 }
 
-sub getString {
-  my $this = shift;
-
+sub get_string ($this) {
   $this->{'clean'} = 1;
   if ( $this->{'spam'} + $this->{'highspam'} + $this->{'virus'} + $this->{'name'} + $this->{'ohter'} > 0) {
     $this->{'clean'} = 0;
   }
   my $str = $this->{'msgs'}."|";
-  foreach my $st (@statdata_) {
-    $str .= $this->{$st}."|";
-  }
+  $str .= $this->{$_}."|" foreach (@statdata_);
+
   $str =~ s/\|$//;
   return $str;
 }
 
-sub doUpdate {
-  my $this = shift;
-  my $client = shift;
-  my $to = shift;
-  my $update_domain = shift;
-  my $update_global = shift;
-
-  print STDERR "\ncalled: ".'ADD '.$to.' '.$this->getString().' '.$update_domain.' '.$update_global."\n";
-  return $client->query('ADD '.$to.' '.$this->getString().' '.$update_domain.' '.$update_global);
+sub do_update ($this, $client, $to, $update_domain, $update_global) {
+  print STDERR "\ncalled: ".'ADD '.$to.' '.$this->get_string().' '.$update_domain.' '.$update_global."\n";
+  return $client->query('ADD '.$to.' '.$this->get_string().' '.$update_domain.' '.$update_global);
 }
+
 1;

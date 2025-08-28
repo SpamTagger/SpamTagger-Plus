@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,45 +22,39 @@
 #   This module will wait for spam quarantined and log them in databases
 #
 
-package          SpamLogger;
+package SpamLogger;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-require          ReadConfig;
-require        UDPDaemon;
-require          DB;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = "UDPDaemon";
+use lib "/usr/spamtagger/lib/";
+use ReadConfig();
+use DB();
 
-use POSIX;
-use Sys::Hostname;
-use Socket;
-use Storable(qw[freeze thaw]);
-use MIME::Base64;
+use parent qw(UDPDaemon);
+
+use POSIX();
+use Sys::Hostname();
+use Socket();
+use MIME::Base64();
 
 my @fields = ('id', 'tolocal', 'todomain', 'sender', 'subject', 'score', 'rbls', 'prefilter', 'globalscore');
 
-sub new {
-  my $class = shift;
-  my $name = shift;
-  my $file = shift;
+sub new ($class, $name, $file) {
+  my $this = $class->SUPER::create($class, $name, $file);
 
-  my $this = $class->SUPER::create($name, $file);
-
-  my $conf = ReadConfig::getInstance();
-  $this->{slaveID} = $conf->getOption('HOSTID');
+  my $conf = ReadConfig::get_instance();
+  $this->{slaveID} = $conf->get_option('HOSTID');
   bless $this, $class;
   return $this;
 }
 
-
-sub processDatas {
-  my $this = shift;
-  my $datas = shift;
-
+sub process_datas ($this, $datas) {
   if ($datas =~ /^LOG (.*)/) {
     my $tmp = $1;
     my @gotfields = split "_", $tmp;
@@ -78,20 +73,20 @@ sub processDatas {
     }
 
     if (!defined($msg{id})) {
-      $this->logMessage("WARNING ! no id found for message ($tmp)");
+      $this->log_message("WARNING ! no id found for message ($tmp)");
       next;
     }
-    my $logged_in_master = $this->logInMaster(\%msg);
+    my $logged_in_master = $this->log_in_master(\%msg);
     if (!$logged_in_master) {
-      $this->logMessage("Message ".$msg{id}." cannot be logged in master DB !");
+      $this->log_message("Message ".$msg{id}." cannot be logged in master DB !");
     }
-    my $logged_in_slave = $this->logInSlave(\%msg, $logged_in_master);
+    my $logged_in_slave = $this->log_in_slave($logged_in_master, \%msg);
     if (!$logged_in_slave) {
-      $this->logMessage("Message ".$msg{id}." cannot be logged in slave DB !");
+      $this->log_message("Message ".$msg{id}." cannot be logged in slave DB !");
     }
 
     if ($logged_in_master && $logged_in_slave) {
-      $this->logMessage("Message ".$msg{id}." logged both");
+      $this->log_message("Message ".$msg{id}." logged both");
       return "LOGGED BOTH";
     }
     return "LOGGED $logged_in_slave $logged_in_master";
@@ -102,12 +97,10 @@ sub processDatas {
 #####
 ## logSpam
 #####
-sub logSpam {
-  my $this = shift;
-  my %msg;
-
+sub log_spam ($this) {
   my $query = "LOG";
   my $params = "";
+  my %msg;
   foreach my $field (@fields) {
     $msg{$field} = shift;
     if (defined($msg{$field})) {
@@ -120,36 +113,32 @@ sub logSpam {
   $params =~ s/^ //;
   $query .= " ".$params;
   $query =~ s/\n//g;
-  my $res = $this->exec($query);
+  my $res = $this->exec_call($query);
   return $res;
 }
 
 #####
 ## logInMaster
 #####
-sub logInMaster {
-  my $this = shift;
-  my $msg_h = shift;
-  my %message = %$msg_h;
-
-  if (!defined($this->{masterDB}) || !$this->{masterDB}->ping()) {
-    $this->{masterDB} = DB::connect('realmaster', 'st_spool', 0);
-    return 0 if ( !defined($this->{masterDB}) || !$this->{masterDB}->ping());
+sub log_in_master ($this, $message = {}) {
+  unless (defined($this->{masterDB}) && $this->{masterDB}->ping()) {
+    $this->{masterDB} = DB->db_connect('realmaster', 'st_spool', 0);
+    return 0 unless ( defined($this->{masterDB}) && $this->{masterDB}->ping());
   }
 
   my $table = "misc";
-  if ( $message{tolocal} =~ /^([a-z,A-Z])/ ) {
+  if ( $message->{tolocal} =~ /^([a-z,A-Z])/ ) {
     $table = lc($1);
-  } elsif ( $message{tolocal}  =~ /^[0-9]/ ) {
+  } elsif ( $message->{tolocal}  =~ /^[0-9]/ ) {
     $table = 'num';
   } else {
     $table = 'misc';
   }
   my $query =
     "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_master, store_slave) ".
-    "VALUES (NOW(), NOW(), '".$message{todomain}."', '".$message{tolocal}."', ".
-    "'".$message{sender}."', '".$message{id}."', ".
-    "'".$message{score}."', '".$message{rbls}."', '". $message{prefilter}."', '".$message{subject}."', '".$message{globalscore}."', '0', '0', '".$this->{slaveID}."')";
+    "VALUES (NOW(), NOW(), '".$message->{todomain}."', '".$message->{tolocal}."', ".
+    "'".$message->{sender}."', '".$message->{id}."', ".
+    "'".$message->{score}."', '".$message->{rbls}."', '". $message->{prefilter}."', '".$message->{subject}."', '".$message->{globalscore}."', '0', '0', '".$this->{slaveID}."')";
 
   return 0 unless ($this->{masterDB}->execute($query));
   return 1;
@@ -158,30 +147,27 @@ sub logInMaster {
 #####
 ## logInSlave
 #####
-sub logInSlave {
-  my $this = shift;
-  my $msg_h = shift;
-  my %message = %$msg_h;
+sub log_in_slave ($this, $master_stored, $message = {}) {
   my $master_stored = shift;
 
   if (!defined($this->{slaveDB}) || !$this->{slaveDB}->ping()) {
-    $this->{slaveDB} = DB::connect('slave', 'st_spool', 0);
+    $this->{slaveDB} = DB->db_connect('slave', 'st_spool', 0);
     if ( !defined($this->{slaveDB}) || !$this->{slaveDB}->ping()) { return 0; }
   }
 
   my $table = "misc";
-  if ( $message{tolocal} =~ /^([a-z,A-Z])/ ) {
+  if ( $message->{tolocal} =~ /^([a-z,A-Z])/ ) {
     $table = lc($1);
-  } elsif ( $message{tolocal}  =~ /^[0-9]/ ) {
+  } elsif ( $message->{tolocal}  =~ /^[0-9]/ ) {
     $table = 'num';
   } else {
     $table = 'misc';
   }
   my $query =
     "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_master, store_slave) ".
-    "VALUES (NOW(), NOW(), '".$message{todomain}."', '".$message{tolocal}."', ".
-    "'".$message{sender}."', '".$message{id}."', ".
-    "'".$message{score}."', '".$message{rbls}."', '". $message{prefilter}."', '".$message{subject}."', '".$message{globalscore}."', '0', '".$master_stored."', '".$this->{slaveID}."')";
+    "VALUES (NOW(), NOW(), '".$message->{todomain}."', '".$message->{tolocal}."', ".
+    "'".$message->{sender}."', '".$message->{id}."', ".
+    "'".$message->{score}."', '".$message->{rbls}."', '". $message->{prefilter}."', '".$message->{subject}."', '".$message->{globalscore}."', '0', '".$master_stored."', '".$this->{slaveID}."')";
 
   return 0 unless ($this->{slaveDB}->execute($query));
   return 1;

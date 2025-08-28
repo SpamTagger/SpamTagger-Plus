@@ -23,13 +23,8 @@ open my $file, '>', $OUT_FILE;
 # Fonction de gestion de la sortie du script
 # A appeler également en cas de succès
 # Efface le fichier PID et renseigne le temps d'éxécution et le return code dans le fichier de sortie
-sub my_own_exit {
-    my ($exit_code) = @_;
-    $exit_code = 0  if ( ! defined ($exit_code) );
-
-    if ( -e $PID_FILE ) {
-        unlink $PID_FILE;
-    }
+sub my_own_exit ($exit_code = 0) {
+    unlink $PID_FILE if ( -e $PID_FILE );
 
     my $ELAPSED = time() - $timestamp;
     print $file "EXEC : $ELAPSED\n";
@@ -40,13 +35,8 @@ sub my_own_exit {
     exit($exit_code);
 }
 
-
 #### MAIN
 #### Lorsque le module a trouvé une erreur, il est censé sortir avec my_own_exit "#ERREUR" (avec #ERREUR : chiffre : retour de la commande)
-
-
-
-
 
 # A CONSERVER !
 my_own_exit(0);

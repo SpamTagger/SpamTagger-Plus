@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
-#   Copyright (C) 2021 John Mertz <git@john.me.tz>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,89 +23,75 @@ use v5.40;
 use warnings;
 use utf8;
 
-our @ISA = "ManageServices";
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-sub init
-{
-	my $module = shift;
-	my $class = shift;
-	my $self = $class->SUPER::createModule( config($class) );
-	bless $self, 'ManageServices::ClamD';
+use parent -norequire qw(ManageServices);
 
-	return $self;
+sub init ($module, $class) {
+  my $this = $class->SUPER::create_module( config($class) );
+  bless $this, 'ManageServices::ClamD';
+
+  return $this;
 }
 
-sub config
-{
-	my $class = shift;
+sub config ($class) {
+  my $config = {
+    'name'     => 'clamd',
+    'cmndline'  => 'clamav/clamd.conf',
+    'cmd'    => '/opt/clamav/sbin/clamd',
+    'conffile'  => $class->{'conf'}->get_option('SRCDIR').'/etc/clamav/clamd.conf',
+    'pidfile'  => $class->{'conf'}->get_option('VARDIR').'/run/clamav/clamd.pid',
+    'logfile'  => $class->{'conf'}->get_option('VARDIR').'/log/clamav/clamd.log',
+    'localsocket'  => $class->{'conf'}->get_option('VARDIR').'/run/clamav/clamd.sock',
+    'children'  => 1,
+    'user'    => 'clamav',
+    'group'    => 'clamav',
+    'daemonize'  => 'yes',
+    'forks'    => 0,
+    'nouserconfig'  => 'yes',
+    'syslog_facility' => '',
+    'debug'    => 0,
+    'log_sets'  => 'all',
+    'loglevel'  => 'info',
+    'timeout'  => 5,
+    'checktimer'  => 10,
+    'actions'  => {},
+  };
 
-	my $config = {
-		'name' 		=> 'clamd',
-		'cmndline'	=> 'clamav/clamd.conf',
-		'cmd'		=> '/opt/clamav/sbin/clamd',
-		'conffile'	=> $class->{'conf'}->getOption('SRCDIR').'/etc/clamav/clamd.conf',
-		'pidfile'	=> $class->{'conf'}->getOption('VARDIR').'/run/clamav/clamd.pid',
-		'logfile'	=> $class->{'conf'}->getOption('VARDIR').'/log/clamav/clamd.log',
-		'localsocket'	=> $class->{'conf'}->getOption('VARDIR').'/run/clamav/clamd.sock',
-		'children'	=> 1,
-		'user'		=> 'clamav',
-		'group'		=> 'clamav',
-		'daemonize'	=> 'yes',
-		'forks'		=> 0,
-		'nouserconfig'  => 'yes',
-		'syslog_facility' => '',
-		'debug'		=> 0,
-		'log_sets'	=> 'all',
-		'loglevel'	=> 'info',
-		'timeout'	=> 5,
-		'checktimer'	=> 10,
-		'actions'	=> {},
-	};
-
-	return $config;
+  return $config;
 }
 
-sub setup
-{
-	my $self = shift;
-	my $class = shift;
+sub setup ($this, $class) {
+  $this->do_log('Dumping ClamD config...', 'daemon');
+  my $dumped = 0;
+  my $rc = eval
+  {
+    require IPC::Run;
+    1;
+  };
+  if ($rc) {
+    $dumped = 1 if IPC::Run::run([$this->{'SRCDIR'}.'/bin/dump_clamav_config.pl'], "2>&1", ">/dev/null");
+  } else {
+    $dumped = 1 if system($this->{'SRCDIR'}."/bin/dump_clamav_config.pl 2>&1 >/dev/null");
+  }
+  $this->do_log('dump_clamav_config.pl failed', 'daemon') unless ($dumped);
 
-	$self->doLog('Dumping ClamD config...', 'daemon');
-	my $dumped = 0;
-	my $rc = eval
-	{
-		require IPC::Run;
-		1;
-	};
-	if ($rc) {
-		$dumped = 1 if IPC::Run::run([$self->{'SRCDIR'}.'/bin/dump_clamav_config.pl'], "2>&1", ">/dev/null");
-	} else {
-		$dumped = 1 if system($self->{'SRCDIR'}."/bin/dump_clamav_config.pl 2>&1 >/dev/null");
-	}
-	$self->doLog('dump_clamav_config.pl failed', 'daemon') unless ($dumped);
-
-	return 1;
+  return 1;
 }
 
-sub preFork
-{
-	my $self = shift;
-	my $class = shift;
-
-	return 0;
+sub pre_fork ($this, $class) {
+  return 0;
 }
 
-sub mainLoop
-{
-	my $self = shift;
-	my $class = shift;
+sub main_loop ($this, $class) {
+  my $cmd = $this->{'cmd'};
+  $cmd .= ' --config-file=' . $this->{'conffile'};
+  $this->do_log("Running $cmd", 'daemon');
+  system(split(/ /, $cmd));
 
-	my $cmd = $self->{'cmd'};
-	$cmd .= ' --config-file=' . $self->{'conffile'};
-	$self->doLog("Running $cmd", 'daemon');
-	system(split(/ /, $cmd));
-
-	return 1;
+  return 1;
 }
 
 1;

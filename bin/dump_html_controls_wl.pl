@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2020 MailCleaner
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -20,15 +21,17 @@
 #   This script will dump the ssh key files
 #
 #   Usage:
-#           dump_html_controls_wl.pl
+#     dump_html_controls_wl.pl
 
 use v5.40;
 use warnings;
 use utf8;
 
-use DBI();
+use lib '/usr/spamtagger/lib/';
+use DBI;
+use ReadConfig;
 
-my %config = readConfig("/etc/spamtagger.conf");
+our $config = ReadConfig::get_instance();
 
 my $file = '/var/spamtagger/spool/tmp/mailscanner/whitelist_HTML';
 unlink($file);
@@ -37,50 +40,26 @@ do_htmls_wl();
 
 ############################
 sub do_htmls_wl {
-        my $dbh;
-        $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                        "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
-                        or return;
+  my $dbh;
+  $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=".$config->get_option('VARDIR')."/run/mysql_slave/mysqld.sock",
+      "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0})
+      or return;
 
-        my $sth = $dbh->prepare("SELECT sender FROM wwlists WHERE type='htmlcontrols'");
-        $sth->execute() or return;
+  my $sth = $dbh->prepare("SELECT sender FROM wwlists WHERE type='htmlcontrols'");
+  $sth->execute() or return;
 
-        my $count=0;
+  my $count=0;
 
-        open HTML_WL, '>', $file;
-        while (my $ref = $sth->fetchrow_hashref() ) {
-                print HTML_WL $ref->{'sender'}."\n";
-                $count++;
-        }
-        $sth->finish();
-        close HTML_WL;
+  open(my $HTML_WL, '>', $file);
+  while (my $ref = $sth->fetchrow_hashref() ) {
+    print $HTML_WL $ref->{'sender'}."\n";
+    $count++;
+  }
+  $sth->finish();
+  close $HTML_WL;
 
-        # Unlink file if it is empty
-        unlink $file unless $count;
+  # Unlink file if it is empty
+  unlink $file unless $count;
 
-        return;
+  return;
 }
-
-
-#############################
-sub readConfig {
-        my $configfile = shift;
-        my %config;
-        my ($var, $value);
-
-        open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-        return %config;
-}
-

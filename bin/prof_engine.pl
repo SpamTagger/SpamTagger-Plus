@@ -1,20 +1,40 @@
 #!/usr/bin/env perl
+#
+#   SpamTagger Plus - Open Source Spam Filtering
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#
+#   This script search through plaintext log files for items which contain one or more search strings.
+#
+#   Usage:
+#     search_log.pl begindate enddate search_string [additional_strings]
 
 use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
 
-my $conf = ReadConfig::getInstance();
+my $conf = ReadConfig::get_instance();
 
-my $logfile=$conf->getOption('VARDIR')."/log/mailscanner/infolog";
+my $logfile=$conf->get_option('VARDIR')."/log/mailscanner/infolog";
 
-open(LOGFILE, $logfile) or die "cannot open log file: $logfile\n";
+open(my LOGFILE, '<', $logfile) or die "cannot open log file: $logfile\n";
 
 my %counts = ();
 my %sums = ();
@@ -22,7 +42,7 @@ my %max = ();
 my %min = ();
 my %hourly_counts = ();
 my %hourly_sums = ();
-while (<LOGFILE>) {
+while (<$LOGFILE>) {
   if (/\d+\.\d+s/) {
     my $hour = 0;
     if (/\w+\s+\d+\s+(\d+):\d+:\d+/) {
@@ -45,10 +65,10 @@ while (<LOGFILE>) {
     }
   }
 }
-close LOGFILE;
+close $LOGFILE;
 
 print "-----------------------------------------------------------------------------------------------\n";
-printStat('Prefilters');
+print_stat('Prefilters');
 my $av = 0;
 if (defined($counts{'Prefilters'}) && $counts{'Prefilters'} > 0) {
   $av = $sums{'Prefilters'}/$counts{'Prefilters'};
@@ -59,19 +79,20 @@ if ($av > 0 ) {
 }
 print "   rate: ".(int($msgpersec*10000)/10000)." msgs/s\n";
 print "-----------------------------------------------------------------------------------------------\n";
-foreach my $var (sort hashValueDescendingNum(keys %counts)) {
+   ;
+# Process in descending order
+foreach my $var (sort {$b <=> $$a} (keys %counts)) {
   next if ($var eq 'Prefilters');
-  printStat($var);
+  print_stat($var);
 }
 print "-----------------------------------------------------------------------------------------------\n";
 print "Hourly stats: \n";
 my @h = sort keys %hourly_counts;
 foreach my $hour (@h) {
-  printHourly($hour, 'Prefilters');
+  print_hourly($hour, 'Prefilters');
 }
 
-sub printStat {
-  my $var = shift;
+sub print_stat ($var) {
 
   my $av = 0;
   if (defined($counts{$var}) && $counts{$var} > 0) {
@@ -82,22 +103,13 @@ sub printStat {
     $percent = (int( (100/$counts{'SpamCacheCheck'} * $counts{$var}) * 100) / 100);
   }
   print $var.": ".$counts{$var}." ($percent%) => ".$av."s (max:".$max{$var}."s, min:".$min{$var}."s)\n";
+  return;
 }
 
-sub printHourly {
-  my $h = shift;
-  my $var = shift;
-
+sub print_hourly ($h, $var) {
   if (defined($hourly_counts{$h}{$var}) && $hourly_counts{$h}{$var} > 0) {
    $av = (int(($hourly_sums{$h}{$var}/$hourly_counts{$h}{$var})*10000)/10000);
   }
   print $h.": ".$hourly_counts{$h}{$var}." => ".$av."s \n";
-}
-
-sub hashValueAscendingNum {
-   $counts{$a} <=> $counts{$b};
-}
-
-sub hashValueDescendingNum {
-   $counts{$b} <=> $counts{$a};
+  return;
 }

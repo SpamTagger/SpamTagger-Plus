@@ -1,0 +1,28 @@
+header   __ST_SPF_WL       X-SpamTagger-SPF =~ /whitelisted/i
+
+header   __ST_SPF_FAIL       X-SpamTagger-SPF =~ /\bfail\b/i
+header   __ST_SPF_SOFTFAIL   X-SpamTagger-SPF =~ /\bsoftfail\b/i
+header   __ST_SPF_NEUTRAL    X-SpamTagger-SPF =~ /\bneutral\b/i
+header   __ST_SPF_NONE       X-SpamTagger-SPF =~ /\bnone\b/i
+header   __ST_SPF_PASS       X-SpamTagger-SPF =~ /\bpass\b/i
+
+meta   ST_SPF_FAIL       ( __ST_SPF_FAIL  && ! __ST_SPF_WL )
+meta   ST_SPF_SOFTFAIL   ( __ST_SPF_SOFTFAIL && ! __ST_SPF_WL )
+meta   ST_SPF_NEUTRAL    ( __ST_SPF_NEUTRAL && ! __ST_SPF_WL )
+meta   ST_SPF_NONE       ( __ST_SPF_NONE && ! __ST_SPF_WL )
+meta   ST_SPF_PASS       ( __ST_SPF_PASS && ! __ST_SPF_WL )
+
+
+__IF__ __USE_SPF__
+score ST_SPF_FAIL 10.0
+score ST_SPF_SOFTFAIL 2.0
+score ST_SPF_NEUTRAL -0.001
+score ST_SPF_NONE -0.001
+score ST_SPF_PASS -0.001
+__ELSE__ __USE_SPF__
+score ST_SPF_FAIL -0.001
+score ST_SPF_SOFTFAIL -0.001
+score ST_SPF_NEUTRAL -0.001
+score ST_SPF_NONE -0.001
+score ST_SPF_PASS -0.001
+__FI__ __USE_SPF__

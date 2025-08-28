@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -25,53 +26,43 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-use ReadConfig;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
+use lib "/usr/spamtagger/lib/";
+use ReadConfig();
 use DBI();
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(connect);
-our $VERSION    = 1.0;
-
-sub connect {
-  my $type = shift;
-  my $db = shift;
-  my $critical_p = shift;
-
+sub db_connect ($class, $type, $db, $critical_p = 0) {
   my $critical = 1;
-  if (defined($critical_p) && $critical_p < 1) {
-    $critical = 0;
-  }
+  $critical = 0 if ($critical_p < 1);
   if (!$type || $type !~ /slave|master|realmaster|custom/) {
   	print "BADCONNECTIONTYPE\n";
     return "";
   }
   my $dbase = 'st_config';
-  if ($db) {
-    $dbase = $db;
-  }
+  $dbase = $db if ($db);
 
   # determine socket to use
-  my $conf = ReadConfig::getInstance();
-  my $socket = $conf->getOption('VARDIR')."/run/mysql_master/mysqld.sock";
-  if ($type =~ /slave/) {
-    $socket = $conf->getOption('VARDIR')."/run/mysql_slave/mysqld.sock";
-  }
+  my $conf = ReadConfig::get_instance();
+  my $socket = $conf->get_option('VARDIR')."/run/mysql_master/mysqld.sock";
+  $socket = $conf->get_option('VARDIR')."/run/mysql_slave/mysqld.sock" if ($type =~ /slave/);
 
   my $dbh;
   my $realmaster = 0;
-  my $masterfile = $conf->getOption('VARDIR')."/spool/spamtagger/master.conf";
+  my $masterfile = $conf->get_option('VARDIR')."/spool/spamtagger/master.conf";
   if ( ($type =~ /realmaster/ && -f $masterfile) || $type =~ /custom/) {
   	my $host;
   	my $port;
   	my $password;
-    if (open MASTERFILE, $masterfile) {
-      while (<MASTERFILE>) {
+    if (open(my $MASTERFILE, '<', $masterfile)) {
+      while (<$MASTERFILE>) {
         if (/HOST (\S+)/) { $host = $1; }
         if (/PORT (\S+)/) { $port = $1; }
         if (/PASS (\S+)/) { $password = $1; }
       }
-      close MASTERFILE;
+      close $MASTERFILE;
     }
     if ($type =~ /custom/) {
       $host = $db->{'host'};
@@ -81,114 +72,84 @@ sub connect {
     }
     if (! ( $host eq "" || $port eq "" || $password eq "") ) {
       $dbh = DBI->connect("DBI:mysql:database=$dbase;host=$host:$port;",
-			"spamtagger", $password, {RaiseError => 0, PrintError => 0, AutoCommit => 1})
-		or fatal_error("CANNOTCONNECTDB", $critical);
-
+			  "spamtagger", $password, {RaiseError => 0, PrintError => 0, AutoCommit => 1}
+      )	or fatal_error("CANNOTCONNECTDB", $critical);
       $realmaster = 1;
     }
   }
   if ($realmaster < 1) {
     $dbh = DBI->connect("DBI:mysql:database=$db;host=localhost;mysql_socket=$socket",
-			"spamtagger", $conf->getOption('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0})
-		or fatal_error("CANNOTCONNECTDB", $critical);
+			"spamtagger", $conf->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
+    ) or fatal_error("CANNOTCONNECTDB", $critical);
   }
-  my $this = {
-         dbh => $dbh,
-         type => $type,
-         critical => $critical,
-         };
 
- return bless $this, "DB";
+  my $this = {
+    dbh => $dbh,
+    type => $type,
+    critical => $critical,
+  };
+
+  return bless $this, $class;
 }
 
-sub getType {
-  my $this = shift;
+sub get_type ($this) {
   return $this->{dbh};
 }
 
-sub ping {
-  my $this = shift;
-  if (defined($this->{dbh})) {
-    return $this->{dbh}->ping();
-  }
+sub ping ($this) {
+  return $this->{dbh}->ping() if (defined($this->{dbh}));
   return 0;
 }
 
-sub disconnect {
-  my $this = shift;
+sub db_disconnect ($this) {
   my $dbh = $this->{dbh};
-  if ($dbh) {
-    $dbh->disconnect();
-  }
+  $dbh->disconnect() if ($dbh);
   $this->{dbh} = "";
   return 1;
 }
 
-sub fatal_error
-{
-  my $msg = shift;
-  my $critical = shift;
-
-  if (defined($critical) && $critical < 1) {
-  	return 0;
-  }
+sub fatal_error ($this, $critical = 0) {
+  return 0 if ($critical < 1);
   print $msg."\n";
   exit(0);
 }
 
-sub prepare {
-  my $this = shift;
-  my $query = shift;
+sub prepare ($this, $query) {
   my $dbh = $this->{dbh};
 
   my $prepared = $dbh->prepare($query);
-  if (! $prepared) {
+  unless ($prepared) {
     print "WARNING, CANNOT EXECUTE ($query => ".$dbh->errstr.")\n";
     return 0;
   }
   return $prepared;
 }
 
-
-sub execute {
-  my $this = shift;
-  my $query = shift;
-  my $nolock = shift;
-  if (!defined($nolock)) {
-     $nolock = 0;
-  }
+sub execute ($this, $query, $nolock = 0) {
   my $dbh = $this->{dbh};
 
-  if (!defined($dbh)) {
+  unless (defined($dbh)) {
   	print "WARNING, DB HANDLE IS NULL\n";
     return 0;
   }
-  if (!$dbh->do($query)) {
+  unless ($dbh->do($query)) {
     print "WARNING, CANNOT EXECUTE ($query => ".$dbh->errstr.")\n";
     return 0;
   }
   return 1;
 }
 
-sub commit {
-  my $this = shift;
-  my $query = shift;
+sub commit ($this, $query) {
   my $dbh = $this->{dbh};
 
-  if (! $dbh->commit()) {
+  unless ($dbh->commit()) {
     print "WARNING, CANNOT commit\n";
     return 0;
   }
   return 1;
 }
 
-sub getListOfHash {
-  my $this = shift;
-  my $query = shift;
-  my $nowarnings = shift;
-  if (!defined($nowarnings) || $nowarnings != 1) {
-    $nowarnings = 0;
-  }
+sub get_list_of_hash ($this, $query, $nowarnings = 0) {
   my $dbh = $this->{dbh};
   my @results;
 
@@ -208,13 +169,7 @@ sub getListOfHash {
   return @results;
 }
 
-sub getList{
-  my $this = shift;
-  my $query = shift;
-  my $nowarnings = shift;
-  if (!defined($nowarnings) || $nowarnings != 1) {
-  	$nowarnings = 0;
-  }
+sub get_list ($this, $query, $nowarnings = 0) {
   my $dbh = $this->{dbh};
   my @results;
 
@@ -234,10 +189,7 @@ sub getList{
   return @results;
 }
 
-sub getCount {
-  my $this = shift;
-  my $query = shift;
-
+sub get_count ($this, $query) {
   my $dbh = $this->{dbh};
   my $sth = $dbh->prepare($query);
   my $res = $sth->execute();
@@ -245,73 +197,51 @@ sub getCount {
   my ($count) = $sth->fetchrow_array;
 
   return($count);
-
 }
 
-
-sub getHashRow {
-  my $this = shift;
-  my $query = shift;
-  my $nowarnings = shift;
-  if (!defined($nowarnings) || $nowarnings != 1) {
-    $nowarnings = 0;
-  }
+sub get_hash_row ($this, $query, $nowarnings = 0) {
   my $dbh = $this->{dbh};
   my %results;
 
   my $sth = $dbh->prepare($query);
   my $res = $sth->execute();
-  if (!defined($res)) {
-  	if (! $nowarnings) {
+  unless (defined($res)) {
+  	unless ($nowarnings) {
       print "WARNING, CANNOT QUERY ($query => ".$dbh->errstr.")\n";
   	}
     return %results;
   }
 
   my $ret = $sth->fetchrow_hashref();
-  foreach my $key (keys %$ret ) {
-    $results{$key} = $ret->{$key};
-  }
+  $results{$_} = $ret->{$_} foreach (keys(%{$ret}));
+  
   $sth->finish();
   return %results;
 }
 
-sub getLastID {
-  my $this = shift;
-
+sub get_last_id ($this) {
   my $res = 0;
   my $query = "SELECT LAST_INSERT_ID() as lid;";
 
   my $sth = $this->{dbh}->prepare($query);
   my $ret = $sth->execute();
-  if (!$ret) {
-  	return $res;
-  }
+  return $res unless ($ret);
+  
   $ret = $sth->fetchrow_hashref();
-  if (!defined($ret)) {
-    return $res;
-  }
+  return $res unless (defined($ret));
 
-  if (defined($ret->{'lid'})) {
-    return $ret->{'lid'};
-  }
+  return $ret->{'lid'} if (defined($ret->{'lid'}));
   return $res;
 }
 
-sub getError {
-  my $this = shift;
+sub get_error ($this) {
   my $dbh = $this->{dbh};
 
-  if (defined($dbh->errstr)) {
-    return $dbh->errstr;
-  }
+  return $dbh->errstr if (defined($dbh->errstr));
   return "";
 }
 
-sub setAutoCommit {
-  my $this = shift;
-  my $v = shift;
-
+sub set_auto_commit ($this, $v) {
   if ($v) {
     $this->{dbh}->{AutoCommit} = 1;
     return 1;

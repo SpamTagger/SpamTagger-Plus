@@ -1,0 +1,3 @@
+body __ST_LOM_00 /\d+(?:\.|\s|,|')\d+\s*€/
+
+meta ST_LOTS_OF_MONEY ( LOTS_OF_MONEY || __ST_LOM_00 )

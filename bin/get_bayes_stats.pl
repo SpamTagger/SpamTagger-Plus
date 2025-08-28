@@ -3,15 +3,12 @@
 use v5.40;
 use warnings;
 use utf8;
+use Carp qw( confess );
 
-if ($0 =~ m/(\S*)\/get_bayes_stats\.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-print "0|0";
-exit;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
 
-require ReadConfig;
+my $conf = ReadConfig::get_instance();
 
 my $givenmode = shift;
 my $mode = "";
@@ -22,11 +19,9 @@ if (defined($givenmode) && $givenmode =~ /^(-v|-h)$/) {
   }
 }
 
-my $conf = ReadConfig::getInstance();
+my $MSLOGFILE=$conf->get_option('VARDIR')."/log/mailscanner/infolog";
 
-my $MSLOGFILE=$conf->getOption('VARDIR')."/log/mailscanner/infolog";
-
-open LOGFILE, $MSLOGFILE or die("cannot open log file: $MSLOGFILE\n");
+open(my $LOGFILE, '<', $MSLOGFILE) or die("cannot open log file: $MSLOGFILE\n");
 
 my $msgs = 0;
 my $spam_sure = 0;
@@ -39,7 +34,7 @@ my $samsgs = 0;
 my $saspams = 0;
 my $sahams = 0;
 my $saunsure = 0;
-while (<LOGFILE>) {
+while (<$LOGFILE>) {
   if (/(\d\d):\d\d:\d\d .* NiceBayes result (is not spam|is spam) \(([^)]+)\)/) {
     $msgs++;
     my $hour = $1;
@@ -81,7 +76,7 @@ while (<LOGFILE>) {
     }
   }
 }
-close LOGFILE;
+close $LOGFILE;
 
 my $certainty = 0;
 my $sacertainty = 0;

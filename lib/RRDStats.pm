@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -19,158 +20,127 @@
 #
 #   This module will just read the configuration file
 
-package          RRDStats;
+package RRDStats;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-use ReadConfig;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
+use lib "/usr/spamtagger/lib/";
+use ReadConfig();
 use DBI();
-use Net::SNMP;
+use Net::SNMP();
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(createRRD collect plot);
-our $VERSION    = 1.0;
-
-sub New {
-  my $hostname = shift;
+sub new ($hostname) {
 
   my $conf = ReadConfig::getInstance();
   my $spooldir = $conf->getOption('VARDIR')."/spool/rrdtools/".$hostname;
   my $pictdir = $conf->getOption('VARDIR')."/www/mrtg/".$hostname;
   my %stats = ();
 
-  my $slave_db = DB::connect('slave', 'st_config');
+  my $slave_db = DB->db_connect('slave', 'st_config');
   my %row = $slave_db->getHashRow("SELECT community FROM snmpd_config WHERE set_id=1");
-  $slave_db->disconnect();
+  $slave_db->db_disconnect();
   my $community = $row{'community'};
 
   my $this = {
-         hostname => $hostname,
-         spooldir => $spooldir,
-         pictdir => $pictdir,
-         snmp_session => undef,
-         stats => \%stats,
-         community => $community
-         };
- bless $this, "RRDStats";
+    hostname => $hostname,
+    spooldir => $spooldir,
+    pictdir => $pictdir,
+    snmp_session => undef,
+    stats => \%stats,
+    community => $community
+  };
+  bless $this, "RRDStats";
 
- if (!$this->create_stats_dir()) {
-   print "WARNING, CANNOT CREATE STAT DIR\n";
- }
- if (!$this->create_graph_dir()) {
-   print "WARNING, CANNOT CREATE STAT DIR\n";
- }
- if (!$this->connectSNMP()) {
-   print "WARNING, CANNOT CONNECT TO SNMP\n";
- }
+  print "WARNING, CANNOT CREATE STAT DIR\n" unless ($this->create_stats_dir());
+  print "WARNING, CANNOT CREATE STAT DIR\n" unless ($this->create_graph_dir());
+  print "WARNING, CANNOT CONNECT TO SNMP\n" unless ($this->connectSNMP());
 
- return $this;
+  return $this;
 }
 
-sub createRRD {
-  my $this = shift;
-  my $type = shift;
-
+sub create_rrd ($this, $type) {
   if ($type eq 'cpu') {
-	my $res = `uname -r`;
-	if ($res =~ m/^2.4/) {
-	  require RRD::Cpu24;
-	  $this->{stats}{$type} = &RRD::Cpu24::New($this->{spooldir}, 0);
-	} else {
-	  require RRD::Cpu;
-  	  $this->{stats}{$type} = &RRD::Cpu::New($this->{spooldir}, 0);
-	}
+    my $res = `uname -r`;
+    if ($res =~ m/^2.4/) {
+      require RRD::Cpu24;
+      $this->{stats}{$type} = &RRD::Cpu24::new($this->{spooldir}, 0);
+    } else {
+      require RRD::Cpu;
+      $this->{stats}{$type} = &RRD::Cpu::new($this->{spooldir}, 0);
+    }
   } elsif ($type eq 'load') {
-  	require RRD::Load;
-  	$this->{stats}{$type} = &RRD::Load::New($this->{spooldir}, 0);
+    require RRD::Load;
+    $this->{stats}{$type} = &RRD::Load::new($this->{spooldir}, 0);
   } elsif ($type eq 'network') {
-  	require RRD::Network;
-  	$this->{stats}{$type} = &RRD::Network::New($this->{spooldir}, 0);
+    require RRD::Network;
+    $this->{stats}{$type} = &RRD::Network::new($this->{spooldir}, 0);
   } elsif ($type eq 'memory') {
-  	require RRD::Memory;
-  	$this->{stats}{$type} = &RRD::Memory::New($this->{spooldir}, 0);
+    require RRD::Memory;
+    $this->{stats}{$type} = &RRD::Memory::new($this->{spooldir}, 0);
   } elsif ($type eq 'disks') {
-  	require RRD::Disk;
-  	$this->{stats}{$type} = &RRD::Disk::New($this->{spooldir}, 0);
+    require RRD::Disk;
+    $this->{stats}{$type} = &RRD::Disk::new($this->{spooldir}, 0);
   } elsif ($type eq 'messages') {
-  	require RRD::Messages;
-  	$this->{stats}{$type} = &RRD::Messages::New($this->{spooldir}, 0);
+    require RRD::Messages;
+    $this->{stats}{$type} = &RRD::Messages::new($this->{spooldir}, 0);
   } elsif ($type eq 'spools') {
-  	require RRD::Spools;
-  	$this->{stats}{$type} = &RRD::Spools::New($this->{spooldir}, 0);
-  } else {}
+    require RRD::Spools;
+    $this->{stats}{$type} = &RRD::Spools::new($this->{spooldir}, 0);
+  }
+  return;
 }
 
-sub collect {
-  my $this = shift;
-  my $type = shift;
-
+sub collect ($this, $type) {
   if (defined($this->{stats}->{$type})) {
     $this->{stats}->{$type}->collect($this->{snmp_session});
   }
+  return;
 }
 
-sub plot {
-  my $this = shift;
-  my $type = shift;
-  my $mode = shift;
-
+sub plot ($this, $type, $mode) {
   my @ranges = ('day', 'week');
-  if ($mode eq 'daily') {
-    @ranges = ('month', 'year');
-  }
+  @ranges = ('month', 'year') if ($mode eq 'daily');
   if (defined($this->{stats}->{$type})) {
-  	for my $time (@ranges) {
-     #$this->{stats}->{$type}->plot($this->{pictdir}, $time, 0);
+    for my $time (@ranges) {
      $this->{stats}->{$type}->plot($this->{pictdir}, $time, 1);
-  	}
+    }
   }
+  return;
 }
 
-
-sub create_stats_dir {
-  my $this = shift;
-
+sub create_stats_dir ($this) {
   my $conf = ReadConfig::getInstance();
   my $dir = $this->{spooldir};
-  if ( ! -d $dir) {
-     return mkdir $dir;
-  }
+  return mkdir $dir unless (-d $dir);
   return 1;
 }
 
-sub create_graph_dir {
-  my $this = shift;
-
+sub create_graph_dir ($this) {
   my $conf = ReadConfig::getInstance();
   my $dir = $this->{pictdir};
-  if ( ! -d $dir) {
-     return mkdir $dir;
-  }
+  return mkdir $dir unless (-d $dir);
   return 1;
 }
 
-sub connectSNMP {
-  my $this = shift;
-
-  if (defined($this->{snmp_session})) {
-    return 1;
-  }
-
+sub connect_snmp ($this) {
+  return 1 if (defined($this->{snmp_session}));
   my ($session, $error) = Net::SNMP->session(
-                            -hostname => $this->{hostname},
-                            -community => $this->{'community'},
-                            -port => 161,
-                            -timeout => 5,
-                            -version => 2,
-                            -retries => 1
-                           );
-  if ( !defined($session)) {
-  	 print "WARNING, CANNOT CONTACT SNMP HOST\n";
-  	 return 0;
+    -hostname => $this->{hostname},
+    -community => $this->{'community'},
+    -port => 161,
+    -timeout => 5,
+    -version => 2,
+    -retries => 1
+  );
+  unless (defined($session)) {
+     print "WARNING, CANNOT CONTACT SNMP HOST\n";
+     return 0;
   }
   $this->{snmp_session} = $session;
   return 1;

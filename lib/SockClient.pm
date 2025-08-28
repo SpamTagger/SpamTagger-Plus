@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,60 +24,48 @@ use v5.40;
 use warnings;
 use utf8;
 
-require  Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-use IO::Socket;
-use IO::Select;
+use IO::Socket();
+use IO::Select();
 use Time::HiRes qw(setitimer time);
 
-sub new {
-  my $class = shift;
-  my $spec_thish = shift;
-  my %spec_this = %$spec_thish;
-
+sub new ($class, $spec_this = {}) {
   my $this = {
-         timeout => 5,
-
-         socketpath => '/tmp/'.$class,
+    timeout => 5,
+    socketpath => '/tmp/'.$class,
   };
 
   # add specific options of child object
-  foreach my $sk (keys %spec_this) {
-     $this->{$sk} = $spec_this{$sk};
-  }
+  $this->{$_} = $spec_this->{$_} foreach (keys(%{$spec_this}));
 
   bless $this, $class;
   return $this;
 }
 
-sub connect {
+sub sock_connect ($this) {
   my $this = shift;
 
   ## untaint some values
-  if ($this->{socketpath} =~ m/^(\S+)/) {
-    $this->{socketpath} = $1;
-  }
-  if ($this->{timeout} =~ m/^(\d+)$/) {
-    $this->{timeout} = $1;
-  }
+  $this->{socketpath} = $1 if ($this->{socketpath} =~ m/^(\S+)/);
+  $this->{timeout} = $1 if ($this->{timeout} =~ m/^(\d+)$/);
 
   $this->{socket} = IO::Socket::UNIX->new(
-                                Peer    => $this->{socketpath},
-                                Type    => SOCK_STREAM,
-                                Timeout => $this->{timeout} )
-    or return 0;
+    Peer    => $this->{socketpath},
+    Type    => SOCK_STREAM,
+    Timeout => $this->{timeout}
+  ) or return 0;
 
   return 1;
 }
 
-sub query {
-  my $this = shift;
-  my $query = shift;
-
+sub query ($this, $query) {
   my $sent = 0;
   my $tries = 1;
 
-  $this->connect() or return '_NOSERVER';
+  $this->sock_connect() or return '_NOSERVER';
   my $sock = $this->{socket};
 
   $sock->send($query) or return '_NOSERVER';
@@ -84,22 +73,8 @@ sub query {
 
   my $data = '';
   my $rv;
- # $SIG{ALRM} = $SIG{PIPE} = sub { die("Fucked by signal\n"); };
- # my $alarm = 0;
- # eval {
- #     my $h = Sys::SigAction::set_sig_handler( 'ALRM' ,sub { print STDERR "Caught SIGALRM in thread\n"; $alarm = 1; return '_TIMEOUT'; } );
- #    $SIG{ALRM} = sub {
- #      local $| = 1;
- #      print STDERR "Caught SIGALRM in thread\n";
- #      $sock->close();
- #      return '_TIMEOUT';
- #    };
- #    alarm $this->{timeout};
- #    $rv = $sock->recv($data, 1024, 0);
- #    alarm 0;
- #};
 
-  my $read_set = new IO::Select;
+  my $read_set = IO::Select->new();
   $read_set->add($sock);
   my ($r_ready, $w_ready, $error) =  IO::Select->select($read_set, undef, undef, $this->{timeout});
 
@@ -108,29 +83,17 @@ sub query {
     my $buft;
     while(  my $ret = $s->recv($buft, 1024, 0) ) {
       if (defined($buft)) {
-        ## chop twice.. why not ?
-        #chop $buf;
-        #chop $buf;
-        #close($sock);
-        #return $buf;
         $buf .= $buft;
-       } else {
+      } else {
         $read_set->remove($sock);
         close($sock);
         return '_CLOSED';
-       }
-     }
-     close($sock);
-     return $buf;
-   }
-  return '_TIMEOUT';
-
-
-  if (defined($rv) && length $data) {
-    chop($data);
-    return $data;
+      }
+    }
+    close($sock);
+    return $buf;
   }
-  close($sock);
+  return '_TIMEOUT';
 }
 
 1;

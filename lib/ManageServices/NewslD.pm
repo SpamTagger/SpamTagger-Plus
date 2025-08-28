@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
-#   Copyright (C) 2021 John Mertz <git@john.me.tz>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,110 +23,96 @@ use v5.40;
 use warnings;
 use utf8;
 
-our @ISA = "ManageServices";
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-sub init
-{
-	my $module = shift;
-	my $class = shift;
-	my $self = $class->SUPER::createModule( config($class) );
-	bless $self, 'ManageServices::NewslD';
+use parent -norequire qw(ManageServices);
 
-	return $self;
+sub init ($module, $class) {
+  my $this = $class->SUPER::create_module( config($class) );
+  bless $this, 'ManageServices::NewslD';
+
+  return $this;
 }
 
-sub config
-{
-	my $class = shift;
+sub config ($class) {
+  my $config = {
+    'name'     => 'newsld',
+    'cmndline'  => 'newsld.pid',
+    'cmd'    => '/usr/local/bin/newsld',
+    'conffile'  => $class->{'conf'}->get_option('SRCDIR').'/etc/mailscanner/newsld.conf',
+    'pidfile'  => $class->{'conf'}->get_option('VARDIR').'/run/newsld.pid',
+    'logfile'  => $class->{'conf'}->get_option('VARDIR').'/log/mailscanner/newsld.log',
+    'socket'  => $class->{'conf'}->get_option('VARDIR').'/run/newsld.sock',
+    'children'  => 11,
+    'siteconfig'  => $class->{'conf'}->get_option('SRCDIR').'/share/newsld/siteconfig',
+    'user'    => 'spamtagger',
+    'group'    => 'spamtagger',
+    'daemonize'  => 'yes',
+    'forks'    => 0,
+    'nouserconfig'  => 'yes',
+    'syslog_facility' => '',
+    'debug'    => 0,
+    'log_sets'  => 'all',
+    'loglevel'  => 'info',
+    'timeout'  => 5,
+    'checktimer'  => 10,
+    'actions'  => {},
+  };
 
-	my $config = {
-		'name' 		=> 'newsld',
-		'cmndline'	=> 'newsld.pid',
-		'cmd'		=> '/usr/local/bin/newsld',
-		'conffile'	=> $class->{'conf'}->getOption('SRCDIR').'/etc/mailscanner/newsld.conf',
-		'pidfile'	=> $class->{'conf'}->getOption('VARDIR').'/run/newsld.pid',
-		'logfile'	=> $class->{'conf'}->getOption('VARDIR').'/log/mailscanner/newsld.log',
-		'socket'	=> $class->{'conf'}->getOption('VARDIR').'/run/newsld.sock',
-		'children'	=> 11,
-		'siteconfig'	=> $class->{'conf'}->getOption('SRCDIR').'/share/newsld/siteconfig',
-		'user'		=> 'spamtagger',
-		'group'		=> 'spamtagger',
-		'daemonize'	=> 'yes',
-		'forks'		=> 0,
-		'nouserconfig'  => 'yes',
-		'syslog_facility' => '',
-		'debug'		=> 0,
-		'log_sets'	=> 'all',
-		'loglevel'	=> 'info',
-		'timeout'	=> 5,
-		'checktimer'	=> 10,
-		'actions'	=> {},
-	};
-
-	return $config;
+  return $config;
 }
 
-sub setup
-{
-	my $self = shift;
-	my $class = shift;
+sub setup ($this, $class) {
+  $this->do_log('Dumping MailScanner config...', 'daemon');
+  my $dumped = 0;
+  my $rc = eval
+  {
+    require IPC::Run;
+    1;
+  };
+  if ($rc) {
+    $dumped = 1 if IPC::Run::run([$this->{'SRCDIR'}.'/bin/dump_mailscanner_config.pl'], "2>&1", ">/dev/null");
+  } else {
+    $dumped = 1 if system($this->{'SRCDIR'}."/bin/dump_mailscanner_config.pl 2>&1 >/dev/null");
+  }
+  $this->do_log('dump_mailscanner_config.pl failed', 'daemon') unless ($dumped);
 
-	$self->doLog('Dumping MailScanner config...', 'daemon');
-	my $dumped = 0;
-	my $rc = eval
-	{
-		require IPC::Run;
-		1;
-	};
-	if ($rc) {
-		$dumped = 1 if IPC::Run::run([$self->{'SRCDIR'}.'/bin/dump_mailscanner_config.pl'], "2>&1", ">/dev/null");
-	} else {
-		$dumped = 1 if system($self->{'SRCDIR'}."/bin/dump_mailscanner_config.pl 2>&1 >/dev/null");
-	}
-	$self->doLog('dump_mailscanner_config.pl failed', 'daemon') unless ($dumped);
-
-	return 1;
+  return 1;
 }
 
-sub preFork
-{
-	my $self = shift;
-	my $class = shift;
-
-	return 0;
+sub pre_fork ($this, $class) {
+  return 0;
 }
 
-sub mainLoop
-{
-	my $self = shift;
-	my $class = shift;
+sub main_loop ($this, $class) {
+  my $cmd = $this->{'cmd'};
+  open(my $CONF, '<', $this->{'conffile'})
+    || die "Cannot open config file $this->{'conffile'}";
+  while (my $line = <$CONF>) {
+    if ($line =~ m/^#/) {
+      next;
+    } elsif ($line =~ m/^ *$/) {
+      next;
+    } elsif ($line =~ m/([^=]*) *= *(.*)/) {
+      my ($op, $val) = ($1, $2);
 
-	my $cmd = $self->{'cmd'};
-	open(my $CONF, '<', $self->{'conffile'})
-		|| die "Cannot open config file $self->{'conffile'}";
-	while (my $line = <$CONF>) {
-		if ($line =~ m/^#/) {
-			next;
-		} elsif ($line =~ m/^ *$/) {
-			next;
-		} elsif ($line =~ m/([^=]*) *= *(.*)/) {
-			my ($op, $val) = ($1, $2);
+      if ($op eq $val || $val eq "yes") {
+        $cmd .= ' --' . $op;
+      } elsif ($val ne "no") {
+        $cmd .= ' --' . $op . '=' . $val;
+      }
+    } else {
+      $this->do_log("Invalid configuration line: $line", 'daemon');
+    }
+  }
+  close($CONF);
 
-			if ($op eq $val || $val eq "yes") {
-				$cmd .= ' --' . $op;
-			} elsif ($val ne "no") {
-				$cmd .= ' --' . $op . '=' . $val;
-			}
-		} else {
-			$self->doLog("Invalid configuration line: $line", 'daemon');
-		}
-	}
-	close($CONF);
+  $this->do_log("Running $cmd", 'daemon');
+  system(split(/ /, $cmd));
 
-	$self->doLog("Running $cmd", 'daemon');
-	system(split(/ /, $cmd));
-
-	return 1;
+  return 1;
 }
 
 1;

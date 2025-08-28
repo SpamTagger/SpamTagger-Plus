@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,7 +18,6 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #   This script will dump the messagesniffer configuration file with the configuration
 #   settings found in the database.
 #
@@ -28,21 +28,26 @@ use v5.40;
 use warnings;
 use utf8;
 
-use DBI();
+use lib '/usr/spamtagger/lib/';
+use DBI;
+use ReadConfig;
+
+our $conf = ReadConfig::get_instance();
+our $VARDIR = $conf->get_option('VARDIR');
+our $SRCDIR = $conf->get_option('SRCDIR');
 
 my $DEBUG = 1;
 
 my $lasterror;
 
-my %config = readConfig("/etc/spamtagger.conf");
-
-my $dbh;
-$dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                        "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
-                or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
+our $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$VARDIR/run/mysql_slave/mysqld.sock",
+  "spamtagger", $conf->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
+) or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
 my %messagesniffer_conf;
 %messagesniffer_conf = get_messagesniffer_config() or fatal_error("NOMESSAGESNIFFERCONFIGURATIONFOUND", "no MessageSniffer configuration found");
+
+$dbh->db_disconnect();
 
 if (!defined($messagesniffer_conf{'__LICENSEID__'})) {
   $messagesniffer_conf{'__LICENSEID__'} = '';
@@ -61,99 +66,65 @@ chown $uid, $gid, "identity.xml";
 dump_file("getRulebase");
 chown $uid, $gid, "getRulebase";
 
-chmod 0755, "$config{'SRCDIR'}/etc/messagesniffer/getRulebase";
-
-$dbh->disconnect();
+chmod o755, "$SRCDIR'}/etc/messagesniffer/getRulebase";
 
 print "DUMPSUCCESSFUL";
 
 #############################
-sub dump_file
-{
-	my $file = shift;
+sub dump_file ($file) {
+  my $template_file = "$SRCDIR'}/etc/messagesniffer/".$file."_template";
+  my $target_file = "$SRCDIR'}/etc/messagesniffer/".$file;
 
-	my $template_file = "$config{'SRCDIR'}/etc/messagesniffer/".$file."_template";
-	my $target_file = "$config{'SRCDIR'}/etc/messagesniffer/".$file;
+  unless (open(my $TEMPLATE, '<', $template_file) ) {
+    $lasterror = "Cannot open template file: $template_file";
+    return 0;
+  }
+  unless (open(my $TARGET, ">", $target_file) ) {
+    $lasterror = "Cannot open target file: $target_file";
+    close $template_file;
+    return 0;
+  }
 
-	if ( !open(TEMPLATE, $template_file) ) {
-		$lasterror = "Cannot open template file: $template_file";
-		return 0;
-	}
-	if ( !open(TARGET, ">$target_file") ) {
-                $lasterror = "Cannot open target file: $target_file";
-		close $template_file;
-                return 0;
-        }
+  my $proxy_server = "";
+  my $proxy_port = "";
+  if ($conf->get_option('HTTPPROXY')) {
+    if ($conf->get_option('HTTPPROXY') =~ m/http\:\/\/(\S+)\:(\d+)/) {
+      $proxy_server = $1;
+      $proxy_port = $2;
+    }
+  }
 
-	my $proxy_server = "";
-	my $proxy_port = "";
-	if (defined($config{'HTTPPROXY'})) {
-		if ($config{'HTTPPROXY'} =~ m/http\:\/\/(\S+)\:(\d+)/) {
-			$proxy_server = $1;
-			$proxy_port = $2;
-		}
-	}
+  while(my $line = <$TEMPLATE>) {
+    $line =~ s/__VARDIR__/$VARDIR/g;
+    $line =~ s/__SRCDIR__/$SRCDIR/g;
+    if ($proxy_server =~ m/\S+/) {
+      $line =~ s/\#HTTPProxyServer __HTTPPROXY__/HTTPProxyServer $proxy_server/g;
+      $line =~ s/\#HTTPProxyPort __HTTPPROXYPORT__/HTTPProxyPort $proxy_port/g;
+    }
+    $line =~ s/__LICENSEID__/$messagesniffer_conf{'__LICENSEID__'}/g;
+    $line =~ s/__AUTHENTICATION__/$messagesniffer_conf{'__AUTHENTICATION__'}/g;
 
-	while(<TEMPLATE>) {
-		my $line = $_;
+    print $TARGET $line;
+  }
 
-		$line =~ s/__VARDIR__/$config{'VARDIR'}/g;
-		$line =~ s/__SRCDIR__/$config{'SRCDIR'}/g;
-		if ($proxy_server =~ m/\S+/) {
-			$line =~ s/\#HTTPProxyServer __HTTPPROXY__/HTTPProxyServer $proxy_server/g;
-			$line =~ s/\#HTTPProxyPort __HTTPPROXYPORT__/HTTPProxyPort $proxy_port/g;
-		}
-		$line =~ s/__LICENSEID__/$messagesniffer_conf{'__LICENSEID__'}/g;
-		$line =~ s/__AUTHENTICATION__/$messagesniffer_conf{'__AUTHENTICATION__'}/g;
+  close $TEMPLATE;
+  close $TARGET;
 
-		print TARGET $line;
-	}
-
-	close TEMPLATE;
-	close TARGET;
-
-	return 1;
+  return 1;
 }
 
 #############################
-sub get_messagesniffer_config{
-        my %config;
+sub get_messagesniffer_config {
+  my %config;
 
-        my $sth = $dbh->prepare("SELECT licenseid, authentication FROM MessageSniffer");
-        $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
+  my $sth = $dbh->prepare("SELECT licenseid, authentication FROM MessageSniffer");
+  $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
 
-        if ($sth->rows < 1) {
-                return;
-        }
-        my $ref = $sth->fetchrow_hashref() or return;
+  return if ($sth->rows < 1);
 
-        $config{'__LICENSEID__'} = $ref->{'licenseid'};
-        $config{'__AUTHENTICATION__'} = $ref->{'authentication'};
+  $config{'__LICENSEID__'} = $ref->{'licenseid'};
+  $config{'__AUTHENTICATION__'} = $ref->{'authentication'};
 
-        $sth->finish();
-        return %config;
-}
-
-
-#############################
-sub readConfig
-{
-	my $configfile = shift;
-	my %config;
-        my ($var, $value);
-
-	open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-	return %config;
+  $sth->finish();
+  return %config;
 }

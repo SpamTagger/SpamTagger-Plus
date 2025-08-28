@@ -28,27 +28,24 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require SystemPref;
-require PrefDaemon;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use SystemPref();
+use PrefDaemon();
 
-my $conf = ReadConfig::getInstance();
+my $conf = ReadConfig::get_instance();
 my $gaction = shift;
 my $action = "";
 if (defined($gaction) && $gaction eq "-s") {
   $action = "send";
 }
 
-my $sysconf = SystemPref::getInstance();
-if (!$sysconf->getPref('do_stockme')) {
+my $sysconf = SystemPref::get_instance();
+if (!$sysconf->get_pref('do_stockme')) {
   exit 0;
 }
 
-my $VARDIR=$conf->getOption('VARDIR');
+my $VARDIR=$conf->get_option('VARDIR');
 my $CENTERPATH=$VARDIR."/spool/learningcenter";
 my $SPAMDIR=$CENTERPATH."/stockspam/";
 my $HAMDIR=$CENTERPATH."/stockham";
@@ -59,19 +56,19 @@ my $maxpertenperhour = 30;
 my @whats = ('spam', 'ham');
 foreach my $WHAT (@whats) {
   my $whatcount = 0;
-  opendir(HSDIR, $CENTERPATH."/stock$WHAT") or die("Cannot open $WHAT dir\n");
-  while (my $day = readdir(HSDIR)) {
+  opendir(my $HSDIR, '<', $CENTERPATH."/stock$WHAT") or die("Cannot open $WHAT dir\n");
+  while (my $day = readdir($HSDIR)) {
     next if $day !~ /^\d+/;
     next if ! -d $CENTERPATH."/stock$WHAT/".$day;
 
     my @tens = (0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0 , 9 => 0 );
     print "opening: ".$CENTERPATH."/stock$WHAT/".$day."\n";
-    opendir(LIST, $CENTERPATH."/stock$WHAT/".$day) or next;
-    while (my $file = readdir(LIST)) {
-      next if ! open(FILE, $CENTERPATH."/stock$WHAT/".$day."/".$file);
+    opendir(my $LIST, $CENTERPATH."/stock$WHAT/".$day) or next;
+    while (my $file = readdir($LIST)) {
+      next if ! open(my $FILE, '<', $CENTERPATH."/stock$WHAT/".$day."/".$file);
       my $sascore = 0;
       my $nbscore = 0;
-      while (<FILE>) {
+      while (<$FILE>) {
         last if ($nbscore != 0 && $sascore != 0);
         if (/score=(-?\d+)/) {
            $sascore =  $1;
@@ -80,6 +77,7 @@ foreach my $WHAT (@whats) {
            $nbscore = $1;
         }
       }
+      close($FILE);
 
       if ($WHAT eq 'spam' && $sascore > 15 && ($nbscore < 99 && $nbscore > 39)) {
          my $ten = int($nbscore / 10);
@@ -108,24 +106,26 @@ foreach my $WHAT (@whats) {
         }
       }
     }
+    closedir($LIST);
   }
+  closedir($HSDIR);
 
   # delete old stocks
-  if (opendir(QDIR, $CENTERPATH."/stock$WHAT/")) {
-    while(my $entry = readdir(QDIR)) {
+  if (opendir(my $QDIR, '<', $CENTERPATH."/stock$WHAT/")) {
+    while(my $entry = readdir($QDIR)) {
       next if $entry !~ /^\d+/;
       $entry = $CENTERPATH."/stock$WHAT/$entry";
       system("rm", "-rf", $entry) if -d $entry &&
-                                 -M $entry > $sysconf->getPref('stockme_nbdays');
+                                 -M $entry > $sysconf->get_pref('stockme_nbdays');
     }
-    closedir(QDIR);
+    closedir($QDIR);
   }
 
   if ($action eq "send") {
     # create bayes tar
     my $date=`date +%Y%m%d`;
     chomp($date);
-    my $tarfile = "$STOCKDIR/$WHAT-".$conf->getOption('CLIENTID')."-".$conf->getOption('HOSTID')."_$date.tar.gz";
+    my $tarfile = "$STOCKDIR/$WHAT-".$conf->get_option('CLIENTID')."-".$conf->get_option('HOSTID')."_$date.tar.gz";
     system("tar", "-C", "$STOCKDIR/$WHAT/", "-cvzf", "$tarfile", "cur");
 
     my $CVSHOST='cvs.spamtagger.org';

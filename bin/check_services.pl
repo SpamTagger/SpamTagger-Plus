@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -27,21 +28,18 @@ use warnings;
 use utf8;
 
 # TODO: teporarily disable for spamtagger transition
-echo "Feature not currently supported by SpamTagger"
-exit
+die "Feature not currently supported by SpamTagger";
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-use LWP::UserAgent;
-use XML::Simple;
-use Net::DNS::Resolver;
-use Config::Simple;
-use Data::Dumper;
-use String::Random;
-use Getopt::Std;
+=pod Ignore for perlcritic
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use LWP::UserAgent();
+use XML::Simple();
+use Net::DNS::Resolver();
+use Config::Simple();
+use Data::Dumper();
+use String::Random();
+use Getopt::Std();
 
 sub usage() {
   print STDERR << "EOF";
@@ -55,7 +53,7 @@ EOF
 
 my $minsleeptime=0;
 my $maxsleeptime=20;
-my $conf = ReadConfig::getInstance();
+my $conf = ReadConfig::get_instance();
 
 my %options=();
 getopts(":rh", \%options);
@@ -69,23 +67,23 @@ if (defined $options{h}) {
   usage();
 }
 
-if (!$conf->getOption('REGISTERED')) {
+if (!$conf->get_option('REGISTERED')) {
   print STDERR "** ERROR ** Useless on unregistered host. You won't be validated.\n";
   exit 1;
 }
 
-my $updates_config_file = $conf->getOption('SRCDIR').'/etc/spamtagger/updates.cf';
+my $updates_config_file = $conf->get_option('SRCDIR').'/etc/spamtagger/updates.cf';
 if (! -f $updates_config_file ) {
   print STDERR "** ERROR ** No updates configuration found. Aborting.\n";
   exit 1;
 }
-my $updates_config = new Config::Simple($updates_config_file);
+my $updates_config = Config::Simple->new($updates_config_file);
 
 my %services = (
-   'http' => { 'call' => \&checkHTTP, 'params' => {'service' => 'http'}},
-   'https' => { 'call' => \&checkHTTP, 'params' => {'service' => 'https'}},
-   'dns' => { 'call' => \&checkDNS, 'params' => {'service' => 'dns'}},
-   'ssh' => { 'call' => \&checkHTTP, 'params' => {'service' => 'ssh'}}
+   'http' => { 'call' => \&check_http, 'params' => {'service' => 'http'}},
+   'https' => { 'call' => \&check_http, 'params' => {'service' => 'https'}},
+   'dns' => { 'call' => \&check_dns, 'params' => {'service' => 'dns'}},
+   'ssh' => { 'call' => \&check_http, 'params' => {'service' => 'ssh'}}
 );
 
 foreach my $service (keys %services) {
@@ -101,9 +99,7 @@ foreach my $service (keys %services) {
 
 exit 0;
 
-sub checkHTTP {
-  my $params = shift;
-
+sub check_http ($params) {
   my $timeout = 10;
 
   my %return = ('status' => 0, 'message' => 'no check done');
@@ -116,7 +112,7 @@ sub checkHTTP {
   my $license='xxxx-xxxx-xxxx-xxxx';
   my $agent='SpamTagger host/0.1 ';
 
-  my $ua = LWP::UserAgent->new;
+  my $ua = LWP::UserAgent->new();
   $ua->timeout($timeout);
   $ua->agent($agent);
   my $req = HTTP::Request->new( GET => $checkURL );
@@ -124,8 +120,8 @@ sub checkHTTP {
 
   my $xml = XML::Simple->new(ForceArray => 1, KeepRoot => 0);
   my $data = {
-    'clientID' => $conf->getOption('CLIENTID'),
-    'hostID' => $conf->getOption('HOSTID'),
+    'clientID' => $conf->get_option('CLIENTID'),
+    'hostID' => $conf->get_option('HOSTID'),
     'license' => $license
   };
 
@@ -144,11 +140,11 @@ sub checkHTTP {
   return %return;
 }
 
-sub checkDNS {
+sub check_dns {
   my %return = ('status' => 0, 'message' => 'no check done');
 
-  my $random = new String::Random;
-  my $query = $conf->getOption('CLIENTID').'-'.$conf->getOption('HOSTID').'-'.$random->randpattern("cccccccccc").'.'.$updates_config->param('service-check.dnsDomain');
+  my $random = String::Random->new();
+  my $query = $conf->get_option('CLIENTID').'-'.$conf->get_option('HOSTID').'-'.$random->randpattern("cccccccccc").'.'.$updates_config->param('service-check.dnsDomain');
   my $dnsResult = gethostbyname( $query );
   if ($dnsResult) {
     $dnsResult = Socket::inet_ntoa($dnsResult);
@@ -159,7 +155,7 @@ sub checkDNS {
     return %return;
   }
 
-  my $res = Net::DNS::Resolver->new;
+  my $res = Net::DNS::Resolver->new();
   foreach my $server ($res->nameservers) {
     $res->nameservers($server);
     my $reply = $res->query($query, 'A');
@@ -181,4 +177,4 @@ sub checkDNS {
   }
   return %return;
 }
-
+=cut

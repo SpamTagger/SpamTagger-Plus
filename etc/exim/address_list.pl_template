@@ -8,9 +8,9 @@ use utf8;
 ## address(,user)
 
 use lib "__SRCDIR__/lib";
-use Net::SMTP;
-require ReadConfig;
-require DB;
+use Net::SMTP();
+use ReadConfig();
+use DB();
 
 my $ret = '';
 my $domain = shift;
@@ -21,7 +21,7 @@ my $conf = ReadConfig::getInstance();
 
 my $afile = $conf->getOption('VARDIR')."/spool/spamtagger/addresses/".$domain.".addresslist";
 
-open AFILE, ">".$afile or die "Cannot open destination file: $afile";
+open(my $AFILE, ">", $afile) or die "Cannot open destination file: $afile";
 
 my $in_headers = 1;
 my $full_text = '';
@@ -34,21 +34,18 @@ while (<>) {
   $full_text .= $_;
 
   if (/([^@,]+)\@$domain([,;])?(\S+)?/) {
-    print AFILE $1;
-#    if ($2 && $3) {
-#      print AFILE ",".$3;
-#    }
-    print AFILE "\n";
+    print $AFILE "$1\n";
   }
 }
-close AFILE;
+close $AFILE;
 
 print "OK ".$ret." - address list saved in $afile\n";
 
 if ($conf->getOption('ISMASTER') =~ m/^(Y|y|yes|YES)$/) {
-  my $slave_db = DB::connect('slave', 'st_config');
+  my $slave_db = DB->db_connect('slave', 'st_config');
   my @masters = $slave_db->getListOfHash("SELECT hostname from master");
   my @slaves = $slave_db->getListOfHash("SELECT hostname from slave");
+  $slave_db->db_disconnect();
   foreach my $s (@slaves) {
     my $do = 1;
     foreach my $m (@masters) {
@@ -56,7 +53,7 @@ if ($conf->getOption('ISMASTER') =~ m/^(Y|y|yes|YES)$/) {
         $do = 0;
       }
       if ($do) {
-        sendToSlave($s->{'hostname'});
+        send_to_slave($s->{'hostname'});
       }
     }
   }
@@ -64,9 +61,7 @@ if ($conf->getOption('ISMASTER') =~ m/^(Y|y|yes|YES)$/) {
 
 exit 0;
 
-sub sendToSlave {
-  my $slave = shift;
-
+sub send_to_slave ($slave) {
   my $smtp = Net::SMTP->new($slave);
   if (!$smtp) {
     print STDERR "Cannot connect to $slave for propagating address list\n";

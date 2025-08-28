@@ -1,4 +1,23 @@
 #!/usr/bin/env perl
+#
+#   SpamTagger Plus - Open Source Spam Filtering
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#   Newsl prefilter module for MailScanner (Custom version for SpamTagger)
 
 package MailScanner::NiceBayes;
 
@@ -6,11 +25,9 @@ use v5.40;
 use warnings;
 use utf8;
 
-no  strict 'subs'; # Allow bare words for parameter %'s
-#use English; # Needed for $PERL_VERSION to work in all versions of Perl
-
-use IO;
-use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
 my $MODULE = "NiceBayes";
 my %conf;
@@ -21,40 +38,39 @@ sub initialise {
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
   my $configfile = $confdir."/$MODULE.cf";
   %NiceBayes::conf = (
-     command => '/opt/bogofilter/bin/bogofilter -c __CONFIGFILE__ -v',
-     configFile => '/opt/bogofilter/etc/bogofilter.cf',
-     header => "X-$MODULE",
-     putHamHeader => 0,
-     putSpamHeader => 1,
-     maxSize => 0,
-     active => 0,
-     timeOut => 10,
-     avoidHeaders => '',
-     decisive_field => 'none',
-     pos_text => '',
-     neg_text => '',
-     pos_decisive => 0,
-     neg_decisive => 0,
-     position => 0
+    command => '/opt/bogofilter/bin/bogofilter -c __CONFIGFILE__ -v',
+    configFile => '/opt/bogofilter/etc/bogofilter.cf',
+    header => "X-$MODULE",
+    putHamHeader => 0,
+    putSpamHeader => 1,
+    maxSize => 0,
+    active => 0,
+    timeOut => 10,
+    avoidHeaders => '',
+    decisive_field => 'none',
+    pos_text => '',
+    neg_text => '',
+    pos_decisive => 0,
+    neg_decisive => 0,
+    position => 0
   );
 
-  if (open (CONFIG, $configfile)) {
-    while (<CONFIG>) {
+  if (open ($CONFIG, '<', $configfile)) {
+    while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
        $NiceBayes::conf{$1} = $2;
       }
     }
-    close CONFIG;
+    close($CONFIG);
   } else {
     MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
   }
-  if ( -f $NiceBayes::conf{'configFile'} ) {
+  if (-f $NiceBayes::conf{'configFile'}) {
     my $cmd = "grep 'bogofilter_dir' ".$NiceBayes::conf{'configFile'}." | cut -d'=' -f2";
     my $database = `$cmd`;
     chomp($database);
     $database .= "/wordlist.db";
     if ( -f $database ) {
-      #MailScanner::Log::InfoLog("$MODULE: bogfilter database found ($database)");
       $NiceBayes::conf{'active'} = 1;
     } else {
       MailScanner::Log::WarnLog("$MODULE bogofilter database not found (".$database.") ! Disabling $MODULE");
@@ -75,19 +91,21 @@ sub initialise {
   } else {
     $NiceBayes::conf{'neg_text'} = 'position : '.$NiceBayes::conf{'position'}.', not decisive';
   }
+  return;
 }
 
-sub Checks {
-  my $this = shift;
-  my $message = shift;
+# TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
+sub Checks ($this, $message) { ## no critic
 
   ## check maximum message size
   my $maxsize = $NiceBayes::conf{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
-     MailScanner::Log::InfoLog("Message %s is too big for NiceBayes checks (%d > %d bytes)",
-                                $message->{id}, $message->{size}, $maxsize);
-     $global::MS->{mta}->AddHeaderToOriginal($message, $NiceBayes::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
-     return 0;
+    MailScanner::Log::InfoLog(
+      "Message %s is too big for NiceBayes checks (%d > %d bytes)",
+      $message->{id}, $message->{size}, $maxsize
+    );
+    $global::MS->{mta}->AddHeaderToOriginal($message, $NiceBayes::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
+    return 0;
   }
 
   if ($NiceBayes::conf{'active'} < 1) {
@@ -97,32 +115,32 @@ sub Checks {
   }
 
   my $msgtext = "";
-  my (@WholeMessage, $maxsize);
+  my (@whole_message, $maxsize);
   my $toadd = 0;
   my @avoidheaders = split /,/, $NiceBayes::conf{'avoidHeaders'};
   foreach my $headerline (@{$message->{headers}}) {
-      if ($headerline =~ m/^(\S+):/) {
-          my $headermatch = $1;
-          $toadd = 1;
-          foreach my $avoidheader (@avoidheaders) {
-              if ($headermatch =~ m/^$avoidheader/i) {
-                  $toadd = 0;
-                  last;
-              }
-          }
-          if ($toadd) {
-              $msgtext .= $headerline."\n";
-          }
-      } else {
-        if ($toadd) {
-            $msgtext .= $headerline."\n";
+    if ($headerline =~ m/^(\S+):/) {
+      my $headermatch = $1;
+      $toadd = 1;
+      foreach my $avoidheader (@avoidheaders) {
+        if ($headermatch =~ m/^$avoidheader/i) {
+          $toadd = 0;
+          last;
         }
       }
+      if ($toadd) {
+        $msgtext .= $headerline."\n";
+      }
+    } else {
+      if ($toadd) {
+        $msgtext .= $headerline."\n";
+      }
+    }
   }
-  $message->{store}->ReadBody(\@WholeMessage, 0);
+  $message->{store}->ReadBody(\@whole_message, 0);
 
   $msgtext .= "\n";
-  foreach my $line (@WholeMessage) {
+  foreach my $line (@whole_message) {
     $msgtext .= $line;
   }
 
@@ -151,11 +169,9 @@ sub Checks {
   $ret = -1;
   my $score = 0;
   if ($res =~ /^X-Bogosity: (Ham|Spam|Unsure), tests=bogofilter, spamicity=([0-9.]+), version=([0-9.]+)$/) {
-   $ret = 1;
-   if ($1 eq "Spam") {
-     $ret = 2;
-   }
-   $score = int($2*10000) / 100;
+    $ret = 1;
+    $ret = 2 if ($1 eq "Spam");
+    $score = int($2*10000) / 100;
   }
 
   if ($ret == 2) {
@@ -182,6 +198,7 @@ sub Checks {
 
 sub dispose {
   MailScanner::Log::InfoLog("$MODULE module disposing...");
+  return;
 }
 
 1;

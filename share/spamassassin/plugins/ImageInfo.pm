@@ -96,14 +96,18 @@
 
 package Mail::SpamAssassin::Plugin::ImageInfo;
 
-use Mail::SpamAssassin::Plugin;
-use Mail::SpamAssassin::Logger;
-use strict;
+use v5.40;
 use warnings;
+use utf8;
+
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
+use Mail::SpamAssassin::Logger();
 use bytes;
 
-use vars qw(@ISA);
-@ISA = qw(Mail::SpamAssassin::Plugin);
+use parent qw(Mail::SpamAssassin::Plugin);
 
 # constructor: register the eval rule
 sub new {
@@ -112,18 +116,18 @@ sub new {
 
   # some boilerplate...
   $class = ref($class) || $class;
-  my $self = $class->SUPER::new($mailsaobject);
-  bless ($self, $class);
+  my $this = $class->SUPER::new($mailsaobject);
+  bless ($this, $class);
 
-  $self->register_eval_rule ("image_count");
-  $self->register_eval_rule ("pixel_coverage");
-  $self->register_eval_rule ("image_size_exact");
-  $self->register_eval_rule ("image_size_range");
-  $self->register_eval_rule ("image_named");
-  $self->register_eval_rule ("image_name_regex");
-  $self->register_eval_rule ("image_to_text_ratio");
+  $this->register_eval_rule ("image_count");
+  $this->register_eval_rule ("pixel_coverage");
+  $this->register_eval_rule ("image_size_exact");
+  $this->register_eval_rule ("image_size_range");
+  $this->register_eval_rule ("image_named");
+  $this->register_eval_rule ("image_name_regex");
+  $this->register_eval_rule ("image_to_text_ratio");
 
-  return $self;
+  return $this;
 }
 
 # -----------------------------------------
@@ -232,8 +236,7 @@ my %get_details = (
 
 );
 
-sub _get_images {
-  my ($self,$pms) = @_;
+sub _get_images ($this,$pms) {
   my $result = 0;
 
   foreach my $type ( 'all', keys %get_details ) {
@@ -265,17 +268,18 @@ sub _get_images {
       $pms->{'imageinfo'}->{'dems_all'}->{$dem} = 1;
     }
   }
+  return;
 }
 
 # -----------------------------------------
 
 sub image_named {
-  my ($self,$pms,$body,$name) = @_;
+  my ($this,$pms,$body,$name) = @_;
   return unless (defined $name);
 
   # make sure we have image data read in.
   if (!exists $pms->{'imageinfo'}) {
-    $self->_get_images($pms);
+    $this->_get_images($pms);
   }
 
   return 0 unless (exists $pms->{'imageinfo'}->{"names_all"});
@@ -286,12 +290,12 @@ sub image_named {
 # -----------------------------------------
 
 sub image_name_regex {
-  my ($self,$pms,$body,$re) = @_;
+  my ($this,$pms,$body,$re) = @_;
   return unless (defined $re);
 
   # make sure we have image data read in.
   if (!exists $pms->{'imageinfo'}) {
-    $self->_get_images($pms);
+    $this->_get_images($pms);
   }
 
   return 0 unless (exists $pms->{'imageinfo'}->{"names_all"});
@@ -300,7 +304,7 @@ sub image_name_regex {
   foreach my $name (keys %{$pms->{'imageinfo'}->{"names_all"}}) {
     dbg("imageinfo: checking image named $name against regex $re");
     my $eval = 'if (q{'.$name.'} =~  ' . $re . ') {  $hit = 1; } ';
-    eval $eval;
+    eval { $eval };
     dbg("imageinfo: error in regex $re - $@") if $@;
     if ($hit) {
       dbg("imageinfo: image_name_regex hit on $name");
@@ -314,13 +318,13 @@ sub image_name_regex {
 # -----------------------------------------
 
 sub image_count {
-  my ($self,$pms,$body,$type,$min,$max) = @_;
+  my ($this,$pms,$body,$type,$min,$max) = @_;
 
   return unless defined $min;
 
   # make sure we have image data read in.
   if (!exists $pms->{'imageinfo'}) {
-    $self->_get_images($pms);
+    $this->_get_images($pms);
   }
 
   # dbg("imageinfo: count: $min, ".($max ? $max:'').", $type, ".$pms->{'imageinfo'}->{"count_$type"});
@@ -330,13 +334,13 @@ sub image_count {
 # -----------------------------------------
 
 sub pixel_coverage {
-  my ($self,$pms,$body,$type,$min,$max) = @_;
+  my ($this,$pms,$body,$type,$min,$max) = @_;
 
   return unless (defined $type && defined $min);
 
   # make sure we have image data read in.
   if (!exists $pms->{'imageinfo'}) {
-    $self->_get_images($pms);
+    $this->_get_images($pms);
   }
 
   # dbg("imageinfo: pc_$type: $min, ".($max ? $max:'').", $type, ".$pms->{'imageinfo'}->{"pc_$type"});
@@ -346,12 +350,12 @@ sub pixel_coverage {
 # -----------------------------------------
 
 sub image_to_text_ratio {
-  my ($self,$pms,$body,$type,$min,$max) = @_;
+  my ($this,$pms,$body,$type,$min,$max) = @_;
   return unless (defined $type && defined $min && defined $max);
 
   # make sure we have image data read in.
   if (!exists $pms->{'imageinfo'}) {
-    $self->_get_images($pms);
+    $this->_get_images($pms);
   }
 
   # depending on how you call this eval (body vs rawbody),
@@ -368,12 +372,12 @@ sub image_to_text_ratio {
 # -----------------------------------------
 
 sub image_size_exact {
-  my ($self,$pms,$body,$type,$height,$width) = @_;
+  my ($this,$pms,$body,$type,$height,$width) = @_;
   return unless (defined $type && defined $height && defined $width);
 
   # make sure we have image data read in.
   if (!exists $pms->{'imageinfo'}) {
-    $self->_get_images($pms);
+    $this->_get_images($pms);
   }
 
   return 0 unless (exists $pms->{'imageinfo'}->{"dems_$type"});
@@ -384,12 +388,12 @@ sub image_size_exact {
 # -----------------------------------------
 
 sub image_size_range {
-  my ($self,$pms,$body,$type,$minh,$minw,$maxh,$maxw) = @_;
+  my ($this,$pms,$body,$type,$minh,$minw,$maxh,$maxw) = @_;
   return unless (defined $type && defined $minh && defined $minw);
 
   # make sure we have image data read in.
   if (!exists $pms->{'imageinfo'}) {
-    $self->_get_images($pms);
+    $this->_get_images($pms);
   }
 
   my $name = 'dems_'.$type;

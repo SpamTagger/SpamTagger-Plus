@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -27,13 +28,17 @@ use v5.40;
 use warnings;
 use utf8;
 
-use DBI();
+use lib '/usr/spamtagger/lib/';
+use DBI;
+use ReadConfig;
+
+our $config = ReadConfig::get_instance();
+my $VARDIR = $config->get_option('VARDIR');
 
 my $DEBUG = 1;
 
-my %config = readConfig("/etc/spamtagger.conf");
-my $known_hosts_file = $config{'VARDIR'}."/.ssh/known_hosts";
-my $authorized_file = $config{'VARDIR'}."/.ssh/authorized_keys";
+my $known_hosts_file = "$VARDIR/.ssh/known_hosts";
+my $authorized_file = "$VARDIR/.ssh/authorized_keys";
 
 unlink($known_hosts_file);
 unlink($authorized_file);
@@ -46,66 +51,39 @@ chown($uid, $gid, $known_hosts_file);
 do_authorized_keys();
 chown($uid, $gid, $authorized_file);
 
-
-
 ############################
 sub do_known_hosts {
+  my $dbh = DBI->connect(
+    "DBI:mysql:database=st_config;host=localhost;mysql_socket=$VARDIR/run/mysql_master/mysqld.sock",
+    "spamtagger", $config->('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
+  ) or return;
 
-	my $dbh;
-	$dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_master/mysqld.sock",
-			"spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
-        	        or return;
+  my $sth = $dbh->prepare("SELECT hostname, ssh_pub_key FROM slave");
+  $sth->execute() or return;
 
-	my $sth = $dbh->prepare("SELECT hostname, ssh_pub_key FROM slave");
-	$sth->execute() or return;
-
-	while (my $ref = $sth->fetchrow_hashref() ) {
-		open KNOWNHOST, ">> $known_hosts_file";
-		print KNOWNHOST $ref->{'hostname'}." ".$ref->{'ssh_pub_key'}."\n";
-		close KNOWNHOST;
-	}
-	$sth->finish();
-	return;
+  while (my $ref = $sth->fetchrow_hashref() ) {
+    open(my $KNOWNHOST, ">>", $known_hosts_file);
+    print $KNOWNHOST $ref->{'hostname'}." ".$ref->{'ssh_pub_key'}."\n";
+    close $KNOWNHOST;
+  }
+  $sth->finish();
+  return;
 }
 
 sub do_authorized_keys {
-	my $dbh;
-        $dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                        "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
-                        or return;
+  my $dbh = DBI->connect(
+    "DBI:mysql:database=st_config;host=localhost;mysql_socket=$VARDIR/run/mysql_slave/mysqld.sock",
+    "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
+  ) or return;
 
-	my $sth = $dbh->prepare("SELECT ssh_pub_key FROM master");
-	$sth->execute() or return;
+  my $sth = $dbh->prepare("SELECT ssh_pub_key FROM master");
+  $sth->execute() or return;
 
-        while (my $ref = $sth->fetchrow_hashref() ) {
-		open KNOWNHOST, ">> $authorized_file";
-                print KNOWNHOST $ref->{'ssh_pub_key'}."\n";
-                close KNOWNHOST;
-	}
-	$sth->finish();
-        return;
-}
-
-
-#############################
-sub readConfig
-{
-        my $configfile = shift;
-        my %config;
-        my ($var, $value);
-
-        open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-        return %config;
+  while (my $ref = $sth->fetchrow_hashref() ) {
+    open(my $KNOWNHOST, ">>", $authorized_file);
+    print $KNOWNHOST $ref->{'ssh_pub_key'}."\n";
+    close $KNOWNHOST;
+  }
+  $sth->finish();
+  return;
 }

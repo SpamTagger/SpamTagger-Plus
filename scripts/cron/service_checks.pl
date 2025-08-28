@@ -7,7 +7,7 @@ use utf8;
 use lib '/usr/spamtagger/lib';
 use ManageServices;
 
-sub getDate {
+sub get_date {
   my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime(time);
   $mon++;
   $year += 1900;
@@ -19,7 +19,7 @@ my $log = '/var/log/service_check.log';
 my $lock = '/var/spamtagger/spool/tmp/service_check.lock';
 my $cron = '/var/spamtagger/spool/tmp/spamtagger_cron.lock';
 my $update = '/var/spamtagger/spool/spamtagger/updater4mc.status';
-my $date = getDate();
+my $date = get_date();
 my ($LOG, $LOCK);
 
 open ($LOG, '>>', $log) || die "Could not open log file $log\n";
@@ -46,7 +46,7 @@ unless (open($LOCK, '>', $lock)) {
 }
 close($LOCK);
 
-my $status = $manager->checkAll();
+my $status = $manager->check_all();
 foreach my $service (keys %$status) {
   if ( $status->{$service} != 1 ) {
     print $LOG "$date - $service: ".$manager->{'codes'}->{$status->{$service}}->{'verbose'}."\n";

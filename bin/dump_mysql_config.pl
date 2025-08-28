@@ -29,18 +29,24 @@ use utf8;
 
 my $DEBUG = 1;
 
-my %config = readConfig("/etc/spamtagger.conf");
+use lib '/usr/spamtagger/lib/';
+use ReadConfig;
+
+our $conf = ReadConfig::get_instance();
+our $SRCDIR = $conf->get_option('SRCDIR');
+our $VARDIR = $conf->get_option('VARDIR');
+my %config = ();
 
 ## added 10 for migration ease
-$config{'__MASTERID__'} = ($config{'HOSTID'} * 2) - 1 + 10;
-$config{'__SLAVEID__'} = $config{'HOSTID'} * 2 + 10;
+$config{'__MASTERID__'} = ($conf->get_option('HOSTID') * 2) - 1 + 10;
+$config{'__SLAVEID__'} = $conf->get_option('HOSTID') * 2 + 10;
 
 ## Avoid having unsychronized database when starting a new VA
-my $FIRSTUPDATE_FLAG_RAN="$config{'VARDIR'}/run/configurator/updater4st-ran";
+my $FIRSTUPDATE_FLAG_RAN="$VARDIR/run/configurator/updater4st-ran";
 if (-e $FIRSTUPDATE_FLAG_RAN){
-	$config{'__BINARY_LOG_KEEP__'} = 21;
+  $config{'__BINARY_LOG_KEEP__'} = 21;
 } else {
-	$config{'__BINARY_LOG_KEEP__'} = 0;
+  $config{'__BINARY_LOG_KEEP__'} = 0;
 }
 
 my $lasterror = "";
@@ -51,81 +57,44 @@ dump_mysql_file('slave') or fatal_error("CANNOTDUMPMYSQLFILE", $lasterror);
 print "DUMPSUCCESSFUL";
 
 #############################
-sub dump_mysql_file
-{
-	my $stage = shift;
+sub dump_mysql_file ($stage) {
+  my $template_file = "$SRCDIR/etc/mysql/my_$stage.cnf_template";
+  my $target_file = "$SRCDIR/etc/mysql/my_$stage.cnf";
 
-	my $template_file = "$config{'SRCDIR'}/etc/mysql/my_$stage.cnf_template";
-	my $target_file = "$config{'SRCDIR'}/etc/mysql/my_$stage.cnf";
+  unless (open($TEMPLATE, "<", $template_file) ) {
+    $lasterror = "Cannot open template file: $template_file";
+    return 0;
+  }
+  unless (open($TARGET, ">", "$target_file") ) {
+    $lasterror = "Cannot open target file: $target_file";
+    close $template_file;
+    return 0;
+  }
 
-	if ( !open(TEMPLATE, $template_file) ) {
-		$lasterror = "Cannot open template file: $template_file";
-		return 0;
-	}
-	if ( !open(TARGET, ">$target_file") ) {
-                $lasterror = "Cannot open target file: $target_file";
-		close $template_file;
-                return 0;
-        }
+  while($line = <$TEMPLATE>) {
+    $line =~ s/__VARDIR__/$VARDIR/g;
+    $line =~ s/__SRCDIR__/$SRCDIR/g;
 
-	while(<TEMPLATE>) {
-		my $line = $_;
+    $line =~ s/$_/$config{$_}/g foreach (keys(%config);
 
-		$line =~ s/__VARDIR__/$config{'VARDIR'}/g;
-		$line =~ s/__SRCDIR__/$config{'SRCDIR'}/g;
+    print $TARGET $line;
+  }
 
-		foreach my $key (keys %config) {
-                        $line =~ s/$key/$config{$key}/g;
-                }
+  close $TEMPLATE;
+  close $TARGET;
 
-		print TARGET $line;
-	}
-
-	close TEMPLATE;
-	close TARGET;
-
-	return 1;
+  return 1;
 }
 
 #############################
-sub fatal_error
-{
-	my $msg = shift;
-	my $full = shift;
-
-	print $msg;
-	if ($DEBUG) {
-		print "\n Full information: $full \n";
-	}
-	exit(0);
+sub fatal_error ($msg, $full) {
+  print $msg;
+  print "\n Full information: $full \n" if ($DEBUG);
+  exit(0);
 }
 
 #############################
-sub print_usage
-{
-	print "Bad usage: dump_mysql_config.pl\n";
-	exit(0);
-}
-
-#############################
-sub readConfig
-{
-	my $configfile = shift;
-	my %config;
-        my ($var, $value);
-
-	open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-	return %config;
+sub print_usage {
+  print "Bad usage: dump_mysql_config.pl\n";
+  exit(0);
 }

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,58 +24,45 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-use lib qw(/usr/rrdtools/lib/perl/);
-require RRD::Generic;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(New collect plot);
-our $VERSION    = 1.0;
+use lib "/usr/rrdtools/lib/perl/";
+use RRD::Generic();
 
-
-sub New {
-  my $statfile = shift;
+sub new ($statfile, $reset) {
   $statfile = $statfile."/load.rrd";
-  my $reset = shift;
 
   my %things = (
-           load => ['GAUGE', 'AVERAGE']
-         );
+    load => ['GAUGE', 'AVERAGE']
+  );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
 
-
   my $this = {
-  	 statfile => $statfile,
-  	 rrd => $rrd
+    statfile => $statfile,
+    rrd => $rrd
   };
 
   return bless $this, "RRD::Load";
 }
 
-
-sub collect {
-  my $this = shift;
-  my $snmp = shift;
-
+sub collect ($this, $snmp) {
   my %things = (
-        load => '1.3.6.1.4.1.2021.10.1.3.2'
-        );
+    load => '1.3.6.1.4.1.2021.10.1.3.2'
+  );
 
   return RRD::Generic::collect($this->{rrd}, $snmp, \%things);
 }
 
-sub plot {
-  my $this = shift;
-  my $dir = shift;
-  my $period = shift;
-  my $leg = shift;
-
+sub plot ($this, $dir, $period, $leg) {
   my %things = (
-        load => ['area', 'EB9C48', 'BA3614', 'Load', 'AVERAGE', '%10.2lf', ''],
-   );
+    load => ['area', 'EB9C48', 'BA3614', 'Load', 'AVERAGE', '%10.2lf', ''],
+  );
   my @order = ('load');
 
   my $legend = "\t\t     Last\t   Average\t\t  Max\\n";
   return RRD::Generic::plot('load', $dir, $period, $leg, 'System Load', 0, 0, $this->{rrd}, \%things, \@order, $legend);
 }
+
 1;

@@ -29,7 +29,10 @@ use v5.40;
 use warnings;
 use utf8;
 
-my %config = readConfig("/etc/spamtagger.conf");
+use lib '/usr/spamtagger/lib/';
+use ReadConfig;
+
+my $config = ReadConfig::get_instance();
 
 my $msg_id = shift;
 my $for = shift;
@@ -53,11 +56,11 @@ if ( (!$for) || !($for =~ /^(\S+)\@(\S+)$/)) {
 my $for_local = $1;
 my $for_domain = $2;
 
-my $msg_file = $config{'VARDIR'}."/spam/".$for_domain."/".$for."/".$msg_id;
+my $msg_file = $config->get_option('VARDIR')."/spam/".$for_domain."/".$for."/".$msg_id;
 
 print $msg_file."\n";
 
-if ( open(MSG, $msg_file)) {
+if (open(my $MSG, '<', $msg_file)) {
   my $keep_in = 1;
   my $in_it = 0;
   my @hits;
@@ -67,7 +70,7 @@ if ( open(MSG, $msg_file)) {
   my $cmd;
   my $describe_line;
   my $line = "";
-  while (($line=<MSG>) && ($keep_in > 0)) {
+  while (($line=<$MSG>) && ($keep_in > 0)) {
     if ( $line =~ /^X-SpamTagger-SpamCheck:.*\(.*score=([\-]?[0-9\.]*)\,.*$/) {
       print "TOTAL_SCORE::$1::\n";
       $in_it = 1;
@@ -113,39 +116,15 @@ if ( open(MSG, $msg_file)) {
       }
     }
   }
-  close(MSGFILE);
+  close($MSG);
 } else {
   print "MSGFILENOTFOUND\n";
 }
 
 exit 1;
 
-##########################################
-sub readConfig
-{       # Reads configuration file given as argument.
-        my $configfile = shift;
-        my %config;
-        my ($var, $value);
-
-        open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-        return %config;
-}
-
 ############################################
-sub print_usage
-{
+sub print_usage {
         print "bad usage...\n";
         print "Usage: get_reasons.pl message_id destination\@adresse\n";
         exit 0;

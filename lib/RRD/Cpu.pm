@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,70 +24,58 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-use lib qw(/usr/rrdtools/lib/perl/);
-require RRD::Generic;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(New collect plot);
-our $VERSION    = 1.0;
+use lib "/usr/rrdtools/lib/perl/";
+use RRD::Generic();
 
-
-sub New {
-  my $statfile = shift;
+sub new ($statfile, $reset) {
   $statfile = $statfile."/cpu.rrd";
-  my $reset = shift;
 
   my %things = (
-           idle => ['COUNTER', 'AVERAGE'],
-           nice => ['COUNTER', 'AVERAGE'],
-           system => ['COUNTER', 'AVERAGE'],
-           user => ['COUNTER', 'AVERAGE'],
-           wait => ['COUNTER', 'AVERAGE'],
-         );
+    idle => ['COUNTER', 'AVERAGE'],
+    nice => ['COUNTER', 'AVERAGE'],
+    system => ['COUNTER', 'AVERAGE'],
+    user => ['COUNTER', 'AVERAGE'],
+    wait => ['COUNTER', 'AVERAGE'],
+  );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
 
-
   my $this = {
-  	 statfile => $statfile,
-  	 rrd => $rrd
+    statfile => $statfile,
+    rrd => $rrd
   };
 
   return bless $this, "RRD::Cpu";
 }
 
 
-sub collect {
-  my $this = shift;
-  my $snmp = shift;
-
+sub collect ($this, $snmp) {
   my %things = (
-        idle => '1.3.6.1.4.1.2021.11.53.0',
-        nice => '1.3.6.1.4.1.2021.11.51.0',
-        system => '1.3.6.1.4.1.2021.11.52.0',
-        user => '1.3.6.1.4.1.2021.11.50.0',
-        wait => '1.3.6.1.4.1.2021.11.54.0',
-        );
+    idle => '1.3.6.1.4.1.2021.11.53.0',
+    nice => '1.3.6.1.4.1.2021.11.51.0',
+    system => '1.3.6.1.4.1.2021.11.52.0',
+    user => '1.3.6.1.4.1.2021.11.50.0',
+    wait => '1.3.6.1.4.1.2021.11.54.0',
+  );
 
   return RRD::Generic::collect($this->{rrd}, $snmp, \%things);
 }
 
-sub plot {
-  my $this = shift;
-  my $dir = shift;
-  my $period = shift;
-  my $leg = shift;
-
+sub plot ($this, $dir, $period, $leg) {
   my %things = (
-        idle => ['stack', 'EEEEEE', 'EEEEEE', 'Idle', 'AVERAGE', '%10.2lf %%', ''],
-        nice => ['stack', '48C3EB', '2B82C5', 'Nice', 'AVERAGE', '%10.2lf %%', ''],
-        system => ['area', 'FF0000' , 'FF0000', 'System', 'AVERAGE', '%10.2lf %%', ''],
-        user => ['stack', 'EB9C48', 'BA3614', 'User', 'AVERAGE', '%10.2lf %%', ''],
-        wait => ['stack', 'E9644A', 'C2791F', 'Wait', 'AVERAGE', '%10.2lf %%', ''],
-   );
+    idle => ['stack', 'EEEEEE', 'EEEEEE', 'Idle', 'AVERAGE', '%10.2lf %%', ''],
+    nice => ['stack', '48C3EB', '2B82C5', 'Nice', 'AVERAGE', '%10.2lf %%', ''],
+    system => ['area', 'FF0000' , 'FF0000', 'System', 'AVERAGE', '%10.2lf %%', ''],
+    user => ['stack', 'EB9C48', 'BA3614', 'User', 'AVERAGE', '%10.2lf %%', ''],
+    wait => ['stack', 'E9644A', 'C2791F', 'Wait', 'AVERAGE', '%10.2lf %%', ''],
+  );
   my @order = ('system', 'wait', 'user', 'nice', 'idle');
 
   my $legend = "\t\t        Last\t  Average\t\t   Max\\n";
   return RRD::Generic::plot('cpu', $dir, $period, $leg, 'CPU usage [%]', 0, 100, $this->{rrd}, \%things, \@order, $legend);
 }
+
 1;

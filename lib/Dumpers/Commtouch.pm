@@ -17,28 +17,29 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#
 #   This module will just read the configuration file
+#
 
-package          dumpers::PreRBLs;
+package Dumpers::Commtouch;
 
 use v5.40;
 use warnings;
 use utf8;
 
-sub get_specific_config
-{
-    require DB;
-    my $db = DB::connect('slave', 'st_config');
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
+use DB();
+
+sub get_specific_config {
+  my $db = DB->db_connect('slave', 'st_config');
 
 	my %config = ();
-	my %row = $db->getHashRow("SELECT avoidhosts FROM PreRBLs");
-        my $hosts = $row{'avoidhosts'};
-        if ($hosts) {
-          $hosts =~ s/[\s\;]+/,/;
-        } else {
-          $hosts = '';
-        }
-	$config{'__AVOIDHOSTS__'} = $hosts;
+	my %row = $db->get_hash_row("SELECT ctasdLicense, ctipdLicense FROM Commtouch");
+	$config{'__CTASDLICENSE__'} = $row{'ctasdLicense'};
+	$config{'__CTIPDLICENSE__'} = $row{'ctipdLicense'};
 
 	return %config;
 }
