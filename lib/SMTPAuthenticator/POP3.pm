@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -24,49 +25,36 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
 use Mail::POP3Client;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(create authenticate);
-our $VERSION    = 1.0;
+sub new ($server, $port, $params = {}) {
+  my $use_ssl = 0;
+  $use_ssl = $params if ($params =~ /^[01]$/);
+  $port = 110 if ($port < 1 );
 
-
-sub create {
-   my $server = shift;
-   my $port = shift;
-   my $params = shift;
-
-   my $use_ssl = 0;
-   if ($params =~ /^[01]$/) {
-     $use_ssl = $params;
-   }
-
-   if ($port < 1 ) {
-     $port = 110;
-   }
-   my $this = {
-           error_text => "",
-           error_code => -1,
-           server => $server,
-           port => $port,
-           use_ssl => $use_ssl
-         };
+  my $this = {
+    error_text => "",
+    error_code => -1,
+    server => $server,
+    port => $port,
+    use_ssl => $use_ssl
+  };
+  $this->{$_} = $params->{$_} foreach (keys(%{$params}));
 
   bless $this, "SMTPAuthenticator::POP3";
   return $this;
 }
 
-sub authenticate {
-  my $this = shift;
-  my $username = shift;
-  my $password = shift;
-
-  my $pop = new Mail::POP3Client(
-                               HOST     => $this->{server},
-                               PORT     => $this->{port},
-                               USESSL   => $this->{use_ssl},
-                             );
+sub authenticate ($this, $username, $password) {
+  my $pop = Mail::POP3Client->new(
+    HOST     => $this->{server},
+    PORT     => $this->{port},
+    USESSL   => $this->{use_ssl},
+  );
 
   $pop->User( $username );
   $pop->Pass( $password );
@@ -75,7 +63,6 @@ sub authenticate {
   if ($code > 0) {
     $this->{'error_code'} = 0;
     $this->{'error_text'} = "";
-    #print "code: $code => ".$pop->Message()."\n";
     return 1;
   }
   $pop->Message();
@@ -84,6 +71,5 @@ sub authenticate {
   $this->{'error_text'} = $pop->Message();
   return 0;
 }
-
 
 1;

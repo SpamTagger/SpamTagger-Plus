@@ -28,17 +28,12 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/dump_domains\.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require DB;
-require Domain;
-require SystemPref;
-require ConfigTemplate;
-use File::Copy;
-use File::Touch;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use DB();
+use Domain();
+use SystemPref();
+use File::Touch qw(touch);
 use Time::HiRes qw(gettimeofday tv_interval);
 
 my $domain = shift;
@@ -51,30 +46,30 @@ my $previous_time = $start_time;
 my $uid = getpwnam( 'spamtagger' );
 my $gid = getgrnam( 'spamtagger' );
 
-my $conf = ReadConfig::getInstance();
-my $op = $conf->getOption('SRCDIR');
+my $conf = ReadConfig::get_instance();
+my $op = $conf->get_option('SRCDIR');
 
-my $slave_db = DB::connect('slave', 'st_config');
+my $slave_db = DB->db_connect('slave', 'st_config');
 
-my @masters = $slave_db->getListOfHash("SELECT hostname from master");
-my %exim_conf = $slave_db->getHashRow("SELECT * from mta_config WHERE stage=1");
+my @masters = $slave_db->get_list_of_hash("SELECT hostname from master");
+my %exim_conf = $slave_db->get_hash_row("SELECT * from mta_config WHERE stage=1");
 
 $time_in{'gathering_config'} = time() - $previous_time;
 $previous_time = time();
 
 ######### Dump domains list
-my @domain_list = $slave_db->getListOfHash("SELECT * FROM domain d, domain_pref dp WHERE (d.active='true' || d.active=1) AND d.name != '__global__' AND d.prefs=dp.id");
+my @domain_list = $slave_db->get_list_of_hash("SELECT * FROM domain d, domain_pref dp WHERE (d.active='true' || d.active=1) AND d.name != '__global__' AND d.prefs=dp.id");
 
 if (!@domain_list) {
  die('file not dumped, no domain could be retrieved');
 }
-my %dest_hosts = parseDestinations(\@domain_list);
+my %dest_hosts = parse_destinations(\@domain_list);
 
 $time_in{'gathering_domains_config'} = time() - $previous_time;
 $previous_time = time();
 
-my $filepath = $conf->getOption('VARDIR')."/spool/tmp/spamtagger";
-my $posterspath = $conf->getOption('VARDIR')."/spool/spamtagger/addresses";
+my $filepath = $conf->get_option('VARDIR')."/spool/tmp/spamtagger";
+my $posterspath = $conf->get_option('VARDIR')."/spool/spamtagger/addresses";
 if ( ! -d $filepath ) {
    if (! mkdir $filepath ) {
      print "NODESTINATIONFOLDERAVAILABLE $filepath\n";
@@ -82,9 +77,9 @@ if ( ! -d $filepath ) {
    }
    chown $uid, $gid, $filepath;
 }
-if ( !dumpDomainsFile(\%dest_hosts, $filepath)) {
+if ( !dump_domains_file(\%dest_hosts, $filepath)) {
   print "CANNOTDUMPFILE\n";
-  $slave_db->disconnect();
+  $slave_db->db_disconnect();
   exit 1;
 }
 
@@ -93,10 +88,10 @@ print_time('dumping_domains');
 $previous_time = time();
 
 ######### Dump system wide preferences
-my $syspref = SystemPref::getInstance();
-if ( ! $syspref->dumpPrefs()) {
+my $syspref = SystemPref::get_instance();
+if ( ! $syspref->dump_prefs()) {
   print "CANNOTDUMPSYSTEMPREF\n";
-  $slave_db->disconnect();
+  $slave_db->db_disconnect();
   exit 1;
 }
 
@@ -108,18 +103,18 @@ $previous_time = time();
 if (defined($domain) && $domain eq "-a") {
   foreach my $d (@domain_list) {
     my $do = Domain::create($$d{name});
-    $do->dumpPrefsFromRow($d);
+    $do->dump_prefs_from_row($d);
     if ($$d{'addlistcallout'} eq 'true') {
-        $do->dumpLocalAddresses($slave_db);
+        $do->dump_local_addresses($slave_db);
     }
   }
 } elsif (defined($domain)) {
 ######### Dump a domain configuration
   my $domain = Domain::create($domain);
-  if ($domain->getPref('addlistcallout') eq 'true') {
-      $domain->dumpLocalAddresses($slave_db);
+  if ($domain->get_pref('addlistcallout') eq 'true') {
+      $domain->dump_local_addresses($slave_db);
   }
-  if (!$domain->dumpPrefs($slave_db)) {
+  if (!$domain->dump_prefs($slave_db)) {
     exit 1;
   }
 }
@@ -128,14 +123,14 @@ print_time('dumping_domains_pref');
 $previous_time = time();
 
 ## dump archiving and copy to rules
-my $dumpcmd = $conf->getOption('SRCDIR')."/bin/dump_archiving.pl";
+my $dumpcmd = $conf->get_option('SRCDIR')."/bin/dump_archiving.pl";
 my $dumpret = `$dumpcmd`;
 
 $time_in{'dumping_archiving'} = time() - $previous_time;
 print_time('dumping_archiving');
 $previous_time = time();
 
-$slave_db->disconnect();
+$slave_db->db_disconnect();
 print "DUMPSUCCESSFUL";
 if ($debug_time) {
 
@@ -143,10 +138,9 @@ if ($debug_time) {
 exit 0;
 
 #####################################
-## parseDestinations
+## parse_destinations
 
-sub parseDestinations {
-  my $d_ref = shift;
+sub parse_destinations ($d_ref) {
   my @domain_list = @$d_ref;
   my %domain_dest;
 
@@ -174,7 +168,7 @@ sub parseDestinations {
 
       if (defined($2) && $2 !~ /::\d+$/) {
         $dest_str = $2;
-      	next;
+        next;
       }
 
     }
@@ -187,46 +181,45 @@ sub parseDestinations {
     }
     my $name = $domain->{'name'};
     $domain_dest{$name} = {
-    	            id => $domain->{'id'},
-    	            callout => $domain->{'callout'} ,
-    	            altcallout => $domain->{'altcallout'} ,
-    	            ldapcalloutserver => $domain->{'ldapcalloutserver'},
-    	            ldapcalloutparam => $domain->{'ldapcalloutparam'},
-    	            adcheck => $domain->{'adcheck'} ,
-                    addlistcallout => $domain->{'addlistcallout'},
-                    addlist_posters => $domain->{'addlist_posters'},
-                    extcallout => $domain->{'extcallout'} ,
-                    extcallout_type => $domain->{'extcallout_type'} ,
-                    extcallout_param => $domain->{'extcallout_param'} ,
-    	            forward_by_mx => $domain->{'forward_by_mx'} ,
-    	            greylist => $domain->{'greylist'} ,
-    	            destinations =>  [ @dest_hosts ],
-                    destination => $domain->{'destination'},
-    	            destinations_smarthost =>  [ @dest_hosts ],
-                    destination_smarthost => $domain->{'destination_smarthost'},
-                    batv_check => $domain->{'batv_check'},
-                    batv_secret => $domain->{'batv_secret'},
-                    prevent_spoof => $domain->{'prevent_spoof'},
-                    dkim_domain => $domain->{'dkim_domain'},
-		    reject_capital_domain => $domain->{'reject_capital_domain'},
-                    dkim_selector => $domain->{'dkim_selector'},
-                    dkim_pkey => $domain->{'dkim_pkey'},
-                    require_incoming_tls => $domain->{'require_incoming_tls'},
-                    require_outgoing_tls => $domain->{'require_outgoing_tls'},
-                    relay_smarthost => $domain->{'relay_smarthost'},
-                    options => $options };
+      id => $domain->{'id'},
+      callout => $domain->{'callout'} ,
+      altcallout => $domain->{'altcallout'} ,
+      ldapcalloutserver => $domain->{'ldapcalloutserver'},
+      ldapcalloutparam => $domain->{'ldapcalloutparam'},
+      adcheck => $domain->{'adcheck'} ,
+      addlistcallout => $domain->{'addlistcallout'},
+      addlist_posters => $domain->{'addlist_posters'},
+      extcallout => $domain->{'extcallout'} ,
+      extcallout_type => $domain->{'extcallout_type'} ,
+      extcallout_param => $domain->{'extcallout_param'} ,
+      forward_by_mx => $domain->{'forward_by_mx'} ,
+      greylist => $domain->{'greylist'} ,
+      destinations =>  [ @dest_hosts ],
+      destination => $domain->{'destination'},
+      destinations_smarthost =>  [ @dest_hosts ],
+      destination_smarthost => $domain->{'destination_smarthost'},
+      batv_check => $domain->{'batv_check'},
+      batv_secret => $domain->{'batv_secret'},
+      prevent_spoof => $domain->{'prevent_spoof'},
+      dkim_domain => $domain->{'dkim_domain'},
+      reject_capital_domain => $domain->{'reject_capital_domain'},
+      dkim_selector => $domain->{'dkim_selector'},
+      dkim_pkey => $domain->{'dkim_pkey'},
+      require_incoming_tls => $domain->{'require_incoming_tls'},
+      require_outgoing_tls => $domain->{'require_outgoing_tls'},
+      relay_smarthost => $domain->{'relay_smarthost'},
+      options => $options
+    };
   }
 
   return %domain_dest;
 }
 
 #####################################
-## dumpDomainsFile
+## dump_domains_file
 
-sub dumpDomainsFile {
-  my $d_ref = shift;
+sub dump_domains_file ($d_ref, $filepath) {
   my %domains = %$d_ref;
-  my $filepath = shift;
 
   my $locktime = 20;
   my $lockfile = $filepath.'/dump.lock';
@@ -250,64 +243,43 @@ sub dumpDomainsFile {
     exit 1;
   }
 
-  if ( !open(DOMAINSFILE, ">/tmp/domains.list") ) {
-    return 0;
-  }
+  return 0 unless (open(my $DOMAINSFILE, ">", "/tmp/domains.list"));
 
-  if ( !open(DOMAINSFILESMARTHOST, ">/tmp/domains_smarthost.list") ) {
-    return 0;
-  }
+  return 0 unless (open(my $DOMAINSFILESMARTHOST, ">", "/tmp/domains_smarthost.list"));
 
-  if ( !open(CALLOUTFILE, ">$filepath/domains_to_callout.list")) {
-    return 0;
-  }
-  if ( !open(ALTCALLOUTFILE, ">$filepath/domains_to_altcallout.list")) {
-    return 0;
-  }
-  if ( !open(ADCHECKFILE, ">$filepath/domains_to_adcheck.list")) {
-    return 0;
-  }
-  if ( !open(ADDLISTCALLOUTFILE, ">$filepath/domains_to_addlistcallout.list")) {
-    return 0;
-  }
-  if ( !open(EXTCALLOUTFILE, ">$filepath/domains_to_extcallout.list")) {
-    return 0;
-  }
-  if ( !open(MXEDFILE, ">$filepath/domains_to_mx.list")) {
-    return 0;
-  }
-  if ( !open(GREYLISTFILE, ">$filepath/domains_to_greylist.list")) {
-    return 0;
-  }
-  if ( !open(RELAYACCEPTEDDESTFILE, ">$filepath/relay_accepteddest.list")) {
-    return 0;
-  }
-  if ( !open(BATVCHECKFILE, ">$filepath/domains_to_check_batv.list")) {
-    return 0;
-  }
-  if ( !open(PREVENTSPOOFFILE, ">$filepath/domains_to_prevent_spoof.list")) {
-    return 0;
-  }
-  if ( !open(NOCAPSDOMAINS, ">$filepath/no_caps_domains.list")) {
-     return 0;
-  }
-  if ( !open(REQUIREOUTGOINGTLS, ">$filepath/local_domains_require_outgoing_tls.list")) {
-    return 0;
-  }
-  if ( !open(REQUIREINCOMINGTLS, ">$filepath/local_domains_require_incoming_tls.list")) {
-    return 0;
-  }
+  return 0 unless (open(my $CALLOUTFILE, ">", "$filepath/domains_to_callout.list"));
 
-  if ( !open(DKIMFILE, ">$filepath/domains_to_dkim.list")) {
-    return 0;
-  }
-  if ( !open(SNMPDOMAINSFILE, ">/tmp/snmpdomains.list") ) {
-    return 0;
-  }
+  return 0 unless (open(my $ALTCALLOUTFILE, ">", "$filepath/domains_to_altcallout.list"));
+
+  return 0 unless (open(my $ADCHECKFILE, ">", "$filepath/domains_to_adcheck.list"));
+
+  return 0 unless (open(my $ADDLISTCALLOUTFILE, ">", "$filepath/domains_to_addlistcallout.list"));
+
+  return 0 unless (open(my $EXTCALLOUTFILE, ">", "$filepath/domains_to_extcallout.list"));
+
+  return 0 unless (open(my $MXEDFILE, ">", "$filepath/domains_to_mx.list"));
+
+  return 0 unless (open(my $GREYLISTFILE, ">", "$filepath/domains_to_greylist.list"));
+
+  return 0 unless (open(my $RELAYACCEPTEDDESTFILE, ">", "$filepath/relay_accepteddest.list"));
+
+  return 0 unless (open(my $BATVCHECKFILE, ">", "$filepath/domains_to_check_batv.list"));
+
+  return 0 unless (open(my $PREVENTSPOOFFILE, ">", "$filepath/domains_to_prevent_spoof.list"));
+
+  return 0 unless (open(my $NOCAPSDOMAINS, ">", "$filepath/no_caps_domains.list"));
+
+  return 0 unless (open(my $REQUIREOUTGOINGTLS, ">", "$filepath/local_domains_require_outgoing_tls.list"));
+
+  return 0 unless (open(my $REQUIREINCOMINGTLS, ">", "$filepath/local_domains_require_incoming_tls.list"));
+
+  return 0 unless (open(my $DKIMFILE, ">", "$filepath/domains_to_dkim.list"));
+
+  return 0 unless (open(my $SNMPDOMAINSFILE, ">", "/tmp/snmpdomains.list"));
 
   my @list;
   foreach my $domain_name ( keys %domains) {
-  	next if ($domain_name =~ m/^\*$/);
+    next if ($domain_name =~ m/^\*$/);
     push @list, $domain_name;
   }
   my @sorted_list = sort @list;
@@ -339,11 +311,11 @@ sub dumpDomainsFile {
     print DOMAINSFILE $rule."\n";
 
     if ($domains{$domain_name}{relay_smarthost} eq 1) {
-	    my $rule_smarthost = $domain_name.":\t\t";
-	    my $dest_smarthost = $domains{$domain_name}{destination_smarthost};
-	    $dest_smarthost =~ s/\//::/;
-	    $rule_smarthost .= $dest_smarthost;
-	    print DOMAINSFILESMARTHOST $rule_smarthost."\n";
+      my $rule_smarthost = $domain_name.":\t\t";
+      my $dest_smarthost = $domains{$domain_name}{destination_smarthost};
+      $dest_smarthost =~ s/\//::/;
+      $rule_smarthost .= $dest_smarthost;
+      print DOMAINSFILESMARTHOST $rule_smarthost."\n";
     }
 
     print SNMPDOMAINSFILE $domains{$domain_name}{'id'}.":".$domain_name."\n";
@@ -371,15 +343,15 @@ sub dumpDomainsFile {
       if (defined($domains{$domain_name}{addlist_posters})) {
         my @posters = split /[\s,;]/, $domains{$domain_name}{addlist_posters};
 
-        if ( open(ADDLISTPOSTERS, ">$postersfile")) {
+        if (open(my $ADDLISTPOSTERS, ">", $postersfile)) {
           foreach my $p (@posters) {
-           print ADDLISTPOSTERS $p."\n";
+           print $ADDLISTPOSTERS $p."\n";
           }
           foreach my $p (@masters) {
-           print ADDLISTPOSTERS $p->{'hostname'}."\n";
+           print $ADDLISTPOSTERS $p->{'hostname'}."\n";
           }
         }
-        close ADDLISTPOSTERS;
+        close $ADDLISTPOSTERS;
         chown $uid, $gid, "$postersfile";
       }
     } else {
@@ -392,13 +364,13 @@ sub dumpDomainsFile {
       print ADCHECKFILE $domain_name."\n";
 
       if (! -d "$filepath/ldap_callouts") {
-      	 mkdir "$filepath/ldap_callouts";
+         mkdir "$filepath/ldap_callouts";
       }
-      if ( open(LDAPCALLOUTDATA, ">$filepath/ldap_callouts/$domain_name")) {
-      	if ($domains{$domain_name}{ldapcalloutserver}) {
-         	print LDAPCALLOUTDATA "server: ".$domains{$domain_name}{ldapcalloutserver}."\n";
-      	}
-    	if ($domains{$domain_name}{ldapcalloutparam} && $domains{$domain_name}{ldapcalloutparam} =~ m/([^:]+):([^:]+):([^:]+)(?:\:([^:]*))?(?:\:([01]))?/) {
+      if ( open(my $LDAPCALLOUTDATA, ">", "$filepath/ldap_callouts/$domain_name")) {
+        if ($domains{$domain_name}{ldapcalloutserver}) {
+           print LDAPCALLOUTDATA "server: ".$domains{$domain_name}{ldapcalloutserver}."\n";
+        }
+      if ($domains{$domain_name}{ldapcalloutparam} && $domains{$domain_name}{ldapcalloutparam} =~ m/([^:]+):([^:]+):([^:]+)(?:\:([^:]*))?(?:\:([01]))?/) {
                 my $user = $2;
                 my $basedn = $1;
                 my $pass = $3;
@@ -409,17 +381,17 @@ sub dumpDomainsFile {
                     $group = '';
                 }
                 $pass =~ s/__C__/:/g;
-    		print LDAPCALLOUTDATA "user: ".$user."\n";
-    		print LDAPCALLOUTDATA "pass: ".$pass."\n";
-    		print LDAPCALLOUTDATA "basedn: ".$basedn."\n";
+        print LDAPCALLOUTDATA "user: ".$user."\n";
+        print LDAPCALLOUTDATA "pass: ".$pass."\n";
+        print LDAPCALLOUTDATA "basedn: ".$basedn."\n";
             if ($usessl && $usessl eq '1') {
               print LDAPCALLOUTDATA "usessl: 1\n";
             }
             if ($group && $group ne '') {
               print LDAPCALLOUTDATA "group: ".$group;
             }
-    	}
-      	close LDAPCALLOUTDATA;
+      }
+        close LDAPCALLOUTDATA;
       }
     }
     $value = $domains{$domain_name}{forward_by_mx};
@@ -435,7 +407,7 @@ sub dumpDomainsFile {
       print BATVCHECKFILE $domain_name.": ";
       my $secret = $domains{$domain_name}{batv_secret};
       if (!defined($secret) || $secret eq '') {
-      	$secret = 'no secret provided';
+        $secret = 'no secret provided';
       }
       print BATVCHECKFILE "$secret\n";
     }
@@ -462,78 +434,75 @@ sub dumpDomainsFile {
     }
     $value = $domains{$domain_name}{dkim_domain};
     if (defined($value) && $value ne "" && $value ne 'none') {
-    	print DKIMFILE $domain_name.": ";
+      print DKIMFILE $domain_name.": ";
 
         if ($value =~ m/_?default/) {
             print DKIMFILE $exim_conf{'dkim_default_domain'}.";".$exim_conf{'dkim_default_selector'}."\n";
         } else {
-        	print DKIMFILE $value.";";
-        	if (defined($domains{$domain_name}{dkim_selector})) {
-        		print DKIMFILE $domains{$domain_name}{dkim_selector}."\n";
-        	} else {
-        		print DKIMFILE "spamtagger\n";
-        	}
-        	if (defined($domains{$domain_name}{dkim_pkey}) && $domains{$domain_name}{dkim_pkey} ne '') {
-        		if (open DKIMPKEY, ">$dkim_pkey_file") {
-        			print DKIMPKEY $domains{$domain_name}{dkim_pkey}."\n";
-        			close DKIMPKEY;
-        		}
-        	}
+          print DKIMFILE $value.";";
+          if (defined($domains{$domain_name}{dkim_selector})) {
+            print DKIMFILE $domains{$domain_name}{dkim_selector}."\n";
+          } else {
+            print DKIMFILE "spamtagger\n";
+          }
+          if (defined($domains{$domain_name}{dkim_pkey}) && $domains{$domain_name}{dkim_pkey} ne '') {
+            if (open(my $DKIMPKEY, ">", $dkim_pkey_file)) {
+              print $DKIMPKEY $domains{$domain_name}{dkim_pkey}."\n";
+              close $DKIMPKEY;
+            }
+          }
         }
     }
   }
 
-  close DOMAINSFILE;
+  close $DOMAINSFILE;
   move("/tmp/domains.list","$filepath/domains.list");
   chown $uid, $gid, "$filepath/domains.list";
-  close DOMAINSFILESMARTHOST;
+  close $DOMAINSFILESMARTHOST;
   move("/tmp/domains_smarthost.list","$filepath/domains_smarthost.list");
   chown $uid, $gid, "$filepath/domains_smarthost.list";
-  close CALLOUTFILE;
+  close $CALLOUTFILE;
   chown $uid, $gid, "$filepath/domains_to_callout.list";
-  close ALTCALLOUTFILE;
+  close $ALTCALLOUTFILE;
   chown $uid, $gid, "$filepath/domains_to_altcallout.list";
-  close ADCHECKFILE;
+  close $ADCHECKFILE;
   chown $uid, $gid, "$filepath/domains_to_adcheck.list";
-  close ADDLISTCALLOUTFILE;
+  close $ADDLISTCALLOUTFILE;
   chown $uid, $gid, "$filepath/domains_to_addlistcallout.list";
-  close EXTCALLOUTFILE;
+  close $EXTCALLOUTFILE;
   chown $uid, $gid, "$filepath/domains_to_extcallout.list";
-  close MXEDFILE;
+  close $MXEDFILE;
   chown $uid, $gid, "$filepath/domains_to_mx.list";
-  close GREYLISTFILE;
+  close $GREYLISTFILE;
   chown $uid, $gid, "$filepath/domains_to_greylist.list";
-  close RELAYACCEPTEDDESTFILE;
+  close $RELAYACCEPTEDDESTFILE;
   chown $uid, $gid, "$filepath/relay_accepteddest.list";
-  close BATVCHECKFILE;
+  close $BATVCHECKFILE;
   chown $uid, $gid, "$filepath/domains_to_check_batv.list";
-  close PREVENTSPOOFFILE;
+  close $PREVENTSPOOFFILE;
   chown $uid, $gid, "$filepath/domains_to_prevent_spoof.list";
-  close REQUIREINCOMINGTLS;
+  close $REQUIREINCOMINGTLS;
   chown $uid, $gid, "$filepath/no_caps_domains.list";
-  close NOCAPSDOMAINS;
+  close $NOCAPSDOMAINS;
   chown $uid, $gid, "$filepath/local_domains_require_incoming_tls.list";
-  close REQUIREOUTGOINGTLS;
+  close $REQUIREOUTGOINGTLS;
   chown $uid, $gid, "$filepath/local_domains_require_outgoing_tls.list";
-  close DKIMFILE;
+  close $DKIMFILE;
   chown $uid, $gid, "$filepath/domains_to_dkim.list";
-  close SNMPDOMAINSFILE;
+  close $SNMPDOMAINSFILE;
   move("/tmp/snmpdomains.list","$filepath/snmpdomains.list");
   chown $uid, $gid, "$filepath/snmpdomains.list";
-  if (!touch("$filepath/domains_to_prevent_docm.list")) {
+  unless (touch("$filepath/domains_to_prevent_docm.list")) {
     print "CANNOTTOUCH $filepath/domains_to_prevent_docm.list\n";
     exit 1;
   }
   chown $uid, $gid, "$filepath/domains_to_prevent_docm.list";
 
-  if (-f $lockfile) {
-    unlink($lockfile);
-  }
+  unlink($lockfile) if (-f $lockfile);
   return 1;
 }
 
-sub print_time {
-	my $what = shift;
-
-	print "Time for: $what: ".( int( $time_in{$what} * 10000 ) / 10000 )."s.\n";
+sub print_time ($what) {
+  print "Time for: $what: ".( int( $time_in{$what} * 10000 ) / 10000 )."s.\n";
+  return;
 }

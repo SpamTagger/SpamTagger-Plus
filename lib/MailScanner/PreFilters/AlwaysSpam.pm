@@ -6,26 +6,24 @@ use v5.40;
 use warnings;
 use utf8;
 
-no  strict 'subs'; # Allow bare words for parameter %'s
-#use English; # Needed for $PERL_VERSION to work in all versions of Perl
-
-use IO;
-use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
 sub initialise {
   MailScanner::Log::InfoLog('AlwaysSpam module initializing...');
+  return;
 }
 
-sub Checks {
-  my $message = shift;
-
+# TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
+sub Checks ($message) { ## no critic
   MailScanner::Log::InfoLog('AlwaysSpam module checking... well guess what ? it\'s spam !');
-
   return 1;
 }
 
 sub dispose {
   MailScanner::Log::InfoLog('AlwaysSpam module disposing...');
+  return;
 }
 
 1;

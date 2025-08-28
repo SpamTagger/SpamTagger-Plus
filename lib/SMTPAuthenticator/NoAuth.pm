@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -24,36 +25,23 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(create authenticate);
-our $VERSION    = 1.0;
-
-
-sub create {
-   my $server = shift;
-   my $port = shift;
-   my $params = shift;
-
-
-   my $this = {
-           error_text => "No authentication scheme available",
-           error_code => -1,
-         };
+sub new ($server, $port, $params = {}) {
+  my $this = {
+    error_text => "No authentication scheme available",
+    error_code => -1,
+  };
 
   bless $this, "SMTPAuthenticator::NoAuth";
   return $this;
 }
 
-sub authenticate {
-  my $this = shift;
-  my $username = shift;
-  my $password = shift;
-
-  error_text => "No authentication scheme available for user: $username",
+sub authenticate ($this, $username, $password) {
+  $this->{error_text} = "No authentication scheme available for user: $username";
   return 0;
 }
-
 
 1;

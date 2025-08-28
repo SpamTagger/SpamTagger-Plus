@@ -27,13 +27,11 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/dump_greylistd_config\.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require DB;
-my $conf = ReadConfig::getInstance();
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use DB();
+
+my $conf = ReadConfig::get_instance();
 
 my $lasterror;
 my $DEBUG = 0;
@@ -47,7 +45,7 @@ dump_greylistd_file(\%greylist_conf) or fatal_error("CANNOTDUMPGREYLISTDFILE", $
 
 dump_domain_to_avoid($greylist_conf{'__AVOID_DOMAINS_'});
 
-my $domainsfile = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/domains_to_greylist.list";
+my $domainsfile = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/domains_to_greylist.list";
 if ( ! -f $domainsfile) {
   my $res=`touch $domainsfile`;
   chown $uid, $gid, $domainsfile;
@@ -56,12 +54,14 @@ if ( ! -f $domainsfile) {
 print "DUMPSUCCESSFUL";
 
 #############################
-sub get_greylist_config
-{
-  my $slave_db = DB::connect('slave', 'st_config');
+sub get_greylist_config {
+  my $slave_db = DB->db_connect('slave', 'st_config');
 
-  my %configs = $slave_db->getHashRow("SELECT retry_min, retry_max, expire, avoid_domains
-                                                                         FROM greylistd_config");
+  my %configs = $slave_db->get_hash_row(
+    "SELECT retry_min, retry_max, expire, avoid_domains FROM greylistd_config"
+  );
+  $slave_db->db_disconnect();
+
   my %ret;
 
   $ret{'__RETRYMIN__'} = $configs{'retry_min'};
@@ -73,107 +73,69 @@ sub get_greylist_config
 }
 
 #############################
-sub dump_domain_to_avoid
-{
-   my $domains = shift;
+sub dump_domain_to_avoid ($domain) {
    my @domains_to_avoid;
    if (! $domains eq "") {
      @domains_to_avoid = split /\s*[\,\:\;]\s*/, $domains;
    }
 
-   my $file = $conf->getOption('VARDIR')."/spool/tmp/spamtagger/domains_to_avoid_greylist.list";
-   if ( !open(DOMAINTOAVOID, ">$file") ) {
-		$lasterror = "Cannot open template file: $file";
-		return 0;
-	}
-   foreach my $adomain (@domains_to_avoid) {
-     print DOMAINTOAVOID $adomain."\n";
-   }
-   close DOMAINTOAVOID;
-   return 1;
+   my $file = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/domains_to_avoid_greylist.list";
+   unless (open(my $DOMAINTOAVOID, ">", $file) ) {
+    $lasterror = "Cannot open template file: $file";
+    return 0;
+  }
+  print "$DOMAINTOAVOID $_\n" foreach (@domains_to_avoid);
+  close $DOMAINTOAVOID;
+  return 1;
 }
 
 #############################
-sub dump_greylistd_file
-{
-	my $href = shift;
-	my %greylist_conf = %$href;
-	my $srcpath = $conf->getOption('SRCDIR');
-	my $varpath = $conf->getOption('VARDIR');
+sub dump_greylistd_file ($href) {
+  my %greylist_conf = %$href;
+  my $srcpath = $conf->get_option('SRCDIR');
+  my $varpath = $conf->get_option('VARDIR');
 
-	my $template_file = $srcpath."/etc/greylistd/greylistd.conf_template";
-	my $target_file = $srcpath."/etc/greylistd/greylistd.conf";
+  my $template_file = $srcpath."/etc/greylistd/greylistd.conf_template";
+  my $target_file = $srcpath."/etc/greylistd/greylistd.conf";
 
-	if ( !open(TEMPLATE, $template_file) ) {
-		$lasterror = "Cannot open template file: $template_file";
-		return 0;
-	}
-	if ( !open(TARGET, ">$target_file") ) {
-                $lasterror = "Cannot open target file: $target_file";
-		close $template_file;
-                return 0;
-        }
+  unless (open($TEMPLATE, "<", $template_file) ) {
+    $lasterror = "Cannot open template file: $template_file";
+    return 0;
+  }
+  unless (open($TARGET, ">", $target_file) ) {
+    $lasterror = "Cannot open target file: $target_file";
+    close $template_file;
+    return 0;
+  }
 
-	while(<TEMPLATE>) {
-		my $line = $_;
+  while(my $line = <$TEMPLATE>) {
 
-		$line =~ s/__VARDIR__/$varpath/g;
-		$line =~ s/__SRCDIR__/$srcpath/g;
+    $line =~ s/__VARDIR__/$varpath/g;
+    $line =~ s/__SRCDIR__/$srcpath/g;
 
-        foreach my $key (keys %greylist_conf) {
-			$line =~ s/$key/$greylist_conf{$key}/g;
-		}
+    foreach my $key (keys %greylist_conf) {
+      $line =~ s/$key/$greylist_conf{$key}/g;
+    }
 
-		print TARGET $line;
-	}
+    print $TARGET $line;
+  }
 
-	close TEMPLATE;
-	close TARGET;
+  close $TEMPLATE;
+  close $TARGET;
 
-        chown $uid, $gid, $target_file;
-	return 1;
-}
-
-
-#############################
-sub fatal_error
-{
-	my $msg = shift;
-	my $full = shift;
-
-	print $msg;
-	if ($DEBUG) {
-		print "\n Full information: $full \n";
-	}
-	exit(0);
+  chown $uid, $gid, $target_file;
+  return 1;
 }
 
 #############################
-sub print_usage
-{
-	print "Bad usage: dump_exim_config.pl [stage-id]\n\twhere stage-id is an integer between 0 and 4 (0 or null for all).\n";
-	exit(0);
+sub fatal_error ($msg, $full) {
+  print $msg;
+  print "\n Full information: $full \n" if ($DEBUG);
+  exit(0);
 }
 
 #############################
-sub readConfig
-{
-	my $configfile = shift;
-	my %config;
-        my ($var, $value);
-
-	open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-	return %config;
+sub print_usage {
+  print "Bad usage: dump_exim_config.pl [stage-id]\n\twhere stage-id is an integer between 0 and 4 (0 or null for all).\n";
+  exit(0);
 }

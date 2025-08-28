@@ -4,23 +4,20 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
 
-my $conf = ReadConfig::getInstance();
+my $conf = ReadConfig::get_instance();
 
-my $logfile=$conf->getOption('VARDIR')."/log/exim_stage4/mainlog";
+my $logfile=$conf->get_option('VARDIR')."/log/exim_stage4/mainlog";
 
-open(LOGFILE, $logfile) or die "cannot open log file: $logfile\n";
+open(my $LOGFILE, '<', $logfile) or die "cannot open log file: $logfile\n";
 
 my %counts = ();
 my %sums = ();
 my %max = ();
 my %min = ();
-while (<LOGFILE>) {
+while (<$LOGFILE>) {
   if (/\d+\.\d+s/) {
     my @fields = split / /,$_;
     foreach my $field (@fields) {
@@ -48,10 +45,10 @@ while (<LOGFILE>) {
     }
   }
 }
-close LOGFILE;
+close $LOGFILE;
 
 print "-----------------------------------------------------------------------------------------------\n";
-printStat('global');
+print_stat('global');
 my $av = 0;
 if (defined($counts{'global'}) && $counts{'global'} > 0) {
   $av = $sums{'global'}/$counts{'global'};
@@ -64,15 +61,14 @@ print "   rate: ".(int($msgpersec*10000)/10000)." msgs/s\n";
 print "-----------------------------------------------------------------------------------------------\n";
 foreach my $var (keys %counts) {
   next if ($var eq 'global');
-  printStat($var);
+  print_stat($var);
 }
 
-sub printStat {
-  my $var = shift;
-
+sub print_stat ($var) {
   my $av = 0;
   if (defined($counts{$var}) && $counts{$var} > 0) {
    $av = (int(($sums{$var}/$counts{$var})*10000)/10000);
   }
   print $var.": ".$counts{$var}." => ".$av."s (max:".$max{$var}."s, min:".$min{$var}."s)\n";
+  return;
 }

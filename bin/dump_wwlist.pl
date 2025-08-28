@@ -1,7 +1,8 @@
-#!/usr/bin/env perl -I../lib/
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -26,15 +27,12 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/dump_wwlist\.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require DB;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use DB();
 
-my $conf = ReadConfig::getInstance();
-my $op = $conf->getOption('SRCDIR');
+my $conf = ReadConfig::get_instance();
+my $op = $conf->get_option('SRCDIR');
 my $uid = getpwnam( 'spamtagger' );
 my $gid = getgrnam( 'spamtagger' );
 
@@ -43,7 +41,7 @@ if (!defined($what)) {
   $what = "";
 }
 my $to = "";
-my $filepath = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/";
+my $filepath = $conf->get_option('VARDIR')."/spool/spamtagger/prefs/";
 if ($what =~ /^\@([a-zA-Z0-9\.\_\-]+)$/) {
   $to = $what;
   $filepath .= $1."/_global/";
@@ -54,28 +52,23 @@ if ($what =~ /^\@([a-zA-Z0-9\.\_\-]+)$/) {
   $filepath .= "_global/";
 }
 
-my $slave_db = DB::connect('slave', 'st_config');
-
-dumpWWFiles($to, $filepath);
-
-$slave_db->disconnect();
+dump_ww_files($to, $filepath);
 print "DUMPSUCCESSFUL";
 exit 0;
 
 #####################################
-## dumpWWFiles
+## dump_wwfiles
 
-sub dumpWWFiles {
-  my $to = shift;
-  my $filepath = shift;
-
+sub dump_ww_files ($to, $filepath) {
   my @types = ('warn', 'white');
+
+  my $slave_db = DB->db_connect('slave', 'st_config');
 
   foreach my $type (@types) {
     ## get list
-    my @list = $slave_db->getList("SELECT sender FROM wwlists WHERE
-                                               status=1 AND type='".$type."'
-                                               AND recipient='".$to."'");
+    my @list = $slave_db->get_list(
+      "SELECT sender FROM wwlists WHERE status=1 AND type='".$type."' AND recipient='".$to."'"
+    );
 
     # first remove file if exists
     my $file = $filepath."/".$type.".list";
@@ -89,30 +82,26 @@ sub dumpWWFiles {
     }
 
     # create directory if needed
-    createDirs($filepath);
+    create_dirs($filepath);
 
     # and write the file down
-    if ( !open(WWFILE, ">$file") ) {
-      return 0;
-    }
+    return 0 unless (open(my $WWFILE, ">", $file) );
 
-    foreach my $entry (@list) {
-      print WWFILE "$entry\n";
-    }
+    print $WWFILE "$_\n" foreach (@list);
 
-    close WWFILE;
+    close $WWFILE;
     chown 'spamtagger', $file;
   }
+  $slave_db->db_disconnect();
   return 1;
 }
 
 #####################################
-## createDir
+## create_dir
 
-sub createDirs() {
-  my $path = shift;
-
+sub create_dirs($path) {
   my $cmd = "mkdir -p $path";
   my $res = `$cmd`;
-  chown chown $uid, $gid, $path;
+  chown $uid, $gid, $path;
+  return;
 }

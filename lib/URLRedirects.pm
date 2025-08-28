@@ -26,131 +26,123 @@ use v5.40;
 use warnings;
 use utf8;
 
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
 use URI::Escape;
 
-sub new
-{
-        my ($class, $args) = @_;
-        my $self = $args;
-        $self->{'services'} = getServices();
-        $self->{'generics'} = getGenerics();
-        # Prioritize specific services over generic patterns. Split with 'undef' to indicate when search hash has changed
-        $self->{'all'} = [ keys(%{$self->{'services'}}), undef, keys(%{$self->{'generics'}}) ];
-        return bless $self;
+sub new ($class = "URLRedirects", $args = {}) {
+  my $this = $args;
+  $this->{'services'} = get_services();
+  $this->{'generics'} = get_generics();
+  # Prioritize specific services over generic patterns. Split with 'undef' to indicate when search hash has changed
+  $this->{'all'} = [ keys(%{$self->{'services'}}), undef, keys(%{$self->{'generics'}}) ];
+  return bless $this, $class;
 }
 
-sub getServices
-{
-        # List of known rewriting services. Each requires a 'regex' for the URL input
-        # pattern and a 'decoder' function which returns the decoded URL.
-        my %services = (
-		"Bing" => {
-			"regex" => qr%bing\.com/ck/a\?!&&%,
-			"decoder" => sub {
-				my $url = shift;
-				$url =~ s%.*bing\.com/ck/a\?!&&(?:[^u=]+=[^&]+&)*u=a1([^&]+)&.*%$1%;
-                                return decode_base64($url);
-			}
-		},
-                "LinkedIn" => {
-                        "regex" => qr%linkedin.com/slink\?code=([^#]+)%,
-                        "decoder" => sub {
-                                return head(shift);
-                        }
-                },
-                "Proofpoint-v2" => {
-                        "regex"   => qr#urldefense\.proofpoint\.com/v2#,
-                        "decoder" => sub {
-                                my $url = shift;
-                                $url =~ s|\-|\%|g;
-                                $url =~ s|_|\/|g;
-                                $url = uri_unescape($url);
-                                $url =~ s/^[^\?]*\?u=([^&]*)&.*$/$1/;
-                                return $url;
-                        }
-                },
-                "Proofpoint-v3" => {
-                        "regex"   => qr#urldefense\.com/v3#,
-                        "decoder" => sub {
-                                my $url = shift;
-                                $url =~ s|[^_]*__(.*)/__.*|$1|;
-                                $url = uri_unescape($url);
-                                $url =~ s/^[^\?]*\?u=([^&]*)&.*$/$1/;
-                                return $url;
-                        }
-                },
-                "Roaring Penguin" => {
-                        "regex"   => qr#[^/]*/canit/urlproxy.php\?_q=[a-zA-Z0-9]+#,
-                        "decoder" => sub {
-                                use MIME::Base64;
-                                my $url = shift;
-                                $url =~ s|[^/]*/canit/urlproxy\.php\?_q\=([^&]*).*|$1|;
-                                $url = uri_unescape($url) ;
-                                return decode_base64($url);
-                        }
-                },
-        );
-        return \%services;
+sub get_services {
+  # List of known rewriting services. Each requires a 'regex' for the URL input
+  # pattern and a 'decoder' function which returns the decoded URL.
+  my %services = (
+    "Bing" => {
+      "regex" => qr%bing\.com/ck/a\?!&&%,
+      "decoder" => sub {
+        my $url = shift;
+        $url =~ s%.*bing\.com/ck/a\?!&&(?:[^u=]+=[^&]+&)*u=a1([^&]+)&.*%$1%;
+        return decode_base64($url);
+      }
+    },
+    "LinkedIn" => {
+      "regex" => qr%linkedin.com/slink\?code=([^#]+)%,
+      "decoder" => sub {
+        return head(shift);
+      }
+    },
+    "Proofpoint-v2" => {
+      "regex"   => qr#urldefense\.proofpoint\.com/v2#,
+      "decoder" => sub {
+        my $url = shift;
+        $url =~ s|\-|\%|g;
+        $url =~ s|_|\/|g;
+        $url = uri_unescape($url);
+        $url =~ s/^[^\?]*\?u=([^&]*)&.*$/$1/;
+        return $url;
+      }
+    },
+    "Proofpoint-v3" => {
+      "regex"   => qr#urldefense\.com/v3#,
+      "decoder" => sub {
+        my $url = shift;
+        $url =~ s|[^_]*__(.*)/__.*|$1|;
+        $url = uri_unescape($url);
+        $url =~ s/^[^\?]*\?u=([^&]*)&.*$/$1/;
+        return $url;
+      }
+    },
+    "Roaring Penguin" => {
+      "regex"   => qr#[^/]*/canit/urlproxy.php\?_q=[a-zA-Z0-9]+#,
+      "decoder" => sub {
+        use MIME::Base64;
+        my $url = shift;
+        $url =~ s|[^/]*/canit/urlproxy\.php\?_q\=([^&]*).*|$1|;
+        $url = uri_unescape($url) ;
+        return decode_base64($url);
+      }
+    },
+  );
+  return \%services;
 }
 
-sub getGenerics
-{
-        # Fallback patterns to be checked if no specific service is matched
-        my %generics = (
-                # Generic uri_encoded path included as a url argument
-                "uri_encoded_arg" => {
-                        "regex"   => qr#^[^/]*/[^\?]*\?.*=https?\%3A\%2F\%2F#,
-                        "decoder" => sub {
-                                my $url = shift;
-                                $url =~ s#^[^/]*/[^\?]*\?.*=https?\%3A\%2F\%2F([^&]*)&?.*#$1#;
-                                return uri_unescape($url);
-                        }
-                }
-        );
-        return \%generics;
+sub get_generics {
+  # Fallback patterns to be checked if no specific service is matched
+  my %generics = (
+    # Generic uri_encoded path included as a url argument
+    "uri_encoded_arg" => {
+      "regex"   => qr#^[^/]*/[^\?]*\?.*=https?\%3A\%2F\%2F#,
+      "decoder" => sub {
+        my $url = shift;
+        $url =~ s#^[^/]*/[^\?]*\?.*=https?\%3A\%2F\%2F([^&]*)&?.*#$1#;
+        return uri_unescape($url);
+      }
+    }
+  );
+  return \%generics;
 }
 
 # The actual simple search and decode function
-sub decode
-{
-        my $self = shift;
-        my $url = shift;
-        my $recursed = shift || 0;
-
-        $url =~ s#^https?://##;
-        my $type = 'services';
-        foreach my $service (@{$self->{'all'}}) {
-                if (!defined($service)) {
-                        $type = 'generics';
-                        next;
-                }
-                if ($url =~ $self->{$type}->{$service}->{'regex'}) {
-                        my $decoded = $self->{$type}->{$service}->{'decoder'}($url);
-                        if ($decoded) {
-                                # Limit recursion to 10 steps
-                                return $decoded if ($recursed == 10);
-                                return $self->decode($decoded, ++$recursed);
-                        } else {
-                                return $url if ($recursed);
-                                return undef;
-                        }
-                }
-        }
+sub decode ($this, $url, $recursed = 0) {
+  $url =~ s#^https?://##;
+  my $type = 'services';
+  foreach my $service (@{$this->{'all'}}) {
+    if (!defined($service)) {
+      $type = 'generics';
+      next;
+    }
+    if ($url =~ $this->{$type}->{$service}->{'regex'}) {
+      my $decoded = $this->{$type}->{$service}->{'decoder'}($url);
+      if ($decoded) {
+        # Limit recursion to 10 steps
+        return $decoded if ($recursed == 10);
+        return $this->decode($decoded, ++$recursed);
+      } else {
         return $url if ($recursed);
         return 0;
+      }
+    }
+  }
+  return $url if ($recursed);
+  return 0;
 }
 
-sub head
-{
-        my $url = shift;
+sub head ($url) {
+  use LWP::UserAgent;
+  my $ua = LWP::UserAgent->new();
+  $ua->max_redirect(0);
 
-        use LWP::UserAgent;
-        my $ua = LWP::UserAgent->new();
-        $ua->max_redirect(0);
-
-        my $head = $ua->head($url);
-        return undef unless ($head->{_rc} == 301);
-        return $head->{_headers}->{location};
+  my $head = $ua->head($url);
+  return unless ($head->{_rc} == 301);
+  return $head->{_headers}->{location};
 }
 
 1;

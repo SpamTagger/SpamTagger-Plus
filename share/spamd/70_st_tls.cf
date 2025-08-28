@@ -1,0 +1,15 @@
+header    ST_CLIENT_UNENCRYPTED  X-SpamTagger-TLS-Client-Certificate =~ /\bnot encrypted\b/i
+describe   ST_CLIENT_UNENCRYPTED  Unencrypted connection from Client
+score     ST_CLIENT_UNENCRYPTED  0.1
+
+header    ST_CLIENT_CERT_VALID  X-SpamTagger-TLS-Client-Certificate =~ /\bvalid\b/i
+describe   ST_CLIENT_CERT_VALID  Valid TLS client certificate presented
+score     ST_CLIENT_CERT_VALID  0.001
+
+header    ST_CLIENT_CERT_INVALID  X-SpamTagger-TLS-Client-Certificate =~ /\binvalid\b/i
+describe  ST_CLIENT_CERT_INVALID  Invalid TLS client certificate presented
+score     ST_CLIENT_CERT_INVALID  1
+
+header    ST_CLIENT_CERT_NONE  X-SpamTagger-TLS-Client-Certificate =~ /\bnone\b/i
+describe  ST_CLIENT_CERT_NONE  No TLS client certificate presented
+score     ST_CLIENT_CERT_NONE  0.1

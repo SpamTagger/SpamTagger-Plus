@@ -1,6 +1,7 @@
+#!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
-#   Copyright (C) 2016 Florian Billebault <florian.billebault@gmail.com>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -24,11 +25,9 @@ use v5.40;
 use warnings;
 use utf8;
 
-no  strict 'subs'; # Allow bare words for parameter %'s
-#use English; # Needed for $PERL_VERSION to work in all versions of Perl
-
-use IO;
-use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
 my $MODULE = "Newsl";
 my %conf;
@@ -55,13 +54,13 @@ sub initialise {
      position => 0
   );
 
-  if (open (CONFIG, $configfile)) {
-    while (<CONFIG>) {
+  if (open(my $CONFIG, '<', $configfile)) {
+    while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
        $Newsl::conf{$1} = $2;
       }
     }
-    close CONFIG;
+    close $CONFIG;
   } else {
     MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
   }
@@ -81,36 +80,33 @@ sub initialise {
   } else {
     $Newsl::conf{'neg_text'} = 'position : '.$Newsl::conf{'position'}.', not decisive';
   }
+  return;
 }
 
-
-
-sub Checks {
-  my $this = shift;
-  my $message = shift;
-
+# TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
+sub Checks ($this, $message) { ## no critic
   ## check maximum message size
   my $maxsize = $Newsl::conf{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
-       MailScanner::Log::InfoLog("Message %s is too big for Newsl checks (%d > %d bytes)",
-   				$message->{id}, $message->{size}, $maxsize);
-       $message->{prefilterreport} .= ", Newsl (too big)";
-       MailScanner::Log::InfoLog("$MODULE module checking 2.....");
-       $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
-       MailScanner::Log::InfoLog("$MODULE module checking 3.....");
-     return 0;
+    MailScanner::Log::InfoLog("Message %s is too big for Newsl checks (%d > %d bytes)",
+    $message->{id}, $message->{size}, $maxsize);
+    $message->{prefilterreport} .= ", Newsl (too big)";
+    MailScanner::Log::InfoLog("$MODULE module checking 2.....");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
+    MailScanner::Log::InfoLog("$MODULE module checking 3.....");
+    return 0;
   }
 
-  my @WholeMessage;
-  push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
+  my @whole_message;
+  push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   if ($message->{infected}) {
-      push(@WholeMessage, "X-SpamTagger-Internal-Scan: infected\n");
+    push(@whole_message, "X-SpamTagger-Internal-Scan: infected\n");
   }
-  push(@WholeMessage, "\n");
-  $message->{store}->ReadBody(\@WholeMessage, 0);
+  push(@whole_message, "\n");
+  $message->{store}->ReadBody(\@whole_message, 0);
 
   my $msgtext = "";
-  foreach my $line (@WholeMessage) {
+  foreach my $line (@whole_message) {
     $msgtext .= $line;
   }
 
@@ -123,13 +119,13 @@ sub Checks {
   my @lines;
 
   $t->run(sub {
-     use IPC::Run3;
-     my $out;
-     my $err;
+    use IPC::Run3;
+    my $out;
+    my $err;
 
-     $msgtext .= "\n";
-     run3 $Newsl::conf{'command'}, \$msgtext, \$out, \$err;
-     $res = $out;
+    $msgtext .= "\n";
+    run3 $Newsl::conf{'command'}, \$msgtext, \$out, \$err;
+    $res = $out;
   });
   if ($t->timed_out()) {
     MailScanner::Log::InfoLog("$MODULE timed out for ".$message->{id}."!");
@@ -156,7 +152,7 @@ sub Checks {
       }
     }
     if ($line =~ m/^(.*=.*)$/ ) {
-	$rulesum = $1;
+      $rulesum = $1;
     }
   }
 
@@ -166,13 +162,14 @@ sub Checks {
       $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, "is newsletter ($score/$limit) " .$Newsl::conf{'pos_text'});
     }
     $message->{prefilterreport} .= ", Newsl (score=$score, required=$limit, $rulesum, " .$Newsl::conf{pos_text}. ")";
-
     return -1; # Set to 1 to put in spam quarantine, -1 to newsletter
   }
+
   if ($ret < 0) {
-      MailScanner::Log::InfoLog("$MODULE result is weird ($lines[0]) for ".$message->{id});
-      return 0;
+    MailScanner::Log::InfoLog("$MODULE result is weird ($lines[0]) for ".$message->{id});
+    return 0;
   }
+
   MailScanner::Log::InfoLog( "$MODULE result is not newsletter ($score/$limit) for " .$message->{id} );
   if ($Newsl::conf{'putSpamHeader'}) {
     $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, "is not newsletter ($score/$limit) " .$Newsl::conf{'neg_text'});
@@ -183,6 +180,7 @@ sub Checks {
 
 sub dispose {
   MailScanner::Log::InfoLog("$MODULE module disposing...");
+  return;
 }
 
 1;

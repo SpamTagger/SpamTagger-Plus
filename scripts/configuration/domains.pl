@@ -4,13 +4,15 @@ use v5.40;
 use warnings;
 use utf8;
 
-use DBI();
+push(@INC, '/usr/spamtagger/lib');
+use DB();
 use Term::ReadKey;
+use ReadConfig;
 
-my %config = readConfig("/etc/spamtagger.conf");
+my $config = ReadConfig::get_instance();
+my $VARDIR = $config->get_option('VARDIR');
 
-my $master_dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_master/mysqld.sock",
-                                        "spamtagger","$config{'MYSPAMTAGGERPWD'}", {RaiseError => 0, PrintError => 0} );
+our $master_dbh = DB->db_connect('master', 'st_config');
 if (!$master_dbh) {
   printf ("ERROR: no master database found on this system. This script will only run on a SpamTagger master host.\n");
   exit 1;
@@ -47,9 +49,7 @@ while (! $quit) {
 
 printf "\n\n";
 
-if (defined $master_dbh) {
-  $master_dbh->disconnect();
-}
+$master_dbh->db_disconnect();
 
 exit 0;
 
@@ -67,6 +67,7 @@ sub view_domains {
   ReadMode 'cbreak';
   my $key = ReadKey(0);
   ReadMode 'normal';
+  return;
 }
 
 sub delete_domain {
@@ -87,6 +88,7 @@ sub delete_domain {
   ReadMode 'cbreak';
   my $key = ReadKey(0);
   ReadMode 'normal';
+  return;
 }
 
 sub add_domain {
@@ -132,29 +134,5 @@ sub add_domain {
   ReadMode 'cbreak';
   my $key = ReadKey(0);
   ReadMode 'normal';
+  return;
 }
-
-##########################################
-
-sub readConfig {       # Reads configuration file given as argument.
-  my $configfile = shift;
-  my %config;
-  my ($var, $value);
-
-  open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-  while (<CONFIG>) {
-    chomp;                  # no newline
-    s/#.*$//;               # no comments
-    s/^\*.*$//;             # no comments
-    s/;.*$//;               # no comments
-    s/^\s+//;               # no leading white
-    s/\s+$//;               # no trailing white
-    next unless length;     # anything left?
-    my ($var, $value) = split(/\s*=\s*/, $_, 2);
-    $config{$var} = $value;
-  }
-  close CONFIG;
-  return %config;
-}
-
-############################################

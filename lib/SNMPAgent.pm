@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -27,19 +28,19 @@ use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-use DB;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
+use DB();
 use NetSNMP::agent;
 use NetSNMP::OID (':all');
 use NetSNMP::agent (':all');
 use NetSNMP::ASN (':all');
-use ReadConfig;
+use ReadConfig();
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(getInstance new getOption);
-our $VERSION    = 1.0;
-
-my $rootOID = ".1.3.6.1.4.1.36661";
+my $rootoid = ".1.3.6.1.4.1.36661";
+our $LOGGERFILE;
 
 ## debug
 my $logfile = '/tmp/snmpd.debug';
@@ -60,249 +61,198 @@ sub init {
 
   my $dh;
   if (! opendir($dh, $agents_dir)) {
-      doLog('No valid agents directory : '.$agents_dir, 'daemon', 'error');
-      return 0;
+    doLog('No valid agents directory : '.$agents_dir, 'daemon', 'error');
+    return 0;
   }
   my @agents;
   while (my $dir = readdir $dh) {
-  	  if ($dir =~ m/^([A-Z]\S+).pm$/) {
-  	      push @agents, $1;
-  	  }
+    push @agents, $1 if ($dir =~ m/^([A-Z]\S+).pm$/);
   }
   closedir $dh;
 
   foreach my $agent (@agents) {
-      my $agent_class = 'SNMPAgent::'.ucfirst($agent);
+    my $agent_class = 'SNMPAgent::'.ucfirst($agent);
 
-      if (! eval "require $agent_class") {
-          die('Agent type does not exists: '.$agent_class);
-      }
-      my $position = $agent_class->initAgent();
-      $mib{$position} = $agent_class->getMIB();
+    unless (eval { "require $agent_class" }) {
+      die('Agent type does not exists: '.$agent_class);
+    }
+    my $position = $agent_class->initAgent();
+    $mib{$position} = $agent_class->getMIB();
   }
 
-  my $agent = new NetSNMP::agent('dont_init_agent' => 1,
-                              'dont_init_lib' => 1);
+  my $agent = NetSNMP::agent->new(
+    'dont_init_agent' => 1,
+    'dont_init_lib' => 1
+  );
 
-  my $regoid = new NetSNMP::OID($rootOID);
+  my $regoid = NetSNMP::OID->new($rootoid);
   $agent->register("SpamTagger SNMP agent", $regoid, \&SNMPHandler);
 
   doLog('SpamTagger SNMP Agent Initialized.', 'daemon', 'debug');
+  return;
 }
 
-sub SNMPHandler {
-  my  ($handler, $registration_info, $request_info, $requests) = @_;
+sub snmp_handler ($handler, $registration_info, $request_info, $requests) {
 
   for (my $request = $requests; $request; $request = $request->next()) {
 
-        my $oid = $request->getOID();
-        if ($request_info->getMode() == MODE_GET) {
+    my $oid = $request->getOID();
+    if ($request_info->getMode() == MODE_GET) {
 
-            doLog("GET : $oid", 'daemon', 'debug');
-            my $value_call = getValueForOID($oid);
-            if (defined($value_call)) {
-            	my ($type, $value) = $value_call->($oid);
-                doLog("type: $type => $value", 'oid', 'debug');
-            	$request->setValue($type, $value);
-            }
-        }
-        if ($request_info->getMode() == MODE_GETNEXT) {
-           doLog("GETNEXT : $oid", 'daemon', 'debug');
+      doLog("GET : $oid", 'daemon', 'debug');
+      my $value_call = getValueForOID($oid);
+      if (defined($value_call)) {
+        my ($type, $value) = $value_call->($oid);
+        doLog("type: $type => $value", 'oid', 'debug');
+        $request->setValue($type, $value);
+      }
+    }
+    if ($request_info->getMode() == MODE_GETNEXT) {
+      doLog("GETNEXT : $oid", 'daemon', 'debug');
 
-           my $nextoid = getNextForOID($oid);
-           if (defined($nextoid)) {
-               my $value_call = getValueForOID(new NetSNMP::OID($nextoid));
-               if (defined($value_call)) {
-                   my ($type, $value) = $value_call->(new NetSNMP::OID($nextoid));
-                   doLog("type: $type => $value", 'oid', 'debug');
-                   $request->setOID($nextoid);
-                   $request->setValue($type, $value);
-               }
-           }
+      my $nextoid = getNextForOID($oid);
+      if (defined($nextoid)) {
+        my $value_call = getValueForOID(NetSNMP::OID->new($nextoid));
+        if (defined($value_call)) {
+          my ($type, $value) = $value_call->(NetSNMP::OID->new($nextoid));
+          doLog("type: $type => $value", 'oid', 'debug');
+          $request->setOID($nextoid);
+          $request->setValue($type, $value);
         }
+      }
+    }
+  }
+  return;
+}
+
+sub get_value_for_oid ($oid) {
+  my $el = getOIDElement($oid);
+  return $el if (ref($el) eq 'CODE');
+  return;
+}
+
+sub get_oid_element ($oid) {
+  doLog("Getting element for oid : $oid", 'oid', 'debug');
+  my @oid = $oid->to_array();
+  my $regoid = NetSNMP::OID->new($rootoid);
+  my @rootoid = $regoid->to_array();
+
+  my @local_oid = splice(@oid, @rootoid);
+
+  my $branch = \%mib;
+  foreach my $b (@local_oid) {
+    return unless (ref($branch) eq 'HASH');
+    return unless (defined($branch->{$b}));
+    $branch = $branch->{$b};
+  }
+  return $branch;
+}
+
+sub get_next_for_oid ($oid, $nextbranch) {
+  return if (NetSNMP::OID->new($oid) < NetSNMP::OID->new($rootoid));
+  my $el = getOIDElement(NetSNMP::OID->new($oid));
+  if (defined($el) && ref($el) eq 'HASH' && (!defined($nextbranch) || !$nextbranch)) {
+    # searching inside
+    doLog("is HASH, looking inside $oid", 'oid', 'debug');
+    return $oid.".".getNextElementInBranch($el);
+  } else {
+    # look into current branch for next
+    my $oido = NetSNMP::OID->new($oid);
+    my @oida = $oido->to_array();
+    my $pos = pop(@oida);
+    $oid = join('.', @oida);
+    my $branch = getOIDElement(NetSNMP::OID->new($oid));
+    #foreach my $selpos (sort(keys(%{$branch}))) {
+    foreach my $selpos ( sort { $a <=> $b} keys %{$branch} ) {
+      if ($selpos > $pos) {
+        doLog("Got a higer element at pos $oid.$selpos", 'oid', 'debug');
+        my $sel = getOIDElement(NetSNMP::OID->new("$oid.$selpos"));
+        return "$oid.$selpos" if (ref($sel) eq 'CODE');
+        if (ref($sel) eq 'HASH') {
+          my $tpos = getNextElementInBranch($sel);
+          return $oid.".".$selpos.".".$tpos if (defined($tpos));
+          return;
+        }
+      }
+    }
+    # if nobody, pop to higer level
+    if ($oid ne '') {
+      doLog('got to jump higher of '.$oid, 'oid', 'debug');
+      return getNextForOID($oid, 1);
+    }
+    return;
   }
 }
 
-sub getValueForOID {
-    my $oid = shift;
-
-    my $el = getOIDElement($oid);
-    if (ref($el) eq 'CODE') {
-        return $el;
+sub get_next_element_in_branch ($branch) {
+  return if ( ref($branch) ne 'HASH');
+  foreach my $e ( sort { $a <=> $b} keys %{$branch} ) {
+    return $e if (ref($branch->{$e}) eq 'CODE');
+    if (ref($branch->{$e}) eq 'HASH') {
+      return $e.".".getNextElementInBranch($branch->{$e});
     }
-    return undef;
-}
-
-sub getOIDElement {
-    my $oid = shift;
-
-	if (!defined($oid)) {
-		return undef;
-	}
-	doLog("Getting element for oid : $oid", 'oid', 'debug');
-    my @oid = $oid->to_array();
-    my $regoid = new NetSNMP::OID($rootOID);
-    my @rootoid = $regoid->to_array();
-
-    my @local_oid = splice(@oid, @rootoid);
-    #doLog("Local oid : ".join('.',@local_oid));
-
-    my $branch = \%mib;
-    foreach my $b (@local_oid) {
-    	if (ref($branch) eq 'HASH') {
-            if (defined($branch->{$b})) {
-                $branch = $branch->{$b};
-            } else {
-                return undef;
-            }
-    	} else {
-    		return undef;
-    	}
-    }
-    return $branch;
-}
-
-sub getNextForOID {
-	my $oid = shift;
-	my $nextbranch = shift;
-
-    if (new NetSNMP::OID($oid) < new NetSNMP::OID($rootOID)) {
-    	return undef;
-    }
-    my $el = getOIDElement(new NetSNMP::OID($oid));
-    if (defined($el) && ref($el) eq 'HASH' && (!defined($nextbranch) || !$nextbranch)) {
-    	# searching inside
-    	doLog("is HASH, looking inside $oid", 'oid', 'debug');
-    	return $oid.".".getNextElementInBranch($el);
-    } else {
-    	# look into current branch for next
-        my $oido = new NetSNMP::OID($oid);
-        my @oida = $oido->to_array();
-        my $pos = pop(@oida);
-        $oid = join('.', @oida);
-    	my $branch = getOIDElement(new NetSNMP::OID($oid));
-    	#foreach my $selpos (sort(keys(%{$branch}))) {
-    	foreach my $selpos ( sort { $a <=> $b} keys %{$branch} ) {
-    		if ($selpos > $pos) {
-    			doLog("Got a higer element at pos $oid.$selpos", 'oid', 'debug');
-    			my $sel = getOIDElement(new NetSNMP::OID("$oid.$selpos"));
-    			if (ref($sel) eq 'CODE') {
-    				return "$oid.$selpos";
-    			}
-    			if (ref($sel) eq 'HASH') {
-    				my $tpos = getNextElementInBranch($sel);
-    				if (defined($tpos)) {
-    					return $oid.".".$selpos.".".$tpos;
-    				}
-    				return undef;
-    			}
-    		}
-    	}
-    	# if nobody, pop to higer level
-    	if ($oid ne '') {
-    		doLog('got to jump higher of '.$oid, 'oid', 'debug');
-        	return getNextForOID($oid, 1);
-    	}
-    	return undef;
-    }
-}
-
-sub getNextElementInBranch {
-	my $branch = shift;
-
-    if ( ref($branch) ne 'HASH') {
-    	return undef;
-    }
- #   foreach my $e (sort(keys %{$branch})) {
-    foreach my $e ( sort { $a <=> $b} keys %{$branch} ) {
-    	if (ref($branch->{$e}) eq 'CODE') {
-    		return $e;
-    	}
-    	if (ref($branch->{$e}) eq 'HASH') {
-            return $e.".".getNextElementInBranch($branch->{$e});
-        }
-    }
-    return undef;
+  }
+  return;
 }
 ##### Log management
 
 ## add log_sets
 foreach my $set ( split( /,/, $log_sets ) ) {
-    push @logged_sets, $set;
+  push @logged_sets, $set;
 }
 my $log_prio_level = $log_prio_levels{ $log_priority };
 
-sub doLog {
-    my $message   = shift;
-    my $given_set = shift;
-    my $priority  = shift;
-
-    if ( !defined($priority) ) {
-        $priority = 'info';
+sub do_log ($message, $given_set, $priority = 'info') {
+  foreach my $set ( @logged_sets  ) {
+    if ( $set eq 'all' || !defined($given_set) || $set eq $given_set ) {
+      doEffectiveLog($message) if ( $log_prio_levels{$priority} <= $log_prio_level );
+      last;
     }
-
-    foreach my $set ( @logged_sets  ) {
-        if ( $set eq 'all' || !defined($given_set) || $set eq $given_set ) {
-            if ( $log_prio_levels{$priority} <= $log_prio_level ) {
-                doEffectiveLog($message);
-            }
-            last;
-        }
-    }
+  }
+  return;
 }
 
-sub doEffectiveLog {
-    my $message = shift;
-
-    foreach my $line ( split( /\n/, $message ) ) {
-        if ( $logfile ne '' ) {
-            writeLogToFile($line);
-        }
-        if ( $syslog_facility ne '' && $syslog_progname ne '' ) {
-            syslog( 'info', $line );
-        }
-    }
+sub do_effective_log ($message) {
+  foreach my $line ( split( /\n/, $message ) ) {
+    write_log_to_file($line) if ( $logfile ne '' );
+    syslog( 'info', $line ) if ( $syslog_facility ne '' && $syslog_progname ne '' );
+  }
+  return;
 }
 
-sub writeLogToFile {
-    my $message = shift;
-    chomp($message);
+sub write_log_to_file ($message) {
+  chomp($message);
 
-    if ( $logfile eq '' ) {
-        return;
+  return if ( $logfile eq '' );
+
+  my $LOCK_SH = 1;
+  my $LOCK_EX = 2;
+  my $LOCK_NB = 4;
+  my $LOCK_UN = 8;
+  $| = 1;
+
+  if ( !defined( fileno($LOGGERLOG) ) || !-f $logfile ) {
+    open($LOGGERLOG, ">>", $logfile);
+    unless (defined( fileno($LOGGERLOG) ) ) {
+      open($LOGGERLOG, ">>", "/tmp/".$logfile);
+      $| = 1;
     }
-
-    my $LOCK_SH = 1;
-    my $LOCK_EX = 2;
-    my $LOCK_NB = 4;
-    my $LOCK_UN = 8;
-    $| = 1;
-
-    if ( !defined( fileno(LOGGERLOG) ) || !-f $logfile ) {
-        open LOGGERLOG, ">>" . $logfile;
-        if ( !defined( fileno(LOGGERLOG) ) ) {
-            open LOGGERLOG, ">>/tmp/" . $logfile;
-            $| = 1;
-        }
-        doLog( 'Log file has been opened, hello !', 'daemon' );
-    }
-    my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
-      localtime(time);
-    $mon++;
-    $year += 1900;
-    my $date = sprintf( "%d-%.2d-%.2d %.2d:%.2d:%.2d",
-        $year, $mon, $mday, $hour, $min, $sec );
-    flock( LOGGERLOG, $LOCK_EX );
-    print LOGGERLOG "$date " . $message . "\n";
-    flock( LOGGERLOG, $LOCK_UN );
+    doLog( 'Log file has been opened, hello !', 'daemon' );
+  }
+  my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime(time);
+  $mon++;
+  $year += 1900;
+  my $date = sprintf( "%d-%.2d-%.2d %.2d:%.2d:%.2d", $year, $mon, $mday, $hour, $min, $sec );
+  flock( $LOGGERLOG, $LOCK_EX );
+  print $LOGGERLOG "$date " . $message . "\n";
+  flock( $LOGGERLOG, $LOCK_UN );
+  return;
 }
 
-sub closeLog {
-    my $this = shift;
-
-    doLog( 'Closing log file now.', 'daemon' );
-    close LOGGERLOG;
-    exit;
+sub close_log ($this) {
+  doLog( 'Closing log file now.', 'daemon' );
+  close $LOGGERLOG;
+  exit;
 }
 
 1;

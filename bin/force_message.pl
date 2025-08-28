@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -30,9 +31,13 @@ use warnings;
 use utf8;
 
 use Net::SMTP;
-use DBI();
+use DB();
 
-my %config = readConfig("/etc/spamtagger.conf");
+use lib '/usr/spamtagger/lib/';
+use ReadConfig;
+
+our $config = ReadConfig::get_instance();
+
 my %master_conf;
 
 my $msg_id = shift;
@@ -51,15 +56,15 @@ if ( (!$for) || !($for =~ /^(\S+)\@(\S+)$/)) {
 my $for_local = $1;
 my $for_domain = $2;
 
-my $msg_file = $config{'VARDIR'}."/spam/".$for_domain."/".$for."/".$msg_id;
+my $msg_file = $config->get_option('VARDIR')."/spam/".$for_domain."/".$for."/".$msg_id;
 
-if ( open(MSG, $msg_file)) {
+if (open(my $MSG, '<', $msg_file)) {
   my $start_msg = 0;
   my $msg = "";
   my $has_from = 0;
   my $from = "";
   my $in_dkim = 0;
-  while (<MSG>) {
+  while (<$MSG>) {
     ## just to remove garbage line before the real headers
     if ($start_msg != 1 && /^[A-Z][a-z]*\:\ .*/) {
       $start_msg = 1;
@@ -106,53 +111,19 @@ if ( open(MSG, $msg_file)) {
   $smtp->datasend("X-SpamTagger-Forced: message forced\n");
   $smtp->datasend($msg);
   $smtp->dataend();
-  close(MSG);
-  %master_conf = get_master_config();
+  close($MSG);
   mark_forced();
 
   print("MSGFORCED\n");
-}
-else {
+} else {
   print "MSGFILENOTFOUND\n";
 }
 
 exit 1;
 
 ##########################################
-sub get_master_config {
-  my $dbh;
-  my %mconfig;
-
-  $dbh = DBI->connect(
-    "DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-    "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0}
-  ) or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
-
-  my $sth = $dbh->prepare("SELECT hostname, port, password FROM master");
-  $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
-
-  if ($sth->rows < 1) {
-    return;
-  }
-  my $ref = $sth->fetchrow_hashref() or return;
-
-  $stonfig{'__MYMASTERHOST__'} = $ref->{'hostname'};
-  $stonfig{'__MYMASTERPORT__'} = $ref->{'port'};
-  $stonfig{'__MYMASTERPWD__'} = $ref->{'password'};
-
-  $sth->finish();
-  return %mconfig;
-}
-
-##########################################
-sub mark_forced
-{
-  my $dbh;
-  my $mdn = "DBI:mysql:database=st_spool;host=$master_conf{'__MYMASTERHOST__'};port=$master_conf{'__MYMASTERPORT__'}";
-
-  $dbh = DBI->connect(
-    $mdn, "spamtagger", "$master_conf{'__MYMASTERPWD__'}", {RaiseError => 0, PrintError => 0}
-  ) or return;
+sub mark_forced {
+  my $dbh = DB->db_connect('master', 'st_spool') or return;
 
   my $table = "misc";
   if ($for_local =~ /^([a-z,A-Z])/) {
@@ -166,34 +137,12 @@ sub mark_forced
   my $sth = $dbh->prepare($query);
   $sth->execute() or return;
 
-  $dbh->disconnect();
-}
-
-##########################################
-sub readConfig {       # Reads configuration file given as argument.
-  my $configfile = shift;
-  my %config;
-  my ($var, $value);
-
-  open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-  while (<CONFIG>) {
-    chomp;                  # no newline
-    s/#.*$//;               # no comments
-    s/^\*.*$//;             # no comments
-    s/;.*$//;               # no comments
-    s/^\s+//;               # no leading white
-    s/\s+$//;               # no trailing white
-    next unless length;     # anything left?
-    my ($var, $value) = split(/\s*=\s*/, $_, 2);
-    $config{$var} = $value;
-  }
-  close CONFIG;
-  return %config;
+  $dbh->db_disconnect();
+  return;
 }
 
 ############################################
-sub print_usage
-{
+sub print_usage {
   print "bad usage...\n";
   print "Usage: force_message.pl message_id destination_address\n";
   exit 0;

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,28 +18,29 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-package          PrefClient;
+package PrefClient;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-require          ReadConfig;
-require			  SockClient;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = "SockClient";
+use lib '/usr/spamtagger/lib';
+use ReadConfig();
 
-sub new {
-  my $class = shift;
+use parent qw(SockClient);
 
+sub new ($class) {
   my %msgs = ();
 
   my $spec_this = {
-     %msgs => (),
-     currentid => 0,
-     socketpath => '',
-     timeout => 5,
+    %msgs => (),
+    currentid => 0,
+    socketpath => '',
+    timeout => 5,
   };
 
   my $conf = ReadConfig::getInstance();
@@ -50,27 +52,16 @@ sub new {
   return $this;
 }
 
-sub setTimeout {
-   my $this = shift;
-   my $timeout = shift;
-
-   return 0 if ($timeout !~ m/^\d+$/);
-   $this->{timeout} = $timeout;
-   return 1;
+sub set_timeout ($this, $timeout) {
+  return 0 if ($timeout !~ m/^\d+$/);
+  $this->{timeout} = $timeout;
+  return 1;
 }
 
 ## fetch a pref by calling de pref daemon
-sub getPref {
-  my $this = shift;
-  my $object = shift;
-  my $pref = shift;
-
-  if ($object !~ m/^[-_.!\$#=*&\@a-z0-9]+$/i) {
-    return '_BADOBJECT';
-  }
-  if ($pref !~ m/^[-_a-z0-9]+$/) {
-    return '_BADPREF';
-  }
+sub get_pref ($this, $object, $pref) {
+  return '_BADOBJECT' if ($object !~ m/^[-_.!\$#=*&\@a-z0-9]+$/i);
+  return '_BADPREF' if ($pref !~ m/^[-_a-z0-9]+$/);
 
   my $query = "PREF $object $pref";
 
@@ -79,17 +70,9 @@ sub getPref {
 }
 
 ## fetch a pref, just like getPref but force pref daemon to fetch domain pref if user pref is not found or not set
-sub getRecursivePref {
-  my $this = shift;
-  my $object = shift;
-  my $pref = shift;
-
-  if ($object !~ m/^[-_.!\$#=*&\@a-z0-9]+$/i) {
-    return '_BADOBJECT';
-  }
-  if ($pref !~ m/^[-_a-z0-9]+$/) {
-    return '_BADPREF';
-  }
+sub get_recursive_pref ($this, $object, $pref) {
+  return '_BADOBJECT' if ($object !~ m/^[-_.!\$#=*&\@a-z0-9]+$/i);
+  return '_BADPREF' if ($pref !~ m/^[-_a-z0-9]+$/);
 
   my $query = "PREF $object $pref R";
 
@@ -97,9 +80,7 @@ sub getRecursivePref {
   return $result;
 }
 
-sub extractSRSAddress {
-  my $this = shift;
-  my $sender = shift;
+sub extract_srs_address ($this, $sender) {
   my $sep = '[=+-]';
   my @segments;
   if ($sender =~ m/^srs0.*/i) {
@@ -129,109 +110,70 @@ sub extractSRSAddress {
   return $sender;
 }
 
-sub extractVERP {
-   my $this = shift;
-   my $sender = shift;
-   if ($sender =~ /^[^\+]+\+.+=[a-z0-9\-\.]+\.[a-z]+/i) {
+sub extract_verp ($this, $sender) {
+  if ($sender =~ /^[^\+]+\+.+=[a-z0-9\-\.]+\.[a-z]+/i) {
     $sender =~ s/([^\+]+)\+.+=[a-z0-9\-]{2,}\.[a-z]{2,}\@([a-z0-9\-]{2,}\.[a-z]{2,})/$1\@$2/i;
-   }
-   return $sender;
+  }
+  return $sender;
 }
 
-sub extractSubAddress {
-   my $this = shift;
-   my $sender = shift;
-   if ($sender =~ /^[^\+]+\+.+=[a-z0-9\-\.]+\.[a-z]+/i) {
+sub extract_sub_address ($this, $sender) {
+  if ($sender =~ /^[^\+]+\+.+=[a-z0-9\-\.]+\.[a-z]+/i) {
     $sender =~ s/([^\+]+)\+.+\@([a-z0-9\-]{2,}\.[a-z]{2,})/$1\@$2/i;
-   }
-   return $sender;
+  }
+  return $sender;
 }
 
-sub extractSender {
-   my $this = shift;
-   my $sender = shift;
-   my $orig = $sender;
-   $sender = $this->extractSRSAddress($sender);
-   $sender = $this->extractVERP($sender);
-   $sender = $this->extractSubAddress($sender);
-   if ($orig eq $sender) {
-    return 0;
-   }
-   return $sender;
+sub extract_sender ($this, $sender) {
+  my $orig = $sender;
+  $sender = $this->extractSRSAddress($sender);
+  $sender = $this->extractVERP($sender);
+  $sender = $this->extractSubAddress($sender);
+  return 0 if ($orig eq $sender);
+  return $sender;
 }
 
-sub isWhitelisted {
-   my $this = shift;
-   my $object = shift;
-   my $sender = shift;
+sub is_whitelisted ($this, $object, $sender) {
+  return '_BADOBJECT' if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i);
 
-   if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i) {
-    return '_BADOBJECT';
-   }
-
-   my $query = "WHITE $object $sender";
-   my $result;
-   if (my $result = $this->query("WHITE $object $sender")) {
+  my $query = "WHITE $object $sender";
+  my $result;
+  if (my $result = $this->query("WHITE $object $sender")) {
     return $result;
-   }
-   $sender = $this->extractSender($sender);
-   if ($sender) {
-    if ($result = $this->query("WHITE $object $sender")) {
-      return $result;
-    }
-   } else {
-    return 0;
-   }
+  }
+  $sender = $this->extractSender($sender);
+  return $result if ($sender && result = $this->query("WHITE $object $sender"));
+  return 0;
 }
 
-sub isWarnlisted {
-   my $this = shift;
-   my $object = shift;
-   my $sender = shift;
+sub is_warnlisted ($this, $object, $sender) {
+  return '_BADOBJECT' if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i);
 
-   if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i) {
-    return '_BADOBJECT';
-   }
-
-   my $result;
-   if (my $result = $this->query("WARN $object $sender")) {
+  my $result;
+  if (my $result = $this->query("WARN $object $sender")) {
     return $result;
-   }
-   $sender = $this->extractSender($sender);
-   if ($sender) {
-    if ($result = $this->query("WARN $object $sender")) {
-      return $result;
-    }
-   } else {
-    return 0;
-   }
+  }
+  $sender = $this->extractSender($sender);
+  return $result if ($sender && $result = $this->query("WARN $object $sender"));
+  return 0;
 }
 
-sub isBlacklisted {
-   my $this = shift;
-   my $object = shift;
-   my $sender = shift;
+sub is_blacklisted ($this, $object, $sender) {
+  return '_BADOBJECT' if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i);
 
-   if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i) {
-    return '_BADOBJECT';
-   }
-
-   my $query = "BLACK $object $sender";
-   my $result;
-   if (my $result = $this->query("BLACK $object $sender")) {
+  my $query = "BLACK $object $sender";
+  my $result;
+  if (my $result = $this->query("BLACK $object $sender")) {
     return $result;
-   }
-   $sender = $this->extractSender($sender);
-   if ($sender) {
-    if ($result = $this->query("BLACK $object $sender")) {
-      return $result;
-    }
-   } else {
-    return 0;
-   }
+  }
+  $sender = $this->extractSender($sender);
+  if ($sender && $result = $this->query("BLACK $object $sender")) {
+    return $result;
+  }
+  return 0;
 }
 
-sub logStats {
+sub log_stats {
    my $this = shift;
 
    my $query = 'STATS';

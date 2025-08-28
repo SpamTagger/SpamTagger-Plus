@@ -4,17 +4,16 @@ use v5.40;
 use warnings;
 use utf8;
 
-use DBI();
-use Term::ReadKey;
+push(@INC, '/usr/spamtagger/lib');
+use DB();
+use Term::ReadKey();
+use ReadConfig();
 
-my %config = readConfig("/etc/spamtagger.conf");
+my $config = ReadConfig::get_instance();
+our $SRCDIR = $config->get_option('SRCDIR');
+our $HOSTID = $config->get_option('HOSTID');
 
-my $master_dbh = DBI->connect(
-  "DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_master/mysqld.sock",
-  "spamtagger",
-  "$config{'MYSPAMTAGGERPWD'}",
-  {RaiseError => 0, PrintError => 0}
-);
+my $master_dbh = DB->db_connect('master', 'st_config');
 if (!$master_dbh) {
   printf ("ERROR: no master database found on this system. This script will only run on a SpamTagger master host.\n");
   exit 1;
@@ -23,7 +22,7 @@ if (!$master_dbh) {
 my $quit=0;
 while (! $quit) {
   system("clear");
-  my $required = checkHost();
+  my $required = check_host();
   printf "\n################################\n";
   printf "## SpamTagger slaves manager ##\n";
   printf "################################\n\n";
@@ -56,42 +55,41 @@ while (! $quit) {
   }
 }
 
-if (defined $master_dbh) {
-  $master_dbh->disconnect();
-}
+$master_dbh->db_disconnect();
 
 printf "\n\n";
 printf "dumping configuration...\n";
-my $cmd = $config{'SRCDIR'}."/bin/dump_snmpd_config.pl";
+my $cmd = $SRCDIR."/bin/dump_snmpd_config.pl";
 print "  snmp: ".`$cmd`."\n";
-$cmd = $config{'SRCDIR'}."/bin/dump_firewall.pl";
+$cmd = $SRCDIR."/bin/dump_firewall.pl";
 print "  firewall: ".`$cmd`."\n";
-$cmd = $config{'SRCDIR'}."/bin/dump_apache_config.pl";
+$cmd = $SRCDIR."/bin/dump_apache_config.pl";
 print "  httpd: ".`$cmd`."\n";
 printf "restarting services...";
 print "  stopping snmp: ".`killall -TERM snmpd`;
-print "  starting snmp: ".`$config{'SRCDIR'}/etc/init.d/snmpd start`;
-print "  stopping firewall: ".`$config{'SRCDIR'}/etc/init.d/firewall stop`;
-print "  starting firewall: ".`$config{'SRCDIR'}/etc/init.d/firewall start`;
-print "  stopping httpd: ".`$config{'SRCDIR'}/etc/init.d/apache stop`;
+print "  starting snmp: ".`$SRCDIR/etc/init.d/snmpd start`;
+print "  stopping firewall: ".`$SRCDIR/etc/init.d/firewall stop`;
+print "  starting firewall: ".`$SRCDIR/etc/init.d/firewall start`;
+print "  stopping httpd: ".`$SRCDIR/etc/init.d/apache stop`;
 sleep 5;
-print "  starting httpd: ".`$config{'SRCDIR'}/etc/init.d/apache start`;
+print "  starting httpd: ".`$SRCDIR/etc/init.d/apache start`;
 system("clear");
 
 exit 0;
 
 sub change_host {
   system("clear");
-   printf "Enter this hostname (fully qualified name or ip): ";
+  printf "Enter this hostname (fully qualified name or ip): ";
   my $hostname = ReadLine(0);
   $hostname =~ s/^\s+//;
   $hostname =~ s/\s+$//;
-  my $sth =  $master_dbh->prepare("UPDATE slave SET hostname='$hostname' WHERE id=$config{'HOSTID'}");
+  my $sth =  $master_dbh->prepare("UPDATE slave SET hostname='$hostname' WHERE id=$HOSTID");
   $sth->execute() or die ("error in UPDATE");
   $sth->finish();
   $sth =  $master_dbh->prepare("UPDATE master SET hostname='$hostname'");
   $sth->execute() or die ("error in UPDATE");
   $sth->finish();
+  return;
 }
 
 sub view_slaves {
@@ -109,6 +107,7 @@ sub view_slaves {
   ReadMode 'cbreak';
   my $key = ReadKey(0);
   ReadMode 'normal';
+  return;
 }
 
 sub delete_slave {
@@ -129,6 +128,7 @@ sub delete_slave {
   ReadMode 'cbreak';
   my $key = ReadKey(0);
   ReadMode 'normal';
+  return;
 }
 
 sub add_slave {
@@ -169,10 +169,11 @@ sub add_slave {
   ReadMode 'cbreak';
   $key = ReadKey(0);
   ReadMode 'normal';
+  return;
 }
 
-sub checkHost {
-  my $sth =  $master_dbh->prepare("SELECT hostname FROM slave WHERE id=$config{'HOSTID'}") or die ("error in SELECT");
+sub check_host {
+  my $sth =  $master_dbh->prepare("SELECT hostname FROM slave WHERE id=$HOSTID") or die ("error in SELECT");
   $sth->execute() or die ("error in SELECT");
   if ($sth->rows != 1) {
     return 1;
@@ -198,11 +199,11 @@ sub set_as_slave {
   print "Syncing to master host (this may take a few minutes)... ";
   my $logfile = '/tmp/syncerror.log';
   unlink($logfile);
-  my $resync = `$config{'SRCDIR'}/bin/resync_db.sh -F $master $password 1>/dev/null 2>/tmp/syncerror.log`;
+  my $resync = `$SRCDIR/bin/resync_db.sh -F $master $password 1>/dev/null 2>/tmp/syncerror.log`;
   if ( -s $logfile) {
     print "\n  ** ERROR ** ";
-    if (open ERRORLOG, $logfile) {
-      while(<ERRORLOG>) {
+    if (open(my $ERRORLOG, '<', $logfile) {
+      while(<$ERRORLOG>) {
         if (m/Access denied/) {
           print "Access on master is denied. Please double check the master password and try again.\n";
           print "Press any key to continue...\n";
@@ -217,6 +218,7 @@ sub set_as_slave {
           return;
         }
       }
+      close($ERRORLOG);
     }
     print "Unknown error !\n";
     print "Check the master hostname or IP address, DNS resolution and that this script has been run on the master first.\n";
@@ -230,29 +232,5 @@ sub set_as_slave {
   `crontab /var/spool/cron/crontabs/root 2>&1`;
   print "Host is now a slave of $master\n";
   sleep 5;
+  return;
 }
-
-##########################################
-
-sub readConfig {       # Reads configuration file given as argument.
-  my $configfile = shift;
-  my %config;
-  my ($var, $value);
-
-  open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-  while (<CONFIG>) {
-    chomp;                  # no newline
-    s/#.*$//;                # no comments
-    s/^\*.*$//;             # no comments
-    s/;.*$//;                # no comments
-    s/^\s+//;               # no leading white
-    s/\s+$//;               # no trailing white
-    next unless length;     # anything left?
-    my ($var, $value) = split(/\s*=\s*/, $_, 2);
-    $config{$var} = $value;
-  }
-  close CONFIG;
-  return %config;
-}
-
-############################################

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,104 +24,73 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
 use Net::LDAP;
-
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(create authenticate);
-our $VERSION    = 1.0;
-
 
 my @mailattributes = ('mail', 'maildrop', 'mailAlternateAddress', 'mailalternateaddress', 'proxyaddresses', 'proxyAddresses', 'oldinternetaddress', 'oldInternetAddress', 'cn', 'userPrincipalName');
 
-sub create {
-   my $server = shift;
-   my $port = shift;
-   my $params = shift;
+sub new ($server, $port, $params) {
+  my $this = {
+    error_text => "",
+    error_code => -1,
+    server => '',
+    port => 389,
+    use_ssl => 0,
+    base => '',
+    attribute => 'uid',
+    binduser => '',
+    bindpassword => '',
+    version => 3
+  };
 
-   my $this = {
-       error_text => "",
-       error_code => -1,
-       server => '',
-       port => 389,
-       use_ssl => 0,
-       base => '',
-       attribute => 'uid',
-       binduser => '',
-       bindpassword => '',
-       version => 3
-   };
-
-   $this->{server} = $server;
-   if ($port > 0 ) {
-     $this->{port} = $port;
-   }
-   my @fields = split /:/, $params;
-   if ($fields[4] && $fields[4] =~ /^[01]$/) {
-     $this->{use_ssl} = $fields[4];
-   }
-   if ($fields[0]) {
-     $this->{base} = $fields[0];
-   }
-   if ($fields[1]) {
-    $this->{attribute} = $fields[1];
-   }
-   if ($fields[2]) {
-    $this->{binduser} = $fields[2];
-   }
-   if ($fields[3]) {
-    $this->{bindpassword} = $fields[3];
-    $this->{bindpassword} =~ s/__C__/:/;
-   }
-   if ($fields[5] && $fields[5] == 2) {
-    $this->{version} = 2;
-   }
+  $this->{server} = $server;
+  $this->{port} = $port if ($port > 0 );
+  my @fields = split /:/, $params;
+  $this->{use_ssl} = $fields[4]       if ($fields[4] && $fields[4] =~ /^[01]$/);
+  $this->{base} = $fields[0]          if ($fields[0]);
+  $this->{attribute} = $fields[1]     if ($fields[1]);
+  $this->{binduser} = $fields[2]      if ($fields[2]);
+  $this->{bindpassword} = $fields[3]  if ($fields[3]);
+  $this->{bindpassword} =~ s/__C__/:/ if ($fields[3]);
+  $this->{version} = 2                if ($fields[5] && $fields[5] == 2);
 
   bless $this, "SMTPAuthenticator::LDAP";
   return $this;
 }
 
-sub authenticate {
-  my $this = shift;
-  my $username = shift;
-  my $password = shift;
-
+sub authenticate ($this, $username, $password) {
   my $scheme = 'ldap';
   if ($this->{use_ssl} > 0) {
     $scheme = 'ldaps';
   }
-  #print "connecting to $scheme://".$this->{server}.":".$this->{port}."\n";
   my $ldap = Net::LDAP->new ( $this->{server}, port=>$this->{port}, scheme=>$scheme, timeout=>30, debug=>0 );
 
-  if (!$ldap) {
+  unless ($ldap) {
     $this->{'error_text'} = "Cannot contact LDAP/AD server at $scheme://".$this->{server}.":".$this->{port};
     return 0;
   }
 
-  my $userdn = $this->getDN($username);
+  my $userdn = $this->get_dn($username);
   return 0 if ($userdn eq '');
 
-  my $mesg = $ldap->bind ( $userdn,
-                           password => $password,
-                           version => $this->{version}
-                         );
+  my $mesg = $ldap->bind (
+    $userdn,
+    password => $password,
+    version => $this->{version}
+  );
 
   $this->{'error_code'} = $mesg->code;
   $this->{'error_text'} = $mesg->error_text;
-  if ($mesg->code == 0) {
-     return 1;
-  }
+  return 1 if ($mesg->code == 0);
   return 0;
 }
 
-sub getDN {
-  my $this = shift;
-  my $username = shift;
-
+sub get_dn ($this, $username) {
   my $scheme = 'ldap';
-  if ($this->{use_ssl} > 0) {
-    $scheme = 'ldaps';
-  }
+  $scheme = 'ldaps' if ($this->{use_ssl} > 0);
 
   my $ldap = Net::LDAP->new ( $this->{server}, port=>$this->{port}, scheme=>$scheme, timeout=>30, debug=>0 );
   my $mesg;
@@ -141,8 +111,8 @@ sub getDN {
   my $numfound = $mesg->count ;
   my $dn="" ;
   if ($numfound) {
-      my $entry = $mesg->entry(0);
-      $dn = $entry->dn ;
+     my $entry = $mesg->entry(0);
+     $dn = $entry->dn ;
   } else {
     $this->{'error_text'} = "No such user ($username)";
   }
@@ -150,36 +120,25 @@ sub getDN {
   return $dn ;
 }
 
-sub fetchLinkedAddressesFromEmail {
-  my $this = shift;
-  my $email = shift;
-
+sub fetch_linked_addresses_from_email ($this, $email) {
   my $filter = '(|';
   foreach my $att (@mailattributes) {
     $filter .= '('.$att.'='.$email.')('.$att.'='.'smtp:'.$email.')';
   }
   $filter .= ')';
-  return $this->fetchLinkedAddressFromFilter($filter);
+  return $this->fetch_linked_addresses_from_filter($filter);
 }
 
-sub fetchLinkedAddressesFromUsername {
-  my $this = shift;
-  my $username = shift;
-
+sub fetch_linked_addresses_from_username ($this, $username) {
   my $filter = $this->{attribute}."=".$username;
-  return $this->fetchLinkedAddressFromFilter($filter);
+  return $this->fetch_linked_addresses_from_filter($filter);
 }
 
-sub fetchLinkedAddressFromFilter {
-  my $this = shift;
-  my $filter = shift;
-
+sub fetch_linked_addresses_from_filter ($this, $filter) {
   my @addresses;
 
   my $scheme = 'ldap';
-  if ($this->{use_ssl} > 0) {
-    $scheme = 'ldaps';
-  }
+  $scheme = 'ldaps' if ($this->{use_ssl} > 0);
 
   my $ldap = Net::LDAP->new ( $this->{server}, port=>$this->{port}, scheme=>$scheme, timeout=>30, debug=>0 );
   my $mesg;
@@ -198,23 +157,21 @@ sub fetchLinkedAddressFromFilter {
   }
   $mesg = $ldap->search (base => $this->{base}, scope => 'sub', filter => $filter);
   if ( $mesg->code ) {
-    $this->{'error_text'} = "Could not search";
-    return @addresses;
+     $this->{'error_text'} = "Could not search";
+   return @addresses;
   }
   my $numfound = $mesg->count ;
   my $dn="" ;
   if ($numfound) {
-      my $entry = $mesg->entry(0);
-      foreach my $att (@mailattributes) {
-        foreach my $add ($entry->get_value($att)) {
-            if ($add =~ m/\@/) {
-               $add =~ s/^smtp\://gi;
-               push @addresses, lc($add);
-            }
+    my $entry = $mesg->entry(0);
+    foreach my $att (@mailattributes) {
+      foreach my $add ($entry->get_value($att)) {
+        if ($add =~ m/\@/) {
+          $add =~ s/^smtp\://gi;
+          push @addresses, lc($add);
         }
       }
-  } else {
-    #$this->{'error_text'} = "No data for filter ($filter)";
+    }
   }
   $ldap->unbind;   # take down session
   return @addresses;

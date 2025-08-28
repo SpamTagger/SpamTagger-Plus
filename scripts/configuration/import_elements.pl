@@ -4,20 +4,15 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../../lib";
-  unshift (@INC, $path);
-}
-require DB;
-require ReadConfig;
-require ElementMapper;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use ElementMapper();
 
 my $info = 1;
 my $warning = 1;
 my $error = 1;
 
-my $db = DB::connect('master', 'st_config');
-my $conf = ReadConfig::getInstance();
+my $conf = ReadConfig::get_instance();
 
 my $importfile = shift;
 if (! -f $importfile ) {
@@ -37,22 +32,22 @@ if (defined($nottodeletefile)) {
 }
 
 ### ElementMapper factory called here
-my $mapper = ElementMapper::getElementMapper($what);
+my $mapper = ElementMapper::get_element_mapper($what);
 if (!defined($mapper)) {
   error("Element type \"$what\" not supported");
   exit 1;
 }
 
-if (! open (IMPORTFILE, $importfile)) {
+unless (open(my $IMPORTFILE, '<', $importfile)) {
   warning("Could not open import file: $importfile");
   exit 0;
 }
 
 my %elements = ();
-while (<IMPORTFILE>) {
+while (<$IMPORTFILE>) {
   if (/^__DEFAULTS__ (.*)/) {
     # set new defaults
-    $mapper->setNewDefault($1);
+    $mapper->set_new_default($1);
     next;
   }
   my $el_name = $_;
@@ -63,52 +58,50 @@ while (<IMPORTFILE>) {
   }
   $el_name =~ s/\s//g;
   info("will process element $el_name");
-  $mapper->processElement($el_name, $flags, $el_params);
+  $mapper->process_element($el_name, $flags, $el_params);
   $elements{$el_name} = 1;
 }
-close IMPORTFILE;
+close $IMPORTFILE;
 
-#my $domainsnottodelete = $conf->getOption('SRCDIR')."/etc/exim/domain_not_to_delete.cf";
 my $domainsnottodelete = $nottodeletefile;
 my %nodelete = ();
-if ( open (NODELETEFILE, $domainsnottodelete)) {
-  while (<NODELETEFILE>) {
+if (open(my $NODELETEFILE, '<', $domainsnottodelete)) {
+  while (<$NODELETEFILE>) {
    my $el = $_;
    chomp($el);
    $nodelete{$el} = 1;
    print "preventing delete for: $el\n";
   }
-  close NODELETEFILE;
+  close $NODELETEFILE;
 }
 
-if (! $dontdelete) {
-  my @existing_elements = $mapper->getExistingElements();
+unless ($dontdelete) {
+  my @existing_elements = $mapper->get_existing_elements();
   foreach my $el (@existing_elements) {
     next if (defined($nodelete{$el}));
     if (!defined($elements{$el}) || ! $elements{$el}) {
-      $mapper->deleteElement($el);
+      $mapper->delete_element($el);
     }
   }
 }
 
-
-sub warning {
- my $text = shift;
- if ($warning) {
-   print $text."\n";
- }
+sub warning ($text) {
+  if ($warning) {
+    print $text."\n";
+  }
+  return;
 }
 
-sub error {
- my $text = shift;
- if ($error) {
-   print $text."\n";
- }
+sub error ($text) {
+  if ($error) {
+    print $text."\n";
+  }
+  return;
 }
 
-sub info {
- my $text = shift;
- if ($info) {
-   print $text."\n";
- }
+sub info ($text) {
+  if ($info) {
+    print $text."\n";
+  }
+  return;
 }

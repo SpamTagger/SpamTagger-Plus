@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,18 +24,14 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(create setNewDefault processElement);
-our $VERSION    = 1.0;
-
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
 sub create {
-
   my $this = {
-     my %prefs => (),
-     my %field_email => (),
+     %prefs => (),
+     %field_email => (),
   };
 
   bless $this, "ElementMappers::EmailMapper";
@@ -44,140 +41,110 @@ sub create {
   return $this;
 }
 
-sub setNewDefault {
-  my $this = shift;
-  my $defstr = shift;
-
+sub set_new_default ($this, $defstr) {
   foreach my $data (split('\s', $defstr)) {
     if ($data =~ m/(\S+):(\S+)/) {
-      #print "setting: $1 => $2\n";
       $this->{prefs}{$1} = $2;
     }
   }
+  return;
 }
 
-sub checkElementExistence {
-  my $this = shift;
-  my $address = shift;
-
+sub check_element_existence ($this, $address) {
   my $check_query = "SELECT address, pref FROM email WHERE address='$address'";
-  my %check_res = $this->{db}->getHashRow($check_query);
-  if (defined($check_res{'prefs'})) {
-    return $check_res{'prefs'};
-  }
+  my %check_res = $this->{db}->get_hash_row($check_query);
+  return $check_res{'prefs'} if (defined($check_res{'prefs'}));
   return 0;
 }
 
-sub processElement {
-  my $this = shift;
-  my $address = shift;
-  my $flags = shift;
-  my $params = shift;
-
+sub process_element ($this, $address, $flags, $params) {
   my $update = 1;
-  if ($flags && $flags =~ m/noupdate/ ) {
-   $update = 0;
-  }
+  $update = 0 if ($flags =~ m/noupdate/ );
   $this->{prefs}{'address'} = lc($address);
 
   my $pref = 0;
-  $pref = $this->checkElementExistence($this->{prefs}{'address'});
+  $pref = $this->check_element_existence($this->{prefs}{'address'});
   if ($pref > 0 && $update) {
-    if (! $update ) { return 1; }
-    return $this->updateElement($this->{prefs}{'address'}, $pref);
+    return 1 unless ($update);
+    return $this->update_element($this->{prefs}{'address'}, $pref);
   }
-  return $this->addNewElement($this->{prefs}{'address'});
+  return $this->add_new_element($this->{prefs}{'address'});
 }
 
-sub updateElement {
-  my $this = shift;
-  my $address = shift;
-  my $pref = shift;
-
-  my $set_prefquery = $this->getPrefQuery();
+sub update_element ($this, $address, $pref) {
+  my $set_prefquery = $this->get_pref_query();
   if (! $set_prefquery eq '') {
-   my $prefquery = "UPDATE user_pref SET ".$set_prefquery." WHERE id=".$pref;
-   $this->{db}->execute($prefquery);
-   print $prefquery."\n";
+    my $prefquery = "UPDATE user_pref SET ".$set_prefquery." WHERE id=".$pref;
+    $this->{db}->execute($prefquery);
+    print $prefquery."\n";
   }
 
-  my $set_emailquery = $this->getEmailQuery();
-  if (! $set_emailquery eq '') {
+  my $set_emailquery = $this->get_email_query();
+  unless ( $set_emailquery eq '') {
     my $email_query = "UPDATE email SET ".$set_emailquery." WHERE address='$address'";
     $this->{db}->execute($email_query);
     print $email_query."\n";
   }
+  return;
 }
 
-sub getPrefQuery() {
-  my $this = shift;
-
+sub get_pref_query ($this) {
   my $set_prefquery = '';
   foreach my $datak (keys %{$this->{prefs}}) {
     if (! defined($this->{field_email}{$datak})) {
-     $set_prefquery .= "$datak='".$this->{prefs}{$datak}."', ";
+      $set_prefquery .= "$datak='".$this->{prefs}{$datak}."', ";
     }
   }
   $set_prefquery =~ s/, $//;
   return $set_prefquery;
 }
 
-sub getEmailQuery() {
-  my $this = shift;
-
+sub get_email_query ($this) {
   my $set_emailquery = '';
   foreach my $datak (keys %{$this->{prefs}}) {
     if (defined($this->{field_email}{$datak})) {
-     $set_emailquery .= "$datak='".$this->{prefs}{$datak}."', ";
+      $set_emailquery .= "$datak='".$this->{prefs}{$datak}."', ";
     }
   }
   $set_emailquery =~ s/, $//;
   return $set_emailquery;
 }
 
-sub addNewElement {
- my $this = shift;
- my $address = shift;
+sub add_new_element ($this, $address) {
+  my $set_prefquery = $this->get_pref_query();
+  my $prefquery = "INSERT INTO user_pref SET id=NULL";
+  if (! $set_prefquery eq '') {
+    $prefquery .= " , ".$set_prefquery;
+  }
+  print $prefquery."\n";
+  $this->{db}->execute($prefquery.";");
 
- my $set_prefquery = $this->getPrefQuery();
- my $prefquery = "INSERT INTO user_pref SET id=NULL";
- if (! $set_prefquery eq '') {
-   $prefquery .= " , ".$set_prefquery;
- }
- print $prefquery."\n";
- $this->{db}->execute($prefquery.";");
+  my $getid = "SELECT LAST_INSERT_ID() as id;";
+  my %res = $this->{db}->get_hash_row($getid);
+  unless (defined($res{'id'})) {
+    print "WARNING ! could not get last inserted id!\n";
+    return;
+  }
+  my $prefid = $res{'id'};
 
- my $getid = "SELECT LAST_INSERT_ID() as id;";
- my %res = $this->{db}->getHashRow($getid);
- if (!defined($res{'id'})) {
-   print "WARNING ! could not get last inserted id!\n";
-   return;
- }
- my $prefid = $res{'id'};
-
- my $set_emailquery = $this->getEmailQuery();
- my $query  = "INSERT INTO email SET pref=".$prefid;
- if (! $set_emailquery eq '') {
-   $query .= ", ".$set_emailquery;
- }
- $this->{db}->execute($query);
- print $query."\n";
+  my $set_emailquery = $this->get_email_query();
+  my $query  = "INSERT INTO email SET pref=".$prefid;
+  $query .= ", ".$set_emailquery unless ($set_emailquery eq '');
+  $this->{db}->execute($query);
+  print $query."\n";
+  return;
 }
 
-sub deleteElement {
-  my $this = shift;
-  my $name = shift;
-
+sub delete_element ($this, $name) {
+  # TODO: Does nothing. Need to actually delete element?
+  return;
 }
 
-sub getExistingElements {
-  my $this = shift;
-
+sub get_existing_elements ($this) {
   my $query = "SELECT address FROM email";
-  my @res = $this->{db}->getList($query);
+  my @res = $this->{db}->get_list($query);
 
   return @res;
 }
-
 
 1;

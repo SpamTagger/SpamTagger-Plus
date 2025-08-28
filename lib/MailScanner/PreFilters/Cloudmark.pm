@@ -6,11 +6,10 @@ use v5.40;
 use warnings;
 use utf8;
 
-no  strict 'subs'; # Allow bare words for parameter %'s
-#use English; # Needed for $PERL_VERSION to work in all versions of Perl
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-use IO;
-use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
 use Cloudmark::CMAE::Client qw( :errors );
 
 my $MODULE = "Cloudmark";
@@ -22,29 +21,29 @@ sub initialise {
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
   my $configfile = $confdir."/$MODULE.cf";
   %Cloudmark::conf = (
-     header => "X-$MODULE",
-     putHamHeader => 0,
-     putSpamHeader => 1,
-     maxSize => 0,
-     active => 1,
-     timeOut => 10,
-     server_host => 'localhost',
-     server_port => 2703,
-     threshold => 0,
-     show_categories => 'yes',
-     decisive_field => 'none',
-     pos_text => '',
-     neg_text => '',
-     pos_decisive => 0,
-     neg_decisive => 0,
-     position => 0
+    header => "X-$MODULE",
+    putHamHeader => 0,
+    putSpamHeader => 1,
+    maxSize => 0,
+    active => 1,
+    timeOut => 10,
+    server_host => 'localhost',
+    server_port => 2703,
+    threshold => 0,
+    show_categories => 'yes',
+    decisive_field => 'none',
+    pos_text => '',
+    neg_text => '',
+    pos_decisive => 0,
+    neg_decisive => 0,
+    position => 0
   );
 
-  if (open (CONFIG, $configfile)) {
-    while (<CONFIG>) {
+  if (open(my $CONFIG, '<', $configfile)) {
+    while (<$CONFIG>) {
       $Cloudmark::conf{$1} = $2 if (/^(\S+)\s*\=\s*(.*)$/);
     }
-    close CONFIG;
+    close($CONFIG);
   } else {
     MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
   }
@@ -59,12 +58,11 @@ sub initialise {
   } else {
     $Cloudmark::conf{'neg_text'} = 'position : '.$Cloudmark::conf{'position'}.', not decisive';
   }
+  return;
 }
 
-sub Checks {
-  my $this = shift;
-  my $message = shift;
-
+# TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
+sub Checks ($this, $message) { ## no critic
   ## check maximum message size
   my $maxsize = $Cloudmark::conf{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
@@ -80,7 +78,7 @@ sub Checks {
     return 0;
   }
 
-### check against Cloudmark
+  ### check against Cloudmark
   my ($client, $err) = Cloudmark::CMAE::Client->new (
     host    => $Cloudmark::conf{'server_host'},
     timeout => $Cloudmark::conf{'timeOut'},
@@ -93,12 +91,12 @@ sub Checks {
     return 0;
   }
 
-  my (@WholeMessage, $maxsize);
-  push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
-  push(@WholeMessage, "\n");
-  $message->{store}->ReadBody(\@WholeMessage, 0);
+  my (@whole_message, $maxsize);
+  push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
+  push(@whole_message, "\n");
+  $message->{store}->ReadBody(\@whole_message, 0);
   my $msg = "";
-  foreach my $line (@WholeMessage) {
+  foreach my $line (@whole_message) {
     $msg .= $line;
   }
 
@@ -152,20 +150,18 @@ sub Checks {
     $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{pos_text} .")");
 
     return 1;
-  } else {
-    MailScanner::Log::InfoLog("$MODULE result is not spam (".$score.$result_str.") for ".$message->{id});
-    if ($Cloudmark::conf{'putHamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "is not spam (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
-    }
-    $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
-    return 0;
   }
-
+  MailScanner::Log::InfoLog("$MODULE result is not spam (".$score.$result_str.") for ".$message->{id});
+  if ($Cloudmark::conf{'putHamHeader'}) {
+    $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "is not spam (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
+  }
+  $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
   return 0;
 }
 
 sub dispose {
   MailScanner::Log::InfoLog("$MODULE module disposing...");
+  return;
 }
 
 1;

@@ -19,31 +19,32 @@
 #
 #   This module will just read the configuration file
 
-package          dumpers::TrustedSources;
+package Dumpers::UriRBLs;
 
 use v5.40;
 use warnings;
 use utf8;
 
-sub get_specific_config
-{
-    require DB;
-    my $db = DB::connect('slave', 'st_config');
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-	my %config = ();
-	my %row = $db->getHashRow("SELECT use_alltrusted, use_authservers, useSPFOnLocal, useSPFOnGlobal, authservers, authstring, domainsToSPF, whiterbls FROM trustedSources");
-	$config{'__USE_ALLTRUSTED__'} = $row{'use_alltrusted'};
-	$config{'__USE_AUTHSERVERS__'} = $row{'use_authservers'};
-	$config{'__USE_SPFONLOCAL__'} = $row{'useSPFOnLocal'};
-	$config{'__USE_SPFONGLOBAL__'} = $row{'useSPFOnGlobal'};
-	$config{'__AUTHSERVERS__'} = $row{'authservers'} || '';
-	$config{'__AUTHSTRING__'} = $row{'authstring'} || '';
-	$config{'__DOMAINSTOSPF__'} = $row{'domainsToSPF'} || '';
-	$config{'__DOMAINSTOSPF__'} =~ s/\n//g;
-	$config{'__DOMAINSTOSPF__'} =~ s/\s+/ /g;
-	$config{'__WHITERBLS__'} = $row{'whiterbls'} || '';
+use DB();
 
-	return %config;
+sub get_specific_config {
+  my $db = DB->db_connect('slave', 'st_config');
+
+  my %config = ();
+  my %row = $db->get_hash_row("SELECT avoidhosts FROM UriRBLs");
+  my $hosts = $row{'avoidhosts'};
+  if ($hosts) {
+    $hosts =~ s/[\s\;]+/,/;
+  } else {
+    $hosts = '';
+  }
+  $config{'__AVOIDHOSTS__'} = $hosts;
+
+  return %config;
 }
 
 1;

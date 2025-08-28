@@ -23,58 +23,51 @@ use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(get getSimpleDialog getListDialog getYesNoDialog);
-our $VERSION    = 1.0;
+use lib "/usr/spamtagger/scripts/installer/";
+use Model::InLine::SimpleDialog();
+use Model::InLine::PasswordDialog();
+use Model::InLine::ListDialog();
+use Model::InLine::YesNoDialog();
 
-sub get {
-  my $model = shift;
-
+sub new ($class, $model) {
   my $this = {
-     model => $model
+    model => $model
   };
-  bless $this, "DialogFactory";
+  bless $this, $class;
   return $this;
 }
 
-sub getSimpleDialog {
-  my $this = shift;
-
+sub simple ($this) {
   if ($this->{model} eq 'InLine') {
-   require model::InLine::SimpleDialog;
-   return model::InLine::SimpleDialog::get();
+    return Model::InLine::SimpleDialog->new();
   }
+  return;
 }
 
-sub getPasswordDialog {
-  my $this = shift;
-
+sub password ($this) {
   if ($this->{model} eq 'InLine') {
-   require model::InLine::PasswordDialog;
-   return model::InLine::PasswordDialog::get();
+    return Model::InLine::PasswordDialog->new();
   }
+  return;
 }
 
-
-sub getListDialog {
-  my $this = shift;
+sub list ($this) {
   if ($this->{model} eq 'InLine') {
-   require model::InLine::ListDialog;
-   return model::InLine::ListDialog::get();
+    return Model::InLine::ListDialog->new();
   }
+  return;
 }
 
-
-sub getYesNoDialog {
-  my $this = shift;
+sub yes_no ($this) {
   if ($this->{model} eq 'InLine') {
-   require model::InLine::YesNoDialog;
-   return model::InLine::YesNoDialog::get();
+    return Model::InLine::YesNoDialog->new();
   }
+  return;
 }
-
 
 1;
 

@@ -8,8 +8,7 @@ use lib "__SRCDIR__/lib";
 use SMTPAuthenticator;
 use SMTPCalloutConnector;
 
-sub hideToken {
-  my $dnsname = shift;
+sub hide_token ($dnsname) {
   my $count = $dnsname =~ tr/.//;
   if ($count >= 2 && $dnsname =~ /(([a-zA-Z0-9-_]*\.){2}[a-zA-Z0-9-_]*)\.$/) {
      return $1;
@@ -18,10 +17,7 @@ sub hideToken {
   }
 }
 
-sub authenticate {
-  my $account = shift;
-  my $password = shift;
-
+sub authenticate ($account, $password) {
   my $auth = SMTPAuthenticator::create($account);
   my $ip = Exim::expand_string('$sender_host_address');
 
@@ -33,20 +29,18 @@ sub authenticate {
   if ($auth->authenticate($password, $ip)) {
     return 1;
   }
-  my $error = $auth->getErrorText();
+  my $error = $auth->get_error_text();
   return 0;
 }
 
-sub Auth_log {
+sub auth_log {
   my $text = shift;
 
   Exim::log_write($text);
 }
 
 
-sub external_callout_verify {
-  my $local_part = shift;
-  my $domain = shift;
+sub external_callout_verify ($local_part, $domain) {
   my $rcpt = $local_part.'@'.$domain;
 
   my $connector = SMTPCalloutConnector::create($domain);
@@ -56,39 +50,33 @@ sub external_callout_verify {
   }
 
   if (!$connector->verify($rcpt)) {
-    if ($connector->lastMessage() ne '') {
-      Exim::log_write("External callout last message for recipient $rcpt: ".$connector->lastMessage());
+    if ($connector->last_message() ne '') {
+      Exim::log_write("External callout last message for recipient $rcpt: ".$connector->last_message());
     }
-    return external_callout_build_return(0, $connector->lastMessage());
+    return external_callout_build_return(0, $connector->last_message());
   }
 
-  if ($connector->lastMessage() ne '') {
-    Exim::log_write("External callout last message for recipient $rcpt: ".$connector->lastMessage());
+  if ($connector->last_message() ne '') {
+    Exim::log_write("External callout last message for recipient $rcpt: ".$connector->last_message());
   }
-  return external_callout_build_return(1, $connector->lastMessage());
+  return external_callout_build_return(1, $connector->last_message());
 }
 
-sub external_callout_build_return {
-  my $result = shift;
-  my $message = shift;
-
+sub external_callout_build_return ($result, $message) {
   my $str = 'result='.$result;
   $str .= ' message="'.$message.'"';
 
   return $str;
 }
 
-sub SMTP_WL_IP_Dom {
-  my $domain = shift;
-  my $IP = shift;
-
+sub smtp_wl_ip_dom ($domain, $IP) {
   my $file = "/var/spamtagger/spool/tmp/exim_stage1/rblwhitelists/$domain";
 
-  return 'false' if ( ! -e $file );
-  return 'false' if ( ! open FH, '<', $file);
+  return 'false' unless (-e $file );
+  return 'false' unless (open(my $FH, '<', $file));
 
-  my @IPs = <FH>;
-  close(FH);
+  my @IPs = <$FH>;
+  close($FH);
   chomp(@IPs);
 
   use Net::CIDR::Lite;
@@ -123,17 +111,14 @@ __FI__
   return 'false';
 }
 
-sub SpamC_WL_IP_Dom {
-  my $domain = shift;
-  my $IP = shift;
-
+sub spamc_wl_ip_dom ($domain, $IP) {
   my $file = "/var/spamtagger/spool/tmp/exim_stage1/spamcwhitelists/$domain";
 
-  return 'false' if ( ! -e $file );
-  return 'false' if ( ! open FH, '<', $file);
+  return 'false' unless (-e $file));
+  return 'false' unless (open(my $FH, '<', $file));
 
-  my @IPs = <FH>;
-  close(FH);
+  my @IPs = <$FH>;
+  close($FH);
   chomp(@IPs);
 
   use Net::CIDR::Lite;
@@ -168,17 +153,12 @@ __FI__
   return 'false';
 }
 
-sub prevent_domain_from {
-  my $domain = shift;
-  my $sender_address_domain = shift;
-
+sub prevent_domain_from ($domain, $sender_address_domain) {
   return 'true' if ( lc($domain) eq lc($sender_address_domain) );
   return 'false';
 }
 
-sub no_caps_in_domain {
-  my $sender_address_domain = shift;
-
+sub no_caps_in_domain ($sender_address_domain) {
   return 'true' if ( $sender_address_domain =~ m/[A-Z]/ );
   return 'false';
 }

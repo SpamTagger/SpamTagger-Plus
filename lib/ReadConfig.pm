@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -26,72 +27,53 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(getInstance new getOption);
-our $VERSION    = 1.0;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
 my $CONFIGFILE = "/etc/spamtagger.conf";
 my %config_options;
 
-my $oneTrueSelf;
+our $one_true_self;
 
 ## singleton stuff
-sub getInstance {
-  if (! $oneTrueSelf) {
-  	$oneTrueSelf = new();
-  }
-  return $oneTrueSelf;
+sub get_instance {
+  $one_true_self = new() unless ($one_true_self);
+  return $one_true_self;
 }
 
 ## constructor
-sub new {
-  %config_options = readConfig();
-  #print "loading config...\n";
-  my $this = {
-         configs => \%config_options
-         };
-
-  return bless $this, "ReadConfig";
+sub new ($configfile = $CONFIGFILE) {
+  return bless { configs => _read_config($configfile) }, "ReadConfig";
 }
 
-sub getOption {
-  my $this = shift;
-  my $o = shift;
-
-  if (exists($this->{configs}->{$o})) {
-     return $this->{configs}->{$o};
-  }
+sub get_option ($this, $option) {
+  return $this->{configs}->{$option} if (exists($this->{configs}->{$option}));
   return "";
 }
 
 #############################
-sub readConfig
-{
-	my $configfile = $CONFIGFILE;
+sub _read_config ($configfile) {
+  my ($var, $value);
 
-	my %config;
-        my ($var, $value);
-
-	open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                ## untainting
-                if ($value =~ m/(.*)/) {
-                  $config{$var} = $1;
-                }
-                $config{$var} = $value;
-        }
-        close CONFIG;
-	return %config;
+  open(my $CONFIG, '<', $configfile) or die "Cannot open $configfile: $!\n";
+  while (<$CONFIG>) {
+    chomp;                  # no newline
+    s/#.*$//;               # no comments
+    s/^\*.*$//;             # no comments
+    s/;.*$//;               # no comments
+    s/^\s+//;               # no leading white
+    s/\s+$//;               # no trailing white
+    next unless length;     # anything left?
+    my ($var, $value) = split(/\s*=\s*/, $_, 2);
+    ## untainting
+    if ($value =~ m/(.*)/) {
+      $config{$var} = $1;
+    }
+    $config{$var} = $value;
+  }
+  close($CONFIG);
+  return \%config;
 }
 
 1;

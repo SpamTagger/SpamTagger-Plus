@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -27,42 +28,36 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/dump_archiving\.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require DB;
-require Domain;
-require SystemPref;
-require ConfigTemplate;
-use File::Copy;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use DB();
+use SystemPref();
+use File::Copy();
 
 my $domain = shift;
 
 my $uid = getpwnam( 'spamtagger' );
 my $gid = getgrnam( 'spamtagger' );
 
-my $conf = ReadConfig::getInstance();
-my $op = $conf->getOption('SRCDIR');
+my $conf = ReadConfig::get_instance();
+my $op = $conf->get_option('SRCDIR');
 
-my $slave_db = DB::connect('slave', 'st_config');
+our $slave_db = DB->db_connect('slave', 'st_config');
 
-dumpArchivedDomains();
-dumpCopyto();
-dumpBypassFiltering();
+dump_archived_domains();
+dump_copy_to();
+dump_bypass_filtering();
 
-
-$slave_db->disconnect();
+$slave_db->db_disconnect();
 print "DUMPSUCCESSFUL";
 exit 0;
 
 #####################################
-## dumpArchivedDomains
-sub dumpArchivedDomains {
-  my @adomains = $slave_db->getListOfHash("SELECT d.name FROM domain d, domain_pref dp WHERE dp.archive_mail='1' AND d.name != '__global__' AND d.prefs=dp.id");
+## dump_archived_domains
+sub dump_archived_domains {
+  my @adomains = $slave_db->get_list_of_hash("SELECT d.name FROM domain d, domain_pref dp WHERE dp.archive_mail='1' AND d.name != '__global__' AND d.prefs=dp.id");
 
-  my $archive_path = $conf->getOption('VARDIR')."/spool/tmp/exim_stage1/archiver";
+  my $archive_path = $conf->get_option('VARDIR')."/spool/tmp/exim_stage1/archiver";
   if (! -d $archive_path) {
     mkdir($archive_path);
   }
@@ -73,38 +68,37 @@ sub dumpArchivedDomains {
   my %doms;
   foreach my $d (@adomains) {
     my $domfile = $archive_path."/".$d->{'name'};
-    if ( open(DFILE, ">$domfile") ) {
-      print DFILE "*";
-      close DFILE;
+    if (open(my $DFILE, ">", $domfile) ) {
+      print $DFILE "*";
+      close $DFILE;
       $doms{$d->{'name'}} = 1;
     }
   }
 
-  my @aemail = $slave_db->getListOfHash("SELECT address from email e, user_pref p WHERE p.archive_mail=1 AND e.pref=p.id");
+  my @aemail = $slave_db->get_list_of_hash("SELECT address from email e, user_pref p WHERE p.archive_mail=1 AND e.pref=p.id");
   foreach my $e (@aemail) {
-      if (defined($e->{'address'}) && $e->{'address'} =~ /(\S+)\@(\S+)/) {
-          my $edom = $2;
-          my $euser = $1;
-          if (!defined($doms{$edom})) {
-             my $domfile = $archive_path."/".$edom;
-             if ( open(DFILE, ">>$domfile") ) {
-                 print DFILE $e->{'address'}."\n";
-                 print DFILE $euser."\n";
-                 close DFILE;
-             }
-          } else {
-             # print "user ".$e->{'address'}." not added as domain: $edom already fully archived\n";
-          }
+    if (defined($e->{'address'}) && $e->{'address'} =~ /(\S+)\@(\S+)/) {
+      my $edom = $2;
+      my $euser = $1;
+      unless (defined($doms{$edom})) {
+        my $domfile = $archive_path."/".$edom;
+        if (open(my $DFILE, ">>", $domfile") ) {
+          print $DFILE $e->{'address'}."\n";
+          print $DFILE $euser."\n";
+          close $DFILE;
+        }
       }
+    }
   }
+  return;
 }
 
 #####################################
-## dumpCopyTo
-sub dumpCopyto {
-  my @cdomains = $slave_db->getListOfHash("SELECT d.name, dp.copyto_mail FROM domain d, domain_pref dp WHERE dp.copyto_mail != '' AND d.name != '__global__' AND d.prefs=dp.id");
+## dump_copy_to
+sub dump_copy_to {
+  my @cdomains = $slave_db->get_list_of_hash("SELECT d.name, dp.copyto_mail FROM domain d, domain_pref dp WHERE dp.copyto_mail != '' AND d.name != '__global__' AND d.prefs=dp.id");
 
-  my $copyto_path = $conf->getOption('VARDIR')."/spool/tmp/exim_stage1/copyto";
+  my $copyto_path = $conf->get_option('VARDIR')."/spool/tmp/exim_stage1/copyto";
   if (! -d $copyto_path) {
     mkdir($copyto_path);
   }
@@ -115,58 +109,57 @@ sub dumpCopyto {
   my %doms;
   foreach my $d (@cdomains) {
     my $domfile = $copyto_path."/".$d->{'name'};
-    if ( open(DFILE, ">$domfile") ) {
-      print DFILE "*:".$d->{'copyto_mail'};
-      close DFILE;
+    if (open(my $DFILE, ">", $domfile) ) {
+      print $DFILE "*:".$d->{'copyto_mail'};
+      close $DFILE;
       $doms{$d->{'name'}} = 1;
     }
   }
 
-  my @cemail = $slave_db->getListOfHash("SELECT e.address, p.copyto_mail from email e, user_pref p WHERE p.copyto_mail != '' AND e.pref=p.id");
+  my @cemail = $slave_db->get_list_of_hash("SELECT e.address, p.copyto_mail from email e, user_pref p WHERE p.copyto_mail != '' AND e.pref=p.id");
   foreach my $e (@cemail) {
-      if (defined($e->{'address'}) && $e->{'address'} =~ /(\S+)\@(\S+)/) {
-          my $edom = $2;
-          my $euser = $1;
-          if (!defined($doms{$edom})) {
-             my $domfile = $copyto_path."/".$edom;
-             if ( open(DFILE, ">>$domfile") ) {
-                 print DFILE $e->{'address'}.":".$e->{'copyto_mail'}."\n";
-                 print DFILE $euser.":".$e->{'copyto_mail'}."\n";
-                 close DFILE;
-             }
-          } else {
-             # print "user ".$e->{'address'}." not added as domain: $edom already fully archived\n";
-          }
+    if (defined($e->{'address'}) && $e->{'address'} =~ /(\S+)\@(\S+)/) {
+      my $edom = $2;
+      my $euser = $1;
+      unless (!defined($doms{$edom})) {
+        my $domfile = $copyto_path."/".$edom;
+        if (open(my $DFILE, ">>", $domfile") ) {
+          print $DFILE $e->{'address'}.":".$e->{'copyto_mail'}."\n";
+          print $DFILE $euser.":".$e->{'copyto_mail'}."\n";
+          close $DFILE;
+        }
       }
+    }
   }
+  return;
 }
 
 #####################################
-## dumpBypassFiltering
-sub dumpBypassFiltering {
+## dump_bypass_filtering
+sub dump_bypass_filtering {
 
-  my $bypassfiltering_path = $conf->getOption('VARDIR')."/spool/tmp/exim_stage1/bypass";
+  my $bypassfiltering_path = $conf->get_option('VARDIR')."/spool/tmp/exim_stage1/bypass";
 
-  my @cemail = $slave_db->getListOfHash("SELECT e.address, p.bypass_filtering from email e, user_pref p WHERE p.bypass_filtering != '' AND e.pref=p.id");
+  my @cemail = $slave_db->get_list_of_hash("SELECT e.address, p.bypass_filtering from email e, user_pref p WHERE p.bypass_filtering != '' AND e.pref=p.id");
 
   if (defined($bypassfiltering_path) && $bypassfiltering_path ne '') {
     if ( ! -d $bypassfiltering_path ) {
        mkdir($bypassfiltering_path);
     }
     `rm $bypassfiltering_path/* >/dev/null 2>&1`;
-
   }
 
   foreach my $e (@cemail) {
-      if (defined($e->{'address'}) && $e->{'address'} =~ /(\S+)\@(\S+)/) {
-          my $edom = $2;
-          my $euser = $1;
-          my $domfile = $bypassfiltering_path."/".$edom;
-          if ( open(DFILE, ">>$domfile") ) {
-              print DFILE $euser."\n";
-              close DFILE;
-          }
+    if (defined($e->{'address'}) && $e->{'address'} =~ /(\S+)\@(\S+)/) {
+      my $edom = $2;
+      my $euser = $1;
+      my $domfile = $bypassfiltering_path."/".$edom;
+      if (open(my $DFILE, ">>", $domfile) ) {
+        print $DFILE $euser."\n";
+        close $DFILE;
       }
-   }
+    }
+  }
+  return;
 }
 

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -10,28 +11,26 @@
 #
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
-#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package          model::InLine::PasswordDialog ;
+package Model::InLine::PasswordDialog ;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-use Term::ReadKey;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(build display);
-our $VERSION    = 1.0;
+use Term::ReadKey qw( ReadMode ReadKey );
 
-sub get {
-
+sub new ($class) {
   my $text = '';
   my $default = '';
 
@@ -40,32 +39,21 @@ sub get {
     default => $default
   };
 
-  bless $this, "model::InLine::PasswordDialog";
+  bless $this, $class;
   return $this;
 }
 
-sub build {
-  my $this = shift;
-  my $text = shift;
-  my $default = shift;
-
+sub build($this, $text, $default='') {
   $this->{text} = $text;
   $this->{default} = $default;
 
   return $this;
 }
 
-sub display {
-  my $this = shift;
-
-  #system('clear');
-  if (!$this->{default}) {
-   $this->{default} = '';
-  }
+sub display($this) {
   print $this->{text}. " [".$this->{default}."]: ";
   ReadMode 'noecho';
 
-  ReadMode('raw');
   my $pass = '';
 
   while (1) {
@@ -77,20 +65,19 @@ sub display {
   }
   ReadMode('restore');
 
-  #my $result = ReadLine(0);
   my $result = $pass;
   print "\n";
   ReadMode 'normal';
   chomp $result;
   if ( $result eq "") {
-   $result = $this->{default};
+    $result = $this->{default};
   }
   return $result;
 }
 
-sub clear {
-  my $this = shift;
-
+sub clear($this) {
   system('clear');
+  return;
 }
 
+1;

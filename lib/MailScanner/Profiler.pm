@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 #
+#   SpamTagger Plus - Open Source Spam Filtering
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
+#
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
 #   the Free Software Foundation; either version 2 of the License, or
@@ -20,16 +23,16 @@ use v5.40;
 use warnings;
 use utf8;
 
-no  strict 'subs'; # Allow bare words for parameter %'s
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
 use vars qw($VERSION);
 
 use Time::HiRes qw(gettimeofday tv_interval);
 
 # Constructor.
-sub new {
-  my (%start_times, %res_times) = ();
-
+sub new (%start_times, %res_times) {
   my $this = {
      %start_times => (),
      %res_times => (),
@@ -39,47 +42,35 @@ sub new {
   return $this;
 }
 
-sub start {
-  my $this = shift;
-  my $var = shift;
-
+sub start ($this, $var) {
   return unless MailScanner::Config::Value('profile');
-
   $this->{start_times}{$var} = [gettimeofday];
+  return;
 }
 
-sub stop {
-  my $this = shift;
-  my $var = shift;
-
+sub stop ($this, $var) {
   return unless MailScanner::Config::Value('profile');
 
   return unless defined($this->{start_times}{$var});
   my $interval = tv_interval ($this->{start_times}{$var});
   $this->{res_times}{$var} = (int($interval*10000)/10000);
+  return;
 }
 
-sub getResult {
-  my $this = shift;
-
+sub get_result ($this) {
   return unless MailScanner::Config::Value('profile');
 
   my $out = "";
 
-  my @keys = sort keys %{$this->{res_times}};
-  foreach my $key (@keys) {
-    $out .= " ($key:".$this->{res_times}{$key}."s)";
-  }
+  $out .= " ($key:".$this->{res_times}{$key}."s)" foreach (sort(keys(%{$this->{res_times}})));
   return $out;
 }
 
-sub log {
-  my $this = shift;
-  my $extra = shift;
-
+# TODO: Perl::Critic built-in name confict. Hard-coded in MailScanner?
+sub log ($this, $extra) { ## no critic
   return unless MailScanner::Config::Value('profile');
 
-  MailScanner::Log::InfoLog($extra.$this->getResult());
+  MailScanner::Log::InfoLog($extra.$this->get_result());
   return 1;
 }
 

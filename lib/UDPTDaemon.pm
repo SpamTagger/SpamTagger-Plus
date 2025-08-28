@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,66 +24,58 @@ use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-require			  PreForkTDaemon;
-use threads;
-use threads::shared;
-use IO::Socket;
-use IO::Select;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = "PreForkTDaemon";
+use threads();
+use threads::shared();
+use IO::Socket();
+use IO::Select();
+use Mail::SpamAssassin::Timeout();
+
+use parent qw(PreForkTDaemon);
 
 my %global_shared : shared;
 
-sub new {
-  my $class = shift;
-  my $init = shift;
-  my $config = shift;
-  my $spec_thish = shift;
+sub new ($class, $init, $config, $spec_thish) {
   my %spec_this = %$spec_thish;
-
   my $udpspec_this = {
-     server => '',
-     port => -1,
-     tid => 0,
-
-     read_set => '',
-     write_set => '',
+    server => '',
+    port => -1,
+    tid => 0,
+    read_set => '',
+    write_set => '',
   };
   # add specific options of child object
   foreach my $sk (keys %spec_this) {
-     $udpspec_this->{$sk} = $spec_this{$sk};
+    $udpspec_this->{$sk} = $spec_this{$sk};
   }
 
-  my $this = $class->SUPER::create($class, $config, $udpspec_this);
+  my $this = $class->SUPER->new($class, $config, $udpspec_this);
 
   bless $this, $class;
   return $this;
 }
 
-sub preForkHook() {
-   my $this = shift;
+sub pre_fork_hook ($this) {
+  ## bind to UDP port
+  $this->{server} = IO::Socket::INET->new(
+    LocalAddr => '127.0.0.1',
+    LocalPort => $this->{port},
+    Proto     => 'udp',
+    Timeout => 10
+  ) or die "Couldn't be an udp server on port ".$this->{port}." : $@\n";
+  $this->{server}->autoflush ( 1 ) ;
+  $this->logMessage("Listening on port ".$this->{port});
 
-   ## bind to UDP port
-   $this->{server} = IO::Socket::INET->new(
-   								  LocalAddr => '127.0.0.1',
-   								  LocalPort => $this->{port},
-   								  Proto     => 'udp',
-   								  Timeout => 10)
-     or die "Couldn't be an udp server on port ".$this->{port}." : $@\n";
-   $this->{server}->autoflush ( 1 ) ;
-   $this->logMessage("Listening on port ".$this->{port});
-
-   return 1;
+  return 1;
 }
 
-sub mainLoopHook() {
-  my $this = shift;
-  require Mail::SpamAssassin::Timeout;
-
+sub main_loop_hook ($this) {
   $this->logMessage("In UDPTDaemon main loop");
 
-  my $read_set = new IO::Select;
+  my $read_set = IO::Select->new();
   $read_set->add($this->{server});
 
   my $t = threads->self;
@@ -90,45 +83,20 @@ sub mainLoopHook() {
 
   my $data;
   while ($this->{server}->recv($data, 1024)) {
-      my($port, $ipaddr) = sockaddr_in($this->{server}->peername);
-      my $hishost = gethostbyaddr($ipaddr, AF_INET);
-      chop($data);
-      my $result =  $this->dataRead($data, $this->{server});
-      $this->{server}->send($result."\n");
+    my($port, $ipaddr) = sockaddr_in($this->{server}->peername);
+    my $hishost = gethostbyaddr($ipaddr, AF_INET);
+    chop($data);
+    my $result =  $this->dataRead($data, $this->{server});
+    $this->{server}->send($result."\n");
   }
-#  while(1) {
-#    my ($r_ready, $w_ready, $error) =  IO::Select->select($read_set, undef, undef, 5);
-#
-#    foreach my $sock (@$r_ready) {
-#      if ($sock == $this->{server}) {
-#        my $new_sock = $sock->accept();
-#        $read_set->add($new_sock);
-#        $this->logDebug(" (".$this->{tid}.") Accepted new connection...");
-#        my $buf = <$sock>;
-#        if ($buf) {
-#          ## chop twice.. why not ?
-#          chop $buf;
-#          #chop $buf;
-#          my($cli_add, $cli_port) =  sockaddr_in($sock->peername);
-#          my $result = $this->dataRead($buf, $sock);
-#          $sock->send($result."\n");
-#        } else {
-#          $read_set->remove($sock);
-#          close($sock);
-#          $this->logDebug(" (".$this->{tid}.") Closed socket");
-#        }
-#    }
-#      }
-#  }
 
   return 1;
 }
 
-sub exitHook() {
-  my $this = shift;
-
+sub exit_hook ($this) {
   close ($this->{server});
   $this->logMessage("Listener socket closed");
   return 1;
 }
+
 1;

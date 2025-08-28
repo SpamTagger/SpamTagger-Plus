@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,46 +24,33 @@ use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(create authenticate);
-our $VERSION    = 1.0;
-
-
-sub new {
-   my $class = shift;
-   my $paramsh = shift;
-   my @params = @{$paramsh};
-
-   my $this = {
-   	    'last_message' => '',
-   	    'useable' => 1,
-        'default_on_error' => 1 ## we accept in case of any failure, to avoid false positives
-         };
+sub new ($class, $params = {}) {
+  my $this = {
+    'last_message' => '',
+    'useable' => 1,
+    'default_on_error' => 1 ## we accept in case of any failure, to avoid false positives
+  };
+  $this->{$_} = $params->{$_} foreach (keys(%{$params}));
 
   bless $this, $class;
   return $this;
 }
 
-sub verify {
-	my $this = shift;
-	my $address = shift;
-
-    $this->{last_message} = 'Dummy callout will always answer yes';
-    return 1;
+sub verify ($this, $address) {
+  $this->{last_message} = 'Dummy callout will always answer yes';
+  return 1;
 }
 
-sub isUseable {
-	my $this = shift;
-
-	return $this->{useable};
+sub is_useable ($this) {
+  return $this->{useable};
 }
 
-sub lastMessage {
-	my $this = shift;
-
-	return $this->{last_message};
+sub last_message ($this) {
+  return $this->{last_message};
 }
 
 1;

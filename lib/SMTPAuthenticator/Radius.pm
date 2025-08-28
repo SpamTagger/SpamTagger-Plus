@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,60 +24,43 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
+
 use Authen::Radius;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(create authenticate);
-our $VERSION    = 1.0;
+sub new ($server, $port, $params = {}) {
+  my $secret = '';
+  my @fields = split /:/, $params;
+  $secret = $fields[0] if ($fields[0]);
 
-
-sub create {
-   my $server = shift;
-   my $port = shift;
-   my $params = shift;
-
-   my $secret = '';
-   my @fields = split /:/, $params;
-   if ($fields[0]) {
-     $secret = $fields[0];
-   }
-
-
-   if ($port < 1 ) {
-     $port = 1645;
-   }
-   my $this = {
-           error_text => "",
-           error_code => -1,
-           server => $server,
-           port => $port,
-           secret => $secret,
-         };
+  $port = 1645 if ($port < 1 );
+  my $this = {
+    error_text => "",
+    error_code => -1,
+    server => $server,
+    port => $port,
+    secret => $secret,
+  };
+  $this->{$_} = $params->{$_} foreach (keys(%{$params}));
 
   bless $this, "SMTPAuthenticator::Radius";
   return $this;
 }
 
-sub authenticate {
-  my $this = shift;
-  my $username = shift;
-  my $password = shift;
+sub authenticate ($this, $username, $password) {
+  my $r = Authen::Radius->new(Host => $this->{server}.":".$this->{port}, Secret => $this->{secret});
 
-  my $r = new Authen::Radius(Host => $this->{server}.":".$this->{port}, Secret => $this->{secret});
-
-  if ($r) {
-    if ( $r->check_pwd($username, $password) ) {
-      $this->{'error_code'} = 0;
-      $this->{'error_text'} = Authen::Radius::strerror;
-      return 1;
-    }
+  if ( $r && $r->check_pwd($username, $password) ) {
+    $this->{'error_code'} = 0;
+    $this->{'error_text'} = Authen::Radius::strerror;
+    return 1;
   }
 
   $this->{'error_code'} =  Authen::Radius::get_error;
   $this->{'error_text'} = Authen::Radius::strerror;
   return 0;
 }
-
 
 1;

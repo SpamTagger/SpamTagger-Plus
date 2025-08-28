@@ -39,5 +39,5 @@ __IF_URIDNSBL__loadplugin Mail::SpamAssassin::Plugin::URIDNSBL
 #__IF_PDFINFO__loadplugin Mail::SpamAssassin::Plugin::PDFInfo  /usr/spamtagger/share/spamassassin/plugins/PDFInfo.pm
 __IF_BOTNET__loadplugin Mail::SpamAssassin::Plugin::Botnet /usr/spamtagger/share/spamassassin/plugins/Botnet.pm
 #loadplugin PhishPatrol /usr/spamtagger/share/spamassassin/plugins/PhishPatrol/PhishPatrol.pm
-loadplugin Mail::SpamAssassin::Plugin::iXhash  /usr/spamtagger/share/spamassassin/plugins/iXhash/iXhash.pm
+loadplugin Mail::SpamAssassin::Plugin::IXhash  /usr/spamtagger/share/spamassassin/plugins/IXhash.pm
 loadplugin Mail::SpamAssassin::Plugin::PDFInfo /usr/spamtagger/share/spamassassin/plugins/PDFInfo.pm

@@ -27,21 +27,18 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require DB;
-require Email;
-require MailTemplate;
-require SystemPref;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use DB();
+use Email();
+use MailTemplate();
+use SystemPref();
 use Digest::MD5 qw(md5_hex);
 
 my $max_pending_age = 0; # in days
 
-my $conf = ReadConfig::getInstance();
-if ($conf->getOption('ISMASTER') !~ /^[y|Y]$/) {
+my $conf = ReadConfig::get_instance();
+if ($conf->get_option('ISMASTER') !~ /^[y|Y]$/) {
   print "NOTAMASTER";
   exit 0;
 }
@@ -84,16 +81,16 @@ if ($reset && $reset eq '1') {
 my $language = shift;
 
 if (!$language || !defined($language)) {
-  $language = $email->getPref('language');
+  $language = $email->get_pref('language');
   print STDERR "language: ".$language;
 }
 
-my $sys = SystemPref::getInstance();
+my $sys = SystemPref::get_instance();
 my $http = "http://";
-if ( $sys->getPref('use_ssl') =~ /true/i ) {
+if ( $sys->get_pref('use_ssl') =~ /true/i ) {
   $http = "https://";
 }
-my $baseurl = $http.$sys->getPref('servername');
+my $baseurl = $http.$sys->get_pref('servername');
 
 my %replace = (
   '__ADDRESS__' => $address,
@@ -102,10 +99,10 @@ my %replace = (
 );
 
 
-my $template = MailTemplate::create('userpassword', $mailtemp, $domain->getPref('summary_template'), \$email, $language, 'html');
+my $template = MailTemplate::create('userpassword', $mailtemp, $domain->get_pref('summary_template'), \$email, $language, 'html');
 
-$template->setReplacements(\%replace);
-if ($template->send()) {
+$template->set_replacements(\%replace);
+if ($template->send_message()) {
   print "REQUESTSENT $address\n";
   exit 0;
 }

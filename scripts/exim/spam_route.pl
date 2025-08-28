@@ -21,16 +21,17 @@ use v5.40;
 use warnings;
 use utf8;
 
-use Net::SMTP;
-
-my %config = readConfig("/etc/spamtagger.conf");
-
+push(@INC, '/usr/spamtagger/lib');
+use Net::SMTP();
 use Time::HiRes qw(gettimeofday tv_interval);
 my $stime = [gettimeofday];
-unshift (@INC, $config{'SRCDIR'}."/lib");
-require DB;
-require SpamLogger;
-require Email;
+use DB();
+use SpamLogger();
+use Email();
+use ReadConfig;
+
+my $config = ReadConfig::get_instance();
+our $VARDIR = $config->get_option('VARDIR');
 
 ### Global variables
 my $msg             = "";
@@ -45,7 +46,7 @@ my $prefilters      = "";
 my $bounced_add     = "";
 my $spam_type       = 'ST_SPAM';
 my $tag             = "";
-my $store_id        = $config{'HOSTID'};
+my $store_id        = $config->get_option('HOSTID');
 my @rbl_tags        = ('SBL\+XBL', 'SPAMHAUS-ZEN', 'spamcop.net', 'NJABL', 'SORBS-DNSBL', 'RFC-Ignorant', 'CompleteWhois', 'AHBL', 'SORBS-DUL', 'DSBL', 'SECURITYUSAGE');
 my @prefiltertags   = ('MailFilter', 'NiceBayes', 'PreRBLs', 'Spamc', 'ClamSpam');
 my %prefilterscores = ('Mailfilter' => 3, 'NiceBayes' => 3, 'PreRBLs' => 3, 'ClamSpam' => 4);
@@ -67,22 +68,22 @@ my $to        = $to_local . "@" . $to_domain;
 printf "spam detected for user: $to, from: $sender, with id: $exim_id => ";
 
 ## fetch values in message and store it in $msg
-parseInputMessage();
-cleanVariables();
+parse_input_message();
+clean_variables();
 my $ptime = tv_interval ($stime);
 
 ## get user preference
-my $email = Email::create($to);
+my $email = Email->new($to);
 ## check what to do with message
-my $delivery_type = $email->getPref( 'delivery_type', 1);
-my $whitelisted = $email->hasInWhiteWarnList('whitelist', $sender);
+my $delivery_type = $email->get_pref( 'delivery_type', 1);
+my $whitelisted = $email->has_in_white_warn_list('whitelist', $sender);
 #print "\nin whitelist returned: $whitelisted\n";
-my $warnlisted = $email->hasInWhiteWarnList('warnlist', $sender);
+my $warnlisted = $email->has_in_white_warn_list('warnlist', $sender);
 #print "\nin warnlist returned: $warnlisted\n";
 ## if WHITELISTED, then go through, no tag
 if ($whitelisted) {
   print " is whitelisted ($whitelisted) ";
-  sendAnyway($whitelisted);
+  send_anyway($whitelisted);
 } else {
   ## DROP
   if ( $delivery_type == 3 ) {
@@ -92,25 +93,25 @@ if ($whitelisted) {
     print " is warnlisted ($warnlisted) ";
     if ( !put_in_quarantine() ) {
       print " ** could not put in quarantine!";
-      sendAnyway(0);
+      send_anyway(0);
     }
-    if ( !$email->sendWarnlistHit($sender, $warnlisted, $exim_id) ) {
+    if ( !$email->send_warnlist_hit($sender, $warnlisted, $exim_id) ) {
        print " ** could not send warning!";
-       sendAnyway(0);
+       send_anyway(0);
     }
-    sendNotice();
+    send_notice();
   ## if QUARANTINE or BOUNCE then save message
   } elsif ($delivery_type == 2 || $is_bounce) {
     print " want quarantine";
     print " (bounce)" if ($is_bounce);
     if ( !put_in_quarantine() ) {
       print " ** could not put in quarantine!";
-      sendAnyway(0);
+      send_anyway(0);
     }
   ## TAG
   } else {
     print " want tag";
-    sendAnyway(0);
+    send_anyway(0);
   }
 }
 
@@ -123,9 +124,9 @@ exit 0;
 ######################################
 
 #####
-## parseInputMessage
+## parse_input_message
 #####
-sub parseInputMessage {
+sub parse_input_message {
   my $start_msg      = 0;
   my $line           = "";
   my $has_subject    = 0;
@@ -226,12 +227,13 @@ sub parseInputMessage {
 
   $prefilters =~ s/^\s*,\s*//g;
   $rbls =~ s/^\s*,\s*//g;
+  return;
 }
 
 #####
-## cleanVariables
+## clean_variables
 #####
-sub cleanVariables {
+sub clean_variables {
   $to_domain = clean($to_domain);
   $to_local  = clean($to_local);
   $sender    = clean($sender);
@@ -246,20 +248,19 @@ sub cleanVariables {
   }
   $exim_id = clean($exim_id);
   $subject = clean($subject);
+  return;
 }
 
-
 #####
-## sendAnyway
+## send_anyway
 #####
-sub sendAnyway {
-  my $whitelisted = shift;
+sub send_anyway ($whitelisted) {
   my $smtp;
 
   my %level = (1 => 'system', 2 => 'domain', 3 => 'user');
 
   if (! $whitelisted) {
-    my $tag = $email->getPref( 'spam_tag', '{Spam?}');
+    my $tag = $email->get_pref( 'spam_tag', '{Spam?}');
     $tag = "{Spam?}" if ( $tag =~ /\-1/ );
     $msg =~ s/Subject:\ /Subject: $tag /i if ( $tag !~ /^$/);
   } else {
@@ -298,29 +299,30 @@ sub sendAnyway {
   $err = $smtp->code();
   if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
 
-  sendNotice() if ($whitelisted);
+  send_notice() if ($whitelisted);
+  return;
 }
 
 ##########################################
 
 sub put_in_quarantine {
 
-  if ( !-d $config{'VARDIR'} . "/spam/" . $to_domain ) {
-    mkdir( $config{'VARDIR'} . "/spam/" . $to_domain );
+  if ( !-d $VARDIR . "/spam/" . $to_domain ) {
+    mkdir( $VARDIR . "/spam/" . $to_domain );
   }
-  if ( !-d $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to ) {
-    mkdir( $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to );
+  if ( !-d $VARDIR . "/spam/" . $to_domain . "/" . $to ) {
+    mkdir( $VARDIR . "/spam/" . $to_domain . "/" . $to );
   }
 
   ## save the spam file
   my $filename =
-    $config{'VARDIR'} . "/spam/" . $to_domain . "/" . $to . "/" . $exim_id;
-  if ( !open( MSGFILE, ">" . $filename ) ) {
+    $VARDIR . "/spam/" . $to_domain . "/" . $to . "/" . $exim_id;
+  unless (open(my $MSGFILE, ">", $filename ) ) {
     print " cannot open quarantine file $filename for writing";
     return 0;
   }
-  print MSGFILE $msg;
-  close MSGFILE;
+  print $MSGFILE $msg;
+  close $MSGFILE;
 
   if ( $store_id < 0 ) {
     print " error, store id less than 0 ";
@@ -328,7 +330,7 @@ sub put_in_quarantine {
   }
 
   my $logger = SpamLogger->new("Client", "etc/exim/spamlogger.conf");
-  my $res = $logger->logSpam($exim_id, $to_local, $to_domain, $sender, $subject, $score, $rbls, $prefilters, $globalscore);
+  my $res = $logger->log_spam($exim_id, $to_local, $to_domain, $sender, $subject, $score, $rbls, $prefilters, $globalscore);
   chomp($res);
   if ($res !~ /LOGGED BOTH/) {
     print " WARNING, logging is weird ($res)";
@@ -337,54 +339,29 @@ sub put_in_quarantine {
 }
 
 ##########################################
-sub sendNotice {
-  if (defined($email) && defined($email->{d}) && $email->{d}->getPref('notice_wwlists_hit') == 1) {
-    $email->sendWWHitNotice($whitelisted, $warnlisted, $sender, \$msg);
+sub send_notice {
+  if (defined($email) && defined($email->{d}) && $email->{d}->get_pref('notice_wwlists_hit') == 1) {
+    $email->send_ww_hit_notice($whitelisted, $warnlisted, $sender, \$msg);
   }
+  return;
 }
 
 ##########################################
 
 sub panic_log_msg {
-  my $filename = $config{'VARDIR'} . "/spool/exim_stage4/paniclog/" . $exim_id;
+  my $filename = $VARDIR . "/spool/exim_stage4/paniclog/" . $exim_id;
   print " **WARNING, cannot send message ! saving mail to: $filename\n";
 
-  open PANICLOG, ">" . $filename or return;
-  print PANICLOG $msg;
-  close PANICLOG;
+  open(my $PANICLOG, ">", $filename) or return;
+  print $PANICLOG $msg;
+  close $PANICLOG;
+  return;
 }
 ##########################################
 
-sub clean {
-  my $str = shift;
-
+sub clean ($str) {
   $str =~ s/\\/\\\\/g;
   $str =~ s/\'/\\\'/g;
 
   return $str;
 }
-
-##########################################
-
-sub readConfig {    # Reads configuration file given as argument.
-  my $configfile = shift;
-  my %config;
-  my ( $var, $value );
-
-  open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-  while (<CONFIG>) {
-    chomp;       # no newline
-    s/#.*$//;    # no comments
-    s/^\*.*$//;  # no comments
-    s/;.*$//;    # no comments
-    s/^\s+//;    # no leading white
-    s/\s+$//;    # no trailing white
-    next unless length;    # anything left?
-    my ( $var, $value ) = split( /\s*=\s*/, $_, 2 );
-    $config{$var} = $value;
-  }
-  close CONFIG;
-  return %config;
-}
-
-############################################

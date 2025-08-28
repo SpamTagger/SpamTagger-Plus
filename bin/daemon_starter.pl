@@ -30,86 +30,81 @@ use v5.40;
 use warnings;
 use utf8;
 
+sub show_usage ($reason) {
+  print "daemon_starter: Bad usage ($reason).\n";
+  print "\t daemonstarter daemon [parameters] (start|stop|restart|status)\n";
+  exit 1;
+}
+
 my @params;
 while (1) {
-	my $param = shift;
-	if ( !defined $param ) {
-		last;
-	}
-	push @params, $param;
+  my $param = shift;
+  if ( !defined $param ) {
+    last;
+  }
+  push @params, $param;
 }
 if ( @params < 2 ) {
-	show_usage('not enough parameters');
+  show_usage('not enough parameters');
 }
 my $daemon = shift @params;
 my $action = pop @params;
 
 if ( $action !~ /^(start|stop|restart|status)$/ ) {
-	show_usage( 'bad action (' . $action . ')' );
+  show_usage( 'bad action (' . $action . ')' );
 }
 
 my %options;
 while (@params) {
-	my $k = shift @params;
-	if ( $k !~ /^\-(\S+)/ ) {
-		print
-"Warning: parameter ($k) is a value without a key. It will be discarded.\n";
-		next;
-	}
-	my $key = $1;
-	my $v   = shift @params;
-	if ( $v =~ /^-/ ) {
-		print
+  my $k = shift @params;
+  if ( $k !~ /^\-(\S+)/ ) {
+    print "Warning: parameter ($k) is a value without a key. It will be discarded.\n";
+    next;
+  }
+  my $key = $1;
+  my $v   = shift @params;
+  if ( $v =~ /^-/ ) {
+    print
 "Warning: parameter key ($v) comes before a value. It will be discarded.\n";
-		next;
-	}
-	$options{$key} = $v;
+    next;
+  }
+  $options{$key} = $v;
 }
 
 ## include lib paths
 my $path;
 if ( $0 =~ m/(\S*)\/\S+.pl$/ ) {
-	$path = $1 . "/../lib";
-	unshift( @INC, $path );
+  $path = $1 . "/../lib";
+  unshift( @INC, $path );
 } else {
-	show_usage('no daemon available');
+  show_usage('no daemon available');
 }
 if ( !-f $path . "/" . $daemon . ".pm" ) {
-	show_usage('not such daemon available');
+  show_usage('not such daemon available');
 }
-require $daemon . ".pm";
+require $daemon.".pm";
 
-my $daemon = new $daemon( \%options );
+my $daemon = $daemon->( \%options );
 
 if ( $action eq 'start' ) {
-	$daemon->initDaemon();
+  $daemon->init_daemon();
 } elsif ( $action eq 'stop' ) {
-	$daemon->exitDaemon();
+  $daemon->exit_daemon();
 } elsif ( $action eq 'restart' ) {
     print "  Stopping... ";
-	$daemon->exitDaemon();
+  $daemon->exit_daemon();
     print "stopped\n  Starting...";
-	$daemon->initDaemon();
+  $daemon->init_daemon();
 } elsif ( $action eq 'status' ) {
-	my $res = $daemon->status();
+  my $res = $daemon->status();
     if ( $res =~ /^_/ ) {
-		print "No status available (" . $res . ")\n";
+    print "No status available (" . $res . ")\n";
     } elsif ( $res =~ /NOSERVER/ ) {
         print "not running.\n";
     } else {
         $res =~ s/^\-/running.\n-/;
-		print $res . "\n";
-	}
+    print $res . "\n";
+  }
 }
 
 exit 0;
-
-sub show_usage {
-	my $reason = shift;
-
-	print "daemon_starter: Bad usage ($reason).\n";
-	print
-"\t daemonstarter daemon [parameters] (start|stop|restart|status)\n";
-
-	exit 1;
-}

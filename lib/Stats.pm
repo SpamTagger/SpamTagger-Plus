@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,25 +18,18 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-package          Stats;
+package Stats;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(readFile);
-our $VERSION    = 1.0;
-
-
-sub readFile {
-  my $file = shift;
-
-  if (! -f $file) {
-    return (0,0,0,0,0,0,0,0,0,0);
-  }
+sub read_file ($file) {
+  return (0,0,0,0,0,0,0,0,0,0) unless (-f $file);
 
   my $c_msgs = 0;
   my $c_spams = 0;
@@ -48,42 +42,42 @@ sub readFile {
   my $c_users = 0;
   my $c_domains = 0;
 
-  if (open COUNTFILE, $file) {
+  if (open(my $COUNTFILE, '<', $file)) {
 
-   while (<COUNTFILE>) {
-        if (/^MSGS\ (\d+)$/) {
-           $c_msgs = $1;
-        }
-        if (/^SPAMS\ (\d+)$/) {
-           $c_spams = $1;
-        }
-        if (/^HIGHSPAMS\ (\d+)$/) {
-           $c_highspams = $1;
-        }
-        if (/^VIRUSES\ (\d+)$/) {
-           $c_viruses = $1;
-        }
-        if (/^NAMES\ (\d+)$/) {
-           $c_names = $1;
-        }
-        if (/^OTHERS\ (\d+)$/) {
-           $c_others = $1;
-        }
-        if (/^CLEANS\ (\d+)$/) {
-           $c_cleans = $1;
-        }
-        if (/^BYTES\ (\d+)$/) {
-           $c_bytes = $1;
-        }
-        if (/^USERS\ (\d+)$/) {
-           $c_users = $1;
-        }
-        if (/^DOMAINS\ (\d+)$/) {
-           $c_domains = $1;
-        }
-   }
-  close COUNTFILE;
-  return ($c_msgs, $c_spams, $c_highspams, $c_viruses, $c_names, $c_others, $c_cleans, $c_bytes, $c_users, $c_domains);
+    while (<$COUNTFILE>) {
+      if (/^MSGS\ (\d+)$/) {
+        $c_msgs = $1;
+      }
+      if (/^SPAMS\ (\d+)$/) {
+        $c_spams = $1;
+      }
+      if (/^HIGHSPAMS\ (\d+)$/) {
+        $c_highspams = $1;
+      }
+      if (/^VIRUSES\ (\d+)$/) {
+        $c_viruses = $1;
+      }
+      if (/^NAMES\ (\d+)$/) {
+        $c_names = $1;
+      }
+      if (/^OTHERS\ (\d+)$/) {
+        $c_others = $1;
+      }
+      if (/^CLEANS\ (\d+)$/) {
+        $c_cleans = $1;
+      }
+      if (/^BYTES\ (\d+)$/) {
+        $c_bytes = $1;
+      }
+      if (/^USERS\ (\d+)$/) {
+        $c_users = $1;
+      }
+      if (/^DOMAINS\ (\d+)$/) {
+        $c_domains = $1;
+      }
+    }
+    close $COUNTFILE;
+    return ($c_msgs, $c_spams, $c_highspams, $c_viruses, $c_names, $c_others, $c_cleans, $c_bytes, $c_users, $c_domains);
   }
 }
 

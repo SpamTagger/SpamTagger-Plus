@@ -24,6 +24,13 @@ use v5.40;
 use warnings;
 use utf8;
 
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+
+our $config = ReadConfig::get_instance();
+our $SRCDIR = $config->get_option('SRCDIR');
+our $VARDIR = $config->get_option('VARDIR');
+
 # Process codes:
 my %codes = (
     '0' => 'critical (not running and required)',
@@ -34,13 +41,6 @@ my %codes = (
     '5' => 'currently starting',
     '6' => 'currently restarting (currently procesing stop/start script)'
 );
-
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-    my $path = $1."/../lib";
-    unshift (@INC, $path);
-}
-
-my %config = readConfig("/etc/spamtagger.conf");
 
 my $mode_given;
 my $verbose = 0;
@@ -86,7 +86,7 @@ if (! $mode_given) {
     usage();
 }
 if ($mode_given =~ /s/) {
-    my $restartdir = $config{VARDIR}."/run/";
+    my $restartdir = "$VARDIR/run/";
     my @output;
     my $i = 0;
     $cmd = "ps -efww";
@@ -146,15 +146,15 @@ if ($mode_given =~ /s/) {
     foreach ( 0 .. 2 ) {
     my $key = $order[$_]->{'id'};
         if ($key eq 'exim_stage2') {
-            my $subcmd = "grep -e '^MTA\\s*=\\s*eximms' ".$config{SRCDIR}."/etc/mailscanner/MailScanner.conf";
+            my $subcmd = "grep -e '^MTA\\s*=\\s*eximms' $SRCDIR/etc/mailscanner/MailScanner.conf";
             my $type = `$subcmd`;
             if ($type eq '') {
-                $cmd = "/opt/exim4/bin/exim -C $config{SRCDIR}/etc/exim/$key.conf -bpc";
+                $cmd = "/opt/exim4/bin/exim -C $SRCDIR/etc/exim/$key.conf -bpc";
             } else {
-                $cmd = "ls $config{VARDIR}/spool/exim_stage2/input/*.env 2>&1 | grep -v 'No such' | wc -l";
+                $cmd = "ls $VARDIR/spool/exim_stage2/input/*.env 2>&1 | grep -v 'No such' | wc -l";
             }
         } else {
-            $cmd = "/opt/exim4/bin/exim -C $config{SRCDIR}/etc/exim/$key.conf -bpc";
+            $cmd = "/opt/exim4/bin/exim -C $SRCDIR/etc/exim/$key.conf -bpc";
         }
         $res = `$cmd`;
         chomp($res);
@@ -207,7 +207,7 @@ if ($mode_given =~ /s/) {
     }
     print "\n" unless ($verbose);
 } elsif ($mode_given =~ /t/) {
-    $cmd = "/opt/exim4/bin/exim -C $config{SRCDIR}/etc/exim/exim_stage2.conf -bp | head -1 | cut -d' ' -f2";
+    $cmd = "/opt/exim4/bin/exim -C $SRCDIR/etc/exim/exim_stage2.conf -bp | head -1 | cut -d' ' -f2";
     $res = `$cmd`;
     chomp($res);
     if ($verbose) {
@@ -216,7 +216,7 @@ if ($mode_given =~ /s/) {
         print($res."\n");
     }
 } elsif ($mode_given =~ /u/) {
-    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S $config{VARDIR}/run/mysql_slave/mysqld.sock -uspamtagger -p$config{MYSPAMTAGGERPWD}";
+    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S $VARDIR/run/mysql_slave/mysqld.sock -uspamtagger -p".$config->get_option('MYSPAMTAGGERPWD');
     $res = `$cmd`;
     my $patch = "";
     if ($res =~ /^(\d+)\s+(\S+)$/) {
@@ -231,8 +231,7 @@ if ($mode_given =~ /s/) {
     usage();
 }
 
-sub usage
-{
+sub usage {
     print(
 "Usage:
     get_status.pl [-s, -p, -l, -d, -m, -t, -u] <-v>
@@ -263,37 +262,4 @@ sub usage
     -h: this menu
 ");
     exit(1);
-}
-
-sub getNumberOfGreylistDomains
-{
-    my $cmd = "wc -l ".$config{VARDIR}."/spool/spamtagger/domains_to_greylist.list  | cut -d' ' -f1";
-    my $res = `$cmd`;
-    if ($res =~ m/(\d+)\s+/) {
-        return $1;
-    }
-    return 0;
-}
-
-#############################
-sub readConfig
-{
-    my $configfile = shift;
-    my %config;
-    my ($var, $value);
-
-    open (my $CONFIG, '<', $configfile) or die "Cannot open $configfile: $!\n";
-    while (<$CONFIG>) {
-        chomp;              # no newline
-        s/#.*$//;           # no comments
-        s/^\*.*$//;         # no comments
-        s/;.*$//;           # no comments
-        s/^\s+//;           # no leading white
-        s/\s+$//;           # no trailing white
-        next unless length; # anything left?
-        my ($var, $value) = split(/\s*=\s*/, $_, 2);
-        $config{$var} = $value;
-    }
-    close $CONFIG;
-    return %config;
 }

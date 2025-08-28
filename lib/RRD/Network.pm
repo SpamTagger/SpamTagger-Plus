@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,86 +24,63 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-use lib qw(/usr/rrdtools/lib/perl/);
-require RRD::Generic;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(New collect plot);
-our $VERSION    = 1.0;
+use lib "/usr/rrdtools/lib/perl/";
+use RRD::Generic();
 
-
-sub New {
-  my $statfile = shift;
+sub new ($statfile, $reset) {
   $statfile = $statfile."/network.rrd";
-  my $reset = shift;
 
   my %things = (
-           in => ['COUNTER', 'AVERAGE'],
-           out => ['COUNTER', 'AVERAGE']
-         );
+    in => ['COUNTER', 'AVERAGE'],
+    out => ['COUNTER', 'AVERAGE']
+  );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
 
-
   my $this = {
-  	 statfile => $statfile,
-  	 rrd => $rrd
+    statfile => $statfile,
+    rrd => $rrd
   };
 
   return bless $this, "RRD::Network";
 }
 
-
-sub collect {
-  my $this = shift;
-  my $snmp = shift;
-
-  my $if = $this->getInterfaceID($snmp, 'eth0');
+sub collect ($this, $snmp) {
+  my $if = $this->get_interface_id($snmp, 'eth0');
 
   my %things = (
-        in => '1.3.6.1.2.1.2.2.1.10.'.$if,
-        out => '1.3.6.1.2.1.2.2.1.16.'.$if,
-        );
+    in => '1.3.6.1.2.1.2.2.1.10.'.$if,
+    out => '1.3.6.1.2.1.2.2.1.16.'.$if,
+  );
 
   return RRD::Generic::collect($this->{rrd}, $snmp, \%things);
 }
 
-sub plot {
-  my $this = shift;
-  my $dir = shift;
-  my $period = shift;
-  my $leg = shift;
-
+sub plot ($this, $dir, $period, $leg) {
   my %things = (
-        kbin => ['area', '54EB48', 'BA3614', 'In', 'AVERAGE', '%3.2lf KBps', 'in,1024,/'],
-        kbout => ['line', '7648EB', 'BA3614', 'Out', 'AVERAGE', '%3.2lf KBps', 'out,1024,/'],
-   );
+    kbin => ['area', '54EB48', 'BA3614', 'In', 'AVERAGE', '%3.2lf KBps', 'in,1024,/'],
+    kbout => ['line', '7648EB', 'BA3614', 'Out', 'AVERAGE', '%3.2lf KBps', 'out,1024,/'],
+  );
   my @order = ('kbin', 'kbout');
 
   my $legend = "\t\t  Last\tAverage\t   Max\\n";
   return RRD::Generic::plot('network', $dir, $period, $leg, 'Bandwidth [KBps]', 0, 0, $this->{rrd}, \%things, \@order, $legend);
 }
 
-sub getInterfaceID {
-  my $this = shift;
-  my $snmp = shift;
-  my $if_name = shift;
-  my $if_nb = 1;
-
+sub get_interface_id ($this, $snmp, $if_name, $if_nb) {
   my $base_oid = '1.3.6.1.2.1.2.2.1.2';
   for my $i (1..10) {
     my $oid = $base_oid.".$i";
     my $result = $snmp->get_request(
-                    -varbindlist => [$oid]
-                    );
-    if (defined($result)) {
-      if ($result->{$oid} eq $if_name) {
-        return $i;
-      }
-    } else {
-      return $if_nb;
-    }
+      -varbindlist => [$oid]
+    );
+    return $if_nb unless (defined($result));
+    return $i if ($result->{$oid} eq $if_name);
   }
   return $if_nb;
 }
+
 1;

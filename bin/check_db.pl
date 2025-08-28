@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,7 +18,6 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #   This script will compare the actual slave or master database with
 #   the up-to-date database from SpamTagger Update Services
 #
@@ -28,12 +28,9 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require DB;
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use DB();
 
 my $VERBOSE = 0;
 ## default behaviour
@@ -75,19 +72,19 @@ if (($updatemode + $checkmode + $repairmode) > 1) {
   exit 1;
 }
 
-my $conf = ReadConfig::getInstance();
+my $conf = ReadConfig::get_instance();
 
 ## check replication if wanted
 if ($repcheck > 0) {
-  checkReplicationStatus($repfix);
+  check_replication_status($repfix);
   exit 0;
 }
 if ($repfix > 0) {
-  if (checkReplicationStatus($repfix)) {
+  if (check_replication_status($repfix)) {
     exit 0;
   }
   sleep 5;
-  checkReplicationStatus(0);
+  check_replication_status(0);
   exit 0;
 }
 ## process each database
@@ -99,51 +96,48 @@ foreach my $database (split(',', $databases)) {
   }
 
   ## connect to database
-  my $db = DB::connect($dbtype, $database);
+  my $db = DB->db_connect($dbtype, $database);
   output("Connected to database");
 
   if ($checkmode) {
     ## mysql check mode
-    myCheckRepairDatabase(\$db, 0);
+    my_check_repair_database(\$db, 0);
   } elsif ($repairmode) {
     ## mysql repair mode
-    myCheckRepairDatabase(\$db, 1);
+    my_check_repair_database(\$db, 1);
   } elsif ($updatemode) {
-    compareUpdateDatabase(\$db, $database, 1);
+    compare_update_database(\$db, $database, 1);
   } else {
     ## output status
-    compareUpdateDatabase(\$db, $database, 0);
+    compare_update_database(\$db, $database, 0);
   }
 
-  $db->disconnect();
+  $db->db_disconnect();
   output("Disconnected from database");
 }
 
 if ($updatemode && $dbtype eq 'master') {
   foreach my $dbname ('dmarc_reporting') {
-    my $db = DB::connect($dbtype, $dbname, 0);
-    if ($db && !$db->getType()) {
+    my $db = DB->db_connect($dbtype, $dbname, 0);
+    if ($db && !$db->get_type()) {
        print "Need to create new database $dbname, proceeding...\n";
-       addDatabase($dbtype, $dbname);
+       add_database($dbtype, $dbname);
     }
+    $db->db_disconnect();
   }
 }
 exit 0;
 
 #######################
 ## output
-sub output {
-  my $message = shift;
-
-  if ($VERBOSE) {
-    print $message."\n";
-  }
+sub output ($message) {
+  print $message."\n" if ($VERBOSE);
+  return;
 }
 
 #######################
-## getRefTables
-sub getRefTables {
-  my $dbname = shift;
+## get_ref_tables
+sub get_ref_tables ($dbname) {
   my %tables;
 
   my $prefix = 'cf';
@@ -153,30 +147,29 @@ sub getRefTables {
     $prefix='sp';
   }
 
-  my $install_dir = $conf->getOption('SRCDIR')."/install/dbs";
+  my $install_dir = $conf->get_option('SRCDIR')."/install/dbs";
   if ($dbname eq 'st_spool') {
     $install_dir .= "/spam";
   }
-  opendir(IDIR, $install_dir) or die "could not open table definition directory $install_dir\n";
-  while( my $table_file = readdir(IDIR)) {
+  opendir(my $IDIR, $install_dir) or die "could not open table definition directory $install_dir\n";
+  while( my $table_file = readdir($IDIR)) {
     next if $table_file =~ /^\./;
     if ($table_file =~ /^t\_$prefix\_(\S+)\.sql/) {
       $tables{$1} = $install_dir."/".$table_file;
     }
   }
-  closedir(IDIR);
+  closedir($IDIR);
   return %tables;
 }
 
 #######################
-## getActualTables
-sub getActualTables {
-  my $db_ref = shift;
+## get_actual_tables
+sub get_actual_tables ($db_ref) {
   my $db = $$db_ref;
   my %tables_hash;
 
   my $sql = "SHOW tables;";
-  my @tables = $db->getList($sql);
+  my @tables = $db->get_list($sql);
 
   foreach my $table (@tables) {
     $tables_hash{$table} = $table;
@@ -186,14 +179,13 @@ sub getActualTables {
 
 
 #######################
-## getRefFields
-sub getRefFields {
-  my $file = shift;
+## get_ref_fields
+sub get_ref_fields ($file) {
   my %fields;
   my $previous = 0;
   my $order = 0;
 
-  open(TABLEFILE, $file) or die("ERROR, cannot open reference database file $file\nABORTED\n");
+  open(my TABLEFILE, '<', $file) or die("ERROR, cannot open reference database file $file\nABORTED\n");
   my $in_desc = 0;
   while(<TABLEFILE>) {
     chomp;
@@ -231,16 +223,14 @@ sub getRefFields {
 }
 
 #######################
-## getActualFields
-sub getActualFields {
-  my $db_ref = shift;
+## get_actual_fields
+sub get_actual_fields ($db_ref, $tablename) {
   my $db = $$db_ref;
-  my $tablename = shift;
   my %fields;
   my $previous = "";
 
   my $sql = "DESCRIBE $tablename;";
-  my @afields = $db->getListOfHash($sql);
+  my @afields = $db->get_list_of_hash($sql);
 
   foreach my $f (@afields) {
     my $fname = $f->{Field};
@@ -254,15 +244,12 @@ sub getActualFields {
 
 
 #######################
-## myCheckDatabase
-sub myCheckRepairDatabase {
-  my $db_ref = shift;
+## my_check_repair_database
+sub my_check_repair_database ($db_ref, $repair) {
   my $db = $$db_ref;
-  my $repair = shift;
   my $sql = "";
 
-  my %tables = getActualTables(\$db);
-
+  my %tables = get_actual_tables(\$db);
 
   foreach my $tname (keys %tables) {
     if ($repair) {
@@ -272,37 +259,34 @@ sub myCheckRepairDatabase {
       print "   checking table: $tname...";
       $sql = "CHECK TABLE $tname EXTENDED;";
     }
-    my %result = $db->getHashRow($sql);
+    my %result = $db->get_hash_row($sql);
     print " ".$result{'Msg_text'}."\n";
   }
+  return;
 }
 
 #######################
 ## add permission to database
-sub addDatabase {
-  my $dbtype = shift;
-  my $dbname = shift;
+sub add_database ($dbtype, $dbname) {
+  $dbtype = 'master' if ($dbtype ne 'slave');
 
-  if ($dbtype ne 'slave') {
-    $dbtype = 'master';
-  }
-
-  my $mysqld = $conf->getOption('SRCDIR')."/etc/init.d/mysql_".$dbtype;
+  my $mysqld = $conf->get_option('SRCDIR')."/etc/init.d/mysql_".$dbtype;
   print "Restarting $dbtype database to change permissions...\n";
   `$mysqld restart nopass 2>&1`;
   sleep(20);
-  my $dbr = DB::connect($dbtype, 'mysql');
+  my $dbr = DB->db_connect($dbtype, 'mysql');
   print "Creating database $dbname...\n";
   $dbr->execute("CREATE DATABASE $dbname");
   print "Adding new permissions...\n";
   $dbr->execute("INSERT INTO db VALUES('%', '".$dbname."', 'spamtagger', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')");
+  $dbr->db_disconnect();
   print "Restarting $dbtype database with new permissions...\n";
   `$mysqld restart 2>&1`;
   sleep(20);
-  my $descfile = $conf->getOption('SRCDIR')."/install/dbs/".$dbname.".sql";
+  my $descfile = $conf->get_option('SRCDIR')."/install/dbs/".$dbname.".sql";
   if (-f $descfile) {
     print "Creating schema...\n";
-    my $mysql = $conf->getOption('SRCDIR')."/bin/st_mysql";
+    my $mysql = $conf->get_option('SRCDIR')."/bin/st_mysql";
     if ($dbtype eq 'slave') {
       $mysql .= " -s $dbname";
     } else {
@@ -312,14 +296,14 @@ sub addDatabase {
   }
 
   print "Done.\n";
+  return;
 }
 
 #######################
 ## check replication status and try to fix if wanted
-sub checkReplicationStatus {
-  my $fix = shift;
+sub check_replication_status ($fix) {
   my $haserror = 0;
-  my $logfile = $conf->getOption('VARDIR')."/log/mysql_slave/mysql.log";
+  my $logfile = $conf->get_option('VARDIR')."/log/mysql_slave/mysql.log";
   if (! -f $logfile) {
     print "WARNING: slave mysql log file not found ! ($logfile)\n";
     return 0;
@@ -339,31 +323,27 @@ sub checkReplicationStatus {
     if ($fix) {
       print " ...trying to fix... ";
       my $query = "ALTER TABLE $3 DROP COLUMN $1;";
-      my $dbr = DB::connect('slave', $2);
+      my $dbr = DB->db_connect('slave', $2);
       if ( $dbr->execute($query)) {
-       my $cmd = $conf->getOption('SRCDIR')."/etc/init.d/mysql_slave restart >/dev/null 2>&1";
+       my $cmd = $conf->get_option('SRCDIR')."/etc/init.d/mysql_slave restart >/dev/null 2>&1";
        my $resexec = `$cmd`;
        print " should be fixed!\n";
       } else {
        print " could not modify database. fix failed\n";
        return 0;
       }
+      $dbr->db_disconnect();
     }
   }
   return 0;
 }
 
-
 #######################
-## compareUpdateDatabase
-sub compareUpdateDatabase {
-  my $db_ref = shift;
+## compare_update_database
+sub compare_update_database ($db_ref, $dbname, $update) {
   my $db = $$db_ref;
-  my $dbname = shift;
-  my $update=shift;
-
-  my %reftables = getRefTables($dbname);
-  my %actualtables = getActualTables(\$db);
+  my %reftables = get_ref_tables($dbname);
+  my %actualtables = get_actual_tables(\$db);
 
   #####
   ## check missing things in actual database (from ref to actual)
@@ -378,7 +358,7 @@ sub compareUpdateDatabase {
         if ($dbtype eq 'slave') {
           $type = '-s';
         }
-        my $cmd = $conf->getOption('SRCDIR')."/bin/st_mysql $type < ".$reftables{$table} ." 2>&1";
+        my $cmd = $conf->get_option('SRCDIR')."/bin/st_mysql $type < ".$reftables{$table} ." 2>&1";
         my $res = `$cmd`;
         if (! $res eq '' ) {
           print "ERROR, cannot create database: $res\nABORTED\n";
@@ -392,30 +372,22 @@ sub compareUpdateDatabase {
     }
 
     ## compare and repair table
-    if (!compareUpdateTable(\$db, $table, $reftables{$table}, $update)) {
+    if (!compare_update_table(\$db, $table, $reftables{$table}, $update)) {
       print "ERROR, cannot update table $table\nABORTED\n";
       exit 1;
     }
 
   }
-
-  #####
-  ## check useless tables
-  ## ...
+  return;
 }
 
 #######################
-## compareUpdateTable
-sub compareUpdateTable {
-  my $db_ref = shift;
+## compare_update_table
+sub compare_update_table ($db_ref, $tablename, $tablefile, $update) {
   my $db = $$db_ref;
-  my $tablename = shift;
-  my $tablefile = shift;
-  my $update=shift;
 
-
-  my %reffields = getRefFields($tablefile);
-  my %actualfields = getActualFields(\$db, $tablename);
+  my %reffields = get_ref_fields($tablefile);
+  my %actualfields = get_actual_fields(\$db, $tablename);
   my %nonofields;
 
   #####
@@ -433,7 +405,7 @@ sub compareUpdateTable {
         }
         my $sql = "ALTER TABLE $tablename ADD COLUMN ".$f." ".$reffields{$reff}{deffull}.$after.";";
         if (! $db->execute($sql)) {
-          print " ERROR, cannot create column: ".$db->getError()."\nABORTED\n";
+          print " ERROR, cannot create column: ".$db->get_error()."\nABORTED\n";
           exit 1;
         } else {
           print " FIXED !\n";
@@ -448,7 +420,7 @@ sub compareUpdateTable {
         if ($update) {
           my $sql = "ALTER TABLE $tablename MODIFY $clean $reffields{$reff}{'deffull'};";
           if (! $db->execute($sql)) {
-            print " ERROR, cannot alter column $clean in $tablename: ".$db->getError()."\nABORTED\n";
+            print " ERROR, cannot alter column $clean in $tablename: ".$db->get_error()."\nABORTED\n";
             exit 1;
           } else {
             print " FIXED !\n";
@@ -466,7 +438,7 @@ sub compareUpdateTable {
       if ($update) {
         my $sql = "ALTER TABLE $tablename DROP COLUMN ".$f.";";
         if (! $db->execute($sql)) {
-          print "ERROR, cannot remove column: ".$db->getError()."\nABORTED\n";
+          print "ERROR, cannot remove column: ".$db->get_error()."\nABORTED\n";
           exit 1;
         } else {
           print " FIXED !";

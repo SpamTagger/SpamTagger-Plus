@@ -6,11 +6,9 @@ use v5.40;
 use warnings;
 use utf8;
 
-no  strict 'subs'; # Allow bare words for parameter %'s
-#use English; # Needed for $PERL_VERSION to work in all versions of Perl
-
-use IO;
-use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
 my $MODULE = "ClamSpam";
 my %conf;
@@ -21,27 +19,27 @@ sub initialise {
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
   my $configfile = $confdir."/$MODULE.cf";
   %ClamSpam::conf = (
-     command => '/opt/clamav/bin/clamdscan --no-summary --config-file=__CONFIGFILE__ -',
-     header => "X-$MODULE",
-     putHamHeader => 0,
-     putSpamHeader => 1,
-     putDetailedHeader => 1,
-     scoreHeader => "X-$MODULE-result",
-     maxSize => 0,
-     timeOut => 20,
-     decisive_field => 'none',
-     pos_text => '',
-     pos_decisive => 0,
-     position => 0
+    command => '/opt/clamav/bin/clamdscan --no-summary --config-file=__CONFIGFILE__ -',
+    header => "X-$MODULE",
+    putHamHeader => 0,
+    putSpamHeader => 1,
+    putDetailedHeader => 1,
+    scoreHeader => "X-$MODULE-result",
+    maxSize => 0,
+    timeOut => 20,
+    decisive_field => 'none',
+    pos_text => '',
+    pos_decisive => 0,
+    position => 0
   );
 
-  if (open (CONFIG, $configfile)) {
-    while (<CONFIG>) {
+  if (open(my $CONFIG, '<', $configfile)) {
+    while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
        $ClamSpam::conf{$1} = $2;
       }
     }
-    close CONFIG;
+    close($CONFIG);
   } else {
     MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
   }
@@ -53,12 +51,11 @@ sub initialise {
   } else {
     $ClamSpam::conf{'pos_text'} = 'position : '.$ClamSpam::conf{'position'}. 'not decisive';
   }
+  return;
 }
 
-sub Checks {
-  my $this = shift;
-  my $message = shift;
-
+# TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
+sub Checks ($this, $message) { ## no critic
   ## check maximum message size
   my $maxsize = $ClamSpam::conf{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
@@ -69,13 +66,13 @@ sub Checks {
     return 0;
   }
 
-  my (@WholeMessage, $maxsize);
-  push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
-  push(@WholeMessage, "\n");
-  $message->{store}->ReadBody(\@WholeMessage, 0);
+  my (@whole_message, $maxsize);
+  push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
+  push(@whole_message, "\n");
+  $message->{store}->ReadBody(\@whole_message, 0);
 
   my $msgtext = "";
-  foreach my $line (@WholeMessage) {
+  foreach my $line (@whole_message) {
     $msgtext .= $line;
   }
 
@@ -129,6 +126,7 @@ sub Checks {
 
 sub dispose {
   MailScanner::Log::InfoLog("$MODULE module disposing...");
+  return;
 }
 
 1;

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -25,23 +26,19 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-use threads;
-use threads::shared;
-require DB;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA    = qw(Exporter);
-our @EXPORT   = qw(new threadInit accessFlatElement stabilizeFlatElement getStats announceMonthChange announceDayChange);
-our $VERSION  = 1.0;
+use threads();
+use threads::shared();
+use DB();
 
 my $_current_table : shared = '';
 my $_current_table_exists : shared = 0;
 my $_current_table_creating : shared = 0;
 
-sub new {
-  my $class = shift;
-  my $daemon = shift;
-
+sub new ($class, $daemon) {
   my $this = {
     'class' => $class,
     'daemon' => $daemon
@@ -54,23 +51,19 @@ sub new {
      }
   }
 
-  $this->doLog("backend loaded", 'statsdaemon');
+  $this->do_log("backend loaded", 'statsdaemon');
 
   $this->{data} = $StatsDaemon::data_;
   return $this;
 }
 
-sub threadInit {
-  my $this = shift;
-
-  $this->doLog("backend thread initialization", 'statsdaemon');
-  $this->connectBackend();
+sub thread_init ($this) {
+  $this->do_log("backend thread initialization", 'statsdaemon');
+  $this->connect_backend();
+  return;
 }
 
-sub accessFlatElement {
-  my $this = shift;
-  my $element = shift;
-
+sub access_flat_element ($this, $element) {
   my $value = 0;
 
   if ( $_current_table_exists ) {
@@ -80,42 +73,39 @@ sub accessFlatElement {
         . " d, stats_subject s WHERE s.id=d.subject AND s.subject='"
         . $element
         . "' AND d.day="
-        . $this->{daemon}->getCurrentDate()->{'day'};
-      $this->{daemon}->addStat( 'backend_read', 1 );
-      return '_NOBACKEND' if ( !$this->connectBackend() );
+        . $this->{daemon}->get_current_date()->{'day'};
+      $this->{daemon}->add_stat( 'backend_read', 1 );
+      return '_NOBACKEND' if ( !$this->connect_backend() );
       my %res = $this->{db}->getHashRow($query);
-      $this->doLog( 'Query executed: '.$query, 'statsdaemon', 'debug');
+      $this->do_log( 'Query executed: '.$query, 'statsdaemon', 'debug');
       if ( $res{'id'} && $res{'value'} ) {
 
         $this->{data}->{$element}->{'stable_id'} = $res{'id'};
 
         $value = $res{'value'};
       }
-      $this->doLog( 'loaded data for ' . $element . ' from backend',
+      $this->do_log( 'loaded data for ' . $element . ' from backend',
         'statsdaemon', 'debug' );
    }
    return $value;
 }
 
-sub stabilizeFlatElement {
-  my $this = shift;
-  my $element = shift;
-
+sub stabilize_flat_element ($this, $element) {
   my $table = '';
   if ( $_current_table_exists ) {
     $table = $_current_table;
   } else {
-    if ( $this->createCurrentTable() ) {
+    if ( $this->create_current_table() ) {
       $table = $_current_table;
     }
   }
   if ( $table eq '' ) {
-    $this->doLog(
+    $this->do_log(
       "Error: Current table cannot be found (probably being created)",
       'statsdaemon', 'error' );
     return '_CANNOTSTABILIZE';
   }
-  my $day = $this->{daemon}->getCurrentDate()->{'day'};
+  my $day = $this->{daemon}->get_current_date()->{'day'};
 
   ## find out if element already is registered, register it if not.
   if (!defined($this->{data}->{$element}) ||
@@ -124,29 +114,29 @@ sub stabilizeFlatElement {
      ) {
     my $query =
       "SELECT id FROM stats_subject WHERE subject='" . $element . "'";
-    $this->{daemon}->addStat( 'backend_read', 1 );
-    return '_NOBACKEND' if ( !$this->connectBackend() );
+    $this->{daemon}->add_stat( 'backend_read', 1 );
+    return '_NOBACKEND' if ( !$this->connect_backend() );
     my %res = $this->{db}->getHashRow($query);
     if ( defined( $res{'id'} ) ) {
-      $this->{daemon}->setElementValueByName( $element, 'stable_id',
+      $this->{daemon}->set_element_value_by_name( $element, 'stable_id',
         $res{'id'} );
     } else {
       $query = "INSERT INTO stats_subject SET subject='" . $element . "'";
-      return '_NOBACKEND' if ( !$this->connectBackend() );
+      return '_NOBACKEND' if ( !$this->connect_backend() );
       if ( $this->{db}->execute($query) ) {
         my $id = $this->{db}->getLastID();
-        $this->{daemon}->addStat( 'backend_write', 1 );
+        $this->{daemon}->add_stat( 'backend_write', 1 );
         if ($id) {
-          $this->{daemon}->setElementValueByName( $element, 'stable_id',
+          $this->{daemon}->set_element_value_by_name( $element, 'stable_id',
             $id );
-          $this->doLog(
+          $this->do_log(
             'registered new element ' . $element
               . ' in backend with id '
               . $id,
             'statsdaemon', 'debug'
           );
         } else {
-          $this->doLog(
+          $this->do_log(
             "Could not get subject ID for element: $element",
             'statsdaemon', 'error' );
         }
@@ -155,14 +145,14 @@ sub stabilizeFlatElement {
         my $query =
           "SELECT id FROM stats_subject WHERE subject='" . $element
           . "'";
-        $this->{daemon}->addStat( 'backend_read', 1 );
-        return '_NOBACKEND' if ( !$this->connectBackend() );
+        $this->{daemon}->add_stat( 'backend_read', 1 );
+        return '_NOBACKEND' if ( !$this->connect_backend() );
         my %res = $this->{db}->getHashRow($query);
         if ( defined( $res{'id'} ) ) {
-          $this->{daemon}->setElementValueByName( $element, 'stable_id',
+          $this->{daemon}->set_element_value_by_name( $element, 'stable_id',
             $res{'id'} );
         } else {
-          $this->doLog(
+          $this->do_log(
             "Could not insert subject for element: $element",
             'statsdaemon', 'error' );
         }
@@ -176,30 +166,24 @@ sub stabilizeFlatElement {
     . " SET day="
     . $day
     . ", subject="
-    . $this->{daemon}->getElementValueByName($element, 'stable_id')
+    . $this->{daemon}->get_element_value_by_name($element, 'stable_id')
     . ", value="
-    . $this->{daemon}->getElementValueByName($element, 'value')
+    . $this->{daemon}->get_element_value_by_name($element, 'value')
     . " ON DUPLICATE KEY UPDATE value="
-    . $this->{daemon}->getElementValueByName($element, 'value');
-  return '_NOBACKEND' if ( !$this->connectBackend() );
+    . $this->{daemon}->get_element_value_by_name($element, 'value');
+  return '_NOBACKEND' if ( !$this->connect_backend() );
   if ( !$this->{db}->execute($query) ) {
-    $this->doLog( "Could not stabilize statistic with query: '$query'",
+    $this->do_log( "Could not stabilize statistic with query: '$query'",
       'statsdaemon', 'error' );
     return '_CANNOTSTABILIZE';
   }
-  $this->{daemon}->addStat( 'backend_write', 1 );
-  $this->doLog( 'stabilized value for element ' . $element . ' in backend',
+  $this->{daemon}->add_stat( 'backend_write', 1 );
+  $this->do_log( 'stabilized value for element ' . $element . ' in backend',
     'statsdaemon', 'debug' );
   return 'STABILIZED';
 }
 
-sub getStats {
-  my $this = shift;
-  my $start = shift;
-  my $stop = shift;
-  my $what = shift;
-  my $data = shift;
-
+sub get_stats ($this, $start, $stop, $what, $data) {
   ## defs
   my $base_subject = '---';
 
@@ -330,10 +314,10 @@ sub getStats {
         }
 
         $query .= " group by d.subject";
-        $this->doLog( 'Using query: "'.$query.'"', 'statsdaemon', 'debug' );
-        $this->{daemon}->increaseLongRead();
+        $this->do_log( 'Using query: "'.$query.'"', 'statsdaemon', 'debug' );
+        $this->{daemon}->increase_long_read();
         my @results = $this->{db}->getListOfHash( $query, 1 );
-        $this->{daemon}->decreaseLongRead();
+        $this->{daemon}->decrease_long_read();
         foreach my $res (@results) {
           if ( !$res->{'sm'} ) {
             $res->{'sm'} = 0;
@@ -358,33 +342,25 @@ sub getStats {
   return 'OK';
 }
 
-sub announceMonthChange {
-  my $this = shift;
-
+sub announce_month_change ($this) {
   $_current_table_exists = 0;
-}
-
-sub announceDayChange {
-  my $this = shift;
-
+  return;
 }
 
 ## Database management
-sub connectBackend {
-  my $this = shift;
-
+sub connect_backend ($this) {
   return 1 if ( defined( $this->{db} ) && $this->{db}->ping() );
 
-  $this->{db} = DB::connect( 'slave', 'st_stats', 0 );
+  $this->{db} = DB->db_connect( 'slave', 'st_stats', 0 );
   if ( !$this->{db}->ping() ) {
-    $this->doLog( "WARNING, could not connect to statistics database",
+    $this->do_log( "WARNING, could not connect to statistics database",
       'statsdaemon', 'error' );
     return 0;
   }
-  $this->doLog( "Connected to statistics database", 'statsdaemon' );
+  $this->do_log( "Connected to statistics database", 'statsdaemon' );
 
   if ( $_current_table_exists == 0 ) {
-    $this->createCurrentTable();
+    $this->create_current_table();
   }
 
   my $query = "SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED";
@@ -393,7 +369,7 @@ sub connectBackend {
   return 1;
 }
 
-sub createCurrentTable() {
+sub create_current_table() {
   my $this = shift;
 
   if ( $_current_table_creating == 1 ) {
@@ -409,17 +385,17 @@ sub createCurrentTable() {
     . "KEY `id` (`id`)"
     . ") ENGINE=MyISAM";
   if ( !$this->{db}->execute($query) ) {
-    $this->doLog( "Cannot create subject table", 'statsdaemon', 'error' );
+    $this->do_log( "Cannot create subject table", 'statsdaemon', 'error' );
     $_current_table_creating = 0;
     return 0;
   }
 
   my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
     localtime time;
-  %{$this->{daemon}->getCurrentDate()} =
+  %{$this->{daemon}->get_current_date()} =
     ( 'day' => $mday, 'month' => $mon + 1, 'year' => $year + 1900 );
   my $table = "stats_"
-    . sprintf( '%.4d%.2d', $this->{daemon}->getCurrentDate()->{'year'}, $this->{daemon}->getCurrentDate()->{'month'} );
+    . sprintf( '%.4d%.2d', $this->{daemon}->get_current_date()->{'year'}, $this->{daemon}->get_current_date()->{'month'} );
 
   $query =
     "CREATE TABLE IF NOT EXISTS `$table` ("
@@ -429,14 +405,14 @@ sub createCurrentTable() {
     . "PRIMARY KEY `day` (`day`,`subject`), "
     . "KEY `subject_idx` (`subject`) "
     . ") ENGINE=MyISAM";
-  $this->{daemon}->addStat( 'backend_write', 1 );
+  $this->{daemon}->add_stat( 'backend_write', 1 );
   if ( !$this->{db}->execute($query) ) {
-    $this->doLog( "Cannot create table: " . $table, 'statsdaemon',
+    $this->do_log( "Cannot create table: " . $table, 'statsdaemon',
       'error' );
     $_current_table_creating = 0;
     return 0;
   } else {
-    $this->doLog( 'Table ' . $table . " created", 'statsdaemon' );
+    $this->do_log( 'Table ' . $table . " created", 'statsdaemon' );
   }
   $_current_table_exists = 1;
   $_current_table = $table;
@@ -444,14 +420,10 @@ sub createCurrentTable() {
   return 1;
 }
 
-sub doLog {
-  my $this = shift;
-  my $message   = shift;
-  my $given_set = shift;
-  my $priority  = shift;
-
+sub do_log ($this, $message, $given_set, $priority) {
   my $msg = $this->{class}." ".$message;
-  $this->{daemon}->doLog($msg, $given_set, $priority) if ($this->{daemon});
+  $this->{daemon}->do_log($msg, $given_set, $priority) if ($this->{daemon});
+  return;
 }
 
 1;

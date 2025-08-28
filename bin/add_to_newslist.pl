@@ -28,24 +28,16 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require DB;
-
-my %config = readConfig("/etc/spamtagger.conf");
+use lib '/usr/spamtagger/lib/';
+use DB();
 
 my $dest = shift;
 my $sender = shift;
-if (not isValidEmail($dest)){
-    err("DESTNOTVALID");
-}
-if (not isValidEmail($sender)){
-    err("SENDERNOTVALID");
-}
 
-my $dbh = DB::connect('master', 'st_config') || err("CANNOTCONNECTDB");
+err("DESTNOTVALID") if (not is_valid_email($dest));
+err("SENDERNOTVALID") if (not is_valid_email($sender));
+
+my $dbh = DB->db_connect('master', 'st_config') || err("CANNOTCONNECTDB");
 
 # Remove content after plus in address so that rule applies to base address
 $dest =~ s/([^\+]+)\+([^\@]+)\@(.*)/$1\@$3/;
@@ -53,57 +45,24 @@ $dest =~ s/([^\+]+)\+([^\@]+)\@(.*)/$1\@$3/;
 # WWLists don't have unique indexes, check for duplicate first
 my $sth = $dbh->prepare("SELECT * FROM wwlists WHERE sender = ? AND recipient = ? AND type = 'wnews'") || err("CANNOTSELECTDB");
 $sth->execute($sender, $dest);
-if ($sth->fetchrow_arrayref()) {
-    err("DUPLICATEENTRY");
-}
+err("DUPLICATEENTRY") if ($sth->fetchrow_arrayref());
 
 $sth = $dbh->prepare("INSERT INTO wwlists (sender, recipient, type, expiracy, status, comments)
-    values (?, ?, 'wnews', '0000-00-00', 1, '[Newsletter]')");
+  values (?, ?, 'wnews', '0000-00-00', 1, '[Newsletter]')");
+
 $sth->execute($sender, $dest);
-unless ($sth->rows() > 0) {
-    err("CANNOTINSERTDB");
-}
+err("CANNOTINSERTDB") unless ($sth->rows() > 0);
+$dbh->db_disconnect();
 
 print("OK");
 exit 0;
 
 ##########################################
-sub isValidEmail
-{
-    my $email_str = shift;
-    if ($email_str =~ /^\S*\@\S+\.\S+$/) {
-        return 1;
-    } else {
-        return 0;
-    }
+sub is_valid_email ($email_str) {
+  return 1 if ($email_str =~ /^\S*\@\S+\.\S+$/);
+  return 0;
 }
 
-##########################################
-sub readConfig
-{       # Reads configuration file given as argument.
-        my $configfile = shift;
-        my %config;
-        my ($var, $value);
-
-        open CONFIG, $configfile || err("CONFIGREADFAIL");
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-        return %config;
-}
-
-sub err
-{
-	my $err = shift || "UNKNOWNERROR";
-	print $err . "\n";
-        exit(1);
+sub err ($err = "UNKNOWNERROR") {
+  die $err . "\n";
 }

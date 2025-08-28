@@ -39,24 +39,20 @@ use v5.40;
 use warnings;
 use utf8;
 
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require ReadConfig;
-require DB;
-require Email;
-require MailTemplate;
-require 'lib_utils.pl';
-
+use lib '/usr/spamtagger/lib/';
+use ReadConfig();
+use DB();
+use Email();
+use MailTemplate();
+use STUtils qw( create_lockfile remove_lockfile );
 use Date::Calc qw(Add_Delta_Days Today Date_to_Text Date_to_Text_Long);
-use DateTime;
-use Encode;
-use MIME::QuotedPrint;
+use DateTime();
+use Encode();
+use MIME::QuotedPrint();
 use Digest::SHA1 qw(sha1_hex);
 
-my $conf = ReadConfig::getInstance();
-if ($conf->getOption('ISMASTER') !~ /^[y|Y]$/) {
+my $conf = ReadConfig::get_instance();
+if ($conf->get_option('ISMASTER') !~ /^[y|Y]$/) {
   print "NOTAMASTER";
   exit 0;
 }
@@ -89,13 +85,13 @@ if ($opts =~ /^nodigest$/) {
 ## now we have coherent params.
 
 ## get some system prefs
-my $sysconf = SystemPref::getInstance();
-my $spamnbdays = $sysconf->getPref('days_to_keep_spams');
+my $sysconf = SystemPref::get_instance();
+my $spamnbdays = $sysconf->get_pref('days_to_keep_spams');
 
-my $db = DB::connect('master', 'st_spool', 0);
-my $conf_db = DB::connect('master', 'st_config', 0);
+my $db = DB->db_connect('master', 'st_spool', 0);
+my $conf_db = DB->db_connect('master', 'st_config', 0);
 ## and do the job, either for one or all addresses
-my @addresses = getAllAddresses($address);
+my @addresses = get_all_addresses($address);
 
 ## delete expired digests
 my $query = "DELETE FROM digest_access WHERE DATEDIFF(date_expire, NOW()) < 0;";
@@ -103,37 +99,33 @@ $conf_db->execute($query);
 
 ## loop through addresses
 foreach my $a (@addresses) {
-## @todo:
-##    check if address is filtered.. but this may be tricky..
 
-  #print "doing address: $a\n";
+  ## TODO: check if address is filtered.. but this may be tricky..
   my $email = Email::create($a);
-  if (!$email) {
-  	#print "bad address: $a\n";
-  	next;
+  next unless ($email);
+  if ($email->get_user_pref('gui_group_quarantines')) {
+    $a = $email->get_user()->get_main_address();
+    $email = Email::create($email->get_user()->get_main_address());
   }
-  if ($email->getUserPref('gui_group_quarantines')) {
-      $a = $email->getUser()->getMainAddress();
-      $email = Email::create($email->getUser()->getMainAddress());
-  }
+
   ## check preference against mode
   if ($mode > 0) {
-  	next if ($mode==1 && !$email->getPref('monthly_summary'));
-  	next if ($mode==2 && !$email->getPref('weekly_summary'));
-  	next if ($mode==3 && !$email->getPref('daily_summary'));
+    next if ($mode==1 && !$email->get_pref('monthly_summary'));
+    next if ($mode==2 && !$email->get_pref('weekly_summary'));
+    next if ($mode==3 && !$email->get_pref('daily_summary'));
   }
-  my $domain = $email->getDomainObject();
-  my $type = $email->getPref('summary_type');
-  my $lang = $email->getPref('language');
-  my $temp_id = $domain->getPref('summary_template');
-  if (! -d $conf->getOption('SRCDIR')."/templates/summary/".$temp_id) {
-    $temp_id = 'default';
-  }
+
+  my $domain = $email->get_domain_object();
+  my $type = $email->get_pref('summary_type');
+  my $lang = $email->get_pref('language');
+  my $temp_id = $domain->get_pref('summary_template');
+  $temp_id = 'default' unless (-d $conf->get_option('SRCDIR')."/templates/summary/".$temp_id);
+
   # In case of missing translation for summaries
-  if (!defined($lang) || $lang eq '' || ! -d $conf->getOption('SRCDIR')."/templates/summary/".$temp_id."/$lang") {
+  if (!defined($lang) || $lang eq '' || ! -d $conf->get_option('SRCDIR')."/templates/summary/".$temp_id."/$lang") {
     $lang = 'en';
   }
-  my $to = $email->getPref('summary_to');
+  my $to = $email->get_pref('summary_to');
   my $template;
   if ($type eq 'digest' && $nodigest) {
     $type = 'html';
@@ -148,18 +140,18 @@ foreach my $a (@addresses) {
   my ($start_year,$start_month,$start_day)  = Add_Delta_Days($end_year, $end_month,$end_day, 0-$days);
 
   my @spams;
-  getFullQuarantine($a, \@spams, $email);
+  get_full_quarantine($a, \@spams, $email);
 
-  my $textquarantine = getQuarantineTemplate($template, $template->getSubTemplate('LIST'), \@spams, 'text', $lang, $temp_id);
-  my $htmlquarantine = getQuarantineTemplate($template, $template->getSubTemplate('HTMLQUARANTINE'), \@spams, 'html', $lang, $temp_id);
+  my $textquarantine = get_quarantine_template($template, $template->get_sub_template('LIST'), \@spams, 'text', $lang, $temp_id);
+  my $htmlquarantine = get_quarantine_template($template, $template->get_sub_template('HTMLQUARANTINE'), \@spams, 'html', $lang, $temp_id);
 
   my $end = DateTime->new('year' => $end_year, 'month' => $end_month, 'day' => $end_day );
   $end->set_locale($lang);
   my $start = DateTime->new('year' => $start_year, 'month' => $start_month, 'day' => $start_day );
   $start->set_locale($lang);
   my @addresses = ($a);
-  if ($email->getUserPref('gui_group_quarantines')) {
-      @addresses = $email->getLinkedAddresses();
+  if ($email->get_user_pref('gui_group_quarantines')) {
+      @addresses = $email->get_linked_addresses();
   }
   my %replace = (
     '__NBDAYS__' => $days,
@@ -200,7 +192,7 @@ foreach my $a (@addresses) {
     $replace{'__DIGEST_ID__'} = $hash;
   } else {
     my $query = "SELECT address FROM digest_access WHERE id = '$hash';";
-    my $old = ($conf_db->getListOfHash($query))[0]->{address};
+    my $old = ($conf_db->get_list_of_hash($query))[0]->{address};
     if ($old eq $a) {
       my $query = "UPDATE digest_access SET date_in = DATE(NOW()), date_start = DATE_SUB(NOW(), INTERVAL $days DAY), date_expire = DATE(DATE_ADD(NOW(), INTERVAL $spamnbdays DAY)) WHERE id = '$hash';";
       if ($conf_db->execute($query)){
@@ -212,31 +204,27 @@ foreach my $a (@addresses) {
       print 'COULDNOTUPDATEEXPIRY for different address '.$clean_a.' '.$query."\n";
     }
   }
-  $template->setReplacements(\%replace);
-  my $result = $template->send($to, 10);
+  $conf_db->db_disconnect();
+  $template->set_replacements(\%replace);
+  my $result = $template->send_message($to, 10);
   if ($result) {
     my $date = `date '+%Y-%m-%d %H:%M:%S'`;
     chomp($date);
     my $nbspams = scalar @spams;
-    if ($email->getUserPref('gui_group_quarantines')) {
-        $a = join(',', $email->getLinkedAddresses());
+    if ($email->get_user_pref('gui_group_quarantines')) {
+        $a = join(',', $email->get_linked_addresses());
     }
-    if (!$to) {
-        $to = $email->getUser()->getMainAddress();
-    }
+    $to = $email->get_user()->get_main_address() unless ($to);
     print "$date SUMSENT to $to for $a (days: $days, spams: $nbspams, id: $result)\n";
   }
 }
-# [AuKa] remove lockfile here
 remove_lockfile($lockfile_name);
-
 
 ###
 # get all addresses to send summary
 # @return    array   list of addresses
 ###
-sub getAllAddresses {
-  my ($domain) = @_;
+sub get_all_addresses ($domain) {
 
   # if we had an address and not a domain no need to look for other addresses
   return ($domain) if ($domain =~ /\S+\@\S+$/);
@@ -246,29 +234,27 @@ sub getAllAddresses {
 
   foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','misc', 'num') {
     if ($db && $db->ping()) {
-     my $query = "SELECT to_user, to_domain FROM spam_$letter WHERE ";
-     # We were asked about a specific domain
-     if ($domain ne '-a') {
-       $domain =~ s/^@//;
-       $query .= "to_domain='$domain' AND ";
-     } else {
-       $query .= "to_user NOT LIKE '\%+\%' AND "
-     }
-     $query .= "TO_DAYS(NOW())-TO_DAYS(date_in) < $days+1 GROUP BY to_user, to_domain";
-     my @res = $db->getListOfHash($query);
-	 foreach my $a_h (@res) {
-	 	my $a = $a_h->{'to_user'}."@".$a_h->{'to_domain'};
-        if ($addnottoadd{$a}) {
-            next;
-        }
+      my $query = "SELECT to_user, to_domain FROM spam_$letter WHERE ";
+      # We were asked about a specific domain
+      if ($domain ne '-a') {
+        $domain =~ s/^@//;
+        $query .= "to_domain='$domain' AND ";
+      } else {
+        $query .= "to_user NOT LIKE '\%+\%' AND "
+      }
+      $query .= "TO_DAYS(NOW())-TO_DAYS(date_in) < $days+1 GROUP BY to_user, to_domain";
+      my @res = $db->get_list_of_hash($query);
+      foreach my $a_h (@res) {
+        my $a = $a_h->{'to_user'}."@".$a_h->{'to_domain'};
+        next if ($addnottoadd{$a});
         my $email = Email::create($a);
-        if ($email->getUserPref('gui_group_quarantines')) {
-            foreach my $nottoadd ($email->getLinkedAddresses()) {
-                $addnottoadd{$nottoadd} = 1;
-            }
+        if ($email->get_user_pref('gui_group_quarantines')) {
+          foreach my $nottoadd ($email->get_linked_addresses()) {
+            $addnottoadd{$nottoadd} = 1;
+          }
         }
-	 	push @list, $a;
-	 }
+        push @list, $a;
+      }
     }
   }
   return @list;
@@ -280,11 +266,7 @@ sub getAllAddresses {
 # @param  $spams     array handle  handle of spams array
 # @return            boolean       true on success, false on failure
 ###
-sub getFullQuarantine {
-  my $address = shift;
-  my $spams_h = shift;
-  my $email = shift;
-
+sub get_full_quarantine ($address, $spams_h, $email) {
   my ($to_local, $to_domain, $initial);
 
   if ($address =~ /(\S+)@(\S+)/) {
@@ -305,43 +287,38 @@ sub getFullQuarantine {
 
   my $addwhere = "to_domain='$to_domain' AND (to_user='$to_local' OR to_user LIKE '$to_local+%')";
   if ($email) {
-      if ($email->getUserPref('gui_group_quarantines')) {
-          $table = 'spam';
-          $addwhere = "";
-          foreach my $add ($email->getLinkedAddresses()) {
-            if ($add =~ m/(\S+)\@(\S+)/) {
-               $addwhere .= " OR (to_domain='$2' AND (to_user='$1' OR to_user LIKE '$1+%'))";
-            }
-          }
-          $addwhere =~ s/^\ OR\ //;
+    if ($email->get_user_pref('gui_group_quarantines')) {
+      $table = 'spam';
+      $addwhere = "";
+      foreach my $add ($email->get_linked_addresses()) {
+        if ($add =~ m/(\S+)\@(\S+)/) {
+          $addwhere .= " OR (to_domain='$2' AND (to_user='$1' OR to_user LIKE '$1+%'))";
+        }
       }
+      $addwhere =~ s/^\ OR\ //;
+    }
   }
 
   my $query = "SELECT exim_id, sender, to_domain, to_user, time_in, HOUR(time_in) as T_h, MINUTE(time_in) as T_m, SECOND(time_in) as T_s, YEAR(date_in) as M_y, MONTH(date_in) as M_m, DAYOFMONTH(date_in) as M_d, M_subject, store_slave, M_score, M_prefilter, M_globalscore, is_newsletter FROM $table  WHERE ($addwhere) AND TO_DAYS(NOW())-TO_DAYS(date_in) < $days+1 GROUP BY exim_id ORDER BY date_in DESC, time_in DESC";
   if ($db && $db->ping()) {
-    @{$spams_h} = $db->getListOfHash($query);
+    @{$spams_h} = $db->get_list_of_hash($query);
   }
+  $db->db_disconnect;
+  return;
 }
 
 # fill the quarantine template with datas and return string
 # @param  $template  MailTemplate  template object
 # @param  $tmpl      string        quarantine list template
-# @param  $spams     array handle  hand	le of spams array
+# @param  $spams     array handle  hand  le of spams array
 # @param  $type      string        test or html
 # @return            string        filled quarantine template
 ###
-sub getQuarantineTemplate {
-  my $template = shift;
-  my $tmpl = shift;
-  my $spams = shift;
-  my $type = shift;
-  my $lang = shift;
-  my $temp_id = shift;
-
+sub get_quarantine_template ($template, $tmpl, $spams, $type, $lang, $temp_id) {
   my $ret = "";
   my $i = 0;
-  my $bullet_filled = $template->getDefaultValue('FILLEDBULLET');
-  my $bullet_empty = $template->getDefaultValue('EMPTYBULLET');
+  my $bullet_filled = $template->get_default_value('FILLEDBULLET');
+  my $bullet_empty = $template->get_default_value('EMPTYBULLET');
 
   use URI::Escape;
 
@@ -372,10 +349,10 @@ sub getQuarantineTemplate {
   foreach my $item (@{$spams}) {
     my $tmp = $tmpl;
     if ($type eq 'html') {
-  	  use HTML::Entities;
-  	  foreach my $key (keys %{$item}) {
-  	    $item->{$key} = encode_entities($item->{$key});
-  	  }
+      use HTML::Entities;
+      foreach my $key (keys %{$item}) {
+        $item->{$key} = encode_entities($item->{$key});
+      }
     } else {
       if ($item->{'is_newsletter'} > 0) {
         $tmp =~ s/((\_\_|\?\?)ID(\_\_)?)/$1 ($lang_news{$lang})/;
@@ -386,15 +363,13 @@ sub getQuarantineTemplate {
     my $score = $item->{'M_globalscore'};
     for (my $i=1; $i < 5; $i++) {
       if ($score >= $i) {
-  	$gscore .= $bullet_filled;
+        $gscore .= $bullet_filled;
       } else {
-  	$gscore .= $bullet_empty;
+        $gscore .= $bullet_empty;
       }
     }
-    if ($score > 4 || $score < 0) {
-      $score = 4;
-    }
-    my $pictoscore = $template->getDefaultValue("SCORE".$score);
+    $score = 4 if ($score > 4 || $score < 0);
+    my $pictoscore = $template->get_default_value("SCORE".$score);
 
     my $s_local = "";
     my $s_domain = "";
@@ -491,5 +466,4 @@ sub getQuarantineTemplate {
     $ret .= $spamblock;
   }
   return $ret;
-
 }

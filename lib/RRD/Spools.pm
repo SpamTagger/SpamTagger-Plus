@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,42 +24,33 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-use lib qw(/usr/rrdtools/lib/perl/);
-require RRD::Generic;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(New collect plot);
-our $VERSION    = 1.0;
+use lib "/usr/rrdtools/lib/perl/";
+use RRD::Generic();
 
-
-sub New {
-  my $statfile = shift;
+sub new ($statfile, $reset) {
   $statfile = $statfile."/spools.rrd";
-  my $reset = shift;
 
   my %things = (
-           incoming => ['GAUGE', 'AVERAGE'],
-           filtering => ['GAUGE', 'AVERAGE'],
-           outgoing => ['GAUGE', 'AVERAGE'],
-         );
+    incoming => ['GAUGE', 'AVERAGE'],
+    filtering => ['GAUGE', 'AVERAGE'],
+    outgoing => ['GAUGE', 'AVERAGE'],
+  );
 
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
 
-
   my $this = {
-  	 statfile => $statfile,
-  	 rrd => $rrd
+    statfile => $statfile,
+    rrd => $rrd
   };
 
   return bless $this, "RRD::Spools";
 }
 
-
-sub collect {
-  my $this = shift;
-  my $snmp = shift;
-
+sub collect ($this, $snmp) {
   require Net::SNMP;
   require RRDTool::OO;
 
@@ -66,35 +58,29 @@ sub collect {
 
   my $result = $snmp->get_request(-varbindlist => [$oid]);
   my $value = '|0|0|0';
-  if ($result) {
-    $value = $result->{$oid};
-  }
+  $value = $result->{$oid} if ($result);
 
   my @values = split('\|', $value);
   return $this->{rrd}->update(
-        values => {
-            incoming => $values[1],
-            filtering => $values[2],
-            outgoing => $values[3],
-         }
+    values => {
+      incoming => $values[1],
+      filtering => $values[2],
+      outgoing => $values[3],
+    }
   );
-
 }
 
-sub plot {
-  my $this = shift;
-  my $dir = shift;
-  my $period = shift;
-  my $leg = shift;
+sub plot ($this, $dir, $period, $leg) {
   my %things = (
-        incoming => ['line', '000000', '', 'Incoming', 'AVERAGE', '%10.0lf', ''],
-        filtering => ['line', 'FF0000', '', 'Filtering', 'AVERAGE', '%10.0lf', ''],
-        outgoing => ['line', 'EB9C48', '', 'Outgoing', 'AVERAGE', '%10.0lf', ''],
-   );
+    incoming => ['line', '000000', '', 'Incoming', 'AVERAGE', '%10.0lf', ''],
+    filtering => ['line', 'FF0000', '', 'Filtering', 'AVERAGE', '%10.0lf', ''],
+    outgoing => ['line', 'EB9C48', '', 'Outgoing', 'AVERAGE', '%10.0lf', ''],
+  );
   my @order = ('incoming', 'filtering', 'outgoing');
 
   my $legend = "\t\t          Last\t  Average\t\t Max\\n";
   RRD::Generic::plot('spools', $dir, $period, $leg, 'Spools count', 0, 5, $this->{rrd}, \%things, \@order, $legend);
   return 1;
 }
+
 1;

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -25,55 +26,40 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-use lib qw(/usr/rrdtools/lib/perl/);
-require RRD::Generic;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(New collect plot);
-our $VERSION    = 1.0;
+use lib "/usr/rrdtools/lib/perl/";
+use RRD::Generic();
 
-
-sub New {
-  my $statfile = shift;
+sub new ($statfile, $reset) {
   $statfile = $statfile."/messages.rrd";
-  my $reset = shift;
-#    use Log::Log4perl qw(:easy);
-#    Log::Log4perl->easy_init({
-#        level    => $INFO,
-#       category => 'rrdtool',
-#        layout   => '%m%n',
-#    });
 
   my %things = (
-           bytes => ['GAUGE', 'LAST'],
-           msgs => ['GAUGE', 'LAST'],
-           spams => ['GAUGE', 'LAST'],
-           pspams => ['GAUGE', 'AVERAGE'],
-           viruses => ['GAUGE', 'LAST'],
-           pviruses => ['GAUGE', 'AVERAGE'],
-           contents => ['GAUGE', 'LAST'],
-           pcontents => ['GAUGE', 'AVERAGE'],
-           cleans => ['GAUGE', 'LAST'],
-           pcleans => ['GAUGE', 'AVERAGE']
-         );
+    bytes => ['GAUGE', 'LAST'],
+    msgs => ['GAUGE', 'LAST'],
+    spams => ['GAUGE', 'LAST'],
+    pspams => ['GAUGE', 'AVERAGE'],
+    viruses => ['GAUGE', 'LAST'],
+    pviruses => ['GAUGE', 'AVERAGE'],
+    contents => ['GAUGE', 'LAST'],
+    pcontents => ['GAUGE', 'AVERAGE'],
+    cleans => ['GAUGE', 'LAST'],
+    pcleans => ['GAUGE', 'AVERAGE']
+  );
 
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
 
-
   my $this = {
-  	 statfile => $statfile,
-  	 rrd => $rrd
+   statfile => $statfile,
+   rrd => $rrd
   };
 
   return bless $this, "RRD::Messages";
 }
 
-
-sub collect {
-  my $this = shift;
-  my $snmp = shift;
-
+sub collect ($this, $snmp) {
   require Net::SNMP;
   require RRDTool::OO;
 
@@ -81,54 +67,48 @@ sub collect {
 
   my $result = $snmp->get_request(-varbindlist => [$oid]);
   my $value = '0|0|0|0|0|0|0|0|0|0';
-  if ($result) {
-    $value = $result->{$oid};
-  }
+  $value = $result->{$oid} if ($result);
 
   my @values = split('\|', $value);
   return $this->{rrd}->update(
-        values => {
-            bytes => $values[0],
-            msgs => $values[1],
-            spams => $values[2],
-            pspams => $values[3],
-            pviruses => $values[5],
-            viruses => $values[4],
-            contents => $values[6],
-            pcontents => $values[7],
-            cleans => $values[8],
-            pcleans => $values[9]
-         }
+    values => {
+      bytes => $values[0],
+      msgs => $values[1],
+      spams => $values[2],
+      pspams => $values[3],
+      pviruses => $values[5],
+      viruses => $values[4],
+      contents => $values[6],
+      pcontents => $values[7],
+      cleans => $values[8],
+      pcleans => $values[9]
+    }
   );
-
 }
 
-sub plot {
-  my $this = shift;
-  my $dir = shift;
-  my $period = shift;
-  my $leg = shift;
+sub plot ($this, $dir, $period, $leg) {
   my %things = (
-        msgs => ['line', '000000', '', 'Messages', 'LAST', '%10.0lf', ''],
-        viruses => ['area', 'FF0000', '', 'Viruses', 'LAST', '%10.0lf', ''],
-        contents => ['stack', 'EB9C48', '', 'Contents', 'LAST', '%10.0lf', ''],
-        spams => ['stack', '6633FF', '', 'Spams', 'LAST', '%10.0lf', ''],
-        cleans => ['stack', '54EB48', '', 'Cleans', 'LAST', '%10.0lf', '']
-   );
+    msgs => ['line', '000000', '', 'Messages', 'LAST', '%10.0lf', ''],
+    viruses => ['area', 'FF0000', '', 'Viruses', 'LAST', '%10.0lf', ''],
+    contents => ['stack', 'EB9C48', '', 'Contents', 'LAST', '%10.0lf', ''],
+    spams => ['stack', '6633FF', '', 'Spams', 'LAST', '%10.0lf', ''],
+    cleans => ['stack', '54EB48', '', 'Cleans', 'LAST', '%10.0lf', '']
+  );
   my @order = ('msgs', 'viruses', 'contents', 'spams', 'cleans');
 
-  my $legend = "\t\t         Last\t Average\t\tMax\\n";
+  my $legend = "\t\t     Last\t Average\t\tMax\\n";
   RRD::Generic::plot('messages', $dir, $period, $leg, 'Messages stats', 0, 5, $this->{rrd}, \%things, \@order, $legend);
 
   %things = (
-       pviruses => ['area', 'FF0000', '', 'Viruses', 'AVERAGE', '%10.2lf %%', ''],
-       pcontents => ['stack', 'EB9C48', '', 'Content', 'AVERAGE', '%10.2lf %%', ''],
-       pspams => ['stack', '6633FF', '', 'Spams', 'AVERAGE', '%10.2lf %%', ''],
-       pcleans => ['stack', 'EEEEEE', '', 'Cleans', 'AVERAGE', '%10.2lf %%', '']
+    pviruses => ['area', 'FF0000', '', 'Viruses', 'AVERAGE', '%10.2lf %%', ''],
+    pcontents => ['stack', 'EB9C48', '', 'Content', 'AVERAGE', '%10.2lf %%', ''],
+    pspams => ['stack', '6633FF', '', 'Spams', 'AVERAGE', '%10.2lf %%', ''],
+    pcleans => ['stack', 'EEEEEE', '', 'Cleans', 'AVERAGE', '%10.2lf %%', '']
   );
   @order = ('pviruses', 'pcontents', 'pspams', 'pcleans');
-  $legend = "\t\t           Last\t     Average\t\tMax\\n";
+  $legend = "\t\t       Last\t   Average\t\tMax\\n";
   RRD::Generic::plot('pmessages', $dir, $period, $leg, 'Message type [%]', 0, 100, $this->{rrd}, \%things, \@order, $legend);
   return 1;
 }
+
 1;

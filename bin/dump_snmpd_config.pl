@@ -2,7 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
-#   Copyright (C) 2021 John Mertz <git@john.me.tz>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -28,29 +28,29 @@ use v5.40;
 use warnings;
 use utf8;
 
-use DBI();
+use lib '/usr/spamtagger/lib/';
 use File::Path qw(mkpath);
-if ($0 =~ m/(\S*)\/\S+.pl$/) {
-  my $path = $1."/../lib";
-  unshift (@INC, $path);
-}
-require GetDNS;
+use Term::ReadKey();
+use DB();
+use ReadConfig();
+use GetDNS();
+
+our $dns = GetDNS->new();
+our $config = ReadConfig::get_instance();
+our $SRCDIR = $config->get_option('SRCDIR');
+our $VARDIR = $config->get_option('VARDIR');
 
 my $DEBUG = 1;
 
-my %config = readConfig("/etc/spamtagger.conf");
 my $system_mibs_file = '/usr/share/snmp/mibs/SPAMTAGGER-MIB.txt';
-if ( ! -d '/usr/share/snmp/mibs') {
- mkpath('/usr/share/snmp/mibs');
-}
-my $st_mib_file = $config{'SRCDIR'}.'/www/guis/admin/public/downloads/SPAMTAGGER-MIB.txt';
+mkpath('/usr/share/snmp/mibs') if ( ! -d '/usr/share/snmp/mibs');
+
+my $st_mib_file = "$SRCDIR/www/guis/admin/public/downloads/SPAMTAGGER-MIB.txt";
 
 my $lasterror = "";
 
 my $dbh;
-$dbh = DBI->connect("DBI:mysql:database=st_config;host=localhost;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-			"spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
-		or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
+$dbh = DB->db_connect('slave', 'st_config') or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
 my %snmpd_conf;
 %snmpd_conf = get_snmpd_config() or fatal_error("NOSNMPDCONFIGURATIONFOUND", "no snmpd configuration found");
@@ -60,163 +60,120 @@ my %master_hosts;
 
 dump_snmpd_file() or fatal_error("CANNOTDUMPSNMPDFILE", $lasterror);
 
-$dbh->disconnect();
+$dbh->db_disconnect();
 
-if (-f $system_mibs_file) {
-	unlink($system_mibs_file);
-}
+unlink($system_mibs_file) if (-f $system_mibs_file);
+
 symlink($st_mib_file,$system_mibs_file);
 print "DUMPSUCCESSFUL";
 
 #############################
-sub dump_snmpd_file
-{
-	my $stage = shift;
+sub dump_snmpd_file ($stage) {
+  my $template_file = "$SRCDIR/etc/snmp/snmpd.conf_template";
+  my $target_file = "$SRCDIR/etc/snmp/snmpd.conf";
 
-	my $template_file = "$config{'SRCDIR'}/etc/snmp/snmpd.conf_template";
-	my $target_file = "$config{'SRCDIR'}/etc/snmp/snmpd.conf";
+  my $ipv6 = 0;
+  if (open(my $interfaces, '<', '/etc/network/interfaces')) {
+    while (<$interfaces>) {
+      if ($_ =~ m/iface \S+ inet6/) {
+        $ipv6 = 1;
+        last;
+      }
+    }
+    close($interfaces);
+  }
 
-	my $ipv6 = 0;
-	if (open(my $interfaces, '<', '/etc/network/interfaces')) {
-		while (<$interfaces>) {
-			if ($_ =~ m/iface \S+ inet6/) {
-				$ipv6 = 1;
-				last;
-			}
-		}
-		close($interfaces);
-	}
+  unless (open(my $TEMPLATE, '<', $template_file) ) {
+    $lasterror = "Cannot open template file: $template_file";
+    return 0;
+  }
+  unless (open(my $TARGET, ">", $target_file) ) {
+    $lasterror = "Cannot open target file: $target_file";
+    close $template_file;
+    return 0;
+  }
 
-	if ( !open(TEMPLATE, $template_file) ) {
-		$lasterror = "Cannot open template file: $template_file";
-		return 0;
-	}
-	if ( !open(TARGET, ">$target_file") ) {
-                $lasterror = "Cannot open target file: $target_file";
-		close $template_file;
-                return 0;
-        }
+  my @ips = expand_host_string($snmpd_conf{'__ALLOWEDIP__'}.' 127.0.0.1',{'dumper'=>'snmp/allowedip'});
+  my $ip;
+  foreach my $ip ( keys %master_hosts) {
+    print $TARGET "com2sec local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
+    print $TARGET "com2sec6 local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
+  }
+  foreach my $ip (@ips) {
+    print $TARGET "com2sec local     $ip  $snmpd_conf{'__COMMUNITY__'}\n";
+    if ($ipv6) {
+      print $TARGET "com2sec6 local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
+    }
+  }
 
- 	my @ips = expand_host_string($snmpd_conf{'__ALLOWEDIP__'}.' 127.0.0.1',('dumper'=>'snmp/allowedip'));
-	my $ip;
-	foreach $ip ( keys %master_hosts) {
-		print TARGET "com2sec local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
-		print TARGET "com2sec6 local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
-	}
-	foreach $ip (@ips) {
-		print TARGET "com2sec local     $ip	$snmpd_conf{'__COMMUNITY__'}\n";
-		if ($ipv6) {
-			print TARGET "com2sec6 local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
-		}
-	}
+  while(my $line = <$TEMPLATE>) {
+    $line =~ s/__VARDIR__/$VARDIR/g;
+    $line =~ s/__SRCDIR__/$SRCDIR/g;
 
-	while(<TEMPLATE>) {
-		my $line = $_;
+    print $TARGET $line;
+  }
 
-		$line =~ s/__VARDIR__/$config{'VARDIR'}/g;
-		$line =~ s/__SRCDIR__/$config{'SRCDIR'}/g;
+  my @disks = split(/\:/, $snmpd_conf{'__DISKS__'});
+  my $disk;
+  foreach my $disk (@disks) {
+    print $TARGET "disk      $disk   100000\n";
+  }
 
-		print TARGET $line;
-	}
+  close $TEMPLATE;
+  close $TARGET;
 
-	my @disks = split(/\:/, $snmpd_conf{'__DISKS__'});
-        my $disk;
-        foreach $disk (@disks) {
-                print TARGET "disk      $disk   100000\n";
-        }
-
-	close TEMPLATE;
-	close TARGET;
-
-	return 1;
+  return 1;
 }
 
 #############################
 sub get_snmpd_config{
-	my %config;
+  my %config;
 
-	my $sth = $dbh->prepare("SELECT allowed_ip, community, disks FROM snmpd_config");
-	$sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
+  my $sth = $dbh->prepare("SELECT allowed_ip, community, disks FROM snmpd_config");
+  $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
 
-	if ($sth->rows < 1) {
-                return;
-        }
-        my $ref = $sth->fetchrow_hashref() or return;
+  return if ($sth->rows < 1);
+  my $ref = $sth->fetchrow_hashref() or return;
 
-	$config{'__ALLOWEDIP__'} = join(' ',expand_host_string($ref->{'allowed_ip'},('dumper'=>'snmp/allowedip')));
-	$config{'__COMMUNITY__'} = $ref->{'community'};
-	$config{'__DISKS__'} = $ref->{'disks'};
+  $config{'__ALLOWEDIP__'} = join(' ',expand_host_string($ref->{'allowed_ip'},{'dumper'=>'snmp/allowedip'}));
+  $config{'__COMMUNITY__'} = $ref->{'community'};
+  $config{'__DISKS__'} = $ref->{'disks'};
 
-	$sth->finish();
-        return %config;
+  $sth->finish();
+  return %config;
 }
 
 #############################
 sub get_master_config {
+  my %masters;
 
-	my %masters;
+  my $sth = $dbh->prepare("SELECT hostname FROM master");
+  $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
 
-	my $sth = $dbh->prepare("SELECT hostname FROM master");
-	$sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
+  return if ($sth->rows < 1);
+  while (my $ref = $sth->fetchrow_hashref()) {
+    $masters{$ref->{'hostname'}} = 1;
+  }
 
-        if ($sth->rows < 1) {
-                return;
-        }
-	while (my $ref = $sth->fetchrow_hashref()) {
-		$masters{$ref->{'hostname'}} = 1;
-	}
-
-	$sth->finish();
-        return %masters;
+  $sth->finish();
+  return %masters;
 }
 
 #############################
-sub fatal_error
-{
-	my $msg = shift;
-	my $full = shift;
-
-	print $msg;
-	if ($DEBUG) {
-		print "\n Full information: $full \n";
-	}
-	exit(0);
+sub fatal_error ($msg, $full) {
+  print $msg;
+  if ($DEBUG) {
+    print "\n Full information: $full \n";
+  }
+  exit(0);
 }
 
 #############################
-sub print_usage
-{
-	print "Bad usage: dump_exim_config.pl [stage-id]\n\twhere stage-id is an integer between 0 and 4 (0 or null for all).\n";
-	exit(0);
+sub print_usage {
+  print "Bad usage: dump_exim_config.pl [stage-id]\n\twhere stage-id is an integer between 0 and 4 (0 or null for all).\n";
+  exit(0);
 }
 
-#############################
-sub readConfig
-{
-	my $configfile = shift;
-	my %config;
-        my ($var, $value);
-
-	open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-	return %config;
-}
-
-sub expand_host_string
-{
-    my $string = shift;
-    my %args = @_;
-    my $dns = GetDNS->new();
-    return $dns->dumper($string,%args);
+sub expand_host_string ($string, $args = {}) {
+  return $dns->dumper($string,$args);
 }

@@ -6,13 +6,14 @@ use v5.40;
 use warnings;
 use utf8;
 
-no  strict 'subs'; # Allow bare words for parameter %'s
-#use English; # Needed for $PERL_VERSION to work in all versions of Perl
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-use IO;
+use IO();
 use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
-use IO::Socket;
-use IO::File;
+use IO::Socket();
+use IO::File();
 use File::Temp qw/ tempfile tempdir /;
 
 my $MODULE = "MessageSniffer";
@@ -68,13 +69,13 @@ sub initialise {
      position => 0
   );
 
-  if (open (CONFIG, $configfile)) {
-    while (<CONFIG>) {
+  if (open (my $CONFIG, '<', $configfile)) {
+    while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
        $MessageSniffer::conf{$1} = $2;
       }
     }
-    close CONFIG;
+    close $CONFIG;
   } else {
     MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
   }
@@ -89,11 +90,11 @@ sub initialise {
   } else {
     $MessageSniffer::conf{'neg_text'} = 'position : '.$MessageSniffer::conf{'position'}.', not decisive';
   }
+  return;
 }
 
-sub Checks {
-  my $this = shift;
-  my $message = shift;
+# TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
+sub Checks ($this, $message) { ## no critic
 
   ## check maximum message size
   my $maxsize = $MessageSniffer::conf{'maxSize'};
@@ -105,20 +106,20 @@ sub Checks {
     return 0;
   }
 
-  my (@WholeMessage, $maxsize);
-  push(@WholeMessage, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
-  push(@WholeMessage, "\n");
-  $message->{store}->ReadBody(\@WholeMessage, 0);
+  my (@whole_message, $maxsize);
+  push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
+  push(@whole_message, "\n");
+  $message->{store}->ReadBody(\@whole_message, 0);
 
   my $msgtext = "";
-  foreach my $line (@WholeMessage) {
+  foreach my $line (@whole_message) {
     $msgtext .= $line;
   }
 
   # Make sure we have a temp dir
   unless(-d $MessageSniffer::conf{'tmpDir'}) {
      mkdir($MessageSniffer::conf{'tmpDir'});
-     chmod(0777, $MessageSniffer::conf{'tmpDir'});
+     chmod(o777, $MessageSniffer::conf{'tmpDir'});
   };
 
   my $tim = $MessageSniffer::conf{'timeOut'};
@@ -126,7 +127,7 @@ sub Checks {
   my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
   my $is_prespam = 0;
   my $ret = -5;
-  my $SNF_XCI_Return;
+  my $snf_xci_return;
   my @lines;
 
   $t->run(sub {
@@ -138,17 +139,17 @@ sub Checks {
     my ($fh, $filename) = tempfile( DIR => $MessageSniffer::conf{'tmpDir'} );
 
     # spew our mail into the temp file
-    my $SNF_fh = IO::File->new( $filename, "w" ) || $this->clean_die($filename, "Unable to create temporary file '" . $filename . "'");
-    $SNF_fh->print($mailtext) || $this->clean_die($filename, "Unable to write to temporary file '" .  $filename . "'");
-    $SNF_fh->close || $this->clean_die($filename, "Unable to close temporary file '" .  $filename . "'");
+    my $snf_fh = IO::File->new( $filename, "w" ) || $this->clean_die($filename, "Unable to create temporary file '" . $filename . "'");
+    $snf_fh->print($mailtext) || $this->clean_die($filename, "Unable to write to temporary file '" .  $filename . "'");
+    $snf_fh->close || $this->clean_die($filename, "Unable to close temporary file '" .  $filename . "'");
 
     # Change permissions.
-    my $cnt = chmod(0666, $filename) || $this->clean_die($filename, "Unable to change permissions of temporary file '" .  $filename . "'");
+    my $cnt = chmod(o666, $filename) || $this->clean_die($filename, "Unable to change permissions of temporary file '" .  $filename . "'");
 
     # xci_scan connects to SNFServer with XCI to scan the message
-    $SNF_XCI_Return = $this->xci_scan( $filename, $message->{clientip} );
+    $snf_xci_return = $this->xci_scan( $filename, $message->{clientip} );
 
-    MailScanner::Log::DebugLog("$MODULE returned: succes = ".$SNF_XCI_Return->{success}.", code = ".$SNF_XCI_Return->{code}.", message = ".$SNF_XCI_Return->{message});
+    MailScanner::Log::DebugLog("$MODULE returned: succes = ".$snf_xci_return->{success}.", code = ".$snf_xci_return->{code}.", message = ".$snf_xci_return->{message});
 
     # Remove the temp file, we are done with it.
     unlink($filename);
@@ -164,12 +165,12 @@ sub Checks {
   my $spamfound = "";
 ## analyze result
 
-  my $desc = $SNF_XCI_Return->{code}.' - Unknown';
-  #if (defined($rule_code_xlat{$SNF_XCI_Return->{code}})) {
-    $desc = $SNF_XCI_Return->{code}.' - '.$rule_code_xlat->{$SNF_XCI_Return->{code}};
+  my $desc = $snf_xci_return->{code}.' - Unknown';
+  #if (defined($rule_code_xlat{$snf_xci_return->{code}})) {
+    $desc = $snf_xci_return->{code}.' - '.$rule_code_xlat->{$snf_xci_return->{code}};
   #}
 
-  if ($SNF_XCI_Return->{code} > 0) {
+  if ($snf_xci_return->{code} > 0) {
     ## is spam
     MailScanner::Log::InfoLog("$MODULE result is spam ($desc) for ".$message->{id});
     if ($MessageSniffer::conf{'putSpamHeader'}) {
@@ -177,7 +178,7 @@ sub Checks {
     }
     $message->{prefilterreport} .= ", MessageSniffer ($desc, ".$MessageSniffer::conf{pos_text}.")";
     return 1;
-  } elsif ($SNF_XCI_Return->{code} == 0) {
+  } elsif ($snf_xci_return->{code} == 0) {
     MailScanner::Log::InfoLog("$MODULE result is not spam ($desc) for ".$message->{id});
     if ($MessageSniffer::conf{'putHamHeader'}) {
       $global::MS->{mta}->AddHeaderToOriginal($message, $MessageSniffer::conf{'header'}, "is not spam ($desc, ".$MessageSniffer::conf{neg_text}. ")");
@@ -189,6 +190,7 @@ sub Checks {
 
 sub dispose {
   MailScanner::Log::InfoLog("$MODULE module disposing...");
+  return;
 }
 
 
@@ -197,11 +199,7 @@ sub dispose {
 #   success : true/false
 #   code    : response code from SNF
 #   message : scalar message (if any)
-sub xci_scan
-{
-    my ($this, $file, $ip ) = @_;
-    return undef unless $file;
-
+sub xci_scan ($this, $file, $ip ) {
     my $ret_hash = {
         success => undef,
         code    => undef,
@@ -237,38 +235,30 @@ sub xci_scan
 
 # connect_socket( $host, $port )
 # returns IO::Socket handle
-sub connect_socket
-{
-    my ($this, $host, $port ) = @_;
-    return undef unless $host and $port;
+sub connect_socket ($this, $host, $port) {
     my $protoname = 'tcp';    # Proto should default to tcp but it's not expensive to specify
 
-    my $XCI_Socket = IO::Socket::INET->new(
+    my $xci_socket = IO::Socket::INET->new(
         PeerAddr => $host,
         PeerPort => $port,
         Proto    => $protoname,
-        Timeout  => $MessageSniffer::conf{'SFNTimeout'} ) or return undef;
+        Timeout  => $MessageSniffer::conf{'SFNTimeout'} ) or return;
 
-    $XCI_Socket->autoflush(1);    # make sure autoflush is on -- legacy
-    return $XCI_Socket;           # return the socket handle
+    $xci_socket->autoflush(1);    # make sure autoflush is on -- legacy
+    return $xci_socket;           # return the socket handle
 }
 
 # socket_response( $socket_handle )
 # returns scalar string
-sub socket_response
-{
-    my ( $this, $rs, $file ) = @_;
+sub socket_response ($this, $rs, $file) {
     my $buf = '';    # buffer for response
-
     # blocking timeout for servers who accept but don't answer
     eval {
         local $SIG{ALRM} = sub { die "timeout\n" };    # set up the interrupt
         alarm $MessageSniffer::conf{'SFNTimeout'};                    # set up the alarm
-
         while (<$rs>) {                                # read the socket
             $buf .= $_;
         }
-
         alarm 0;                                       # reset the alarm
     };
 
@@ -285,10 +275,7 @@ sub socket_response
 }
 
 # return an error message for xci_scan
-sub err_hash
-{
-    my ( $this, $message ) = @_;
-
+sub err_hash ($this, $message) {
     return {
         success => undef,
         code    => undef,
@@ -296,9 +283,7 @@ sub err_hash
     };
 }
 
-sub clean_die
-{
-   my ( $this, $file, $message ) = @_;
+sub clean_die ($this, $file, $message) {
    unlink($file);
    MailScanner::Log::InfoLog("$MODULE failed with error ".$message);
    exit(1);

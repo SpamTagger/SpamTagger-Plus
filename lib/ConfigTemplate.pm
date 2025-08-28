@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,22 +18,20 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #   This module will dump a configuration file based on template
-#
 
-package          ConfigTemplate;
+package ConfigTemplate;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-require          ReadConfig;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(create dumpFile);
-our $VERSION    = 1.0;
+use lib '/usr/spamtagger/lib';
+use ReadConfig();
 
 my $conf = ReadConfig::getInstance();
 my $SRCDIR=$conf->getOption('SRCDIR');
@@ -44,13 +43,7 @@ my $VARDIR=$conf->getOption('VARDIR');
 # @param  $targetfile  string  target config file
 # @return              this
 ###
-sub create {
-  my $templatefile = shift;
-  my $targetfile = shift;
-
-  return if !$templatefile || $templatefile eq "";
-  return if !$targetfile || $targetfile eq "";
-
+sub new ($class, $templatefile, $targetfile) {
   $templatefile =~ s/__SRCDIR__/$SRCDIR/g;
   $templatefile =~ s/__VARDIR__/$VARDIR/g;
   if ($templatefile =~ m/^[^\/]/) {
@@ -77,19 +70,18 @@ sub create {
   bless $this, "ConfigTemplate";
 
   $this->preParseTemplate();
-  return $this;
+  return $this, $class;
 }
 
 ###
 # preparse template and variables
 # @return        boolean   true on success, false on failure
 ###
-sub preParseTemplate {
-  my $this = shift;
+sub pre_parse_template ($this) {
 
   my $in_template = "";
-  return 0 if (!open(FILE, $this->{templatefile}));
-  while (<FILE>) {
+  return 0 unless (open(my $FILE, '<', $this->{templatefile}));
+  while (<$FILE>) {
     my $line = $_;
 
     if ($line =~ /\_\_TMPL\_([A-Z0-9]+)\_START\_\_/) {
@@ -106,14 +98,11 @@ sub preParseTemplate {
       next;
     }
   }
-  close FILE;
+  close $FILE;
   return 1;
 }
 
-sub getSubTemplate {
-  my $this = shift;
-  my $tmplname = shift;
-
+sub get_sub_template ($this, $tmplname) {
   if (defined($this->{subtemplates}{$tmplname})) {
     return $this->{subtemplates}{$tmplname};
   }
@@ -125,9 +114,7 @@ sub getSubTemplate {
 # @param  replace   array_h  handle of array of rplacements with tag as keys
 # @return           boolean  true on success, false on failure
 ###
-sub setReplacements {
-  my $this = shift;
-  my $replace_h = shift;
+sub set_replacements ($this, $replace_h, %replace) {
   my %replace = %{$replace_h};
 
   foreach my $tag (keys %replace) {
@@ -140,11 +127,9 @@ sub setReplacements {
 ###
 # dump to destination file
 ###
-sub dump {
-  my $this = shift;
-
-  return 0 if (!open(FILE, $this->{templatefile}));
-  return 0 if (!open(TARGET, ">".$this->{targetfile}));
+sub dump_file ($this) {
+  return 0 unless (open(my $FILE, '<', $this->{templatefile}));
+  return 0 unless (open(my $TARGET, ">", $this->{targetfile}));
 
   my $ret;
   my $in_hidden = 0;
@@ -152,25 +137,20 @@ sub dump {
   my @if_hist = ();
   my $if_hidden = 0;
   my $lc = 0;
-  while (<FILE>) {
+  while (<$FILE>) {
     my $line = $_;
     $lc++;
 
     if ($line =~ /__IF__\s+(\S+)/) {
       if ($this->getCondition($1)) {
         push @if_hist, $1;
-        #$if_hidden = 1;
-      #} elsif ( scalar @if_hist != 0 ) {
-        #$if_hidden = $if_hist[scalar(@if_hist)-1];
       } else {
         push @if_hist, "!".$1;
         $if_hidden++;
       }
-      #push @if_hist, $if_hidden;
       next;
     }
 
-    # __IF__ condition True, do nothing until __FI__
     if ($line =~ /__ELSE__\s+(\S+)/) {
       unless (scalar(@if_hist)) {
         die "__ELSE__ $1 without preceeding __IF__ (".$this->{templatefile}.":$lc)\n";
@@ -199,7 +179,7 @@ sub dump {
     }
 
     if ($line =~  /__EVAL__\s+(.*)$/) {
-      if (! eval "$1") {
+      if (eval { "$1" }) {
         $ev_hidden = 1;
       } else {
         $ev_hidden = 0;
@@ -226,14 +206,11 @@ sub dump {
         #$ret .= ".include_if_exists __SRCDIR__/etc/exim/$inc_file\n";
       }
 
-      open(PATHFILE, '<', $path_file);
-      my @contains = <PATHFILE>;
-      close(PATHFILE);
+      open(my $PATHFILE, '<', $path_file);
+      my @contains = <$PATHFILE>;
+      close($PATHFILE);
       chomp(@contains);
-      foreach (@contains) {
-        $ret .= "$_\n";
-      }
-
+      $ret .= "$_\n" foreach (@contains);
       next;
     }
     if ($line =~  /\_\_TMPL\_([A-Z0-9]+)\_START\_\_/) {
@@ -249,8 +226,7 @@ sub dump {
       $ret .= $line;
     }
   }
-  close FILE;
-
+  close $FILE;
   ## do the replacements
 
   ## replace well known tags
@@ -287,19 +263,12 @@ sub dump {
   return 1;
 }
 
-sub setCondition {
-  my $this = shift;
-  my $condition = shift;
-  my $value = shift;
-
+sub set_condition ($this, $condition, $value) {
   $this->{conditions}{$condition} = $value;
   return 1;
 }
 
-sub getCondition {
-  my $this = shift;
-  my $condition = shift;
-
+sub get_condition ($this, $condition) {
   if (defined($this->{conditions}{$condition})) {
     return $this->{conditions}{$condition};
   }

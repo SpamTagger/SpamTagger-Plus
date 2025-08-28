@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -10,28 +11,26 @@
 #
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
-#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-package          model::InLine::YesNoDialog ;
+package Model::InLine::SimpleDialog ;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-use Term::ReadKey;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(build display);
-our $VERSION    = 1.0;
+use Term::ReadKey qw( ReadMode ReadKey );
 
-sub get {
-
+sub new ($class) {
   my $text = '';
   my $default = '';
 
@@ -40,53 +39,36 @@ sub get {
     default => $default
   };
 
-  bless $this, "model::InLine::YesNoDialog";
+  bless $this, $class;
   return $this;
 }
 
-sub build {
-  my $this = shift;
-  my $text = shift;
-  my $default = shift;
-
+sub build($this, $text, $default='') {
   $this->{text} = $text;
-  $this->{default} = $this->getYesNo($default);
+  $this->{default} = $default;
 
   return $this;
 }
 
-sub display {
-  my $this = shift;
-
-  if (!$this->{default}) {
-   $this->{default} = '';
-  }
-  print $this->{text}."\n";
-  print "Enter \"y\" or \"n\" [".$this->{default}."]: ";
+sub display($this) {
+  print $this->{text}.' '.(defined($this->{default}) ? "[".$this->{default}."]" : '[\'q\' to skip]').": ";
   ReadMode 'normal';
   my $result = ReadLine(0);
   chomp $result;
+  return 0 if ($result eq 'q');
   if ( $result eq "") {
-   $result = $this->{default};
+    if (defined($this->{default})) {
+      $result = $this->{default};
+    } else {
+      return $this->display();
+    }
   }
-  return $this->getYesNo($result);
+  return $result;
 }
 
-sub clear {
-  my $this = shift;
-
+sub clear($this) {
   system('clear');
-}
-
-sub getYesNo {
-  my $this = shift;
-  my $value = shift;
-
-  if ($value =~ m/^(y|yes)$/i) {
-   return 'yes';
-  }
-
-  return 'no';
+  return;
 }
 
 1;

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -19,140 +20,103 @@
 #
 #   This module will just read the configuration file
 
-package          SystemPref;
+package SystemPref;
 
 use v5.40;
 use warnings;
 use utf8;
 
-require          Exporter;
-require          ReadConfig;
-require			  DB;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(getInstance getPref);
-our $VERSION    = 1.0;
+use lib "/usr/spamtagger/lib/";
+use ReadConfig();
+use DB();
 
-my $oneTrueSelf;
+our $one_true_self;
 
 ## singleton stuff
-sub getInstance {
-  if (! $oneTrueSelf) {
-  	$oneTrueSelf = create();
-  }
-  return $oneTrueSelf;
+sub get_instance {
+  $one_true_self = create() unless ($one_true_self);
+  return $one_true_self;
 }
 
-sub create {
-  my $name = shift;
+sub new ($class = "SystemPref", $name = "SystemPref") {
   my %prefs;
 
-  my $conf = ReadConfig::getInstance();
-  my $preffile = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/_global/prefs.list";
-  my $prefdir = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/_global/";
+  my $conf = ReadConfig::get_instance();
+  my $preffile = $conf->get_option('VARDIR')."/spool/spamtagger/prefs/_global/prefs.list";
+  my $prefdir = $conf->get_option('VARDIR')."/spool/spamtagger/prefs/_global/";
   my $this = {
-         name => $name,
-         prefdir => $prefdir,
-         preffile => $preffile,
-         prefs => \%prefs
-         };
+    name => $name,
+    prefdir => $prefdir,
+    preffile => $preffile,
+    prefs => \%prefs
+  };
 
-  bless $this, "SystemPref";
-  return $this;
+  return bless $this, $class;
 }
 
-sub getPref {
-  my $this = shift;
-  my $pref = shift;
-  my $default = shift;
-
+sub get_pref ($this, $pref, $default) {
   if (!defined($this->{prefs}) || !defined($this->{prefs}->{id})) {
- #-#   my $pref_daemon = PrefDaemon::create();
- #-#   ## get system prefs
- #-# 	my $cachedpref = $pref_daemon->getPref('PREF', "global ".$pref);
- #-# 	if ($cachedpref !~ /^(BADPREF|NOTFOUND|NOCACHE|TIMEDOUT|NODAEMON)/ ) {
- #-# 	  $this->{prefs}->{$pref} = $cachedpref;
- #-# 	  return $cachedpref;
- #-# 	}
- #-# 	if ($cachedpref =~ /^(NOCACHE|TIMEDOUT|NODAEMON)/) {
- #-# 	  $this->loadPrefs();
- #-# 	}
-
     my $prefclient = PrefClient->new();
-    $prefclient->setTimeout(2);
-    my $dpref = $prefclient->getPref('_global', $pref);
+    $prefclient->set_timeout(2);
+    my $dpref = $prefclient->get_pref('_global', $pref);
     if (defined($dpref) && $dpref !~ /^_/) {
       $this->{prefs}->{$pref} = $dpref;
       return $dpref;
     }
     ## fallback loading
-    $this->loadPrefs();
-
+    $this->load_prefs();
   }
 
-  if (defined($this->{prefs}->{$pref})) {
-    return $this->{prefs}->{$pref};
-  }
-  if (defined($default)) {
-    return $default;
-  }
+  return $this->{prefs}->{$pref} if (defined($this->{prefs}->{$pref}));
+  return $default if (defined($default));
   return "";
 }
 
-sub loadPrefs {
-  my $this = shift;
-
- if ( ! -f $this->{preffile}) {
-    return 0;
+sub load_prefs ($this) {
+  return 0 unless (-f $this->{preffile})
+  return 0 unless (open(my $PREFFILE, '<', $this->{preffile}));
+  while (<$PREFFILE>) {
+    $this->{prefs}->{$1} = $2 if (/^(\S+)\s+(.*)$/);
   }
-
-  if (! open PREFFILE, $this->{preffile}) {
-   return 0;
-  }
-  while (<PREFFILE>) {
-    if (/^(\S+)\s+(.*)$/) {
-      $this->{prefs}->{$1} = $2;
-
-    }
-  }
-  close PREFFILE;
+  close $PREFFILE;
+  return;
 }
 
-
-sub dumpPrefs {
-  my $this = shift;
-
-  my $slave_db = DB::connect('slave', 'st_config');
+sub dump_prefs ($this) {
+  my $slave_db = DB->db_connect('slave', 'st_config');
   my %prefs = $slave_db->getHashRow("SELECT * FROM antispam");
   my %conf = $slave_db->getHashRow("SELECT use_ssl, servername FROM httpd_config");
   my %sysconf = $slave_db->getHashRow("SELECT summary_from, analyse_to FROM system_conf");
 
   if (! -d $this->{prefdir} && ! mkdir($this->{prefdir})) {
-   	 print "CANNOTCREATESYSTEMPREFDIR\n";
-     return 0;
+    print "CANNOTCREATESYSTEMPREFDIR\n";
+    return 0;
   }
   my $uid = getpwnam( 'spamtagger' );
   my $gid = getgrnam( 'spamtagger' );
   chown $uid, $gid, $this->{prefdir};
 
-  if ( ! open PREFFILE, ">".$this->{preffile}) {
+  unless (open($PREFFILE, ">", $this->{preffile})) {
     print "CANNOTWRITESYSTEMPREF\n";
     return 0;
   }
   foreach my $p (keys %prefs) {
-    if (!defined($prefs{$p})) {
-      $prefs{$p} = '';
-    }
-    print PREFFILE "$p ".$prefs{$p}."\n";
+    $prefs{$p} = '' unless (defined($prefs{$p}));
+    print $PREFFILE "$p ".$prefs{$p}."\n";
   }
   foreach my $p (keys %conf) {
-    print PREFFILE "$p ".$conf{$p}."\n";
+    print $PREFFILE "$p ".$conf{$p}."\n";
   }
   foreach my $p (keys %sysconf) {
-    print PREFFILE "$p ".$sysconf{$p}."\n";
+    print $PREFFILE "$p ".$sysconf{$p}."\n";
   }
-  close PREFFILE;
+  close $PREFFILE;
   chown $uid, $gid, $this->{preffile};
   return 1;
 }
+
 1;

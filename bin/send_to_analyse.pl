@@ -26,30 +26,29 @@
 #   where msg_id is the message id
 #   and destination is the email address of the original recipient
 
-use DBI();
-use Net::SMTP;
-require MIME::Lite;
+use v5.40;
+use warnings;
 
+push(@INC, '/usr/spamtagger/lib');
+use DB();
+use Net::SMTP();
+use MIME::Lite();
+use ReadConfig();
+
+our $config = ReadConfig::get_instance();
 my $msg_id = shift;
 my $for = shift;
 
-if ( (!$msg_id) || !($msg_id =~ /^[a-z,A-Z,0-9]{6}-[a-z,A-Z,0-9]{6,11}-[a-z,A-Z,0-9]{2,4}$/)) {
-        print "INCORRECTMSGID\n";
-        exit 0;
-}
+die "INCORRECTMSGID\n" if ( (!$msg_id) || !($msg_id =~ /^[a-z,A-Z,0-9]{6}-[a-z,A-Z,0-9]{6,11}-[a-z,A-Z,0-9]{2,4}$/));
+die "INCORRECTMSGDEST\n" if ( (!$for) || !($for =~ /^(\S+)\@(\S+)$/));
 
-if ( (!$for) || !($for =~ /^(\S+)\@(\S+)$/)) {
-        print "INCORRECTMSGDEST\n";
-        exit 0;
-}
 my $for_local = $1;
 my $for_domain = $2;
 
-my %config = readConfig("/etc/spamtagger.conf");
 my %system_conf = get_system_config();
 my %domain_conf = get_domain_config($for_domain);
 
-my $msg_file = $config{'VARDIR'}."/spam/".$for_domain."/".$for."/".$msg_id;
+my $msg_file = $config->get_option('VARDIR')."/spam/".$for_domain."/".$for."/".$msg_id;
 
 if (defined($domain_conf{'falsepos_to'}) && $domain_conf{'falsepos_to'} =~ m/\S+\@\S+/) {
   $system_conf{'analyse_to'} = $domain_conf{'falsepos_to'};
@@ -66,110 +65,82 @@ exit 0;
 ##########################################
 sub get_system_config {
 
-	my %default = (days_to_keep_spams => 30, sysadmin => 'support@localhost', summary_subject => 'SpamTagger Plus analysis request', summary_from => 'support@localhost', servername => 'localhost', analyse_to => 'analyse@localhost');
+  my %default = (days_to_keep_spams => 30, sysadmin => 'support@localhost', summary_subject => 'SpamTagger Plus analysis request', summary_from => 'support@localhost', servername => 'localhost', analyse_to => 'analyse@localhost');
 
-        my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                                "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
-                                        or die "cannot connect to database | get_system_config() |";
+  my $dbh = DB->db_connect('slave', 'st_config');
 
-        my $sth =  $dbh->prepare("SELECT s.days_to_keep_spams, s.sysadmin, s.summary_subject, s.summary_from, h.servername, s.analyse_to, s.falsepos_to FROM system_conf s, httpd_config h")
-                                                or die "cannot prepare query | get_system_config() |";
-        $sth->execute() or die "cannot execute query | get_system_config() |";
-        if ($sth->rows < 1) {
-		$sth->finish();
-		$dbh->disconnect();
-		return %default;
-	}
+  my $sth =  $dbh->prepare(
+    "SELECT s.days_to_keep_spams, s.sysadmin, s.summary_subject, s.summary_from, h.servername, s.analyse_to, s.falsepos_to FROM system_conf s, httpd_config h"
+  ) or die "cannot prepare query | get_system_config() |";
+  $sth->execute() or die "cannot execute query | get_system_config() |";
+  if ($sth->rows < 1) {
+    $sth->finish();
+    $dbh->db_disconnect();
+    return %default;
+  }
 
-	my $ref = $sth->fetchrow_hashref() or die "cannot get query results | get_system_config() |";
-        $sth->finish();
-        %default = (days_to_keep_spams => $ref->{'days_to_keep_spams'}, sysadmin => $ref->{'sysadmin'}, summary_subject => $ref->{'summary_subject'}, summary_from => $ref->{'summary_from'}, servername => $ref->{'servername'}, analyse_to => $ref->{'falsepos_to'});
-        $dbh->disconnect();
+  my $ref = $sth->fetchrow_hashref() or die "cannot get query results | get_system_config() |";
+  $sth->finish();
+  %default = (days_to_keep_spams => $ref->{'days_to_keep_spams'}, sysadmin => $ref->{'sysadmin'}, summary_subject => $ref->{'summary_subject'}, summary_from => $ref->{'summary_from'}, servername => $ref->{'servername'}, analyse_to => $ref->{'falsepos_to'});
+  $dbh->db_disconnect();
 
-        return %default;
+  return %default;
 }
 
 ##########################################
-sub get_domain_config {
-  my $d = shift;
+sub get_domain_config ($d) {
   my %default = (language => 'en', support_email => '');
 
-  my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{VARDIR}/run/mysql_slave/mysqld.sock",
-                          "spamtagger", "$config{MYSPAMTAGGERPWD}", {RaiseError => 0, PrintError => 0})
-			           or die "cannot connect to database | get_domain_config() |";
+  my $dbh = DB->db_connect('slave', 'st_config');
 
   my $sth =  $dbh->prepare("SELECT dp.language, dp.support_email, dp.falsepos_to, dp.systemsender FROM domain_pref dp, domain d WHERE d.prefs=dp.id AND (d.name='$d' or d.name='*') order by name DESC LIMIT 1")
                                    or die "cannot prepare query | get_domain_config() |";
   $sth->execute() or die "cannot execute query | get_domain_config() |";
   if ($sth->rows < 1) {
    $sth->finish();
-   $dbh->disconnect();
+   $dbh->db_disconnect();
    return %default;
   }
 
   my $ref = $sth->fetchrow_hashref() or die "cannot get query results | get_domain_config() |";
   $sth->finish();
   %default = (language => $ref->{'language'}, support_email => $ref->{'support_email'}, falsepos_to => $ref->{'falsepos_to'}, systemsender => $ref->{'systemsender'});
-  $dbh->disconnect();
+  $dbh->db_disconnect();
 
   return %default;
 }
 
 ##########################################
-sub send_message {
-	my $msg_file = shift;
-	my $for = $system_conf{'analyse_to'};
-	#if ($domain_conf{'support_email'} =~ /^(\S+)\@(\S+)$/) { $for = $domain_conf{'support_email'};};
-	my $from = $system_conf{'summary_from'};
-	my $subject = "Analysis request";
+sub send_message ($msg_file) {
+  my $for = $system_conf{'analyse_to'};
+  #if ($domain_conf{'support_email'} =~ /^(\S+)\@(\S+)$/) { $for = $domain_conf{'support_email'};};
+  my $from = $system_conf{'summary_from'};
+  my $subject = "Analysis request";
 
-	MIME::Lite->send("smtp", 'localhost:2525', Debug => 0, Timeout => 30);
+  MIME::Lite->send("smtp", 'localhost:2525', Debug => 0, Timeout => 30);
 
-	my $mime_msg = MIME::Lite->new(
-		From => $from,
-		To   => $for,
-		Subject => $subject,
-		Type => 'TEXT',
-		Data => "Analysis request for message: \n\n  Id:\t\t $msg_id\n  Server:\t $system_conf{'servername'}\n  Host ID:\t $config{'HOSTID'}\n  Address:\t $for_local\@$for_domain\n\n"
-	)
-	or die "ERRORSENDING $for\n";
+  my $mime_msg = MIME::Lite->new(
+    From => $from,
+    To   => $for,
+    Subject => $subject,
+    Type => 'TEXT',
+    Data => "Analysis request for message: \n\n  Id:\t\t $msg_id\n  Server:\t $system_conf{'servername'}\n  Host ID:\t ".$config->get_option('HOSTID')."\n  Address:\t $for_local\@$for_domain\n\n"
+  )
+  or die "ERRORSENDING $for\n";
 
- 	$mime_msg->attach(
-		Type => 'application/text',
-		Path => $msg_file,
-		Filename => 'message.txt'
-	)
-	or die "ERRORSENDING $for\n";
-	my $message_body = $mime_msg->body_as_string();
+   $mime_msg->attach(
+    Type => 'application/text',
+    Path => $msg_file,
+    Filename => 'message.txt'
+  )
+  or die "ERRORSENDING $for\n";
+  my $message_body = $mime_msg->body_as_string();
 
-	if ($mime_msg->send()) {
-        	print("SENTTOANALYSE\n");
-		return 1;
-	} else {
-		print "ERRORSENDING $for\n";
-		return 0;
-	}
-}
-
-##########################################
-sub readConfig
-{       # Reads configuration file given as argument.
-        my $configfile = shift;
-        my %config;
-        my ($var, $value);
-
-        open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-        return %config;
+  if ($mime_msg->send()) {
+          print("SENTTOANALYSE\n");
+    return 1;
+  } else {
+    print "ERRORSENDING $for\n";
+    return 0;
+  }
 }

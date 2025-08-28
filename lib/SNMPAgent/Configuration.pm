@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,18 +24,17 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-use NetSNMP::agent;
+use lib "/usr/spamtagger/lib/";
+use lib "/usr/rrdtools/lib/perl/";
+use NetSNMP::agent();
 use NetSNMP::OID (':all');
 use NetSNMP::agent (':all');
 use NetSNMP::ASN (':all');
-use lib qw(/usr/rrdtools/lib/perl/);
-use ReadConfig;
-
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(init getMIB isMaster);
-our $VERSION    = 1.0;
+use ReadConfig();
 
 my $mib_root_position = 2;
 
@@ -43,35 +43,28 @@ my %mib_status = ( 1 => \%mib_global);
 
 my $conf;
 
-sub initAgent() {
-   doLog('Agent Configuration initializing', 'status', 'debug');
+sub init_agent {
+  do_log('Agent Configuration initializing', 'status', 'debug');
 
-   $conf = ReadConfig::getInstance();
+  $conf = ReadConfig::get_instance();
 
-   return $mib_root_position;
+  return $mib_root_position;
 }
 
 
-sub getMIB() {
-   return \%mib_status;
+sub get_mib {
+  return \%mib_status;
 }
 
-sub doLog() {
-	my $message = shift;
-	my $cat = shift;
-	my $level = shift;
-
-	SNMPAgent::doLog($message, $cat, $level);
+sub do_log ($message, $cat, $level) {
+  SNMPAgent::do_log($message, $cat, $level);
+  return;
 }
-
 
 ##### Handlers
-sub isMaster() {
-	my $ismaster = 0;
-	if ($conf->getOption('ISMASTER') eq 'Y') {
-		$ismaster = 1;
-	}
-	return (ASN_INTEGER, int($ismaster));
+sub is_master {
+  return (ASN_INTEGER, 1 if ($conf->get_option('ISMASTER') eq 'Y');
+  return (ASN_INTEGER, 0);
 }
 
 1;

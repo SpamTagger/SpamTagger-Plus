@@ -4,47 +4,32 @@ use v5.40;
 use warnings;
 use utf8;
 
-use DBI();
+use lib '/usr/spamtagger/lib/';
 use Term::ReadKey;
+use DBI;
+use ReadConfig;
 
-my %config = readConfig("/etc/spamtagger.conf");
+our $config = ReadConfig::get_instance();
 
-my $slave_dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=$config{'VARDIR'}/run/mysql_slave/mysqld.sock",
-                                        "spamtagger","$config{'MYSPAMTAGGERPWD'}", {RaiseError => 0, PrintError => 0} );
-if (!$slave_dbh) {
-	printf ("ERROR: no slave database found on this system.\n");
-	exit 1;
+my $slave_dbh = DBI->connect(
+  "DBI:mysql:database=st_config;mysql_socket=".$config->get_option('VARDIR')."/run/mysql_slave/mysqld.sock",
+  "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
+);
+
+unless ($slave_dbh) {
+  printf ("ERROR: no slave database found on this system.\n");
+  exit 1;
 }
 
 sub view_slaves {
-	my $sth =  $slave_dbh->prepare("SELECT id, hostname, port, ssh_pub_key  FROM slave") or die ("error in SELECT");
-	$sth->execute() or die ("error in SELECT");
-	my $el=$sth->rows;
-	while (my $ref=$sth->fetchrow_hashref()) {
-		printf $ref->{'hostname'}."\n";
-	}
-	$sth->finish();
-}
-
-sub readConfig {       # Reads configuration file given as argument.
-        my $configfile = shift;
-        my %config;
-        my ($var, $value);
-
-        open CONFIG, $configfile or die "Cannot open $configfile: $!\n";
-        while (<CONFIG>) {
-                chomp;                  # no newline
-                s/#.*$//;                # no comments
-                s/^\*.*$//;             # no comments
-                s/;.*$//;                # no comments
-                s/^\s+//;               # no leading white
-                s/\s+$//;               # no trailing white
-                next unless length;     # anything left?
-                my ($var, $value) = split(/\s*=\s*/, $_, 2);
-                $config{$var} = $value;
-        }
-        close CONFIG;
-        return %config;
+  my $sth =  $slave_dbh->prepare("SELECT id, hostname, port, ssh_pub_key  FROM slave") or die ("error in SELECT");
+  $sth->execute() or die ("error in SELECT");
+  my $el=$sth->rows;
+  while (my $ref=$sth->fetchrow_hashref()) {
+    printf $ref->{'hostname'}."\n";
+  }
+  $sth->finish();
+  return;
 }
 
 view_slaves();

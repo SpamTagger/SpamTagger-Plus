@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -23,60 +24,47 @@ use v5.40;
 use warnings;
 use utf8;
 
-require Exporter;
-use lib qw(/usr/rrdtools/lib/perl/);
-require RRD::Generic;
+use Exporter 'import';
+our @EXPORT_OK = ();
+our $VERSION   = 1.0;
 
-our @ISA        = qw(Exporter);
-our @EXPORT     = qw(New collect plot);
-our $VERSION    = 1.0;
+use lib "/usr/rrdtools/lib/perl/";
+use RRD::Generic();
 
-
-sub New {
-  my $statfile = shift;
+sub new ($statfile, $reset) {
   $statfile = $statfile."/disk.rrd";
-  my $reset = shift;
   my %things = (
-           rootused => ['GAUGE', 'LAST'],
-           varused => ['GAUGE', 'LAST'],
-         );
+    rootused => ['GAUGE', 'LAST'],
+    varused => ['GAUGE', 'LAST'],
+  );
   my $rrd = RRD::Generic::create($statfile, \%things, $reset);
 
-
   my $this = {
-  	 statfile => $statfile,
-  	 rrd => $rrd
+    statfile => $statfile,
+    rrd => $rrd
   };
 
   return bless $this, "RRD::Disk";
 }
 
-
-sub collect {
-  my $this = shift;
-  my $snmp = shift;
-
+sub collect ($this, $snmp) {
   my %things = (
-        rootused => '1.3.6.1.4.1.2021.9.1.9.1',
-        varused => '1.3.6.1.4.1.2021.9.1.9.2',
-        );
+    rootused => '1.3.6.1.4.1.2021.9.1.9.1',
+    varused => '1.3.6.1.4.1.2021.9.1.9.2',
+  );
 
   return RRD::Generic::collect($this->{rrd}, $snmp, \%things);
 }
 
-sub plot {
-  my $this = shift;
-  my $dir = shift;
-  my $period = shift;
-  my $leg = shift;
-
+sub plot ($this, $dir, $period, $leg) {
   my %things = (
-        rootused => ['line', '7648EB', '', 'System [/]   ', 'AVERAGE', '%10.2lf %%', ''],
-        varused => ['area', 'EB9C48', '', 'Datas  [/var]', 'AVERAGE', '%10.2lf %%', ''],
-   );
+    rootused => ['line', '7648EB', '', 'System [/]   ', 'AVERAGE', '%10.2lf %%', ''],
+    varused => ['area', 'EB9C48', '', 'Datas  [/var]', 'AVERAGE', '%10.2lf %%', ''],
+  );
   my @order = ('varused', 'rootused');
 
   my $legend = "\t\t              Last\t  Average\t\t    Max\\n";
   return RRD::Generic::plot('disk', $dir, $period, $leg, 'Disks usage [%]', 0, 100, $this->{rrd}, \%things, \@order, $legend);
 }
+
 1;
