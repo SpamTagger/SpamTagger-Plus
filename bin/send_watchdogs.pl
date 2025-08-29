@@ -44,7 +44,6 @@ if (-e "$vardir/spool/spamtagger/disable-watchdog-emails") {
   exit 0;
 }
 
-my $baseurl;
 ## select language
 my $sysconf = SystemPref::get_instance();
 my $lang = $sysconf->get_pref('default_language') || 'en';
@@ -54,7 +53,8 @@ my $temp_id = 'default';
 
 my $recipient;
 my $custom_recipient = "$vardir/spool/spamtagger/watchdog-recipient";
-if (-e $custom_recipient && open(my $fh, '<', $custom_recipient)) {
+my $fh;
+if (-e $custom_recipient && open($fh, '<', $custom_recipient)) {
   $recipient .= $_ while (<$fh>);
   chomp($recipient);
 } else {
@@ -132,7 +132,7 @@ my $hosts = scalar(@err_hosts);
 
 ## fill template body
 my $version;
-my %langs = (
+%langs = (
   'en' => 'SpamTagger staff will receive reports for watchdog errors on your machines. We will periodically investigate and resolve these issues on your behalf, if possible. For further assistance you can <a href="https://support.spamtagger.org/boards/3/topics/82-watchdogs">read our Knowledge Base article on the topic</a> or <a href="https://github.com/SpamTagger/SpamTagger-Plus/issues">open an Issue</a>.'
 );
 $version = $langs{$lang} || $langs{'en'};

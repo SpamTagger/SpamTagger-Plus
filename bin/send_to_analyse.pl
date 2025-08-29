@@ -29,6 +29,9 @@
 use v5.40;
 use warnings;
 
+die "Feature not currently supported by SpamTagger\n";
+
+=pod
 push(@INC, '/usr/spamtagger/lib');
 use DB();
 use Net::SMTP();
@@ -112,8 +115,8 @@ sub get_domain_config ($d) {
 
 ##########################################
 sub send_message ($msg_file) {
-  my $for = $system_conf{'analyse_to'};
-  #if ($domain_conf{'support_email'} =~ /^(\S+)\@(\S+)$/) { $for = $domain_conf{'support_email'};};
+  my $to = $system_conf{'analyse_to'};
+  #if ($domain_conf{'support_email'} =~ /^(\S+)\@(\S+)$/) { $to = $domain_conf{'support_email'};};
   my $from = $system_conf{'summary_from'};
   my $subject = "Analysis request";
 
@@ -121,26 +124,27 @@ sub send_message ($msg_file) {
 
   my $mime_msg = MIME::Lite->new(
     From => $from,
-    To   => $for,
+    To   => $to,
     Subject => $subject,
     Type => 'TEXT',
     Data => "Analysis request for message: \n\n  Id:\t\t $msg_id\n  Server:\t $system_conf{'servername'}\n  Host ID:\t ".$config->get_option('HOSTID')."\n  Address:\t $for_local\@$for_domain\n\n"
   )
-  or die "ERRORSENDING $for\n";
+  or die "ERRORSENDING $to\n";
 
    $mime_msg->attach(
     Type => 'application/text',
     Path => $msg_file,
     Filename => 'message.txt'
   )
-  or die "ERRORSENDING $for\n";
+  or die "ERRORSENDING $to\n";
   my $message_body = $mime_msg->body_as_string();
 
   if ($mime_msg->send()) {
           print("SENTTOANALYSE\n");
     return 1;
   } else {
-    print "ERRORSENDING $for\n";
+    print "ERRORSENDING $to\n";
     return 0;
   }
 }
+=cut

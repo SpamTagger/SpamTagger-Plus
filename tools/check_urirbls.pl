@@ -43,7 +43,8 @@ my $config = {
 
 # Get values from file
 my $configfile = "$SRCDIR/etc/mailscanner/prefilters/UriRBLs.cf";
-if (open(my $CONFIG, '<', $configfile)) {
+my $CONFIG;
+if (open($CONFIG, '<', $configfile)) {
   while (<$CONFIG>) {
     if (/^(\S+)\s*\=\s*(.*)$/) {
       if (defined($config->{$1})) {
@@ -115,7 +116,7 @@ foreach my $file (@ARGV) {
     next;
   }
   my $fh;
-  unless (open(my $fh,'<',$file)) {
+  unless (open($fh,'<',$file)) {
     print "Failed to open $file\n";
     next;
   }
@@ -185,7 +186,7 @@ foreach my $file (@order) {
   my @finals;
   foreach (@uris) {
     my $short = $dnslists->find_uri_shortener( $_ );
-    if (defined($short) && $short ne 0) {
+    if (defined($short) && $short != 0) {
       push(@finals, $short);
     }
     push(@finals, $dnslists->find_uri( $_ ));
@@ -196,7 +197,7 @@ foreach my $file (@order) {
     if (defined($uniq{$_})) {
       $uniq{$_}++;
     # Ignore whitelisted
-    } elsif ($_ eq 0) {
+    } elsif ($_ == 0) {
       next;
     } else {
       $uniq{$_} = 1;

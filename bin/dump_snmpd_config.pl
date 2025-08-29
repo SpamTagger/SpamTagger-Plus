@@ -73,7 +73,8 @@ sub dump_snmpd_file ($stage) {
   my $target_file = "$SRCDIR/etc/snmp/snmpd.conf";
 
   my $ipv6 = 0;
-  if (open(my $interfaces, '<', '/etc/network/interfaces')) {
+  my $interfaces;
+  if (open($interfaces, '<', '/etc/network/interfaces')) {
     while (<$interfaces>) {
       if ($_ =~ m/iface \S+ inet6/) {
         $ipv6 = 1;
@@ -83,11 +84,12 @@ sub dump_snmpd_file ($stage) {
     close($interfaces);
   }
 
-  unless (open(my $TEMPLATE, '<', $template_file) ) {
+  my ($TEMPLATE, $TARGET);
+  unless (open($TEMPLATE, '<', $template_file) ) {
     $lasterror = "Cannot open template file: $template_file";
     return 0;
   }
-  unless (open(my $TARGET, ">", $target_file) ) {
+  unless (open($TARGET, ">", $target_file) ) {
     $lasterror = "Cannot open target file: $target_file";
     close $template_file;
     return 0;

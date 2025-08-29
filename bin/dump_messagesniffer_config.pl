@@ -75,11 +75,12 @@ sub dump_file ($file) {
   my $template_file = "$SRCDIR'}/etc/messagesniffer/".$file."_template";
   my $target_file = "$SRCDIR'}/etc/messagesniffer/".$file;
 
-  unless (open(my $TEMPLATE, '<', $template_file) ) {
+  my ($TEMPLATE, $TARGET);
+  unless (open($TEMPLATE, '<', $template_file) ) {
     $lasterror = "Cannot open template file: $template_file";
     return 0;
   }
-  unless (open(my $TARGET, ">", $target_file) ) {
+  unless (open($TARGET, ">", $target_file) ) {
     $lasterror = "Cannot open target file: $target_file";
     close $template_file;
     return 0;

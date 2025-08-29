@@ -41,15 +41,15 @@ use ReadConfig();
 our $config = ReadConfig::get_instance();
 our $VARDIR = $config->get_option('VARDIR');
 
-my $quardir = shift;
+my $quardir = shift || bad_usage();
 my $forced_postfix = '-F'.int(rand(100));
 
-if (! $quardir || (! ($quardir =~ /\d{8}\/([a-z,A-Z,0-9]{6}-[a-z,A-Z,0-9]{6,11}-[a-z,A-Z,0-9]{2,4})$/) ) ) {
+unless ($quardir =~ /\d{8}\/([a-z,A-Z,0-9]{6}-[a-z,A-Z,0-9]{6,11}-[a-z,A-Z,0-9]{2,4})$/) {
   bad_usage();
 }
+my $id = $1;
 
 my $dir = "$VARDIR/spool/mailscanner/quarantine/$quardir";
-my $id = $1;
 chomp $dir;
 
 my $uid = getpwnam( 'spamtagger' );
@@ -60,8 +60,9 @@ if (! -d $dir ) {
   exit;
 }
 
-die("CANNOTFINDHEADERFILE") unless (open(my $HFILE, '<', $dir."/".$id."-H"));
-die("CANNOTOPENDESTHEADERFILE") unless (open(my $DHFILE, '>', "$VARDIR/spool/exim_stage4/input/".$id."-H"));
+my ($HFILE, $DHFILE);
+die("CANNOTFINDHEADERFILE") unless (open($HFILE, '<', $dir."/".$id."-H"));
+die("CANNOTOPENDESTHEADERFILE") unless (open($DHFILE, '>', "$VARDIR/spool/exim_stage4/input/".$id."-H"));
 
 my $id_header = '';
 my $hsize;
@@ -80,7 +81,7 @@ while (<$HFILE>) {
 
     $header = $hname.": <".$hlpart.$forced_postfix."@".$hrpart.">";
     $id_header = sprintf('%.3d', length($header)+1)."I ".$header;
-    print DHFILE $id_header."\n";
+    print $DHFILE $id_header."\n";
   } elsif (/^(\d+)I (\S+):\s*$/) {
     # Do this if the Message ID is on two lines
     $is_multiline_id = 1;
@@ -93,13 +94,14 @@ while (<$HFILE>) {
       $hlpart = $1;
       $hrpart = $2;
       $header = $hname.": <".$hlpart.$forced_postfix."@".$hrpart.">";
-      my $id_header = sprintf('%.3d', length($header)+1)."I ".$header;
+      $id_header = sprintf('%.3d', length($header)+1)."I ".$header;
       print $DHFILE $id_header."\n";
     } else {
       print $DHFILE $_;
     }
   }
 }
+close $DHFILE;
 close $HFILE;
 
 unless (copy($dir."/".$id."-D", "$VARDIR/spool/exim_stage4/input/")) {

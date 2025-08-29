@@ -59,7 +59,8 @@ sub prepare_run ($this) {
 sub get_messages_to_process ($this) {
   $this->{daemon}->profile_start('BATCHLOAD');
   chdir( $this->{spamdir} ) or return 0;
-  opendir(my $SDIR, '.' ) or return 0;
+  my $SDIR;
+  opendir($SDIR, '.' ) or return 0;
 
   my $waitingcount = 0;
   my $batchsize    = 0;
@@ -71,7 +72,7 @@ sub get_messages_to_process ($this) {
 
     next if ( $batchsize >= $maxbatchsize );
     next if ( $this->{daemon}->is_locked($id) );
-    if ( -f $id . ".msg" ) {
+    if ( -f "$id.msg" ) {
       $batchsize++;
       $this->add_message($id);
     } else {

@@ -78,7 +78,7 @@ if (defined $options{h}) {
 unless ( -e "$VARDIR/run/fail2ban.disabled" ) {
   my $timout = 5;
   my $failed = 0;
-  eval {
+  $failed = eval {
     local $SIG{ALRM} = sub { die "timeout\n" };
     alarm $timout;
     if ($has_ipc_run) {
@@ -105,7 +105,8 @@ unless ( -e "$VARDIR/run/fail2ban.disabled" ) {
 ###########################
 system("$SRCDIR/bin/resync_db.sh", "-C");
 # Sync spam tables
-if (open(my $fh, '>>', "$VARDIR/log/spamtagger/spam_sync.log")) {
+my $fh;
+if (open($fh, '>>', "$VARDIR/log/spamtagger/spam_sync.log")) {
   print $fh `$SRCDIR/bin/sync_spams.pl`;
   close($fh);
 }
@@ -324,7 +325,7 @@ unless ($skip) {
     if (my $pid_syncspam = fork) {
       push(@wait,$pid_syncspam);
     } elsif (defined $pid_syncspam) {
-      if (open(my $fh, '>>', "$VARDIR/log/spamtagger/spam_sync.log")) {
+      if (open($fh, '>>', "$VARDIR/log/spamtagger/spam_sync.log")) {
         print $fh `$SRCDIR/bin/resync_spams.pl`;
         print $fh "done syncing spams.\n";
         close($fh);
@@ -369,7 +370,7 @@ if ($itsmidnight) {
   ###############
   ## first do the log rotation and NOT fork as it shut down mysql_slave which is used by others scripts
   print "rotating logs...\n";
-  my $rc = create_lockfile('rotate.lock', '/tmp/', time+4*60*60, 'rotate_logs');
+  $rc = create_lockfile('rotate.lock', '/tmp/', time+4*60*60, 'rotate_logs');
   if ($rc!=0) {
     system($SRCDIR."/scripts/cron/rotate_logs.sh");
     print "done rotating logs.\n";
@@ -519,7 +520,7 @@ if ($itstime) {
     print "sending watchdog report to support address, if applicable...\n";
     my $date = `date '+%Y%m%d'`;
     chomp($date);
-    if (open(my $fh, '>>', $VARDIR."/log/spamtagger/watchdogs.log")) {
+    if (open($fh, '>>', $VARDIR."/log/spamtagger/watchdogs.log")) {
       print $fh "Sending watchdog alerts:\n";
       print $fh `$SRCDIR/bin/send_watchdogs.pl`;
       print $fh "done watchdog report.\n";
@@ -537,7 +538,7 @@ if ($itstime) {
     print "sending daily summaries...\n";
     my $date = `date '+%Y%m%d'`;
     chomp($date);
-    if (open(my $fh, '>>', $VARDIR."/log/spamtagger/summaries.log")) {
+    if (open($fh, '>>', $VARDIR."/log/spamtagger/summaries.log")) {
       print $fh "Sending daily summaries:\n";
       print $fh `$SRCDIR/bin/send_summary.pl -a 3 1`;
       print $fh "done daily summaries.\n";
@@ -565,7 +566,7 @@ if ($itsweekday) {
     print "sending weekly summaries...\n";
     my $date = `date '+%Y%m%d'`;
     chomp($date);
-    if (open(my $fh, '>>', $VARDIR."/log/spamtagger/summaries.log")) {
+    if (open($fh, '>>', $VARDIR."/log/spamtagger/summaries.log")) {
       print $fh "Sending weekly summaries:\n";
       print $fh `$SRCDIR/bin/send_summary.pl -a 2 7`;
       print $fh "done weekly summaries.\n";
@@ -593,7 +594,7 @@ if ($itsmonthday) {
     print "sending monthly summaries...\n";
     my $date = `date '+%Y%m%d'`;
     chomp($date);
-    if (open(my $fh, '>>', $VARDIR."/log/spamtagger/summaries.log")) {
+    if (open($fh, '>>', $VARDIR."/log/spamtagger/summaries.log")) {
       print $fh "Sending monthly summaries:\n";
       print $fh `$SRCDIR/bin/send_summary.pl -a 1 31`;
       print $fh "done monthly summaries.\n";
@@ -608,7 +609,7 @@ if ($itsmonthday) {
 # ST restart         #
 ######################
 ######################
-if ( -e $VARDIR."/run/spamtagger.rn") {
+if ( -e "$VARDIR/run/spamtagger.rn") {
   if ($has_ipc_run) {
     IPC::Run::run([$SRCDIR."/etc/init.d/spamtagger", "restart"], "2>&1", ">/dev/null");
     IPC::Run::run(["rm", $VARDIR."/run/spamtagger.rn"], "2>&1", ">/dev/null");

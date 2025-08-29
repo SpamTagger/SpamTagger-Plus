@@ -42,7 +42,8 @@ sub defaults ($current_process) {
 sub slurp_file ($file) {
     my @contains = ();
 
-    return (0, @contains) unless (open(my $FILE, '<', $file) );
+    my $FILE;
+    return (0, @contains) unless (open($FILE, '<', $file) );
 
     @contains = <$FILE>;
     close($FILE);
@@ -90,7 +91,8 @@ sub load_params ($conf_file, $current_process) {
 
 # Log results to $MYOUTFILE
 sub st_log ($data) {
-  open(my $MYOUTFILE, '>>', $WATCHDOG_OUTFILE);
+  my $MYOUTFILE;
+  open($MYOUTFILE, '>>', $WATCHDOG_OUTFILE);
   print $MYOUTFILE $data ."\n";
   close $MYOUTFILE;
   return;
@@ -115,7 +117,7 @@ if( ! -d $WATCHDOG_TMP  ) {
 chdir($WATCHDOG_BIN) or exit(1);
 # Collect all standard SpamTagger (ST), and custom watchdog modules
 my @files = glob('mod_*');
-if (-d $WATCHDOG_CUSTOM."/bin/") {
+if (-d "$WATCHDOG_CUSTOM/bin/") {
   push(@files,glob($WATCHDOG_CUSTOM.'/bin/mod*'));
 }
 # Sort alphabetically
@@ -144,7 +146,7 @@ foreach my $file (@files) {
   }
   @old = @remaining;
   # Skip module if it is disabled with '.disabled' flag
-  if (-e $WATCHDOG_CUSTOM.'/etc/'.$current_process{name}.'.disabled') {
+  if (-e "$WATCHDOG_CUSTOM/etc/$current_process{name}.disabled") {
     print STDERR "Ignoring $current_process{file_no_extension} because it is disabled by '" . $WATCHDOG_CUSTOM."/etc/".$current_process{name}.'.disabled' . "\n";
     next;
   }
@@ -217,7 +219,8 @@ foreach my $current_process (@processes) {
 
       $current_process->{pid} = $pid;
       # write a PID file for this module's run
-      open(my $OUTFILE, '>', $current_process->{pid_file});
+      my $OUTFILE;
+      open($OUTFILE, '>', $current_process->{pid_file});
       print $OUTFILE $pid;
       close($OUTFILE);
 

@@ -215,7 +215,7 @@ sub create_database ($this, $file) {
   foreach my $element (@{$this->{elements}}) {
 
     if ($element->{'type'} eq 'COUNTER' || $element->{'type'} eq 'DERIVE') {
-      eval {
+      my $ret = eval {
         $rrd->tune(dsname => $element->{'name'}, minumum => 0);
         #$rrd->tune(dsname => $element->{'name'}, maximum => 10000);
       }

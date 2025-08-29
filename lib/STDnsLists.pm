@@ -42,19 +42,19 @@ sub new ($class, $logfunction = sub { print STDERR shift."\n"; }, $debug = 0) {
   my $this        = {};
 
   $this->{rbls}                      = {};
-  $this->{useableRbls}               = ();
-  $this->{whitelistedDomains}        = {};
-  $this->{TLDs}                      = {};
-  $this->{localDomains}              = {};
+  $this->{useable_rbls}               = ();
+  $this->{whitelisted_domains}        = {};
+  $this->{tlds}                      = {};
+  $this->{local_domains}              = {};
   $this->{maxurilength}              = 150;
   $this->{logfunction}               = $logfunction;
   $this->{debug}                     = $debug;
-  $this->{timeOut}                   = 10;
+  $this->{timeout}                   = 10;
   $this->{failuretobedead}           = 1;
   $this->{retrydeadinterval}         = 120;
   $this->{shortner_resolver_maxdeep} = 10;
   $this->{shortner_resolver_timeout} = 5;
-  $this->{URLRedirects}              = URLRedirects->new();
+  $this->{url_redirects}              = URLRedirects->new();
 
   %rblsfailure = ();
 
@@ -62,12 +62,19 @@ sub new ($class, $logfunction = sub { print STDERR shift."\n"; }, $debug = 0) {
   return $this;
 }
 
-sub load_rbls ($this, $rbls, $sele, $rbls, $whit, $TLDs, $loca, $prelog) {
-  if ( opendir(my $DIR, $rblspath ) ) {
+sub load_rbls
+  (
+    $this, $rblspath, $selected_rbls, $rbls_type,
+    $whitelist_domains_file, $tlds_file, $local_domains_file, $prelog
+  )
+{
+  my $DIR;
+  if ( opendir($DIR, $rblspath ) ) {
     while ( my $entry = readdir($DIR) ) {
       if ( $entry =~ m/\S+\.cf$/ ) {
         my $rblname = '';
-        if ( open(my $RBLFILE, '<', $rblspath . "/" . $entry ) ) {
+        my $RBLFILE;
+        if ( open($RBLFILE, '<', $rblspath . "/" . $entry ) ) {
           while (<$RBLFILE>) {
             if (/^name\s*=\s*(\S+)$/) {
               $rblname                            = $1;
@@ -105,86 +112,84 @@ sub load_rbls ($this, $rbls, $sele, $rbls, $whit, $TLDs, $loca, $prelog) {
           keys( %{ $this->{rbls} } ) . " useable RBLs" );
     }
   } else {
-    &{ $this->{logfunction} }(
-          "$prelog could not open RBL's definition directory ("
-        . $rblspath
-        . ")" );
+    &{ $this->{logfunction} }("$prelog could not open RBL's definition directory ($rblspath)");
   }
 
   my %deadrbls = ();
-  my @neededrbls = split( ' ', $selectedRbls );
+  my @neededrbls = split( ' ', $selected_rbls );
   foreach my $r (@neededrbls) {
     if ( defined( $this->{rbls}{$r}{'dnsname'} ) ) {
-      push @{ $this->{useableRbls} }, $r;
+      push @{ $this->{useable_rbls} }, $r;
     } else {
       &{ $this->{logfunction} }(
         "$prelog configured to use $r, but this RBLs is not available !"
       );
     }
   }
-  if ( $this->{useableRbls} ) {
+  if ( $this->{useable_rbls} ) {
     &{ $this->{logfunction} }( "$prelog using "
-        . @{ $this->{useableRbls} }
+        . @{ $this->{useable_rbls} }
         . " RBLs ("
-        . join( ', ', @{ $this->{useableRbls} } )
+        . join( ', ', @{ $this->{useable_rbls} } )
         . ")" );
   } else {
     &{ $this->{logfunction} }("$prelog not using any RBLs");
   }
 
   ## loading whitelisted domains
-  if ( open(my $FILE, '<', $whitelistDomainsFile ) ) {
+  my $FILE;
+  if ( open($FILE, '<', $whitelist_domains_file ) ) {
     while (<$FILE>) {
       if (/\s*([-_.a-zA-Z0-9]+)/) {
-        $this->{whitelistedDomains}{$1} = 1;
+        $this->{whitelisted_domains}{$1} = 1;
       }
     }
     close $FILE;
     &{ $this->{logfunction} }( "$prelog loaded " .
-        keys( %{ $this->{whitelistedDomains} } )
+        keys( %{ $this->{whitelisted_domains} } )
         . " whitelisted domains" );
-  } elsif ( $whitelistDomainsFile ne '' ) {
+  } elsif ( $whitelist_domains_file ne '' ) {
     &{ $this->{logfunction} }(
           "$prelog could not load domains whitelist file ("
-        . $whitelistDomainsFile
+        . $whitelist_domains_file
         . ") !" );
   }
 
   ## loading tlds
-  foreach my $tldfile ( split( '\s', $TLDsFiles ) ) {
-    if ( open(my $FILE, '<', $tldfile ) ) {
+  foreach my $tldfile ( split( '\s', $tlds_file ) ) {
+    if ( open($FILE, '<', $tldfile ) ) {
       while (<$FILE>) {
         if (/^([-_.a-zA-Z0-9]+)/i) {
-          $this->{TLDs}{ lc($1) } = 1;
+          $this->{tlds}{ lc($1) } = 1;
         }
       }
       close $FILE;
     } elsif ( $tldfile ne '' ) {
       &{ $this->{logfunction} }(
-            "$prelog could not load two levels TLDs file (" . $tldfile
+            "$prelog could not load two levels tlds file (" . $tldfile
           . ") !" );
     }
   }
-  if ( $TLDsFiles ne '' ) {
+  if ( $tlds_file ne '' ) {
     &{ $this->{logfunction} }(
-      "$prelog loaded " . keys( %{ $this->{TLDs} } ) . " TLDs" );
+      "$prelog loaded " . keys( %{ $this->{tlds} } ) . " tlds" );
   }
 
   ## loading local domains
-  if ( open(my $FILE, '<', $localDomainsFile ) ) {
+  if ( open($FILE, '<', $local_domains_file ) ) {
     while (<$FILE>) {
       if (/^(\S+):/) {
-        $this->{localDomains}{$1} = 1;
+        $this->{local_domains}{$1} = 1;
       }
     }
     close $FILE;
     &{ $this->{logfunction} }( "$prelog loaded " .
-      keys( %{ $this->{localDomains} } ) . " local domains" );
+      keys( %{ $this->{local_domains} } ) . " local domains" );
   }
 
   ## loading url shorteners
   my $shortfile = $rblspath . '/url_shorteners.txt';
-  if ( open(my $FILE, '<', $shortfile ) ) {
+  if ( open($FILE, '<', $shortfile ) ) {
     while (<$FILE>) {
       if (/^([a-z.\-]+)/i) {
         $this->{shorteners}{$1} = 1;
@@ -263,7 +268,7 @@ sub get_next_location ($this, $uri) {
     if ( defined($shorteners{$domain.'/'.$get}) ) {
       return $shorteners{$domain.'/'.$get};
     }
-    my $redirect = $this->{URLRedirects}->decode($domain.'/'.$get);
+    my $redirect = $this->{url_redirects}->decode($domain.'/'.$get);
     if ($redirect) {
       $shorteners{$domain.'/'.$get} = $redirect;
       return ( $domain.'/'.$get , $redirect );
@@ -292,7 +297,7 @@ sub get_next_location ($this, $uri) {
         'User-Agent' => "Mozilla/5.0"
       );
       my ( $code, $mess, %h );
-      eval {
+      my $ret = eval {
         ( $code, $mess, %h ) = $s->read_response_headers( laxed => 1 );
       };
       if ( $code >= 300 && $code < 400 ) {
@@ -321,7 +326,7 @@ m/([a-zA-Z0-9-_.]{4,25})[ |[(*'"]{0,5}@[ |\])*'"]{0,5}([a-zA-Z0-9-_\.]{4,25}\.[ 
 
     $add =~ s/^3D//;
     $add = lc($add);
-    if ( !defined( $this->{localDomains}{$dom} )
+    if ( !defined( $this->{local_domains}{$dom} )
       && $this->is_valid_domain( $dom, 0, $prelog ) )
     {
       return $add;
@@ -335,7 +340,7 @@ sub is_valid_domain ($this, $domain, $usewhitelist, $prelog) {
 
   if ( $domain =~ m/[a-z0-9\-_.:]+[.:][a-z0-9]{2,15}$/ ) {
     if ($usewhitelist) {
-      foreach my $wd ( keys %{ $this->{whitelistedDomains} } ) {
+      foreach my $wd ( keys %{ $this->{whitelisted_domains} } ) {
         if ( $domain =~ m/([^.]{0,150}\.$wd)$/ || $domain eq $wd ) {
           if ( $this->{debug} ) {
             &{ $this->{logfunction} }( $prelog
@@ -354,7 +359,7 @@ sub is_valid_domain ($this, $domain, $usewhitelist, $prelog) {
       return $domain;
     }
 
-    foreach my $ld ( keys %{ $this->{localDomains} } ) {
+    foreach my $ld ( keys %{ $this->{local_domains} } ) {
       next if ( $ld =~ m/\*$/ );
       if ( $domain =~ m/([^.]{0,150}\.$ld)$/ || $domain eq $ld ) {
         if ( $this->{debug} ) {
@@ -365,7 +370,7 @@ sub is_valid_domain ($this, $domain, $usewhitelist, $prelog) {
       }
     }
 
-    foreach my $tld ( keys %{ $this->{TLDs} } ) {
+    foreach my $tld ( keys %{ $this->{tlds} } ) {
       if ( $domain =~ m/([^.]{0,150}\.$tld)$/ ) {
         my $ret = $1;
         if ( $this->{debug} ) {
@@ -415,7 +420,7 @@ sub check_dns ($this, $value, $type, $prelog, $maxhitcount = 0, $maxbshitcount =
     my $hitcount   = 0;
     my $bshitcount = 0;
 
-    foreach my $r ( @{ $this->{useableRbls} } ) {
+    foreach my $r ( @{ $this->{useable_rbls} } ) {
       if (   defined( $rblsfailure{$r}{'disabled'} )
         && $rblsfailure{$r}{'disabled'}
         && defined( $rblsfailure{$r}{'lastfailure'} ) )
@@ -444,23 +449,23 @@ sub check_dns ($this, $value, $type, $prelog, $maxhitcount = 0, $maxbshitcount =
       last if ( $maxhitcount   && $hitcount >= $maxhitcount );
       last if ( $maxbshitcount && $bshitcount >= $maxbshitcount );
 
-            my $callvalue = $value;
-            if ($callvalue =~ m/^(\d+\.\d+\.\d+\.\d+|[a-f0-9\:]{5,71})$/) {
-                if ($this->{rbls}{$r}{'type'} =~ m/^URIRBL$/i && $this->{rbls}{$r}{'callonip'} == 0) {
-                    if ( $this->{debug} ) {
-                        &{ $this->{logfunction} }( $prelog . " not checking literal IP ".$callvalue." against ".$this->{rbls}{$r}{'dnsname'}." ( callonip = ".$this->{rbls}{$r}{'callonip'}." )" );
-                    }
-                    next;
-                }
-                my $ip_object = Net::IP->new($callvalue);
-                if ($ip_object) {
-                    $callvalue = $ip_object->reverse_ip;
-                    $callvalue =~ s/[a-z0-9]\.arpa\.$//;
-                    $callvalue =~ s/\.in-add$//;
-                    $callvalue =~ s/\.ip$//;
-                    $callvalue =~ s/\.\./\./;
-                }
-            }
+      my $callvalue = $value;
+      if ($callvalue =~ m/^(\d+\.\d+\.\d+\.\d+|[a-f0-9\:]{5,71})$/) {
+        if ($this->{rbls}{$r}{'type'} =~ m/^URIRBL$/i && $this->{rbls}{$r}{'callonip'} == 0) {
+          if ( $this->{debug} ) {
+            &{ $this->{logfunction} }( $prelog . " not checking literal IP ".$callvalue." against ".$this->{rbls}{$r}{'dnsname'}." ( callonip = ".$this->{rbls}{$r}{'callonip'}." )" );
+          }
+          next;
+        }
+        my $ip_object = Net::IP->new($callvalue);
+        if ($ip_object) {
+          $callvalue = $ip_object->reverse_ip;
+          $callvalue =~ s/[a-z0-9]\.arpa\.$//;
+          $callvalue =~ s/\.in-add$//;
+          $callvalue =~ s/\.ip$//;
+          $callvalue =~ s/\.\./\./;
+        }
+      }
 
       if ( $this->{debug} ) {
         &{ $this->{logfunction} }( $prelog
@@ -511,10 +516,10 @@ sub check_dns ($this, $value, $type, $prelog, $maxhitcount = 0, $maxbshitcount =
     exit $is_spam;
   }
 
-  eval {
+  my $ret = eval {
     $pipe->reader();
     local $SIG{ALRM} = sub { die "Command Timed Out" };
-    alarm $this->{'timeOut'};
+    alarm $this->{'timeout'};
 
     while (<$pipe>) {
       chomp;
@@ -576,7 +581,7 @@ sub check_dns ($this, $value, $type, $prelog, $maxhitcount = 0, $maxbshitcount =
     kill -15, $pid;
     for ( $i = 0 ; $i < 5 ; $i++ ) {
       sleep 1;
-      waitpid( $pid, &POSIX::WNOHANG );
+      waitpid( $pid, &POSIX::WNOHANG() );
       last unless kill( 0, $pid );
       kill -15, $pid;
     }
@@ -599,7 +604,7 @@ sub get_all_rbls ($this) {
 }
 
 sub get_useable_rbls ($this) {
-  return $this->{useableRbls};
+  return $this->{useable_rbls};
 }
 
 sub get_debug_value ($this) {

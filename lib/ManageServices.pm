@@ -24,6 +24,7 @@ use Proc::ProcessTable();
 our $init_dir = '/usr/spamtagger/etc/init.d';
 our $restart_dir = '/var/spamtagger/run';
 our $log_levels = { 'error' => 0, 'info' => 1, 'debug' => 2 };
+our $LOGGERLOG;
 
 our %default_configs = (
   'VARDIR'  => '/var/spamtagger',
@@ -106,15 +107,15 @@ our %default_actions = (
   }
 );
 
-sub new ($class, %params = ()) {
-  my $conf = ReadConfig::getInstance();
+sub new ($class, %params) {
+  my $conf = ReadConfig::get_instance();
 
   my $this = {
     'init_dir'   => $params{'init_dir'} || $init_dir,
     'restart_dir'   => $params{'restart_dir'} || $restart_dir,
     'process_table'   => Proc::ProcessTable->new(),
     'codes'    => get_codes(),
-    'autoStart'  => $params{'autoStart'}  || 0,
+    'auto_start'  => $params{'auto_start'}  || 0,
     'conf'    => $conf,
     'timeout'  => 5,
   };
@@ -282,7 +283,7 @@ sub load_module ($this, $service) {
 
   require "ManageServices/" . $module . ".pm";
   $module = "ManageServices::".$module;
-  $this->{'module'} = init $module $this;
+  $this->{'module'} = init($module, $this);
   $this->get_config() || return 0;
   $this->get_actions() || return 0;
 
@@ -323,11 +324,12 @@ sub get_config ($this) {
   }
 
   my $conffile = $this->{'module'}->{'conffile'};
-  if ( -f $conffile.'_template' ) {
+  if ( -f "${conffile}_template" ) {
     my $template = ConfigTemplate->new( $conffile."_template", $conffile );
     my $ret = $template->dumpFile();
   }
-  if ( open(my $CONFFILE, '<', $this->{'module'}->{'conffile'} )) {
+  my $CONFFILE;
+  if ( open($CONFFILE, '<', $this->{'module'}->{'conffile'} )) {
     while (<$CONFFILE>) {
       chomp;
       next if /^\#/;
@@ -378,9 +380,8 @@ sub find_process ($this) {
   return 0;
 }
 
-sub pids ($this) {
-  unless (defined($this->{'module'})) {
-    my $service = shift || die "Either run \$this->load_module('service_name') first\nor run with service name: \$this->pids('service_name')";
+sub pids ($this, $service = undef) {
+  if (!defined($this->{'module'}) && defined($service)) {
     $this->load_module($service);
   }
 
@@ -415,7 +416,7 @@ sub pids ($this) {
 }
 
 sub create_module ($this, $defs) {
-  my $file = $defs->{'conffile'} || $this->{'conf'}->getOption('SRCDIR').'/etc/spamtagger/'.$this->{'service'}.".cf";
+  my $file = $defs->{'conffile'} || $this->{'conf'}->get_option('SRCDIR').'/etc/spamtagger/'.$this->{'service'}.".cf";
   my $module = {};
   foreach my $key (keys %default_configs) {
     $module->{$key} = $default_configs{$key}
@@ -431,7 +432,8 @@ sub create_module ($this, $defs) {
     my $ret = $template->dumpFile();
   }
 
-  if (open(my $CONFFILE, '<', $file)) {
+  my $CONFFILE;
+  if (open($CONFFILE, '<', $file)) {
     while (<$CONFFILE>) {
       chomp;
       next if /^\#/;
@@ -444,12 +446,10 @@ sub create_module ($this, $defs) {
   return $module;
 }
 
-sub status ($this, $autostart = undef) {
-  unless (defined($this->{'module'})) {
-    my $service = shift || die "Either run \$this->load_module('service_name') first\nor run with service name: \$this->status('service_name')";
+sub status ($this, $auto_start = $this->{'auto_start'}, $service = undef) {
+  if (!defined($this->{'module'}) && defined($service)) {
     $this->load_module($service);
   }
-  $autoStart = $this->{'autoStart'} unless (defined($autoStart));
 
   my $status = 0;
   my $running = $this->find_process();
@@ -480,7 +480,7 @@ sub status ($this, $autostart = undef) {
           $this->{'codes'}->{$i}->{'suffix'}))[9]
           < (time() - 60) )
         {
-          if ($autoStart) {
+          if ($auto_start) {
             return $this->clear_flags($this->restart());
           } else {
             return $this->clear_flags(3);
@@ -492,7 +492,7 @@ sub status ($this, $autostart = undef) {
     if ($running) {
       return $this->clear_flags(1);
     } else {
-      if ($autoStart) {
+      if ($auto_start) {
         return $this->clear_flags($this->start());
       } else {
         return $this->clear_flags(0);
@@ -503,15 +503,14 @@ sub status ($this, $autostart = undef) {
   }
 }
 
-sub start ($this) {
-  unless (defined($this->{'module'})) {
-    my $service = shift || die "Either run \$this->load_module('service_name') first\nor run with service name: \$this->start('service_name')";
+sub start ($this, $service = undef) {
+  if (!defined($this->{'module'}) && defined($service)) {
     $this->load_module($service);
   }
 
   return $this->clear_flags(7) if ($this->status(0) == 7);
 
-  $this->do_log( 'starting ' . $this->{'service'} . '...', 'daemon' );
+  $this->do_log( "starting $this->{'service'}...", 'daemon' );
 
   if ($this->{'module'}->{'state'} =~ m/^[0235]$/) {
     $this->clear_flags(5);
@@ -520,7 +519,7 @@ sub start ($this) {
   }
 
   if ($this->find_process()) {
-    $this->do_log( $this->{'service'} . ' already running.', 'daemon' );
+    $this->do_log("$this->{'service'} already running.", 'daemon' );
     $this->clear_flags(1);
     return 1;
   }
@@ -529,27 +528,23 @@ sub start ($this) {
 
   $this->do_log('Initializing Daemon', 'daemon');
 
-  $SIG{ALRM} = sub { $this->do_log( "Got alarm signal.. nothing to do", 'daemon' ); };
-  $SIG{PIPE} = sub { $this->do_log( "Got PIPE signal.. nothing to do", 'daemon' ); };
+  $SIG{ALRM} = sub { $this->do_log( "Got alarm signal.. nothing to do", 'daemon' ); }; ## no critic
+  $SIG{PIPE} = sub { $this->do_log( "Got PIPE signal.. nothing to do", 'daemon' ); }; ## no critic
 
   if ($this->{'module'}->{'daemonize'}) {
     my $pid = fork;
     if ($pid) {
-      $this->do_log( 'Deamonized with PID ' . $pid, 'daemon' );
+      $this->do_log( "Deamonized with PID $pid", 'daemon' );
       sleep(1);
       my @pids = $this->pids();
       my @remaining = ();
       foreach my $testing ( @pids ) {
-        foreach ( @{ $this->{'process_table'}->table } ) {
-          if ($_->{'pid'} == $testing &&
-            $_->{'cmndline'} =~ m#$this->{'module'}->{'cmndline'}#i )
-          {
+        foreach ( @{ $this->{'process_table'}->table() } ) {
+          if ($_->{'pid'} == $testing && $_->{'cmndline'} =~ m#$this->{'module'}->{'cmndline'}#i ) {
             if ($_->{'pid'} == $pid) {
-              $this->do_log( 'Started successfully',
-                'daemon' );
+              $this->do_log( 'Started successfully', 'daemon' );
             } else {
-              $this->do_log( 'Started child ' . $_->{'pid'},
-                'daemon' );
+              $this->do_log( "Started child $_->{'pid'}", 'daemon' );
             }
             push @remaining, $_->{'pid'};
             last;
@@ -560,7 +555,7 @@ sub start ($this) {
         $this->write_pid_file( @remaining );
         return $this->clear_flags(1);
       } else {
-        $this->do_log( 'Deamon doesn\'t exist after start. Failed', 'daemon' );
+        $this->do_log( "Deamon doesn't exist after start. Failed.", 'daemon' );
         return 0;
       }
     } elsif ($pid == -1) {
@@ -568,30 +563,17 @@ sub start ($this) {
       $this->clear_flags(0);
       return $this->{'module'}->{'state'};
     } else {
-      if ( $this->{'module'}->{'gid'} ) {
-        $) = $this->{'module'}->{'gid'} ||
-          die "failed to set gid\n";
-        unless ( grep { $) } split( ' ', $this->{'module'}->{'gid'} ) ) ) {
-          print STDERR "Can't set GID " .
-            $this->{'module'}->{'gid'} .
-            " (" . $( . " " . $) . ")\n";
-          return 0;
-        }
-      }
-      $this->do_log('Set GID to ' . $this->{'module'}->{'group'} .
-        " (" . $( . ")", 'daemon');
-
+  if ( $this->{'gid'} ) {
+  }
       if ( $this->{'module'}->{'uid'} ) {
-        $> = $this->{'module'}->{'uid'};
-        unless ($> == $this->{'module'}->{'uid'}) {
-          print STDERR "Can't set UID " .
-            $this->{'module'}->{'uid'} .
-            " (" . $< . " " . $> . ")\n";
-          return 0;
-        }
+        die "Can't set UID $this->{'uid'}: $?\n" unless (setuid($this->{'uid'}));
       }
-      $this->do_log('Set UID to ' . $this->{'module'}->{'user'} .
-        " (" . $< . ")", 'daemon');
+      $this->do_log("Set UID to $this->{'module'}->{'user'} ($<)", 'daemon');
+
+      if ( $this->{'module'}->{'gid'} ) {
+        die "Can't set GID $this->{'gid'}: $?\n" unless (setgrp($this->{'gid'}));
+      }
+      $this->do_log("Set GID to $this->{'module'}->{'group'} ($()", 'daemon');
 
       open STDIN, '<', '/dev/null';
       open STDOUT, '>>', '/dev/null';
@@ -600,7 +582,7 @@ sub start ($this) {
       umask 0;
     }
   } else {
-    $this->write_pid_file( ($$) );
+    $this->write_pid_file( "$$" );
   }
 
   $this->pre_fork();
@@ -616,9 +598,8 @@ sub start ($this) {
   return $this->{'module'}->{'state'};
 }
 
-sub stop ($this) {
-  unless (defined($this->{'module'})) {
-    my $service = shift || die "Either run \$this->load_module('service_name') first\nor run with service name: \$this->stop('service_name')";
+sub stop ($this, $service = undef) {
+  if (!defined($this->{'module'}) && defined($service)) {
     $this->load_module($service);
   }
 
@@ -680,9 +661,8 @@ sub stop ($this) {
   }
 }
 
-sub restart ($this) {
-  unless (defined($this->{'module'})) {
-    my $service = shift || die "Either run \$this->load_module('service_name') first\nor run with service name: \$this->restart('service_name')";
+sub restart ($this, $service = undef) {
+  if (!defined($this->{'module'}) && defined($service)) {
     $this->load_module($service);
   }
 
@@ -717,9 +697,8 @@ sub restart ($this) {
   return $this->start();
 }
 
-sub enable ($this) {
-  unless (defined($this->{'module'})) {
-    my $service = shift || die "Either run \$this->load_module('service_name') first\nor run with service name: \$this->enable('service_name')";
+sub enable ($this, $service = undef) {
+  if (!defined($this->{'module'}) && defined($service)) {
     $this->load_module($service);
   }
 
@@ -727,9 +706,8 @@ sub enable ($this) {
   return $this->restart();
 }
 
-sub disable ($this) {
-  unless (defined($this->{'module'})) {
-    my $service = shift || die "Either run \$this->load_module('service_name') first\nor run with service name: \$this->disable('service_name')";
+sub disable ($this, $service = undef) {
+  if (!defined($this->{'module'}) && defined($service)) {
     $this->load_module($service);
   }
 
@@ -786,7 +764,7 @@ sub main_loop ($this) {
 }
 
 sub fork_children ($this) {
-  $SIG{'TERM'} = sub {
+  $SIG{'TERM'} = sub { ## no critic
     $this->do_log(
       'Main thread got a TERM signal. Proceeding to shutdown...',
       'daemon'
@@ -865,8 +843,9 @@ sub new_child ($this) {
 
 sub read_pid_file ($this) {
   my @pids;
-  return unless (open(my $PIDFILE, '<', $this->{'module'}->{'pidfile'}));
-  while (<PIDFILE>) {
+  my $PIDFILE;
+  return unless (open($PIDFILE, '<', $this->{'module'}->{'pidfile'}));
+  while (<$PIDFILE>) {
     push(@pids, $_) if ($_ =~ m/^\d+$/);
   }
   return @pids;
@@ -877,7 +856,8 @@ sub write_pid_file ($this, @pids) {
     unlink($this->{'module'}->{'pidfile'});
     return 1;
   }
-  if (open(my $PIDFILE, '>', $this->{'module'}->{'pidfile'} ) ) {
+  my $PIDFILE;
+  if (open($PIDFILE, '>', $this->{'module'}->{'pidfile'} ) ) {
     foreach (@pids) {
       print $PIDFILE "$_\n";
     }
@@ -894,7 +874,8 @@ sub clear_flags ($this, $status) {
   }
   $this->{'module'}->{'state'} = $status;
 
-  opendir(my $dh, $this->{'restart_dir'});
+  my $dh;
+  opendir($dh, $this->{'restart_dir'});
   my @files = readdir($dh);
   closedir $dh;
 
@@ -917,7 +898,8 @@ sub clear_flags ($this, $status) {
       $this->{'service'} . '.' .
       $this->{'codes'}->{$status}->{'suffix'} ) )
     {
-      open(my $fh, '>',
+      my $fh;
+      open($fh, '>',
         $this->{'restart_dir'} . '/' .
         $this->{'service'} . '.' .
         $this->{'codes'}->{$status}->{'suffix'}
@@ -995,13 +977,13 @@ sub write_log ($this, $message) {
   my $LOCK_EX = 2;
   my $LOCK_NB = 4;
   my $LOCK_UN = 8;
-  $| = 1;
+  $| = 1; ## no critic
 
-  if ( !defined( fileno(LOGGERLOG) ) || !-f $this->{'module'}->{'logfile'} ) {
-    open(my $LOGGERLOG, ">>", $this->{'module'}->{'logfile'});
-    if ( !defined( fileno(LOGGERLOG) ) ) {
+  if ( !defined( fileno($LOGGERLOG) ) || !-f $this->{'module'}->{'logfile'} ) {
+    open($LOGGERLOG, ">>", $this->{'module'}->{'logfile'});
+    if ( !defined( fileno($LOGGERLOG) ) ) {
       open $LOGGERLOG, ">>", "/tmp/" . $this->{'module'}->{'logfile'};
-      $| = 1;
+      $| = 1; ## no critic
     }
     $this->do_log( 'Log file has been opened, hello !', 'daemon' );
   }
@@ -1021,7 +1003,6 @@ sub get_thread_id ($this) {
 }
 
 1;
-
 __END__
 
 =head1 NAME
@@ -1034,11 +1015,11 @@ Load package
 
   use ManageServices;
 
-Create object (enable autoStart for services that are not running)
+Create object (enable auto_start for services that are not running)
 
-  my $manager = ManageServices->( 'autoStart' => 1 ) || die "$!\n";
+  my $manager = ManageServices->( 'auto_start' => 1 ) || die "$!\n";
 
-If the object is created with the 'autoStart' option enabled, services will
+If the object is created with the 'auto_start' option enabled, services will
 be restarted when possible, including with 'check_all', 'status', and 'pids'.
 
 Object contains a list of services as a hash

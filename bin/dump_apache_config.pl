@@ -77,12 +77,13 @@ sub dump_apache_file ($filetmpl, $filedst) {
   my $template_file = "${SRCDIR}${filetmpl}";
   my $target_file = "${SRCDIR}${filedst}";
 
-  unless (open(my $TEMPLATE, "<", $template_file) ) {
+  my ($TEMPLATE, $TARGET);
+  unless (open($TEMPLATE, "<", $template_file) ) {
     $lasterror = "Cannot open template file: $template_file";
     return 0;
   }
 
-  unless (open(my $TARGET, ">", $target_file) ) {
+  unless (open($TARGET, ">", $target_file) ) {
     $lasterror = "Cannot open target file: $target_file";
     close $template_file;
     return 0;
@@ -129,11 +130,12 @@ sub dump_soap_wsdl {
   my $template_file = "$SRCDIR/www/soap/htdocs/spamtagger.wsdl_template";
   my $target_file = "$SRCDIR/www/soap/htdocs/spamtagger.wsdl";
 
-  unless (open(my $TEMPLATE, "<", $template_file) ) {
+  my ($TEMPLATE, $TARGET);
+  unless (open($TEMPLATE, "<", $template_file) ) {
     $lasterror = "Cannot open template file: $template_file";
     return 0;
   }
-  unless (open(my $TARGET, ">", "$target_file") ) {
+  unless (open($TARGET, ">", "$target_file") ) {
     $lasterror = "Cannot open target file: $target_file";
     close $template_file;
     return 0;
@@ -232,7 +234,8 @@ sub dump_certificate ($cert, $key, $chain) {
   } else {
     $cert =~ s/\r\n/\n/g;
     $key =~ s/\r\n/\n/g;
-    if (open(my $FILE, ">", $path)) {
+    my $FILE;
+    if (open($FILE, ">", $path)) {
       print $FILE $cert."\n";
       print $FILE $key."\n";
       close $FILE;
@@ -240,7 +243,8 @@ sub dump_certificate ($cert, $key, $chain) {
   }
 
   if ( $chain && $chain ne '' ) {
-    if (open(my $FILE, ">", $chainpath)) {
+    my $FILE;
+    if (open($FILE, ">", $chainpath)) {
       print $FILE $chain."\n";
       close $FILE;
     }

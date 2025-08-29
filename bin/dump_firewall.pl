@@ -89,7 +89,8 @@ our $trusted = join(' ', keys(%trustedips));
 my $dnsres = Net::DNS::Resolver->new;
 
 # do we have ipv6 ?
-if (open(my $interfaces, '<', '/etc/network/interfaces')) {
+my $interfaces;
+if (open($interfaces, '<', '/etc/network/interfaces')) {
   while (<$interfaces>) {
     if ($_ =~ m/iface \S+ inet6/) {
       $has_ipv6 = 1;
@@ -155,8 +156,8 @@ sub get_api_rules {
   my %ips;
   while (my $ref = $sth->fetchrow_hashref() ) {
     my @notempty;
-    push (@notempty, $ref->{'api_admin_ips'}) if (defined($ref->{'api_admin_ips'}) && $ref->{'api_admin_ips'} != '');
-    push (@notempty, $ref->{'api_fulladmin_ips'}) if (defined($ref->{'api_fulladmin_ips'}) && $ref->{'api_fulladmin_ips'} != '');
+    push (@notempty, $ref->{'api_admin_ips'}) if (defined($ref->{'api_admin_ips'}) && $ref->{'api_admin_ips'} ne '');
+    push (@notempty, $ref->{'api_fulladmin_ips'}) if (defined($ref->{'api_fulladmin_ips'}) && $ref->{'api_fulladmin_ips'} ne '');
     foreach my $ip (expand_host_string(my $string = join("\n", @notempty),{'dumper'=>'system_conf/api_admin_ips'})) {
       $ips{$ip} = 1;
     }
@@ -214,7 +215,8 @@ sub get_external_rules {
 }
 
 sub do_start_script {
-  unless (open(my $START, ">", $start_script) ) {
+  my $START;
+  unless (open($START, ">", $start_script) ) {
      $lasterror = "Cannot open start script";
      return 0;
   }
@@ -330,7 +332,8 @@ sub do_start_script {
   my @blacklist_files = ('/usr/spamtagger/etc/firewall/blacklist.txt', '/usr/spamtagger/etc/firewall/blacklist_custom.txt');
   my $blacklist_script = '/usr/spamtagger/etc/firewall/blacklist';
   unlink $blacklist_script;
-  open(my $BLACKLIST, '>>', $blacklist_script);
+  my $BLACKLIST;
+  open($BLACKLIST, '>>', $blacklist_script);
   print $BLACKLIST "#! /bin/sh\n\n";
   print $BLACKLIST "$ipset_bin create BLACKLISTIP hash:ip\n" unless (defined($existing->{'BLACKLISTIP'}));
   print $BLACKLIST "$ipset_bin create BLACKLISTNET hash:net\n" unless (defined($existing->{'BLACKLISTNET'}));
@@ -341,6 +344,7 @@ sub do_start_script {
   }
   foreach my $blacklist_file (@blacklist_files) {
     if ( -e $blacklist_file ) {
+      my $BLACK_IP;
       if (open($BLACK_IP, '<', $blacklist_file) ) {
         while (my $IP = <$BLACK_IP>) {
           chomp($IP);
@@ -389,7 +393,8 @@ sub do_start_script {
 }
 
 sub do_stop_script {
-  unless (open(my $STOP, ">", $stop_script) ) {
+  my $STOP;
+  unless (open($STOP, ">", $stop_script) ) {
     $lasterror = "Cannot open stop script";
     return 0;
   }
@@ -439,11 +444,13 @@ sub get_subnets {
 
 #############################
 sub dump_local_file ($template, $target) {
-  if (open(my $tmp, '<', $template)) {
+  my $tmp;
+  if (open($tmp, '<', $template)) {
     my $output = "";
     $output .= $_ while (<$tmp>);
     $output =~ s/__TRUSTEDIPS__/$trusted/g;
-    if (open(my $out, '>', $target)) {
+    my $out;
+    if (open($out, '>', $target)) {
       print $out $output;
     } else {
       print STDERR "Failed to open target $target\n";

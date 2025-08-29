@@ -56,7 +56,8 @@ sub db_connect ($class, $type, $db, $critical_p = 0) {
   	my $host;
   	my $port;
   	my $password;
-    if (open(my $MASTERFILE, '<', $masterfile)) {
+    my $MASTERFILE;
+    if (open($MASTERFILE, '<', $masterfile)) {
       while (<$MASTERFILE>) {
         if (/HOST (\S+)/) { $host = $1; }
         if (/PORT (\S+)/) { $port = $1; }
@@ -108,7 +109,7 @@ sub db_disconnect ($this) {
   return 1;
 }
 
-sub fatal_error ($this, $critical = 0) {
+sub fatal_error ($msg, $critical = 0) {
   return 0 if ($critical < 1);
   print $msg."\n";
   exit(0);

@@ -85,7 +85,8 @@ sub dump_ww_files ($to, $filepath) {
     create_dirs($filepath);
 
     # and write the file down
-    return 0 unless (open(my $WWFILE, ">", $file) );
+    my $WWFILE;
+    return 0 unless (open($WWFILE, ">", $file) );
 
     print $WWFILE "$_\n" foreach (@list);
 

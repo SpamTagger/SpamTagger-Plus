@@ -23,27 +23,28 @@ use utf8;
 
 use Perl::Critic qw(critique);
 use Test2::V0;
+use Env qw(TABLE_TERM_SIZE);
 
 my $start = shift || '.';
-$ENV{TABLE_TERM_SIZE} = 100;
+$TABLE_TERM_SIZE = 100;
 
-our $args = {precise=>{signatures=>'perl'}, -severity => 4};
+our %args = ();
 if (-f $start."/perlcritic.conf") {
-  $args->{-profile} = $start."/perlcritic.conf"
+  $args{-profile} = $start."/perlcritic.conf"
 } elsif (-f $start."/etc/perlcritic.conf") {
-  $args->{-profile} = $start."/etc/perlcritic.conf"
+  $args{-profile} = $start."/etc/perlcritic.conf"
 }
-#use Data::Dump qw( dump );
-#print dump($critic->config())."\n";
+my $critic = Perl::Critic->new( %args );
 
 die "Path '$start' does not exist\n" unless (-d $start);
 
 sub check_dir ($path) {
-  opendir(my $dir, $path);
+  my $dir;
+  opendir($dir, $path);
   while (my $new_path = readdir($dir)) {
     next if ($new_path =~ /^\./);
     if (-f "$path/$new_path" && $new_path =~ /\.p(l|m)$/) {
-      my @violations = critique($args, "$path/$new_path");
+      my @violations = $critic->critique("$path/$new_path");
       is(@violations, 0, "$path/$new_path");
       print "$path/$new_path: $_" foreach (@violations);
     }

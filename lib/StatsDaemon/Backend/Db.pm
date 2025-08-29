@@ -142,12 +142,12 @@ sub stabilize_flat_element ($this, $element) {
         }
       } else {
         ## maybe inserted meanwhile, so search again...
-        my $query =
+        $query =
           "SELECT id FROM stats_subject WHERE subject='" . $element
           . "'";
         $this->{daemon}->add_stat( 'backend_read', 1 );
         return '_NOBACKEND' if ( !$this->connect_backend() );
-        my %res = $this->{db}->getHashRow($query);
+        %res = $this->{db}->getHashRow($query);
         if ( defined( $res{'id'} ) ) {
           $this->{daemon}->set_element_value_by_name( $element, 'stable_id',
             $res{'id'} );

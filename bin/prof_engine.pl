@@ -34,7 +34,8 @@ my $conf = ReadConfig::get_instance();
 
 my $logfile=$conf->get_option('VARDIR')."/log/mailscanner/infolog";
 
-open(my LOGFILE, '<', $logfile) or die "cannot open log file: $logfile\n";
+my $LOGFILE;
+open($LOGFILE, '<', $logfile) or die "cannot open log file: $logfile\n";
 
 my %counts = ();
 my %sums = ();
@@ -94,22 +95,23 @@ foreach my $hour (@h) {
 
 sub print_stat ($var) {
 
-  my $av = 0;
+  my $average = 0;
   if (defined($counts{$var}) && $counts{$var} > 0) {
-   $av = (int(($sums{$var}/$counts{$var})*10000)/10000);
+   $average = (int(($sums{$var}/$counts{$var})*10000)/10000);
   }
   my $percent = 0;
   if ($counts{'SpamCacheCheck'} > 0) {
     $percent = (int( (100/$counts{'SpamCacheCheck'} * $counts{$var}) * 100) / 100);
   }
-  print $var.": ".$counts{$var}." ($percent%) => ".$av."s (max:".$max{$var}."s, min:".$min{$var}."s)\n";
+  print $var.": ".$counts{$var}." ($percent%) => ".$average."s (max:".$max{$var}."s, min:".$min{$var}."s)\n";
   return;
 }
 
 sub print_hourly ($h, $var) {
+  my $average;
   if (defined($hourly_counts{$h}{$var}) && $hourly_counts{$h}{$var} > 0) {
-   $av = (int(($hourly_sums{$h}{$var}/$hourly_counts{$h}{$var})*10000)/10000);
+    $average = (int(($hourly_sums{$h}{$var}/$hourly_counts{$h}{$var})*10000)/10000);
   }
-  print $h.": ".$hourly_counts{$h}{$var}." => ".$av."s \n";
+  print $h.": ".$hourly_counts{$h}{$var}." => ".$average."s \n";
   return;
 }

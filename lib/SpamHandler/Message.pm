@@ -400,7 +400,7 @@ sub process ($this) {
     # Neither newsletter, nor spam
     } else {
       $status = 'not spam';
-      unless ($this->{decisive_module}{action} == 'negative') {
+      unless ($this->{decisive_module}{action} eq 'negative') {
         $this->{decisive_module}{module} = undef;
       }
       $this->{fullheaders} =~ s/Subject:\s+\{(ST_SPAM|ST_HIGHSPAM)\}/Subject:/i;
@@ -428,10 +428,11 @@ sub process ($this) {
 }
 
 sub load_env_file ($this) {
-  open(my $ENV, '<', $this->{envfile} ) or return 0;
+  my $env;
+  open($env, '<', $this->{envfile} ) or return 0;
 
   my $fromfound = 0;
-  while (<$ENV>) {
+  while (<$env>) {
     if ( !$fromfound ) {
       $fromfound = 1;
       $this->{env_sender} = lc($_);
@@ -443,7 +444,7 @@ sub load_env_file ($this) {
         }
     }
   }
-  close $ENV;
+  close $env;
 
   if ( $this->{env_rcpt} =~ m/^(\S+)@(\S+)$/ ) {
     $this->{env_tolocal} = $1;
@@ -460,7 +461,8 @@ sub load_msg_file ($this) {
   my $last_hvalue = '';
   my $uriscount   = 0;
 
-  open(my $BODY, '<', $this->{msgfile} ) or return 0;
+  my $BODY;
+  open($BODY, '<', $this->{msgfile} ) or return 0;
   while (<$BODY>) {
 
     ## check for end of headers
@@ -838,7 +840,7 @@ sub send_me_anyway ($this) {
     $id = $1;
   }
 
-  if ($id == 'unknown') {
+  if ($id eq 'unknown') {
     $this->{daemon}->do_log(
       $this->{batchid}
         . ": message "
@@ -932,7 +934,8 @@ sub quarantine ($this) {
       . $this->{env_rcpt} . "/"
       . $this->{exim_id};
 
-  unless (open(my $MSGFILE, ">", $filename ) ) {
+  my $MSGFILE;
+  unless (open($MSGFILE, ">", $filename ) ) {
     print " cannot open quarantine file $filename for writing";
     $this->{daemon}->do_log(
       "Cannot open quarantine file $filename for writing",

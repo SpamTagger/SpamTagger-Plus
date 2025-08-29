@@ -80,7 +80,8 @@ sub dump_domain_to_avoid ($domain) {
    }
 
    my $file = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/domains_to_avoid_greylist.list";
-   unless (open(my $DOMAINTOAVOID, ">", $file) ) {
+   my $DOMAINTOAVOID;
+   unless (open($DOMAINTOAVOID, ">", $file) ) {
     $lasterror = "Cannot open template file: $file";
     return 0;
   }
@@ -91,17 +92,18 @@ sub dump_domain_to_avoid ($domain) {
 
 #############################
 sub dump_greylistd_file ($href) {
-  my %greylist_conf = %$href;
   my $srcpath = $conf->get_option('SRCDIR');
   my $varpath = $conf->get_option('VARDIR');
 
   my $template_file = $srcpath."/etc/greylistd/greylistd.conf_template";
   my $target_file = $srcpath."/etc/greylistd/greylistd.conf";
 
+  my $TEMPLATE;
   unless (open($TEMPLATE, "<", $template_file) ) {
     $lasterror = "Cannot open template file: $template_file";
     return 0;
   }
+  my $TARGET;
   unless (open($TARGET, ">", $target_file) ) {
     $lasterror = "Cannot open target file: $target_file";
     close $template_file;
@@ -113,8 +115,8 @@ sub dump_greylistd_file ($href) {
     $line =~ s/__VARDIR__/$varpath/g;
     $line =~ s/__SRCDIR__/$srcpath/g;
 
-    foreach my $key (keys %greylist_conf) {
-      $line =~ s/$key/$greylist_conf{$key}/g;
+    foreach my $key (keys %{$href}) {
+      $line =~ s/$key/$href->{$key}/g;
     }
 
     print $TARGET $line;

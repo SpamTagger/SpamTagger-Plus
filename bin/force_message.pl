@@ -58,7 +58,8 @@ my $for_domain = $2;
 
 my $msg_file = $config->get_option('VARDIR')."/spam/".$for_domain."/".$for."/".$msg_id;
 
-if (open(my $MSG, '<', $msg_file)) {
+my $MSG;
+if (open($MSG, '<', $msg_file)) {
   my $start_msg = 0;
   my $msg = "";
   my $has_from = 0;

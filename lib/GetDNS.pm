@@ -147,10 +147,10 @@ sub dumper ($this, $raw = '', $args = {}) {
   } while ($continue);
 
   if (scalar(@invalid)) {
-    if (open(my $fh, '>>', $args->{'log'})) {
-            print($fh "Did not understand hostlist entries '" .
-        join("', '",@invalid) .
-        "' in '$args->{'dumper'}'\n");
+    my $fh;
+    if (open($fh, '>>', $args->{'log'})) {
+      print($fh "Did not understand hostlist entries '" .
+        join("', '",@invalid)."' in '$args->{'dumper'}'\n");
       close($fh);
     }
   }

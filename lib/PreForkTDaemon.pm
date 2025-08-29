@@ -40,7 +40,7 @@ our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
 use threads();
-use threads::shared();
+use threads::shared qw( share );
 use POSIX();
 use Sys::Syslog();
 use ReadConfig();
@@ -50,9 +50,9 @@ use Time::HiRes qw(gettimeofday tv_interval);
 
 my $PROFILE = 1;
 my ( %prof_start, %prof_res ) = ();
-my $daemoncounts_ = &share( {} );
+my $daemoncounts_ = share( () );
 my %log_prio_levels = ( 'error' => 0, 'info' => 1, 'debug' => 2 );
-our $LOGGERFILE;
+our $LOGGERLOG;
 
 sub new ($class, $daemonname, $conffilepath, $spec_this = {}) {
   $daemoncounts_->{'starttime'} = time();
@@ -98,8 +98,8 @@ sub new ($class, $daemonname, $conffilepath, $spec_this = {}) {
   };
 
   # add specific options of child object
-  foreach my $sk ( keys %spec_this ) {
-    $this->{$sk} = $spec_this{$sk};
+  foreach my $sk ( keys %{$spec_this} ) {
+    $this->{$sk} = $spec_this->{$sk};
   }
 
   ## add log_sets
@@ -118,7 +118,8 @@ sub new ($class, $daemonname, $conffilepath, $spec_this = {}) {
   }
 
   # replace with configuration file values
-  if (open(my $CONFFILE, '<', $this->{configfile})) {
+  my $CONFFILE;
+  if (open($CONFFILE, '<', $this->{configfile})) {
     while (<$CONFFILE>) {
       chomp;
       next if /^\#/;
@@ -146,7 +147,7 @@ sub new ($class, $daemonname, $conffilepath, $spec_this = {}) {
     $this->{'runasgroup'} ? getgrnam( $this->{'runasgroup'} ) : 0;
 
   ## set our process name
-  $0 = $this->{name};
+  $0 = $this->{name}; ## no critic
   if ( $this->{'syslog_progname'} eq '' ) {
     $this->{'syslog_progname'} = $this->{name};
   }
@@ -162,28 +163,16 @@ sub new ($class, $daemonname, $conffilepath, $spec_this = {}) {
 
 sub init_daemon ($this) {
   my $result = 'not started';
-  my @errors;
 
   ## change user and group if needed
-  if ( $this->{'gid'} ) {
-    ( $(, $) ) = ( $this->{'gid'}, $this->{'gid'} );
-    $( == $this->{'gid'} && $) == $this->{'gid'}
-      || die "Can't set GID " . $this->{'gid'};
-    $) = $this->{'gid'};
-  }
   if ( $this->{'uid'} ) {
-    ( $<, $> ) = ( $this->{'uid'}, $this->{'uid'} );
-    $< == $this->{'uid'} && $> == $this->{'uid'}
-      || die "Can't set UID " . $this->{'uid'};
+    die "Can't set UID $this->{'uid'}: $?\n" unless (setuid($this->{'uid'}));
   }
-  $this->do_log(
-    'Set UID to ' . $this->{'runasgroup'} . "(" . $< . ")",
-    'daemon'
-  );
-  $this->do_log(
-    'Set GID to ' . $this->{'runasgroup'} . "(" . $( . ")",
-    'daemon'
-  );
+  $this->do_log("Set UID to $this->{'runasgroup'} ($<)", 'daemon');
+  if ( $this->{'gid'} ) {
+    die "Can't set GID $this->{'gid'}: $?\n" unless (setgrp($this->{'gid'}));
+  }
+  $this->do_log("Set GID to $this->{'runasgroup'} ($()", 'daemon');
 
   my @pids = $this->read_pid_file();
 
@@ -213,12 +202,12 @@ sub init_daemon ($this) {
   $this->do_log( 'Initializing Daemon', 'daemon' );
 
 # first install some critical signal handler so that main script wont get killed
-  $SIG{ALRM} = sub {
+  $SIG{ALRM} = sub { ## no critic
     $this->do_log( "Got alarm signal.. nothing to do", 'daemon' );
-  };
-  $SIG{PIPE} = sub {
+  }; ## no critic
+  $SIG{PIPE} = sub { ## no critic
     $this->do_log( "Got PIPE signal.. nothing to do", 'daemon' );
-  };
+  }; ## no critic
 
   if ( $this->{daemonize} ) {
 
@@ -226,18 +215,18 @@ sub init_daemon ($this) {
     my $pid = fork;
     if ($pid) {
       # parent
-      open my $fh, ">>", $this->{pidfile};
+      my $fh;
+      open($fh, ">>", $this->{pidfile});
       print $fh $pid;
       close $fh;
-      $this->do_log( 'Deamonized with PID ' . $pid, 'daemon' );
+      $this->do_log( "Deamonized with PID $pid", 'daemon' );
       $result = "started.";
-      return output($result,@errors);
-      exit();
+      return output($result, @errors);
     } elsif ($pid == -1) {
       # failed
       $result = "not started.";
       push @errors, "Couldn't fork: $!";
-      return output($result,@errors);
+      return output($result, @errors);
     } else {
       # child
       open STDIN, '<', '/dev/null';
@@ -248,7 +237,8 @@ sub init_daemon ($this) {
     }
   } else {
     my $pid = $$;
-    open my $fh, ">>", $this->{pidfile};
+    my $fh;
+    open($fh, ">>", $this->{pidfile});
     print $fh $pid;
     close $fh;
   }
@@ -266,7 +256,7 @@ sub exit_daemon ($this) {
   my @pids = $this->read_pid_file();
 
   require Proc::ProcessTable;
-  my $t = new Proc::ProcessTable;
+  my $t = Proc::ProcessTable->new();
 
   my @running = ();
   my $match = 0;
@@ -296,7 +286,7 @@ sub exit_daemon ($this) {
           }
           sleep 1;
           $pidstillhere = 0;
-          my $n = new Proc::ProcessTable;
+          my $n = Proc::ProcessTable->new();
           foreach ( @{$t->table} ) {
           if ($_->{'pid'} == $p->{'pid'}) {
             $pidstillhere = 1;
@@ -336,8 +326,9 @@ sub get_daemon_counts ($this) {
 
 sub read_pid_file ($this) {
   my @pids;
-  if ( open(my $PIDFILE, '<', $this->{pidfile} ) ) {
-    while (<PIDFILE>) {
+  my $PIDFILE;
+  if ( open($PIDFILE, '<', $this->{pidfile} ) ) {
+    while (<$PIDFILE>) {
       push @pids, $1 if (/(\d+)/);
     }
   }
@@ -345,7 +336,7 @@ sub read_pid_file ($this) {
 }
 
 sub fork_children ($this) {
-  $SIG{'TERM'} = sub {
+  $SIG{'TERM'} = sub { ## no critic
     $this->do_log(
       'Main thread got a TERM signal. Proceeding to shutdown...',
       'daemon'
@@ -456,7 +447,7 @@ sub status_hook ($this) {
   my $time_before_hardkill = $this->{time_before_hardkill};
 
   require Proc::ProcessTable;
-  my $t = new Proc::ProcessTable;
+  my $t = Proc::ProcessTable->new();
   my @match;
   foreach my $p ( @{ $t->table } ) {
     my $cmndline = $p->{'cmndline'};
@@ -544,13 +535,13 @@ sub write_log_to_file ($this, $message) {
   my $LOCK_EX = 2;
   my $LOCK_NB = 4;
   my $LOCK_UN = 8;
-  $| = 1;
+  $| = 1; ## no critic
 
   if ( !defined( fileno($LOGGERLOG) ) || !-f $this->{logfile} ) {
     open($LOGGERLOG, ">>", $this->{logfile});
     if ( !defined( fileno($LOGGERLOG) ) ) {
       open $LOGGERLOG, ">>", "/tmp/".$this->{logfile};
-      $| = 1;
+      $| = 1; ## no critic
     }
     $this->do_log( 'Log file has been opened, hello !', 'daemon' );
   }
@@ -583,16 +574,14 @@ sub format_time ($this, $time) {
 }
 
 ##### profiling
-sub profile_start ($this) {
+sub profile_start ($this, $var) {
   return unless $PROFILE;
-  my $var = shift;
   $prof_start{$var} = [gettimeofday];
   return;
 }
 
-sub profile_stop ($this) {
+sub profile_stop ($this, $var) {
   return unless $PROFILE;
-  my $var = shift;
   return unless defined( $prof_start{$var} );
   my $interval = tv_interval( $prof_start{$var} );
   my $time     = ( int( $interval * 10000 ) / 10000 );

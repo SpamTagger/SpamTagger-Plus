@@ -119,7 +119,8 @@ sub remove_and_save_ST_RBLs {
     return 0;
   }
 
-  open(my $FH, '>', $rbl_sql_file);
+  my $FH;
+  open($FH, '>', $rbl_sql_file);
 
   foreach my $table (keys %rbl_field) {
     my $field = $rbl_field{$table};
@@ -172,7 +173,8 @@ sub handle_dns_ok {
     }
 
     # The file contains the SQL statements ready to be excuted
-    open(my $FH, $rbl_sql_file or warn "Cannot open $rbl_sql_file: $!\n";
+    my $FH;
+    open($FH, $rbl_sql_file or warn "Cannot open $rbl_sql_file: $!\n";
     while (<$FH>) {
       $sth = $master_dbh->prepare($_);
       $sth->execute();

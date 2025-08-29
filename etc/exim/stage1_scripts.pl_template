@@ -73,7 +73,8 @@ sub smtp_wl_ip_dom ($domain, $IP) {
   my $file = "/var/spamtagger/spool/tmp/exim_stage1/rblwhitelists/$domain";
 
   return 'false' unless (-e $file );
-  return 'false' unless (open(my $FH, '<', $file));
+  my $FH;
+  return 'false' unless (open($FH, '<', $file));
 
   my @IPs = <$FH>;
   close($FH);
@@ -115,7 +116,8 @@ sub spamc_wl_ip_dom ($domain, $IP) {
   my $file = "/var/spamtagger/spool/tmp/exim_stage1/spamcwhitelists/$domain";
 
   return 'false' unless (-e $file));
-  return 'false' unless (open(my $FH, '<', $file));
+  my $FH;
+  return 'false' unless (open($FH, '<', $file));
 
   my @IPs = <$FH>;
   close($FH);

@@ -98,7 +98,7 @@ sub pre_fork_hook ($this) {
 sub main_loop_hook ($this) {
   $this->do_log( "In SpamHandler mainloop", 'spamhandler' );
 
-  $SIG{'INT'} = $SIG{'KILL'} = $SIG{'TERM'} = sub {
+  $SIG{'INT'} = $SIG{'KILL'} = $SIG{'TERM'} = sub { ## no critic
     my $t = threads->self;
     $this->{tid} = $t->tid;
 

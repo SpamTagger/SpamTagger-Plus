@@ -58,7 +58,7 @@ if (!$email) {
   print "INVALIDADDRESS";
   exit 0;
 }
-my $domain = Domain::create($domain);
+$domain = Domain::create($domain);
 if (!$domain) {
    print "INVALIDDOMAIN";
    exit 0;

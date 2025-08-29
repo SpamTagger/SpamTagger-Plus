@@ -76,10 +76,11 @@ sub dolist($this, $dir, $parent) {
   return $dir unless -d $dir;
 
   my @dlglist;
-  opendir(my $DIR, $dir) or return $dir;
+  my $DIR;
+  opendir($DIR, $dir) or return $dir;
   while(my $entry = readdir($DIR)) {
     next if $entry =~ m/\./;
-    if ( -d $dir."/".$entry || -f $dir."/".$entry) {
+    if ( -d "$dir/$entry" || -f "$dir/$entry") {
       push @dlglist, $entry;
     }
   }

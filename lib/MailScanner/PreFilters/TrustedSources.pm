@@ -68,7 +68,8 @@ sub initialise {
   @TrustedSources::domains_to_spf = ();
   %TrustedSources::localDomains_;
 
-  if (open(my $CONFIG, '<', $configfile)) {
+  my $CONFIG;
+  if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
         $TrustedSources::conf{$1} = $2;
@@ -89,7 +90,8 @@ sub initialise {
   @TrustedSources::domains_to_spf = @a;
 
   if ($TrustedSources::conf{useSPFOnLocal} && -f $TrustedSources::conf{localDomainSFile}) {
-    if (open (my $LOCALDOMAINS, '<', $TrustedSources::conf{localDomainSFile})) {
+    my $LOCALDOMAINS;
+    if (open($LOCALDOMAINS, '<', $TrustedSources::conf{localDomainSFile})) {
       while(<$LOCALDOMAINS>) {
         if (m/\s*([-_.a-zA-Z]+)/) {
           my $dom = lc($1);
@@ -104,7 +106,8 @@ sub initialise {
   }
 
   if (-f $TrustedSources::conf{builtInDomainsFile}) {
-    if (open(my $BUILTIN, '<', $TrustedSources::conf{builtInDomainsFile})) {
+    my $BUILTIN;
+    if (open($BUILTIN, '<', $TrustedSources::conf{builtInDomainsFile})) {
       while (<$BUILTIN>) {
         next if (/^\s*#/);
         next if (/^\s*$/);
@@ -131,9 +134,9 @@ sub initialise {
   $TrustedSources::tcidr->add_any('127.0.0.1');
   foreach my $tip (@trusted_ips) {
     if ($tip =~ m/:/) {
-      eval { $TrustedSources::tcidripv6->add_any($tip) };
+      my $ret = eval { $TrustedSources::tcidripv6->add_any($tip) };
     } else {
-      eval { $TrustedSources::tcidr->add_any($tip) };
+      my $ret = eval { $TrustedSources::tcidr->add_any($tip) };
     }
     if ($TrustedSources::conf{debug}) {
       MailScanner::Log::InfoLog("$MODULE added trusted ip/net: $tip");
@@ -142,9 +145,9 @@ sub initialise {
   $TrustedSources::acidr->add_any('127.0.0.2');
   foreach my $tip (@auth_ips) {
     if ($tip =~ m/:/) {
-      eval { $TrustedSources::acidripv6->add_any($tip) };
+      my $ret = eval { $TrustedSources::acidripv6->add_any($tip) };
     } else {
-      eval { $TrustedSources::acidr->add_any($tip) };
+      my $ret = eval { $TrustedSources::acidr->add_any($tip) };
     }
     if ($TrustedSources::conf{debug}) {
       MailScanner::Log::InfoLog("$MODULE adding auth server: $tip");
@@ -322,13 +325,13 @@ sub Checks ($this, $message) { ## no critic
   }
 
   if ((! $message->{from} eq "") && $this->want_spf($message) && ( $first_untrusted > 0)) {
-    use Mail::SPF;
+    require Mail::SPF;
     my $spf_from = $this->validated_from($message);
     if ($TrustedSources::conf{debug}) {
       MailScanner::Log::InfoLog("$MODULE will do SPF check for: ".$spf_from);
     }
     my $returnspf = 1;
-    eval {
+    my $ret = eval {
       my $spf_server  = Mail::SPF::Server->new(max_dns_interactive_terms => 20);
       my $request     = Mail::SPF::Request->new(
         scope => 'mfrom',

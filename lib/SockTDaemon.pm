@@ -118,7 +118,7 @@ sub main_loop_hook ($this) {
   my $t = threads->self;
   $this->{tid} = $t->tid;
 
-  $SIG{'INT'} = $SIG{'KILL'} = $SIG{'TERM'} = sub {
+  $SIG{'INT'} = $SIG{'KILL'} = $SIG{'TERM'} = sub { ## no critic
     $this->do_log(
       "Thread " . $t->tid . " got TERM! Proceeding to shutdown thread...",
       'daemon'
@@ -135,7 +135,7 @@ sub main_loop_hook ($this) {
 
   $this->init_thread_hook();
 
-  $SIG{ALRM} = sub {
+  $SIG{ALRM} = sub { ## no critic
     local $| = 1;
     print time, ": Caught SIGALRM in thread\n";
   };
@@ -151,7 +151,7 @@ sub main_loop_hook ($this) {
       print STDERR "Got conenction from: ".$1."\n";
     }
     my $client_on = 1;
-    $SIG{'PIPE'} = sub {
+    $SIG{'PIPE'} = sub { ## no critic
       $this->do_log( "closing client socket, got PIPE signal", 'socket' );
       $this->{socks_status}{$client} .= ',PIPE received';
       if (defined($this->{sock_timer}{$client})) {

@@ -56,16 +56,19 @@ my $maxpertenperhour = 30;
 my @whats = ('spam', 'ham');
 foreach my $WHAT (@whats) {
   my $whatcount = 0;
-  opendir(my $HSDIR, '<', $CENTERPATH."/stock$WHAT") or die("Cannot open $WHAT dir\n");
+  my $HSDIR;
+  opendir($HSDIR, '<', $CENTERPATH."/stock$WHAT") or die("Cannot open $WHAT dir\n");
   while (my $day = readdir($HSDIR)) {
     next if $day !~ /^\d+/;
-    next if ! -d $CENTERPATH."/stock$WHAT/".$day;
+    next if ! -d "$CENTERPATH/stock$WHAT/$day";
 
     my @tens = (0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0 , 9 => 0 );
     print "opening: ".$CENTERPATH."/stock$WHAT/".$day."\n";
-    opendir(my $LIST, $CENTERPATH."/stock$WHAT/".$day) or next;
+    my $LIST;
+    opendir($LIST, $CENTERPATH."/stock$WHAT/".$day) or next;
     while (my $file = readdir($LIST)) {
-      next if ! open(my $FILE, '<', $CENTERPATH."/stock$WHAT/".$day."/".$file);
+      my $FILE;
+      next if ! open($FILE, '<', $CENTERPATH."/stock$WHAT/".$day."/".$file);
       my $sascore = 0;
       my $nbscore = 0;
       while (<$FILE>) {
@@ -111,7 +114,8 @@ foreach my $WHAT (@whats) {
   closedir($HSDIR);
 
   # delete old stocks
-  if (opendir(my $QDIR, '<', $CENTERPATH."/stock$WHAT/")) {
+  my $QDIR;
+  if (opendir($QDIR, '<', $CENTERPATH."/stock$WHAT/")) {
     while(my $entry = readdir($QDIR)) {
       next if $entry !~ /^\d+/;
       $entry = $CENTERPATH."/stock$WHAT/$entry";

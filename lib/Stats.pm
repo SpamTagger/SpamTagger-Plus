@@ -42,7 +42,8 @@ sub read_file ($file) {
   my $c_users = 0;
   my $c_domains = 0;
 
-  if (open(my $COUNTFILE, '<', $file)) {
+  my $COUNTFILE;
+  if (open($COUNTFILE, '<', $file)) {
 
     while (<$COUNTFILE>) {
       if (/^MSGS\ (\d+)$/) {

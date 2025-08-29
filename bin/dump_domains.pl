@@ -110,7 +110,7 @@ if (defined($domain) && $domain eq "-a") {
   }
 } elsif (defined($domain)) {
 ######### Dump a domain configuration
-  my $domain = Domain::create($domain);
+  $domain = Domain::create($domain);
   if ($domain->get_pref('addlistcallout') eq 'true') {
       $domain->dump_local_addresses($slave_db);
   }
@@ -141,16 +141,15 @@ exit 0;
 ## parse_destinations
 
 sub parse_destinations ($d_ref) {
-  my @domain_list = @$d_ref;
   my %domain_dest;
 
   my $options = "";
-  for my $domain (@domain_list) {
+  for my $dom (@{$d_ref}) {
     $options = "";
     # get destination hosts and port
     my $port = 25;
-    my $destinations = $domain->{'destination'};
-    if ($domain->{'destination'} =~ m/(.*)\/(\d+)+$/ ) {
+    my $destinations = $dom->{'destination'};
+    if ($dom->{'destination'} =~ m/(.*)\/(\d+)+$/ ) {
       $destinations = $1;
       $port = $2;
     }
@@ -310,8 +309,8 @@ sub dump_domains_file ($d_ref, $filepath) {
     $rule .= $dest;
     print DOMAINSFILE $rule."\n";
 
-    if ($domains{$domain_name}{relay_smarthost} eq 1) {
-      my $rule_smarthost = $domain_name.":\t\t";
+    if ($domains{$domain_name}{relay_smarthost} == 1) {
+      my $rule_smarthost = "$domain_name:\t\t";
       my $dest_smarthost = $domains{$domain_name}{destination_smarthost};
       $dest_smarthost =~ s/\//::/;
       $rule_smarthost .= $dest_smarthost;
@@ -343,7 +342,8 @@ sub dump_domains_file ($d_ref, $filepath) {
       if (defined($domains{$domain_name}{addlist_posters})) {
         my @posters = split /[\s,;]/, $domains{$domain_name}{addlist_posters};
 
-        if (open(my $ADDLISTPOSTERS, ">", $postersfile)) {
+        my $ADDLISTPOSTERS;
+        if (open($ADDLISTPOSTERS, ">", $postersfile)) {
           foreach my $p (@posters) {
            print $ADDLISTPOSTERS $p."\n";
           }
@@ -366,7 +366,8 @@ sub dump_domains_file ($d_ref, $filepath) {
       if (! -d "$filepath/ldap_callouts") {
          mkdir "$filepath/ldap_callouts";
       }
-      if ( open(my $LDAPCALLOUTDATA, ">", "$filepath/ldap_callouts/$domain_name")) {
+      my $LDAPCALLOUTDATA;
+      if ( open($LDAPCALLOUTDATA, ">", "$filepath/ldap_callouts/$domain_name")) {
         if ($domains{$domain_name}{ldapcalloutserver}) {
            print LDAPCALLOUTDATA "server: ".$domains{$domain_name}{ldapcalloutserver}."\n";
         }
@@ -446,7 +447,8 @@ sub dump_domains_file ($d_ref, $filepath) {
             print DKIMFILE "spamtagger\n";
           }
           if (defined($domains{$domain_name}{dkim_pkey}) && $domains{$domain_name}{dkim_pkey} ne '') {
-            if (open(my $DKIMPKEY, ">", $dkim_pkey_file)) {
+            my $DKIMPKEY;
+            if (open($DKIMPKEY, ">", $dkim_pkey_file)) {
               print $DKIMPKEY $domains{$domain_name}{dkim_pkey}."\n";
               close $DKIMPKEY;
             }

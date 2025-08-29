@@ -98,19 +98,19 @@ if ($mode_given =~ /s/) {
         if ($res =~ /$service->{'proc'}/ ) {
             $st = 1;
         }
-        if ($st == 0 && -f $restartdir."/".$key.".stopped") {
+        if ($st == 0 && -f "$restartdir/$key.stopped") {
             $st = 2;
         }
-        if ( -f $restartdir.$key.".rn") {
+        if ( -f "$restartdir$key.rn") {
             $st = 3;
         }
-        if ( -f $restartdir.$key.".start.rs") {
+        if ( -f "$restartdir$key.start.rs") {
             $st = 4;
         }
-        if ( -f $restartdir.$key.".stop.rs") {
+        if ( -f "$restartdir$key.stop.rs") {
             $st = 5;
         }
-        if ( -f $restartdir.$key.".restart.rs") {
+        if ( -f "$restartdir$key.restart.rs") {
             $st = 6;
         }
         $order[$i++]{'status'} = $st;
@@ -121,13 +121,13 @@ if ($mode_given =~ /s/) {
     if ($res =~ /^1$/) {
         $st = 1;
     }
-    if (-f $restartdir."firewall.restart.rs") {
+    if (-f "${restartdir}firewall.restart.rs") {
         $st = 6
-    } elsif (-f $restartdir."firewall.stop.rs") {
+    } elsif (-f "${restartdir}firewall.stop.rs") {
         $st = 5;
-    } elsif (-f $restartdir."firewall.start.rs") {
+    } elsif (-f "${restartdir}firewall.start.rs") {
         $st = 4;
-    } elsif (-f $restartdir."firewall.rn") {
+    } elsif (-f "${restartdir}firewall.rn") {
         $st = 3;
     }
     $order[$i]->{'status'} = $st;

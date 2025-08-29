@@ -61,8 +61,9 @@ sub do_known_hosts {
   my $sth = $dbh->prepare("SELECT hostname, ssh_pub_key FROM slave");
   $sth->execute() or return;
 
+  my $KNOWNHOST;
+  open($KNOWNHOST, ">>", $known_hosts_file);
   while (my $ref = $sth->fetchrow_hashref() ) {
-    open(my $KNOWNHOST, ">>", $known_hosts_file);
     print $KNOWNHOST $ref->{'hostname'}." ".$ref->{'ssh_pub_key'}."\n";
     close $KNOWNHOST;
   }
@@ -79,10 +80,11 @@ sub do_authorized_keys {
   my $sth = $dbh->prepare("SELECT ssh_pub_key FROM master");
   $sth->execute() or return;
 
+  my $AUTHORIZED_KEYS;
+  open($AUTHORIZED_KEYS, ">>", $authorized_file);
   while (my $ref = $sth->fetchrow_hashref() ) {
-    open(my $KNOWNHOST, ">>", $authorized_file);
-    print $KNOWNHOST $ref->{'ssh_pub_key'}."\n";
-    close $KNOWNHOST;
+    print $AUTHORIZED_KEYS $ref->{'ssh_pub_key'}."\n";
+    close $AUTHORIZED_KEYS;
   }
   $sth->finish();
   return;

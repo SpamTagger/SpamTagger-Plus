@@ -42,7 +42,8 @@ sub initialise {
      position => 0
   );
 
-  if (open(my $CONFIG, '<', $configfile)) {
+  my $CONFIG;
+  if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
         $MailFilters::conf{$1} = $2;
@@ -90,7 +91,7 @@ sub Checks ($this, $message) { ## no critic
   }
 
   ### check against MailFilters
-  my (@whole_message, $maxsize);
+  my @whole_message;
   push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   push(@whole_message, "\n");
   $message->{store}->ReadBody(\@whole_message, 0);

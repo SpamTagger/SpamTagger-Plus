@@ -104,7 +104,7 @@ if ($days eq 'ALL') {
 }
 
 # Print warning for large number of days
-if ($days gt 30) {
+if ($days > 30) {
   print STDERR "Searching " . ($days+1) . " days. This can take a long time. Use Ctrl+C to exit.\n";
 }
 
@@ -117,7 +117,8 @@ if (defined $filter && $filter =~ /@/) {
 # Otherwise, get the domains list
 } else {
   my @domains;
-  open(my $df, '<', $domains_list) || die "Unable to open domain list: $domains_list\nYou probably don't have any domains configured.\n";
+  my $df;
+  open($df, '<', $domains_list) || die "Unable to open domain list: $domains_list\nYou probably don't have any domains configured.\n";
   while (<$df>) {
     push @domains, (split ':', $_)[0];
     # If the sender argument matches this domain exactly, set that as the regex
@@ -143,7 +144,7 @@ if (defined $filter && $filter =~ /@/) {
 }
 
 # If requiring more than just today and yesterday, we need the gzip module
-if ($days gt 1) {
+if ($days > 1) {
   check_install( 'module' => 'PerlIO::gzip', 'version' => 0.18) || die "Searching logs from previous days requires the library PerlIO::gzip. Please install with:\n  apt-get install libperlio-gzip-perl\n\n";
 }
 
@@ -166,12 +167,12 @@ my %outstanding_ids;
 my %results;
 for (my $i = 0; $i <= $days; $i++) {
   my $fh;
-  if ($i eq 0) {
-    open(my $fh, '<', "$VAR/log/exim_stage1/mainlog") or die $!;
-  } elsif ($i eq 1) {
-    open(my $fh, '<', "$VAR/log/exim_stage1/mainlog.0") or die $!;
+  if ($i == 0) {
+    open($fh, '<', "$VAR/log/exim_stage1/mainlog") or die $!;
+  } elsif ($i == 1) {
+    open($fh, '<', "$VAR/log/exim_stage1/mainlog.0") or die $!;
   } else {
-    open(my $fh, '<:gzip', "$VAR/log/exim_stage1/mainlog.".($i-1).".gz") or die $!;
+    open($fh, '<:gzip', "$VAR/log/exim_stage1/mainlog.".($i-1).".gz") or die $!;
   }
   while (<$fh>) {
     # Search for initial log line to for both listed and unlisted domains

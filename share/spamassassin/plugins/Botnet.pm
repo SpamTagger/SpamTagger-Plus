@@ -1,4 +1,4 @@
-package Mail::SpamAssassin::Plugin::Botnet;
+package Mail::SpamAssassin::Plugin::Botnet; ## no critic
 
 #   Copyright (C) 2003  The Regents of the University of California
 #
@@ -740,36 +740,35 @@ sub check_ipinhostname {
   # optional spacing or not.  And, for decimal format, check for
   # combined decimal values (ex: 3rd octet * 256 + 4th octet)
   my ($name, $ip) = @_;
-  my ($a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l, $m, $n);
 
   unless ( (defined ($name)) && ($name ne "") ) { return 0; }
 
   unless ($ip =~ /^\d+\.\d+\.\d+\.\d+$/) { return 0; }
 
-  my ($a, $b, $c, $d) = split(/\./, $ip); # decimal octets
+  my ($c, $d, $e, $f) = split(/\./, $ip); # decimal octets
 
   # permutations of combined decimal octets into single decimal values
-  my $e = ($a * 256 * 256 * 256) + ($b * 256 * 256)
-    + ($c * 256) + $d;                           # all 4 octets
-  my $f = ($a * 256 * 256) + ($b * 256) + $c;        # first 3 octets
-  my $g = ($b * 256 * 256) + ($c * 256) + $d;        # last 3 octets
-  my $h = ($a * 256) + $b;                           # first 2 octets
-  my $i = ($b * 256) + $c;                           # middle 2 octets
-  my $j = ($c * 256) + $d;                           # last 2 octets
+  my $g = ($c * 256 * 256 * 256) + ($d * 256 * 256)
+    + ($e * 256) + $f;                           # all 4 octets
+  my $h = ($c * 256 * 256) + ($d * 256) + $e;        # first 3 octets
+  my $i = ($d * 256 * 256) + ($e * 256) + $f;        # last 3 octets
+  my $j = ($c * 256) + $d;                           # first 2 octets
+  my $k = ($d * 256) + $e;                           # middle 2 octets
+  my $l = ($e * 256) + $f;                           # last 2 octets
 
   # hex versions of the ip address octets, in lower case
   # we don't need combined hex octets, as they'll
   # just look like sequential individual octets
-  my $k = sprintf("%02x", $a);                       # first octet
-  my $l = sprintf("%02x", $b);                       # second octet
-  my $m = sprintf("%02x", $c);                       # third octet
-  my $n = sprintf("%02x", $d);                       # fourth octet
+  my $m = sprintf("%02x", $c);                       # first octet
+  my $n = sprintf("%02x", $d);                       # second octet
+  my $o = sprintf("%02x", $e);                       # third octet
+  my $p = sprintf("%02x", $f);                       # fourth octet
 
   return check_words(
     $name,
-    "$a.*$b|$b.*$c|$c.*$d|$d.*$c|$c.*$b|$b.*$a|" .
-    "$n.*$m|$m.*$l|$l.*$k|$k.*$l|$l.*$m|$m.*$n|" .
-    "$e|$f|$g|$h|$i|$j"
+    "$c.*$d|$d.*$e|$e.*$f|$f.*$e|$e.*$d|$d.*$c|" .
+    "$p.*$o|$o.*$n|$n.*$m|$m.*$l|$n.*$o|$o.*$p|" .
+    "$g|$h|$i|$j|$k|$l"
   );
 }
 

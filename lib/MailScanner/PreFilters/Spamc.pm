@@ -54,7 +54,8 @@ sub initialise {
     position => 0,
   );
 
-  if (open(my $CONFIG, '<', $configfile)) {
+  my $CONFIG;
+  if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
         $Spamc::conf{$1} = $2;
