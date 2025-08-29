@@ -43,13 +43,13 @@ use Mail::SpamAssassin::Timeout();
 our $LOGGERFILE;
 
 sub new ($class) {
-  my $conf = ReadConfig::getInstance();
-  my $configfile = $conf->getOption('SRCDIR')."/etc/exim/prefDaemon.conf";
+  my $conf = ReadConfig::get_instance();
+  my $configfile = $conf->get_option('SRCDIR')."/etc/exim/prefDaemon.conf";
 
   ## default values
-  my $pidfile = $conf->getOption('VARDIR')."/run/prefdaemon.pid";
+  my $pidfile = $conf->get_option('VARDIR')."/run/prefdaemon.pid";
   my $port = 4352;
-  my $logfile = $conf->getOption('VARDIR')."/log/spamtagger/prefdaemom.log";
+  my $logfile = $conf->get_option('VARDIR')."/log/spamtagger/prefdaemom.log";
   my $daemontimeout = 1200;
   my $client_timeout = 5;
   my $sockettimeout = 120;
@@ -106,7 +106,8 @@ sub new ($class) {
   };
 
   # replace with configuration file values
-  if (open(my $CONFFILE, '<', $configfile)) {
+  my $CONFFILE;
+  if (open($CONFFILE, '<', $configfile)) {
     while (<$CONFFILE>) {
       chop;
       next if /^\#/;
@@ -126,7 +127,7 @@ sub log_message ($this, $message) {
   if ($this->{debug}) {
     unless (defined(fileno(LOGGERLOG))) {
        open($LOGGERLOG, ">>", "/tmp/".$this->{logfile});
-       $| = 1;
+       $| = 1; ## no critic
     }
     my $date=`date "+%Y-%m-%d %H:%M:%S"`;
     chop($date);
@@ -151,10 +152,9 @@ sub start_daemon ($this) {
 
     $this->logMessage("Starting Daemon");
 
-    $SIG{INT} = $SIG{TERM} = $SIG{HUP} = $SIG{ALRM} = sub { $this->parentGotSignal(); };
+    $SIG{INT} = $SIG{TERM} = $SIG{HUP} = $SIG{ALRM} = sub { $this->parentGotSignal(); }; ## no critic
 
-    #alarm $this->{daemontimeout};
-    $0 = "PrefDaemon";
+    #$0 = "PrefDaemon";
     $this->initDaemon();
     $this->launch_children();
     until ($this->{time_to_die}) {
@@ -170,7 +170,7 @@ sub parent_got_signal ($this) {
 
 sub reaper ($this) {
   $this->logMessage("Got child death...");
-  $SIG{CHLD} = sub { $this->reaper(); };
+  $SIG{CHLD} = sub { $this->reaper(); }; ## no critic
   my $pid = wait;
   $this->{children}--;
   delete $this->{childrens}{$pid};
@@ -182,7 +182,7 @@ sub reaper ($this) {
 }
 
 sub huntsman ($this) {
-  local($SIG{CHLD}) = 'IGNORE';
+  local($SIG{CHLD}) = 'IGNORE'; ## no critic
   $this->{time_to_die} = 1;
   $this->logMessage("Shutting down childs");
   kill 'INT' => keys %{$this->{childrens}};
@@ -207,8 +207,8 @@ sub launch_children ($this) {
     $this->makeChild();
   }
   # Install signal handlers
-  $SIG{CHLD} = sub { $this->reaper(); };
-  $SIG{INT} = sub { $this->huntsMan(); };
+  $SIG{CHLD} = sub { $this->reaper(); }; ## no critic
+  $SIG{INT} = sub { $this->huntsMan(); }; ## no critic
 
   while (1) {
     sleep;
@@ -240,7 +240,7 @@ sub make_child ($this) {
     return;
   }
   # Child can *not* return from this subroutine.
-  $SIG{INT} = 'DEFAULT';
+  $SIG{INT} = 'DEFAULT'; ## no critic
 
   # unblock signals
   sigprocmask(SIG_UNBLOCK, $sigset) or die "Can't unblock SIGINT for fork: $!\n";
@@ -573,8 +573,6 @@ sub query_daemon ($this, $type, $pref) {
     $socket->send($type." ".$pref."\n");
     my $MAXLEN  = 1024;
     my $response;
-
-    $! = 0;
 
     $socket->recv($response, $MAXLEN);
     return "NODAEMON" if ($! !~ /^$/);

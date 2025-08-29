@@ -249,7 +249,7 @@ sub data_read ($this, $data) {
 
     if ( $set_socks_available_ > $this->{reserve_set_socks} ) {
       $set_socks_available_--;
-      my $ret = $this->calc_stats( $element, $fromdate, $todate );
+      $ret = $this->calc_stats( $element, $fromdate, $todate );
       $set_socks_available_++;
       return $ret;
     } else {
@@ -510,6 +510,7 @@ sub dump_data ($this) {
   }
   return;
 }
+
 sub calc_stats ($this, $what, $begin, $end) {
   return '_BADUSAGEWHAT' if ( !defined($what) || $what !~ m/^[a-zA-Z0-9@._\-,*:]+$/ );
   return '_BADUSAGEBEGIN' if ( !defined($begin) || $begin !~ m/^[+-]?\d{1,8}$/ );

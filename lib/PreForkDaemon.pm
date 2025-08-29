@@ -60,7 +60,8 @@ sub new ($class, $daemonname, $conffilepath, $spec_this) {
   $this->{$_} = $spec_this->{$_} foreach (keys(%{$spec_this}));
 
   # replace with configuration file values
-  if (open(my $CONFFILE, '<', $configfile)) {
+  my $CONFFILE;
+  if (open($CONFFILE, '<', $configfile)) {
     while (<$CONFFILE>) {
       chop;
       next if /^\#/;
@@ -71,7 +72,8 @@ sub new ($class, $daemonname, $conffilepath, $spec_this) {
     close $CONFFILE;
   }
 
-  $0 = $this->{name};
+  # Set process name
+  $0 = $this->{name}; ## no critic
   return bless $this, $class;
 }
 
@@ -105,7 +107,7 @@ my $children = 0;        # current number of children
 my %shared;
 
 sub reaper ($this) {
-  $SIG{CHLD} = \&reaper;
+  $SIG{CHLD} = \&reaper; ## no critic
   my $pid = wait;
   $children --;
   delete $children{$pid};
@@ -144,10 +146,11 @@ sub log_debug ($this, $message) {
 }
 
 sub do_log ($this, $message) {
-  open(my $LOGGERLOG, ">>", $this->{logfile});
+  my $LOGGERLOG;
+  open($LOGGERLOG, ">>", $this->{logfile});
   unless (defined(fileno(LOGGERLOG))) {
     open $LOGGERLOG, ">>", "/tmp/".$this->{logfile};
-    $| = 1;
+    $| = 1; ## no critic
   }
   my $date=`date "+%Y-%m-%d %H:%M:%S"`;
   chop($date);
@@ -185,8 +188,8 @@ sub fork_children ($this) {
   }
 
   # Install signal handlers.
-  $SIG{CHLD} = sub { $this->reaper(); };
-  $SIG{INT}  = $SIG{TERM} = sub { $this->huntsman(); };
+  $SIG{CHLD} = sub { $this->reaper(); }; ## no critic
+  $SIG{INT}  = $SIG{TERM} = sub { $this->huntsman(); }; ## no critic
 
   $this->{finishedforked} = 1;
   # And maintain the population.
@@ -216,7 +219,8 @@ sub make_new_child ($this, $pid, $sigset) {
     return;
   } else {
     # Child can *not* return from this subroutine.
-    $SIG{INT} = 'DEFAULT';      # make SIGINT kill us as it did before
+    # make SIGINT kill us as it did before
+    $SIG{INT} = 'DEFAULT'; ## no critic
 
     # unblock signals
     sigprocmask(SIG_UNBLOCK, $sigset)
@@ -237,7 +241,7 @@ sub make_new_child ($this, $pid, $sigset) {
     }
 
     ##
-    $SIG{ALRM} = sub { $this->exit_child(); };
+    $SIG{ALRM} = sub { $this->exit_child(); }; ## no critic
     alarm 10;
     ## mainLoopHook
     $this->main_loop_hook();

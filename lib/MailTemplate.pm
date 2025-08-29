@@ -82,7 +82,7 @@ sub new ($class, $directory, $filename, $template, $destination_h, $language,$ty
     $from = $dm if (! $dm eq "" && $dm !~ /NOTFOUND/ && $dm !~ /^_/);
   }
   $path = $conf->get_option('SRCDIR')."/templates/$directory/$template/$lang/$filename";
-  if (! -d $path."_parts" && ! -f $path.".txt") {
+  if (! -d "${path}_parts" && ! -f "$path.txt") {
     $path = $conf->get_option('SRCDIR')."/templates/$directory/default/$lang/$filename";
   }
   my $this = {
@@ -102,11 +102,12 @@ sub new ($class, $directory, $filename, $template, $destination_h, $language,$ty
   bless $this, $class;
 
   # first read main text part (also included in html version)
-  $this->pre_parse_template($path.".txt");
+  $this->pre_parse_template("$path.txt");
   $this->{headers}->{Subject} =~ s/\?\?ADDRESS/$to/;
   # then parse other parte if needed
-  if ($type eq 'html' && -d $path."_parts") {
-    if (opendir(my $DIR, $path."_parts")) {
+  if ($type eq 'html' && -d "${path}_parts") {
+    my $DIR;
+    if (opendir($DIR, $path."_parts")) {
       while (defined(my $file = readdir($DIR))) {
         chomp($file);
         next if ($file !~ /\.(txt|html)$/);
@@ -365,8 +366,7 @@ sub get_main_text_part ($this) {
 }
 
 sub get_default_value ($this, $value) {
-  return $this->{values}{$value} (defined($this->{values}{$value}));
-  return "";
+  return $this->{values}{$value} || "";
 }
 
 ###
@@ -375,7 +375,8 @@ sub get_default_value ($this, $value) {
 ###
 sub get_useable_parts ($this) {
   my @ret = ();
-  if (opendir(my $DIR, $this->{path}."_parts")) {
+  my $DIR;
+  if (opendir($DIR, $this->{path}."_parts")) {
     while (defined(my $file = readdir($DIR))) {
       chomp($file);
       next if ($file !~ /\.(htm|html)$/i);
@@ -384,7 +385,7 @@ sub get_useable_parts ($this) {
     close($DIR);
   }
   # next add text part
-  if (opendir(my $DIR, $this->{path}."_parts")) {
+  if (opendir($DIR, $this->{path}."_parts")) {
     while (defined(my $file = readdir($DIR))) {
       chomp($file);
       next if ($file !~ /\.(txt|text)$/i);
@@ -393,7 +394,7 @@ sub get_useable_parts ($this) {
     close($DIR);
   }
   # finally add pictures
-  if (opendir(my $DIR, $this->{path}."_parts")) {
+  if (opendir($DIR, $this->{path}."_parts")) {
     while (defined(my $file = readdir($DIR))) {
       chomp($file);
       next if ($file !~ /\.(gif|jpg|jpeg|png)$/i);
@@ -410,7 +411,8 @@ sub get_useable_parts ($this) {
 # @return             string   body text
 ###
 sub parse_template ($this, $template) {
-  return "" unless (open(my $FILE, '<', $template));
+  my $FILE;
+  return "" unless (open($FILE, '<', $template));
 
   my $ret;
   my $in_hidden = 0;

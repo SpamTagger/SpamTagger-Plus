@@ -75,7 +75,8 @@ sub new ($class, $daemonname, $conffilepath) {
   };
 
   # replace with configuration file values
-  if (open(my $CONFFILE, '<', $configfile) {
+  my $CONFFILE;
+  if (open($CONFFILE, '<', $configfile)) {
     while (<$CONFFILE>) {
       chomp($_);
       next if $_ =~ /^\#/;
@@ -93,8 +94,8 @@ sub new ($class, $daemonname, $conffilepath) {
 sub log_message ($this, $message) {
   if ($this->{debug}) {
     unless (defined(fileno($LOGGERLOG))) {
-      open $LOGGERLOG, ">>", "/tmp/".$this->{logfile};
-      $| = 1;
+      open($LOGGERLOG, ">>", "/tmp/$this->{logfile}");
+      $| = 1; ## no critic
     }
     my $date=`date "+%Y-%m-%d %H:%M:%S"`;
     chomp($date);
@@ -119,10 +120,10 @@ sub start_daemon ($this) {
 
     $this->log_message("Starting Daemon");
 
-    $SIG{INT} = $SIG{TERM} = $SIG{HUP} = $SIG{ALRM} = sub { $this->parent_got_signal(); };
+    $SIG{INT} = $SIG{TERM} = $SIG{HUP} = $SIG{ALRM} = sub { $this->parent_got_signal(); }; ## no critic
 
     #alarm $this->{daemontimeout};
-    $0 = $this->{'name'};
+    $0 = $this->{'name'}; ## no critic
     $this->init_daemon();
     $this->launch_childs();
     until ($this->{time_to_die}) {};
@@ -138,7 +139,7 @@ sub parent_got_signal ($this) {
 
 sub reaper ($this) {
   $this->log_message("Got child death...");
-  $SIG{CHLD} = sub { $this->reaper(); };
+  $SIG{CHLD} = sub { $this->reaper(); }; ## no critic
   my $pid = wait;
   $this->{children}--;
   delete $this->{childrens}{$pid};
@@ -150,7 +151,7 @@ sub reaper ($this) {
 }
 
 sub huntsman ($this) {
-  local($SIG{CHLD}) = 'IGNORE';
+  local($SIG{CHLD}) = 'IGNORE'; ## no critic
   $this->{time_to_die} = 1;
   $this->log_message("Shutting down childs");
   kill 'INT' => keys %{$this->{childrens}};
@@ -176,8 +177,8 @@ sub launch_childs ($this) {
     $this->make_child();
   }
   # Install signal handlers
-  $SIG{CHLD} = sub { $this->reaper(); };
-  $SIG{INT} = sub { $this->huntsman(); };
+  $SIG{CHLD} = sub { $this->reaper(); }; ## no critic
+  $SIG{INT} = sub { $this->huntsman(); }; ## no critic
 
   while (1) {
     sleep;
@@ -212,7 +213,7 @@ sub make_child ($this) {
     return;
   }
   # Child can *not* return from this subroutine.
-  $SIG{INT} = sub { };
+  $SIG{INT} = sub { }; ## no critic
 
   # unblock signals
   sigprocmask(SIG_UNBLOCK, $sigset) or die "Can't unblock SIGINT for fork: $!\n";

@@ -12,6 +12,7 @@ our $VERSION   = 1.0;
 
 use LWP::UserAgent();
 use HTTP::Request::Common();
+use Mail::SpamAssassin::Timeout();
 
 my $MODULE = "Commtouch";
 my %conf;
@@ -49,7 +50,8 @@ sub initialise {
     position => 0
   );
 
-  if (open(my $CONFIG, '<', $configfile)) {
+  my $CONFIG;
+  if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
         $Commtouch::conf{$1} = $2;
@@ -108,7 +110,6 @@ sub Checks ($this, $message) { ## no critic
     $request .= "x-ctch-ip: ".$client_ip."\r\n";
 
     my $tim = $Commtouch::conf{'timeOut'};
-    use Mail::SpamAssassin::Timeout;
     my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
     my $response = "";
 
@@ -167,13 +168,12 @@ sub Checks ($this, $message) { ## no critic
 
   ### check against ctaspd
   if ($Commtouch::conf{'use_ctaspd'}) {
-    my (@whole_message, $maxsize);
+    my @whole_message;
     push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
     push(@whole_message, "\n");
     $message->{store}->ReadBody(\@whole_message, 0);
 
     my $tim = $Commtouch::conf{'timeOut'};
-    use Mail::SpamAssassin::Timeout;
     my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
     my $is_prespam = 0;
     my $ret = -5;
@@ -258,7 +258,7 @@ sub Checks ($this, $message) { ## no critic
       if ($Commtouch::conf{'putSpamHeader'}) {
         $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "is spam (".$ctipd_header."Spam: $spam_result, ".$Commtouch::conf{pos_text}. ")");
       }
-      $message->{prefilterreport} .= ", $MODULE ($ctipd_header Spam: $spam_result, ".$Commtouch::conf{pos_text}. ")");
+      $message->{prefilterreport} .= ", $MODULE ($ctipd_header Spam: $spam_result, ".$Commtouch::conf{pos_text}. ")";
       return 1;
     }
 
@@ -270,7 +270,7 @@ sub Checks ($this, $message) { ## no critic
       if ($Commtouch::conf{'putSpamHeader'}) {
         $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "is spam (".$ctipd_header."VOD: $vod_result, ".$Commtouch::conf{pos_text}. ")");
       }
-      $message->{prefilterreport} .= ", $MODULE ($ctipd_header VOD: $vod_result, ".$Commtouch::conf{pos_text}. ")");
+      $message->{prefilterreport} .= ", $MODULE ($ctipd_header VOD: $vod_result, ".$Commtouch::conf{pos_text}. ")";
 
       return 1;
     }

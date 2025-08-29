@@ -17,7 +17,8 @@ use File::Path qw/make_path/;
 sub _slurp_file ($file) {
   my @contains = ();
 
-  return (0, @contains) unless (open(my $FILE, '<', $file) );
+  my $FILE;
+  return (0, @contains) unless (open($FILE, '<', $file) );
   @contains = <$FILE>;
   close($FILE);
   chomp(@contains);
@@ -26,7 +27,8 @@ sub _slurp_file ($file) {
 }
 
 sub _create_lockfile ($fullpathname, $timeout, $process_name) {
-  return 0 unless (open(my $FILE, '>', $fullpathname));
+  my $FILE;
+  return 0 unless (open($FILE, '>', $fullpathname));
   print $FILE "$$\n";
   print $FILE "$timeout\n$process_name\n"      if ( defined($timeout) && defined($process_name) );
   close $FILE;

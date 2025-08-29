@@ -37,9 +37,9 @@ use Net::SNMP();
 
 sub new ($hostname) {
 
-  my $conf = ReadConfig::getInstance();
-  my $spooldir = $conf->getOption('VARDIR')."/spool/rrdtools/".$hostname;
-  my $pictdir = $conf->getOption('VARDIR')."/www/mrtg/".$hostname;
+  my $conf = ReadConfig::get_instance();
+  my $spooldir = $conf->get_option('VARDIR')."/spool/rrdtools/".$hostname;
+  my $pictdir = $conf->get_option('VARDIR')."/www/mrtg/".$hostname;
   my %stats = ();
 
   my $slave_db = DB->db_connect('slave', 'st_config');
@@ -115,14 +115,14 @@ sub plot ($this, $type, $mode) {
 }
 
 sub create_stats_dir ($this) {
-  my $conf = ReadConfig::getInstance();
+  my $conf = ReadConfig::get_instance();
   my $dir = $this->{spooldir};
   return mkdir $dir unless (-d $dir);
   return 1;
 }
 
 sub create_graph_dir ($this) {
-  my $conf = ReadConfig::getInstance();
+  my $conf = ReadConfig::get_instance();
   my $dir = $this->{pictdir};
   return mkdir $dir unless (-d $dir);
   return 1;

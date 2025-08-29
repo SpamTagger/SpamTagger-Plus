@@ -67,7 +67,8 @@ sub initialise {
     position             => 0
   );
 
-  if (open(my $CONFIG, '<', $configfile )) {
+  my $CONFIG;
+  if (open($CONFIG, '<', $configfile )) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
         $UriRBLs::conf{$1} = $2;
@@ -141,7 +142,7 @@ sub Checks { ## no critic
         MailScanner::Log::InfoLog("$MODULE should avoid control on IP ".$avoidhost." for message ".$message->{id});
       }
       my $acidr = Net::CIDR::Lite->new();
-      eval { $acidr->add_any($avoidhost); };
+      my $ret = eval { $acidr->add_any($avoidhost); };
       if ($acidr->find($message->{clientip})) {
         MailScanner::Log::InfoLog("$MODULE not checking UriRBL on ".$message->{clientip}." because IP is whitelisted for message ".$message->{id});
         return 0;
@@ -302,7 +303,7 @@ sub process_part ($message, $part, $uris, $emails, $shorts) {
     }
 
     if ( $UriRBLs::conf{'resolveShorteners'} ) {
-      my $ret =
+      $ret =
         $UriRBLs::dnslists->find_uri_shortener( $line,
         "$MODULE (" . $message->{id} . ")"
       );

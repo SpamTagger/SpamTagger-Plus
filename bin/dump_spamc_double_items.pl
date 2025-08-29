@@ -32,8 +32,9 @@ unlink '/usr/spamtagger/share/spamassassin/double_item_uri.cf';
 
 exit if ( ! -f '/usr/spamtagger/share/spamassassin/double_item_uri.txt' );
 
-open(my $FH_TXT, '<', '/usr/spamtagger/share/spamassassin/double_item_uri.txt');
-open(my $RULES, '>', '/usr/spamtagger/share/spamassassin/double_item_uri.cf');
+my ($FH_TXT, $RULES);
+open($FH_TXT, '<', '/usr/spamtagger/share/spamassassin/double_item_uri.txt');
+open($RULES, '>', '/usr/spamtagger/share/spamassassin/double_item_uri.cf');
 while (<$FH_TXT>) {
         $_ =~ s/^\s*//;
         $_ =~ s/\s*$//;

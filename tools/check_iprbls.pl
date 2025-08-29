@@ -37,7 +37,8 @@ my $config = {
 
 # Get values from file
 my $configfile = "$SRCDIR/etc/mailscanner/prefilters/PreRBLs.cf";
-if (open(my $CONFIG, '<', $configfile)) {
+my $CONFIG;
+if (open($CONFIG, '<', $configfile)) {
   while (<$CONFIG>) {
     if (/^(\S+)\s*\=\s*(.*)$/) {
       if (defined($config->{$1})) {

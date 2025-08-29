@@ -151,7 +151,8 @@ sub get_ref_tables ($dbname) {
   if ($dbname eq 'st_spool') {
     $install_dir .= "/spam";
   }
-  opendir(my $IDIR, $install_dir) or die "could not open table definition directory $install_dir\n";
+  my $IDIR;
+  opendir($IDIR, $install_dir) or die "could not open table definition directory $install_dir\n";
   while( my $table_file = readdir($IDIR)) {
     next if $table_file =~ /^\./;
     if ($table_file =~ /^t\_$prefix\_(\S+)\.sql/) {
@@ -185,9 +186,10 @@ sub get_ref_fields ($file) {
   my $previous = 0;
   my $order = 0;
 
-  open(my TABLEFILE, '<', $file) or die("ERROR, cannot open reference database file $file\nABORTED\n");
+  my $TABLEFILE;
+  open($TABLEFILE, '<', $file) or die("ERROR, cannot open reference database file $file\nABORTED\n");
   my $in_desc = 0;
-  while(<TABLEFILE>) {
+  while(<$TABLEFILE>) {
     chomp;
     if ( $_ =~ /CREATE\s+TABLE\s+(\S+)\s+\(/ ) {
       $in_desc = 1;
@@ -218,7 +220,7 @@ sub get_ref_fields ($file) {
       next;
     }
   }
-  close(TABLEFILE);
+  close($TABLEFILE);
   return %fields;
 }
 

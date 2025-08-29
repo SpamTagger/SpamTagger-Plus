@@ -33,9 +33,9 @@ our $VERSION   = 1.0;
 use lib '/usr/spamtagger/lib';
 use ReadConfig();
 
-my $conf = ReadConfig::getInstance();
-my $SRCDIR=$conf->getOption('SRCDIR');
-my $VARDIR=$conf->getOption('VARDIR');
+my $conf = ReadConfig::get_instance();
+my $SRCDIR=$conf->get_option('SRCDIR');
+my $VARDIR=$conf->get_option('VARDIR');
 
 ###
 # create the dumper
@@ -47,12 +47,12 @@ sub new ($class, $templatefile, $targetfile) {
   $templatefile =~ s/__SRCDIR__/$SRCDIR/g;
   $templatefile =~ s/__VARDIR__/$VARDIR/g;
   if ($templatefile =~ m/^[^\/]/) {
-    $templatefile = $conf->getOption('SRCDIR')."/".$templatefile;
+    $templatefile = $conf->get_option('SRCDIR')."/".$templatefile;
   }
   $targetfile =~ s/__SRCDIR__/$SRCDIR/g;
   $targetfile =~ s/__VARDIR__/$VARDIR/g;
   if ($targetfile =~ m/^[^\/]/) {
-    $targetfile = $conf->getOption('SRCDIR')."/".$targetfile;
+    $targetfile = $conf->get_option('SRCDIR')."/".$targetfile;
   }
 
   my %replacements = ();
@@ -80,7 +80,8 @@ sub new ($class, $templatefile, $targetfile) {
 sub pre_parse_template ($this) {
 
   my $in_template = "";
-  return 0 unless (open(my $FILE, '<', $this->{templatefile}));
+  my $FILE;
+  return 0 unless (open($FILE, '<', $this->{templatefile}));
   while (<$FILE>) {
     my $line = $_;
 
@@ -114,11 +115,9 @@ sub get_sub_template ($this, $tmplname) {
 # @param  replace   array_h  handle of array of rplacements with tag as keys
 # @return           boolean  true on success, false on failure
 ###
-sub set_replacements ($this, $replace_h, %replace) {
-  my %replace = %{$replace_h};
-
-  foreach my $tag (keys %replace) {
-    $this->{replacements}{$tag} = $replace{$tag};
+sub set_replacements ($this, $replace) {
+  foreach my $tag (keys %{$replace}) {
+    $this->{replacements}{$tag} = $replace->{$tag};
   }
   return 1;
 }
@@ -128,8 +127,9 @@ sub set_replacements ($this, $replace_h, %replace) {
 # dump to destination file
 ###
 sub dump_file ($this) {
-  return 0 unless (open(my $FILE, '<', $this->{templatefile}));
-  return 0 unless (open(my $TARGET, ">", $this->{targetfile}));
+  my ($FILE, $TARGET);
+  return 0 unless (open($FILE, '<', $this->{templatefile}));
+  return 0 unless (open($TARGET, ">", $this->{targetfile}));
 
   my $ret;
   my $in_hidden = 0;
@@ -206,7 +206,8 @@ sub dump_file ($this) {
         #$ret .= ".include_if_exists __SRCDIR__/etc/exim/$inc_file\n";
       }
 
-      open(my $PATHFILE, '<', $path_file);
+      my $PATHFILE;
+      open($PATHFILE, '<', $path_file);
       my @contains = <$PATHFILE>;
       close($PATHFILE);
       chomp(@contains);
@@ -230,11 +231,9 @@ sub dump_file ($this) {
   ## do the replacements
 
   ## replace well known tags
-  my $conf = ReadConfig::getInstance();
-
   my %wellknown = (
-    '__SRCDIR__' => $conf->getOption('SRCDIR'),
-    '__VARDIR__' => $conf->getOption('VARDIR'),
+    '__SRCDIR__' => $conf->get_option('SRCDIR'),
+    '__VARDIR__' => $conf->get_option('VARDIR'),
   );
 
   ## replace given tags
@@ -254,9 +253,9 @@ sub dump_file ($this) {
   }
 
   if ( defined ($ret) ) {
-    print TARGET $ret;
+    print $TARGET $ret;
   }
-  close TARGET;
+  close $TARGET;
   my $uid = getpwnam( 'spamtagger' );
   my $gid = getgrnam( 'spamtagger' );
   chown $uid, $gid, $this->{targetfile};

@@ -37,7 +37,8 @@ die 'Path for quarantine_dir must be absolute' unless $quarantine_dir =~ /^\//;
 $quarantine_dir =~ s/\/$//; # Delete trailing slash
 
 # Now get the content list for the directory.
-opendir(my $QDIR, '<', $quarantine_dir) or die "Couldn't read directory $quarantine_dir";
+my $QDIR;
+opendir($QDIR, '<', $quarantine_dir) or die "Couldn't read directory $quarantine_dir";
 
 # Loop through this list looking for any *directory* which hasn't been
 # modified in the last $days_to_keep days.

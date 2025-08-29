@@ -56,8 +56,8 @@ my %mib = ();
 sub init {
   doLog('SpamTagger SNMP Agent Initializing...', 'daemon', 'debug');
 
-  my $conf = ReadConfig::getInstance();
-  my $agents_dir = $conf->getOption('SRCDIR')."/lib/SNMPAgent/";
+  my $conf = ReadConfig::get_instance();
+  my $agents_dir = $conf->get_option('SRCDIR')."/lib/SNMPAgent/";
 
   my $dh;
   if (! opendir($dh, $agents_dir)) {
@@ -229,13 +229,13 @@ sub write_log_to_file ($message) {
   my $LOCK_EX = 2;
   my $LOCK_NB = 4;
   my $LOCK_UN = 8;
-  $| = 1;
+  $| = 1; ## no critic
 
   if ( !defined( fileno($LOGGERLOG) ) || !-f $logfile ) {
     open($LOGGERLOG, ">>", $logfile);
     unless (defined( fileno($LOGGERLOG) ) ) {
       open($LOGGERLOG, ">>", "/tmp/".$logfile);
-      $| = 1;
+      $| = 1; ## no critic
     }
     doLog( 'Log file has been opened, hello !', 'daemon' );
   }

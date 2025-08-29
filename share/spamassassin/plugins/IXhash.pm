@@ -39,7 +39,7 @@ To see which DNS zones are currently available see http://www.ixhash.net
 
 =cut
 
-package Mail::SpamAssassin::Plugin::IXhash;
+package Mail::SpamAssassin::Plugin::IXhash; ## no critic
 
 use v5.40;
 use warnings;
@@ -127,7 +127,6 @@ sub ixhashtest ($this, $permsgstatus,$full,$dnszone) {
   my $tmpfile = '';
   my $tmpfh = undef;
   my $hits = 0;
-  my $digest = 0;
   # alarm the dns query - dallase@uribl.com
   # --------------------------------------------------------------------------
   # here we implement proper alarms, ala Pyzor, Razor2 plugins.

@@ -39,7 +39,6 @@ profile_start('init');
 ### Global variables
 my $msg = "";
 my $DEBUG = 0;
-my $err = 0;
 my $is_bounce      = 0;
 my $header_from    = "";
 my $subject        = "";
@@ -48,7 +47,6 @@ my $rbls           = "";
 my $prefilters     = "";
 my $bounced_add    = "";
 my $spam_type      = 'ST_SPAM';
-my $tag            = "";
 my $store_id       = $config->get_option('HOSTID');
 my @rbl_tags       = ('__RBLS_TAGS__');
 my @prefiltertags  = ('__PREFILTERS_TAGS__');
@@ -272,22 +270,21 @@ sub send_anyway ($whitelisted) {
 
     if (! $whitelisted) {
       my $tag = $email->get_pref( 'spam_tag', '{Spam?}');
-    if ( $tag =~ /\-1/ ) {
-    $tag = "{Spam?}";
-    }
-
-    if ( $tag !~ /^$/) {
-    $msg =~ s/Subject:\ /Subject: $tag /i;
-    }
+      if ( $tag =~ /\-1/ ) {
+        $tag = "{Spam?}";
+      }
+      if ( $tag !~ /^$/) {
+        $msg =~ s/Subject:\ /Subject: $tag /i;
+      }
     } else {
-        $msg =~ s/X-SpamTagger-SpamCheck: spam,/X-SpamTagger-SpamCheck: spam, whitelisted by $level{$whitelisted},/i;
+      $msg =~ s/X-SpamTagger-SpamCheck: spam,/X-SpamTagger-SpamCheck: spam, whitelisted by $level{$whitelisted},/i;
     }
 
   unless ( $smtp = Net::SMTP->new('localhost:2525') ) {
     print " ** cannot connect to outgoing smtp server !\n";
     exit 0;
   }
-  $err = 0;
+  my $err = 0;
   $err = $smtp->code();
   if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
 
@@ -325,17 +322,17 @@ sub send_anyway ($whitelisted) {
 
 sub put_in_quarantine {
   profile_start('putInQuar');
-  if ( !-d $VARDIR . "/spam/" . $to_domain ) {
-    mkdir( $VARDIR . "/spam/" . $to_domain );
+  if ( !-d "$VARDIR/spam/$to_domain" ) {
+    mkdir( "$VARDIR/spam/$to_domain" );
   }
-  if ( !-d $VARDIR . "/spam/" . $to_domain . "/" . $to ) {
-    mkdir( $VARDIR . "/spam/" . $to_domain . "/" . $to );
+  if ( !-d "$VARDIR/spam/$to_domain/$to" ) {
+    mkdir( "$VARDIR/spam/$to_domain/$to" );
   }
 
   ## save the spam file
-  my $filename =
-    $VARDIR . "/spam/" . $to_domain . "/" . $to . "/" . $exim_id;
-  unless (open(my $MSGFILE, ">", $filename )) {
+  my $filename = "$VARDIR/spam/$to_domain/$to/$exim_id";
+  my $MSGFILE;
+  unless (open($MSGFILE, ">", $filename )) {
     print " cannot open quarantine file $filename for writing";
     return 0;
   }
@@ -375,7 +372,8 @@ sub panic_log_msg {
   my $filename = $VARDIR."/spool/exim_stage4/paniclog/".$exim_id;
   print " **WARNING, cannot send message ! saving mail to: $filename\n";
 
-  open(my $PANICLOG, ">", $filename) or return;
+  my $PANICLOG;
+  open($PANICLOG, ">", $filename) or return;
   print $PANICLOG $msg;
   close $PANICLOG;
   return;

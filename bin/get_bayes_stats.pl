@@ -21,14 +21,14 @@ if (defined($givenmode) && $givenmode =~ /^(-v|-h)$/) {
 
 my $MSLOGFILE=$conf->get_option('VARDIR')."/log/mailscanner/infolog";
 
-open(my $LOGFILE, '<', $MSLOGFILE) or die("cannot open log file: $MSLOGFILE\n");
+my $LOGFILE;
+open($LOGFILE, '<', $MSLOGFILE) or die("cannot open log file: $MSLOGFILE\n");
 
 my $msgs = 0;
 my $spam_sure = 0;
 my $ham_sure = 0;
 my $weird = 0;
 my $unsure = 0;
-my $hour = 0;
 my %hourly_counts;
 my $samsgs = 0;
 my $saspams = 0;

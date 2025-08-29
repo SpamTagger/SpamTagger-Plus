@@ -37,7 +37,7 @@ use SystemPref();
 use Domain();
 
 sub new ($class, $domainname = 'default_domain') {
-  if ($domainname == 'default_domain') {
+  if ($domainname eq 'default_domain') {
     my $system = SystemPref->new();
     $domainname = $system->get_pref('default_domain');
   }

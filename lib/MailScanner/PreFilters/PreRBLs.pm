@@ -68,7 +68,8 @@ sub initialise {
     position => 0
   );
 
-  if (open(my $CONFIG, '<', $configfile)) {
+  my $CONFIG;
+  if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
         $PreRBLs::conf{$1} = $2;
@@ -87,6 +88,7 @@ sub initialise {
   );
 
   if (-f $PreRBLs::conf{domains_hostname_map_file}) {
+    my $MAPFILE;
     if (open($MAPFILE, '<', $PreRBLs::conf{domains_hostname_map_file})) {
       while (<$MAPFILE>) {
         if (/^(\S+),(.*)$/) {
@@ -158,7 +160,7 @@ sub Checks ($this, $message) { ## no critic
           MailScanner::Log::InfoLog("$MODULE should avoid control on IP ".$avoidhost." for message ".$message->{id});
         }
         my $acidr = Net::CIDR::Lite->new();
-        eval { $acidr->add_any($avoidhost); };
+        my $ret = eval { $acidr->add_any($avoidhost); };
         if ($acidr->find($message->{clientip})) {
           MailScanner::Log::InfoLog("$MODULE not checking IPRBL on ".$message->{clientip}." because IP is whitelisted for message ".$message->{id});
           $checkip = 0;

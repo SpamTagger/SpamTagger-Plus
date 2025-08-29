@@ -94,7 +94,7 @@
 #
 # -------------------------------------------------------
 
-package Mail::SpamAssassin::Plugin::ImageInfo;
+package Mail::SpamAssassin::Plugin::ImageInfo; ## no critic
 
 use v5.40;
 use warnings;
@@ -304,7 +304,7 @@ sub image_name_regex {
   foreach my $name (keys %{$pms->{'imageinfo'}->{"names_all"}}) {
     dbg("imageinfo: checking image named $name against regex $re");
     my $eval = 'if (q{'.$name.'} =~  ' . $re . ') {  $hit = 1; } ';
-    eval { $eval };
+    my $ret = eval { $eval };
     dbg("imageinfo: error in regex $re - $@") if $@;
     if ($hit) {
       dbg("imageinfo: image_name_regex hit on $name");

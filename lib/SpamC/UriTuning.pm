@@ -39,7 +39,8 @@ sub gglapi_domain ($this, $permsgstatus, $body, $body_html) {
 	return 0 if ( ! -f '/usr/spamtagger/share/spamassassin/plugins/UriTuning.list' );
 
 	# Get list of strings
-	open(my $LIST, '<', '/usr/spamtagger/share/spamassassin/plugins/UriTuning.list');
+  my $LIST;
+	open($LIST, '<', '/usr/spamtagger/share/spamassassin/plugins/UriTuning.list');
 	@elems = <$LIST>;
 	close($LIST);
 	chomp(@elems);

@@ -77,8 +77,9 @@ sub get_pref ($this, $pref, $default) {
 }
 
 sub load_prefs ($this) {
-  return 0 unless (-f $this->{preffile})
-  return 0 unless (open(my $PREFFILE, '<', $this->{preffile}));
+  my $PREFFILE;
+  return 0 unless (-f $this->{preffile});
+  return 0 unless (open($PREFFILE, '<', $this->{preffile}));
   while (<$PREFFILE>) {
     $this->{prefs}->{$1} = $2 if (/^(\S+)\s+(.*)$/);
   }
@@ -100,6 +101,7 @@ sub dump_prefs ($this) {
   my $gid = getgrnam( 'spamtagger' );
   chown $uid, $gid, $this->{prefdir};
 
+  my $PREFFILE;
   unless (open($PREFFILE, ">", $this->{preffile})) {
     print "CANNOTWRITESYSTEMPREF\n";
     return 0;

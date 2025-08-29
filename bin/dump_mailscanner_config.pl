@@ -146,11 +146,13 @@ sub get_ms_config {
   $config{'__BLOCKUNENCRYPT__'} = $row{'block_unencrypt'};
   if ($row{'allow_passwd_archives'} eq 'yes')   {
     $config{'__ALLOWPWDARCHIVES__'} = 'yes';
+    my $FH;
     open($FH, '>', '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives');
     print $FH "FromOrTo:\tdefault\tyes";
     close $FH
   } else {
     $config{'__ALLOWPWDARCHIVES__'} = '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives';
+    my $FH;
     open $FH, '>', '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives';
     if (defined($row{wh_passwd_archives})) {
       my @wh_dom = split('\n', $row{wh_passwd_archives});
@@ -204,7 +206,8 @@ sub get_ms_config {
   $config{'__PREFILTERS__'} = $pfoption;
 
   my $exim_command = 0;
-  if (open(my $fh, '<', '/opt/MailScanner/lib/MailScanner/ConfigDefs.pl')) {
+  my $fh;
+  if (open($fh, '<', '/opt/MailScanner/lib/MailScanner/ConfigDefs.pl')) {
     while (my $line = <$fh>) {
       if ($line =~ m/^eximcommand\s*=/) {
         $exim_command = 1;
@@ -385,6 +388,7 @@ sub dump_prefilter_files {
   my $basedir=$conf->get_option('SRCDIR')."/etc/mailscanner/prefilters";
 
   return 1 unless (-d $basedir) ;
+  my $QDIR;
   opendir($QDIR, $basedir) or die "Couldn't read directory $basedir";
   while(my $entry = readdir($QDIR)) {
     if ($entry =~ /(\S+)(\.cf)_template$/) {

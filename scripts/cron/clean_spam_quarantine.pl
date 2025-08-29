@@ -72,19 +72,22 @@ foreach my $db (@dbs) {
 }
 
 ## delete real files
-opendir(my $QDIR, $quarantine_dir )
+my $QDIR;
+opendir($QDIR, $quarantine_dir )
   or die "Couldn't read directory $quarantine_dir";
 while ( my $entry = readdir($QDIR) ) {
   next if $entry =~ /^\./;
   $entry = $quarantine_dir . '/' . $entry;
   if ( -d $entry ) {
-    opendir(my $DDIR, $entry ) or die "Couldn't read directory $entry";
+    my $DDIR;
+    opendir($DDIR, $entry ) or die "Couldn't read directory $entry";
     while ( my $domain_entry = readdir($DDIR) ) {
       next if $domain_entry =~ /^\./;
       $domain_entry = $entry . '/' . $domain_entry;
 
       if ( -d $domain_entry ) {
-        opendir(my $UDIR, $domain_entry )
+        my $UDIR;
+        opendir($UDIR, $domain_entry )
           or die "Couldn't read directory $domain_entry";
         while ( my $user_entry = readdir($UDIR) ) {
           next if $user_entry =~ /^\./;

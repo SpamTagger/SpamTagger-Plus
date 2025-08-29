@@ -68,7 +68,8 @@ sub dump_archived_domains {
   my %doms;
   foreach my $d (@adomains) {
     my $domfile = $archive_path."/".$d->{'name'};
-    if (open(my $DFILE, ">", $domfile) ) {
+    my $DFILE;
+    if (open($DFILE, ">", $domfile) ) {
       print $DFILE "*";
       close $DFILE;
       $doms{$d->{'name'}} = 1;
@@ -82,7 +83,8 @@ sub dump_archived_domains {
       my $euser = $1;
       unless (defined($doms{$edom})) {
         my $domfile = $archive_path."/".$edom;
-        if (open(my $DFILE, ">>", $domfile") ) {
+        my $DFILE;
+        if (open($DFILE, ">>", $domfile)) {
           print $DFILE $e->{'address'}."\n";
           print $DFILE $euser."\n";
           close $DFILE;
@@ -109,7 +111,8 @@ sub dump_copy_to {
   my %doms;
   foreach my $d (@cdomains) {
     my $domfile = $copyto_path."/".$d->{'name'};
-    if (open(my $DFILE, ">", $domfile) ) {
+    my $DFILE;
+    if (open($DFILE, ">", $domfile)) {
       print $DFILE "*:".$d->{'copyto_mail'};
       close $DFILE;
       $doms{$d->{'name'}} = 1;
@@ -122,8 +125,9 @@ sub dump_copy_to {
       my $edom = $2;
       my $euser = $1;
       unless (!defined($doms{$edom})) {
-        my $domfile = $copyto_path."/".$edom;
-        if (open(my $DFILE, ">>", $domfile") ) {
+        my $domfile = "$copyto_path/$edom";
+        my $DFILE;
+        if (open($DFILE, ">>", $domfile)) {
           print $DFILE $e->{'address'}.":".$e->{'copyto_mail'}."\n";
           print $DFILE $euser.":".$e->{'copyto_mail'}."\n";
           close $DFILE;
@@ -154,7 +158,8 @@ sub dump_bypass_filtering {
       my $edom = $2;
       my $euser = $1;
       my $domfile = $bypassfiltering_path."/".$edom;
-      if (open(my $DFILE, ">>", $domfile) ) {
+      my $DFILE;
+      if (open($DFILE, ">>", $domfile) ) {
         print $DFILE $euser."\n";
         close $DFILE;
       }

@@ -88,7 +88,8 @@ sub pre_fork ($this, $class) {
 
 sub main_loop ($this, $class) {
   my $cmd = $this->{'cmd'};
-  open(my $CONF, '<', $this->{'conffile'})
+  my $CONF;
+  open($CONF, '<', $this->{'conffile'})
     || die "Cannot open config file $this->{'conffile'}";
   while (my $line = <$CONF>) {
     if ($line =~ m/^#/) {

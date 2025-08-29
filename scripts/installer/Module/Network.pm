@@ -52,7 +52,8 @@ sub run($this) {
   $config .= "\nauto lo\n";
   $config .= "iface lo inet loopback\n";
   mkdir($this->{networkfile}.'.d/') unless (-d $this->{networkfile}.'.d/');
-  if (open(my $fh, '>', $this->{networkfile}.'.d/lo')) {
+  my $fh;
+  if (open($fh, '>', $this->{networkfile}.'.d/lo')) {
     print $fh $config;
     close($fh);
   } else {
@@ -72,7 +73,7 @@ sub run($this) {
   }
   foreach my $if (keys %interfaces) {
     next if ($interfaces{$if} eq '');
-    if (open(my $fh, '>>', $this->{networkfile}.'.d/'.$if)) {
+    if (open($fh, '>>', $this->{networkfile}.'.d/'.$if)) {
       print $fh '  post-up /sbin/ip route add '.$interfaces{$if}.' dev '.$if.'\n';
       print $fh '  post-up /sbin/ip route add default via '.$interfaces{$if}.' dev '.$if.'\n' if ($gw eq $if);
       print $fh '  pre-down /sbin/ip route del default via '.$interfaces{$if}.' dev '.$if.'\n' if ($gw eq $if);
@@ -85,11 +86,13 @@ sub run($this) {
   $resolv->ask();
   my $resconfig = $resolv->get_config();
 
-  if (open(my $RESFILE, '>', $this->{resolvfile})) {
+  my $RESFILE;
+  if (open($RESFILE, '>', $this->{resolvfile})) {
     print $RESFILE $resconfig;
     close $RESFILE;
   }
-  if (open(my $NETFILE, '>', $this->{networkfile})) {
+  my $NETFILE;
+  if (open($NETFILE, '>', $this->{networkfile})) {
     print $NETFILE "source /etc/network/interfaces.d/*\n";
     close $NETFILE;
   }
@@ -112,7 +115,7 @@ sub doint($this, $listh, $configured) {
 
   my $dlg = $this->{dlg};
   my $if = $lista[0];
-  if (scalar(@lista) gt 1) {
+  if (scalar(@lista) > 1) {
     push(@lista, 'finish');
     $dlg->build("Select interface to configure [".$current."]:", \@lista, $i, 1);
     $if = $dlg->display();
@@ -133,7 +136,8 @@ sub doint($this, $listh, $configured) {
   }
   $dlg->clear();
 
-  if (open(my $fh, '>', $this->{networkfile}.'.d/'.$if)) {
+  my $fh;
+  if (open($fh, '>', $this->{networkfile}.'.d/'.$if)) {
     print $fh $config;
     close($if);
   }

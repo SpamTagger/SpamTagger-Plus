@@ -60,11 +60,11 @@ my $msg_file = $config->get_option('VARDIR')."/spam/".$for_domain."/".$for."/".$
 
 print $msg_file."\n";
 
-if (open(my $MSG, '<', $msg_file)) {
+my $MSG;
+if (open($MSG, '<', $msg_file)) {
   my $keep_in = 1;
   my $in_it = 0;
   my @hits;
-  my $hit;
   my $score_line;
   my $score;
   my $cmd;
@@ -84,7 +84,7 @@ if (open(my $MSG, '<', $msg_file)) {
         if ($line =~ /^\s/) {
           chomp($line);
           @hits = split(/,/, $line);
-          foreach $hit (@hits) {
+          foreach my $hit (@hits) {
             chomp($hit);
             $hit =~ s/^\s+//;
             $hit =~ s/\s+$//;

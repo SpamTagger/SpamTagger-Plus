@@ -69,8 +69,8 @@ sub get_pref ($this, $pref, $default) {
 }
 
 sub load_prefs ($this) {
-  my $conf = ReadConfig::getInstance();
-  my $preffile = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$this->{name}."/prefs.list";
+  my $conf = ReadConfig::get_instance();
+  my $preffile = $conf->get_option('VARDIR')."/spool/spamtagger/prefs/".$this->{name}."/prefs.list";
 
   my @dlist = ($this->{name}, '*', '_joker', '_global');
 
@@ -92,7 +92,7 @@ sub load_prefs ($this) {
   ## finaly try to find a valid preferences file
   my $found = 0;
   for my $d ( @dlist ) {
-    $preffile =   $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$d."/prefs.list";
+    $preffile = $conf->get_option('VARDIR')."/spool/spamtagger/prefs/".$d."/prefs.list";
     if ( -f $preffile) {
       $found = 1;
       last;
@@ -124,8 +124,8 @@ sub dump_prefs ($this, $slave_db) {
 sub dump_prefs_from_row ($this, $row) {
   my %res = %{$row};
   print "CANNOTFINDPREFS" unless (%res && defined($res{id}));
-  my $conf = ReadConfig::getInstance();
-  my $prefdir = $conf->getOption('VARDIR')."/spool/spamtagger/prefs/".$this->{name};
+  my $conf = ReadConfig::get_instance();
+  my $prefdir = $conf->get_option('VARDIR')."/spool/spamtagger/prefs/".$this->{name};
   my $preffile = $prefdir."/prefs.list";
 
   my $stuid = getpwnam('SpamTagger');
@@ -146,7 +146,8 @@ sub dump_prefs_from_row ($this, $row) {
     chown $uid, $gid, $prefdir;
   }
 
-  unless (open(my $PREFFILE, ">", $preffile)) {
+  my $PREFFILE;
+  unless (open($PREFFILE, ">", $preffile)) {
     print "CANNOTWRITEPREFFILE";
     return 0;
   }
@@ -163,8 +164,7 @@ sub dump_prefs_from_row ($this, $row) {
   ## dump ldap callout file
   if ($this->getPref('adcheck') eq 'true') {
 
-    my $syspref = SystemPref::getInstance();
-    my $conf = ReadConfig::getInstance();
+    my $syspref = SystemPref::get_instance();
     my $ldapserver = $syspref->getPref('ad_server');
     my ($ad_basedn, $ad_binddn, $ad_pass) = split(':', $syspref->getPref('ad_param'));
 
@@ -174,7 +174,7 @@ sub dump_prefs_from_row ($this, $row) {
 
     my $template = ConfigTemplate->new(
       "etc/exim/ldapcallout_template",
-      $conf->getOption('VARDIR')."/spool/spamtagger/callout/"
+      $conf->get_option('VARDIR')."/spool/spamtagger/callout/"
         . $this->getPref('name').".ldapcallout");
 
     my %rep;
@@ -200,14 +200,15 @@ sub dump_prefs_from_row ($this, $row) {
 
 sub dump_local_addresses ($this, $slave_db) {
   my $stuid = getpwnam('SpamTagger');
-  my $conf = ReadConfig::getInstance();
+  my $conf = ReadConfig::get_instance();
 
   $slave_db = DB->db_connect('slave', 'st_config') unless ($slave_db);
 
   my $query = "SELECT e.address FROM email e WHERE e.address LIKE '%@".$this->{name}."'";
 
-  my $file = $conf->getOption('VARDIR')."/spool/spamtagger/addresses/".$this->{name}.".addresslist";
-  unless (open(my $OUTFILE, ">", $file)) {
+  my $file = $conf->get_option('VARDIR')."/spool/spamtagger/addresses/".$this->{name}.".addresslist";
+  my $OUTFILE;
+  unless (open($OUTFILE, ">", $file)) {
     unlink($file) if (-e $file); ## in case we cannot write to file, try to remove it
     return 0;
   }

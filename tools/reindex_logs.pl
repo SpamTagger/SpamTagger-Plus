@@ -35,7 +35,7 @@ use File::Path qw( rmtree );
 
 check_install( 'module' => 'PerlIO::gzip', 'version' => 0.18) || die "Reindexing requires the library PerlIO::gzip. Please install with:\n  apt-get install libperlio-gzip-perl\n\n";
 
-$| = 1;
+$| = 1; ## no critic
 our $VAR = "/var/spamtagger";
 
 # Define services with ownership UID, GID, init commands, and timestamp search patterns per file.
@@ -202,7 +202,8 @@ sub fast_write ($logs, $service, $path, $suffix) {
     my $out_method = '>>';
     $out_method .= ':gzip' if ($suffix =~ m/\.gz$/);
     print("Writing logs for ${path}${suffix}\n");
-    if (open(my $oh, $out_method, $path.$suffix)) {
+    my $oh;
+    if (open($oh, $out_method, $path.$suffix)) {
       foreach my $line (@{$logs->{$path}->{$suffix}}) {
         print $oh $line;
       }
@@ -352,7 +353,8 @@ foreach my $service (@services_to_index) {
 
         my $in_method = '<';
         $in_method .= ':gzip' if ($input =~ m/\.gz$/);
-        if (open(my $ih, $in_method, "${VAR}/log/${service}/${file}${input}")) {
+        my $ih;
+        if (open($ih, $in_method, "${VAR}/log/${service}/${file}${input}")) {
           while (my $line = <$ih>) {
             my $hit = 0;
             my $done = 0;

@@ -176,7 +176,8 @@ if (@messages > 0) {
   if ($batchwithlog && $batchid) {
     $fullogfile = $tmpdir.'/'.$batchid.".full";
   }
-  unless (open(my $FULLOG, ">>", $fullogfile)) {
+  my $FULLOG;
+  unless (open($FULLOG, ">>", $fullogfile)) {
     print STDERR "Cannot open full log file: $fullogfile\n";
     exit();
   }
@@ -335,13 +336,13 @@ sub print_usage {
 }
 
 sub search_exim ($file, $store) {
-  my $fh;
   my $ffile = $file;
   return if ! -f $file;
   if ($file =~ /.gz$/) {
     $ffile = "zcat $file |";
   }
-  unless (open(my $fh, '<', $ffile)) {
+  my $fh;
+  unless (open($fh, '<', $ffile)) {
     print "Warning, cannot open file: $file !\n";
     return;
   }
@@ -356,11 +357,11 @@ sub search_exim ($file, $store) {
 }
 
 sub search_mailscanner ($file, $store) {
-  my $fh;
   my $ffile = $file;
   return if ! -f $file;
   $ffile = "zcat $file |" if ($file =~ /.gz$/);
-  unless (open(my $fh, '<', $ffile) {
+  my $fh;
+  unless (open($fh, '<', $ffile) {
     print "Warning, cannot open file: $file !\n";
     return;
   }
@@ -377,13 +378,13 @@ sub search_mailscanner ($file, $store) {
 }
 
 sub search_spamhandler ($file, $store) {
-  my $fh;
   my $ffile = $file;
   return if ! -f $file;
   if ($file =~ /.gz$/) {
     $ffile = "zcat $file |";
   }
-  unless (open(my $fh, '<', $ffile)) {
+  my $fh;
+  unless (open($fh, '<', $ffile)) {
     print "Warning, cannot open file: $file !\n";
     return;
   }
@@ -426,126 +427,123 @@ sub print_batch_result ($msg, %msg_o) {
       $_accepted = 1;
       $_inreport = 'Accepted (id='.$msg_o{'id'}.')';
       if ($line =~ /P=esmtpa A=[^:]+:(\S+)/) {
-            $_inreport = "Authenticated relay ($1)";
+        $_inreport = "Authenticated relay ($1)";
       }
     }
     if ($line =~ m/[-=]> (\S+)(?:\ <\S+>)?\ R=(\S+) T=(\S+) .* C=\"([^\"]+)\"/) {
       $_tos .= ','.$1;
       if ($3 eq 'remote_smtp') {
-         $_relayed = 1;
-           $_outmessage = $4;
-           $msg_o{'nid'} = $msg_o{'id'};
-           if ($line =~ m/H=(\S+(?:\ \[\S+\]))/) {
-             $_outhost = $1;
-           }
+        $_relayed = 1;
+        $_outmessage = $4;
+        $msg_o{'nid'} = $msg_o{'id'};
+        if ($line =~ m/H=(\S+(?:\ \[\S+\]))/) {
+          $_outhost = $1;
+        }
       }
-    }
-    if ($line =~ /== (\S+) R=(\S+) (?:T=\S+ )?(.*)/) {
+     }
+     if ($line =~ /== (\S+) R=(\S+) (?:T=\S+ )?(.*)/) {
        if ($2 eq 'dnslookup') {
-          $_tos = $1;
-          $_inreport = $3;
-          $msg_o{'nid'} = $msg_o{'id'};
+         $_tos = $1;
+         $_inreport = $3;
+         $msg_o{'nid'} = $msg_o{'id'};
        }
-    }
-    if ($line =~ /^(\d{4}-\d\d-\d\d\ \d\d:\d\d:\d\d) (\S+) Completed/ && $_relayed) {
-      $_dateout = $1;
-  if ($_outreport ne 'Rejected') {
-          $_outreport = 'Completed';
-          $_delivered = 1;
-  }
-    }
-    if ($line =~ /F=<([^>]+)>/ ) {
-        $_from = $1;
-    }
-    if ($line =~ /rejected RCPT <?([^>:]+)>:\s(.*)?/ ) {
-        $_tos = $1;
-        $_inreport = $2;
-    } elsif ($line =~ /F=<\S+> temporarily rejected RCPT <?([^>:]+)>:\s(.*)/ ) {
-      $_accepted = 0;
-      $_inreport = $1;
-    } elsif ($_inreport eq '') {
-      $_inreport = $line;
-    }
-    if ( $line !~ /[=-]\>/ && $line =~ /H=(\S+)\s(\S+)\s\[([^\]]+)\]/) {
-        $_senderhostname = $1;
-        $_senderhostip = $3;
-    } elsif ($line !~ /[=-]\>/ && $line =~ /H=(\S+)\s\[([^\]]+)\]/) {
-        $_senderhostname = $1;
-        $_senderhostip = $2;
-    }
-    if ( $line =~ /\*\* (\S+).*SMTP error.*: host (.*): (.*)/) {
-  $_outreport = 'Rejected';
-  $_delivered = 0;
-  $msg_o{'nid'} = $msg_o{'id'};
-  $_outmessage = $3;
-  $_outhost = $2;
-  $_relayed = 1;
-  $_tos = $1;
-    }
-    if ($_senderhostname =~ /^\((\S*)\)/) {
-        $_senderhostname = $1.'/U';
-    }
-    if ($line =~ /=> \S+ R=filter_forward T=\S+ .* C=\"([^\"]+)/) {
-        $_inreport = $1;
-    }
-    if ($_inreport =~ /^\"(.*)\"$/) {
-        $_inreport = $1;
-    }
+     }
+     if ($line =~ /^(\d{4}-\d\d-\d\d\ \d\d:\d\d:\d\d) (\S+) Completed/ && $_relayed) {
+       $_dateout = $1;
+       if ($_outreport ne 'Rejected') {
+         $_outreport = 'Completed';
+         $_delivered = 1;
+       }
+     }
+     if ($line =~ /F=<([^>]+)>/ ) {
+       $_from = $1;
+     }
+     if ($line =~ /rejected RCPT <?([^>:]+)>:\s(.*)?/ ) {
+       $_tos = $1;
+       $_inreport = $2;
+     } elsif ($line =~ /F=<\S+> temporarily rejected RCPT <?([^>:]+)>:\s(.*)/ ) {
+       $_accepted = 0;
+       $_inreport = $1;
+     } elsif ($_inreport eq '') {
+       $_inreport = $line;
+     }
+     if ( $line !~ /[=-]\>/ && $line =~ /H=(\S+)\s(\S+)\s\[([^\]]+)\]/) {
+       $_senderhostname = $1;
+       $_senderhostip = $3;
+     } elsif ($line !~ /[=-]\>/ && $line =~ /H=(\S+)\s\[([^\]]+)\]/) {
+       $_senderhostname = $1;
+       $_senderhostip = $2;
+     }
+     if ( $line =~ /\*\* (\S+).*SMTP error.*: host (.*): (.*)/) {
+       $_outreport = 'Rejected';
+       $_delivered = 0;
+       $msg_o{'nid'} = $msg_o{'id'};
+       $_outmessage = $3;
+       $_outhost = $2;
+       $_relayed = 1;
+       $_tos = $1;
+     }
+     if ($_senderhostname =~ /^\((\S*)\)/) {
+       $_senderhostname = $1.'/U';
+     }
+     if ($line =~ /=> \S+ R=filter_forward T=\S+ .* C=\"([^\"]+)/) {
+       $_inreport = $1;
+     }
+     if ($_inreport =~ /^\"(.*)\"$/) {
+       $_inreport = $1;
+     }
 
-  }
-  $_tos =~ s/^,//;
+   }
+   $_tos =~ s/^,//;
 
-  if ($_accepted == 1 && $_senderhostip eq '') {
-    $_accepted = 2;
-  }
+   if ($_accepted == 1 && $_senderhostip eq '') {
+     $_accepted = 2;
+   }
 
-  print $_datein."|".$config->get_option('HOSTID')."|".$_senderhostname."|".$_senderhostip."|".$_accepted."|".$_relayed."|".$_inreport."|".$msg_o{'id'}."|".$_from."|".$_tos."|".$msg_o{'nid'};
+   print $_datein."|".$config->get_option('HOSTID')."|".$_senderhostname."|".$_senderhostip."|".$_accepted."|".$_relayed."|".$_inreport."|".$msg_o{'id'}."|".$_from."|".$_tos."|".$msg_o{'nid'};
 
-  # $_spam will be 0 for ham, 1 for spam, 2 for newsletter and 3 for spam and newsletter
-  my $_spam = 0;
-  my $_spamreport = '';
-  my $_content = '';
-  my $_contentreport = '';
-  my $_fstatus = '';
-  foreach my $line (split '\n', $ms_ids{$msg_o{'nid'}}) {
-   if ($line =~ m/to\ \S+\ is\ (not spam|spam)[^,]*, (.*)/) {
+   # $_spam will be 0 for ham, 1 for spam, 2 for newsletter and 3 for spam and newsletter
+   my $_spam = 0;
+   my $_spamreport = '';
+   my $_content = '';
+   my $_contentreport = '';
+   my $_fstatus = '';
+   foreach my $line (split '\n', $ms_ids{$msg_o{'nid'}}) {
+    if ($line =~ m/to\ \S+\ is\ (not spam|spam)[^,]*, (.*)/) {
       if ($1 eq 'spam') {
-      if ($_spam eq 2) {
-             $_spam = 3;
-      } else {
-             $_spam = 1;
-      }
-
-
+        if ($_spam == 2) {
+          $_spam = 3;
+        } else {
+          $_spam = 1;
+        }
       }
       $_spamreport = $2;
     }
-  if ($line =~ m/to\ \S+\ is\ (not spam|spam).*Newsl \(score=([^,]*), required=([^,]*)/) {
-    if ( int($2) >= int($3) ) {
-
-      if ($_spam eq 1) {
-             $_spam = 3;
-      } else {
-             $_spam = 2;
+    if ($line =~ m/to\ \S+\ is\ (not spam|spam).*Newsl \(score=([^,]*), required=([^,]*)/) {
+      if ( int($2) >= int($3) ) {
+        if ($_spam == 1) {
+          $_spam = 3;
+        } else {
+          $_spam = 2;
+        }
       }
     }
-  }
-        if ($line =~ m/result is newsletter/) {
-    if ($_spam eq 1) {
-           $_spam += 2;
-    } else {
-           $_spam = 2;
+    if ($line =~ m/result is newsletter/) {
+      if ($_spam == 1) {
+        $_spam += 2;
+      } else {
+        $_spam = 2;
+      }
     }
-        }
-    ## TO DO: check for viruses and content...
+    ## TODO: check for viruses and content...
     if ($line =~ m/Content Checks: Detected (.*)/) {
       $_content = 'Detected';
       $_contentreport = $1;
     }
-        if ($line =~ m/Filename Checks:\s+\(\S+\ (.*)\)/) {
-                $_content = 'Detected';
-                $_contentreport = $1;
-        }
+    if ($line =~ m/Filename Checks:\s+\(\S+\ (.*)\)/) {
+      $_content = 'Detected';
+      $_contentreport = $1;
+    }
 
     if ($line =~ m/(Saved entire message to|Saved infected)/ ) {
       $_content = 'Quarantined';
@@ -754,7 +752,7 @@ sub get_date_from_log ($file, $position) {
     }
     $m = $months{$fm} if (defined($months{$fm}));
     $d = sprintf("%.2d", $fd);
-    $y = $y-1 if ("$y$m$d" > $today_str);
+    $y = $y-1 if ("$y$m$d" gt $today_str);
     return ('year' => $y, 'month' => $m, 'day' => $d);
   }
 

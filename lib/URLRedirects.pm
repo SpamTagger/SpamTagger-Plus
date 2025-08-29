@@ -37,7 +37,7 @@ sub new ($class = "URLRedirects", $args = {}) {
   $this->{'services'} = get_services();
   $this->{'generics'} = get_generics();
   # Prioritize specific services over generic patterns. Split with 'undef' to indicate when search hash has changed
-  $this->{'all'} = [ keys(%{$self->{'services'}}), undef, keys(%{$self->{'generics'}}) ];
+  $this->{'all'} = [ keys(%{$this->{'services'}}), undef, keys(%{$this->{'generics'}}) ];
   return bless $this, $class;
 }
 

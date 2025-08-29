@@ -202,7 +202,8 @@ sub set_as_slave {
   my $resync = `$SRCDIR/bin/resync_db.sh -F $master $password 1>/dev/null 2>/tmp/syncerror.log`;
   if ( -s $logfile) {
     print "\n  ** ERROR ** ";
-    if (open(my $ERRORLOG, '<', $logfile) {
+    my $ERRORLOG;
+    if (open($ERRORLOG, '<', $logfile) {
       while(<$ERRORLOG>) {
         if (m/Access denied/) {
           print "Access on master is denied. Please double check the master password and try again.\n";

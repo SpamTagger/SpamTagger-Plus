@@ -38,7 +38,8 @@ if (!defined($mapper)) {
   exit 1;
 }
 
-unless (open(my $IMPORTFILE, '<', $importfile)) {
+my $IMPORTFILE;
+unless (open($IMPORTFILE, '<', $importfile)) {
   warning("Could not open import file: $importfile");
   exit 0;
 }
@@ -65,7 +66,8 @@ close $IMPORTFILE;
 
 my $domainsnottodelete = $nottodeletefile;
 my %nodelete = ();
-if (open(my $NODELETEFILE, '<', $domainsnottodelete)) {
+my $NODELETEFILE;
+if (open($NODELETEFILE, '<', $domainsnottodelete)) {
   while (<$NODELETEFILE>) {
    my $el = $_;
    chomp($el);

@@ -123,7 +123,7 @@
 #
 # -------------------------------------------------------
 
-package Mail::SpamAssassin::Plugin::PDFInfo;
+package Mail::SpamAssassin::Plugin::PDFInfo; ## no critic
 
 use v5.40;
 use warnings;
@@ -192,7 +192,7 @@ my %get_details = (
 
     my ($height, $width, $fuzzy_data, $pdf_tags);
     my ($producer, $created, $modified, $title, $creator, $author) = ('unknown','0','0','untitled','unknown','unknown');
-    my ($md5, $fuzzy_md5) = ('', '');
+    my ($md5, $fuzzy_md5, $tags_md5) = ('', '', '');
     my ($total_height, $total_width, $total_area, $line_count) = (0,0,0,0);
 
     my $name = $part->{'name'} || '';
@@ -317,10 +317,9 @@ my %get_details = (
 
     dbg("pdfinfo: Filename=$name Title=$title Author=$author Producer=$producer Created=$created Modified=$modified");
 
-    my $md5;
     $md5 = uc(md5_hex($data)) if $data;
     $fuzzy_md5 = uc(md5_hex($fuzzy_data)) if $fuzzy_data;
-    my $tags_md5 = uc(md5_hex($pdf_tags)) if $pdf_tags;
+    $tags_md5 = uc(md5_hex($pdf_tags)) if $pdf_tags;
 
     dbg("pdfinfo: MD5 results for ".($name ? $name : '')." - md5=".($md5 ? $md5 : '')." fuzzy1=".($fuzzy_md5 ? $fuzzy_md5 : '')." fuzzy2=".($tags_md5 ? $tags_md5 : ''));
 
@@ -467,7 +466,7 @@ sub pdf_name_regex {
   my $hit = 0;
   foreach my $name (keys %{$pms->{'pdfinfo'}->{"names_pdf"}}) {
     my $eval = 'if (q{'.$name.'} =~  '.$re.') {  $hit = 1; } ';
-    eval { $eval };
+    my $ret = eval { $eval };
     dbg("pdfinfo: error in regex $re - $@") if $@;
     if ($hit) {
       dbg("pdfinfo: pdf_name_regex hit on $name");
@@ -713,7 +712,7 @@ sub pdf_match_details {
   my $hit = 0;
   $check_value =~ s/[\{\}\\]//g;
   my $eval = 'if (q{'.$check_value.'} =~ '.$regex.') { $hit = 1; }';
-  eval { $eval };
+  my $ret = eval { $eval };
   dbg("pdfinfo: error in regex $regex - $@") if $@;
   if ($hit) {
     dbg("pdfinfo: pdf_match_details $detail $regex matches $check_value");

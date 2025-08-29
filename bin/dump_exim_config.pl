@@ -44,6 +44,7 @@ use DB();
 
 my $DEBUG = 1;
 our $conf = ReadConfig::get_instance();
+our $EXIM_BIN="/opt/exim4/bin/exim";
 our $dns = GetDNS->new();
 my $include_debug = 0;
 
@@ -184,31 +185,31 @@ if ( -f "/etc/init.d/rsyslog" ) {
 chown $uid, $gid, $proxyfile;
 if (-e $conf->get_option('VARDIR')."/spool/exim_stage${stage}/db/retry") {
   chown $uid, $gid, $conf->get_option('VARDIR')."/spool/exim_stage${stage}/db/retry";
-    chmod o640, $conf->get_option('VARDIR')."/spool/exim_stage${stage}/db/retry";
+    chmod 0640, $conf->get_option('VARDIR')."/spool/exim_stage${stage}/db/retry";
 }
 
 print "DUMPSUCCESSFUL";
 
 #############################
-sub dump_exim_file ($stage, $include_file) {
+sub dump_exim_file ($stage, $include_file = undef) {
 
-  # 4.94 configuration changes
-  my $version = `/opt/exim4/bin/exim --version 2> /dev/null`;
+  unless (-e $EXIM_BIN) {
+    die "Exim binary not found at $EXIM_BIN\n";
+  }
+  my $version = `$EXIM_BIN --version 2> /dev/null`;
   foreach (split("\n", $version)) {
     if ($_ =~ m/.*Exim version (4\.\d\d).*/) {
       $version = $1;
       last;
     }
   }
-  unless ($version =~ m/^4\.\d\d$/ && $version ge 4.94) {
-    $version = '';
+  unless ($version =~ m/^4\.\d\d$/) {
+    die "Could not detect Exim version\n";
   }
 
   # If include =1 we are generating the files included in the exim configuration
   my $include = 0;
-  if ( defined($include_file) ) {
-    $include = 1;
-  }
+  $include = 1 if ( defined($include_file) );
 
   my $srcdir = $conf->get_option('SRCDIR');
   my $template;
@@ -216,11 +217,13 @@ sub dump_exim_file ($stage, $include_file) {
     if (-e "$srcdir/etc/exim/exim_stage$stage.conf_template_$version") {
       $template = ConfigTemplate::create(
         "$srcdir/etc/exim/exim_stage$stage.conf_template_$version",
-        "$srcdir/etc/exim/exim_stage$stage.conf");
+        "$srcdir/etc/exim/exim_stage$stage.conf"
+      );
     } else {
       $template = ConfigTemplate::create(
         "$srcdir/etc/exim/exim_stage$stage.conf_template",
-        "$srcdir/etc/exim/exim_stage$stage.conf");
+        "$srcdir/etc/exim/exim_stage$stage.conf"
+      );
     }
   } else {
     my $dest_file = $include_file;
@@ -228,11 +231,13 @@ sub dump_exim_file ($stage, $include_file) {
     if (-e "$srcdir/etc/exim/${include_file}_$version") {
       $template = ConfigTemplate::create(
         "$srcdir/etc/exim/${include_file}_$version",
-        "$srcdir/etc/exim/$dest_file");
+        "$srcdir/etc/exim/$dest_file"
+      );
     } else {
       $template = ConfigTemplate::create(
         "$srcdir/etc/exim/$include_file",
-        "$srcdir/etc/exim/$dest_file");
+        "$srcdir/etc/exim/$dest_file"
+      );
     }
   }
 
@@ -308,8 +313,8 @@ sub dump_exim_file ($stage, $include_file) {
   }
   if ($sys_conf{'__WHITELISTBOTHFROM__'}) {
     if ( ! -e $conf->get_option('VARDIR').'/spool/spamtagger/st-wl-on-both-from' ) {
-      open (my $WLFH, '>', $conf->get_option('VARDIR').'/spool/spamtagger/st-wl-on-both-from');
-      close($WLFH);
+      require File::Touch;
+      File::Touch::touch($conf->get_option('VARDIR').'/spool/spamtagger/st-wl-on-both-from');
     }
   } else {
     if ( -e $conf->get_option('VARDIR').'/spool/spamtagger/st-wl-on-both-from' ) {
@@ -385,7 +390,7 @@ sub dump_exim_file ($stage, $include_file) {
 
   my @net_interfaces = get_interfaces();
   $template->set_condition('DISABLE_IPV6', 1);
-  foreach my $interface (@net_interfaces){
+  foreach my $interface (@net_interfaces) {
     if ($interface =~ /eth\d*/ && ! is_ipv6_disabled($interface)) {
         $template->set_condition('DISABLE_IPV6', 0);
     }
@@ -409,7 +414,8 @@ sub dump_exim_file ($stage, $include_file) {
   chown 0, 0, $tmptarget_file;
   my $no_target = 0;
   my $no_tmptarget = 0;
-  if (open(my $TARGET, '>', $trusted_configs )) {
+  my $TARGET;
+  if (open($TARGET, '>', $trusted_configs )) {
     while (<$TARGET>) {
       $no_target = 1 if (/^$target_file/);
       $no_tmptarget = 1 if (/^$tmptarget_file/);
@@ -417,12 +423,12 @@ sub dump_exim_file ($stage, $include_file) {
     close($TARGET);
   }
   if (!$no_target || !$no_tmptarget) {
-    if (open(my $TARGET, ">>", $trusted_configs )) {
+    if (open($TARGET, ">>", $trusted_configs )) {
       if (!$no_target) {
-        print $TARGET $target_file."\n";
+        print $TARGET "$target_file\n";
       }
       if (!$no_tmptarget) {
-        print $TARGET $tmptarget_file."\n";
+        print $TARGET "$tmptarget_file\n";
       }
       close($TARGET);
     }
@@ -469,7 +475,8 @@ sub dump_proxy_file ($file, $smtp_proxy) {
     $str .= $_." \: " foreach (@dest_hosts);
     $str =~ s/\s*\:\s*$//;
 
-    unless (open(my TARGET, ">", "$file") ) {
+    my $TARGET;
+    unless (open($TARGET, ">", "$file") ) {
       $lasterror = "Cannot open proxy file: $file";
       return 0;
     }
@@ -528,7 +535,8 @@ sub get_system_config {
   $sconfig{'__SMTP_PROXY__'} = $row{'smtp_proxy'};
   $sconfig{'__SYSLOG_HOST__'} = $row{'syslog_host'};
   if ( -f '/usr/spamtagger/etc/spamtagger/syslog/force_syslog_on_this_host') {
-    if (open(my $FH, '<', '/usr/spamtagger/etc/spamtagger/syslog/force_syslog_on_this_host') ) {
+    my $FH;
+    if (open($FH, '<', '/usr/spamtagger/etc/spamtagger/syslog/force_syslog_on_this_host') ) {
       my $line = <$FH>;
       chomp $line;
       $sconfig{'__SYSLOG_HOST__'} = $line;
@@ -584,14 +592,13 @@ sub get_master {
 }
 
 #############################
-sub dump_master_file ($file, $m_h) {
-  my %master = %$m_h;
+sub dump_master_file ($file, $master) {
+  my $MASTERFILE;
+  return 0 unless (open($MASTERFILE, ">", $file));
 
-  return 0 unless (open $MASTERFILE, ">", $file);
-
-  print $MASTERFILE "HOST ".$master{'host'}."\n";
-  print $MASTERFILE "PORT ".$master{'port'}."\n";
-  print $MASTERFILE "PASS ".$master{'password'}."\n";
+  print $MASTERFILE "HOST ".$master->{'host'}."\n";
+  print $MASTERFILE "PORT ".$master->{'port'}."\n";
+  print $MASTERFILE "PASS ".$master->{'password'}."\n";
   close $MASTERFILE;
   return 1;
 }
@@ -659,9 +666,9 @@ sub dump_spam_route {
   `$compile`;
 
   chown $uid, $gid, $target_file;
-  chmod o754, $target_file;
+  chmod 0754, $target_file;
   chown $uid, $gid, $bytecompiledscript;
-  chmod o754, $bytecompiledscript;
+  chmod 0754, $bytecompiledscript;
 
   my $template3 = ConfigTemplate::create(
     "etc/exim/out_scripts.pl_template",
@@ -681,7 +688,7 @@ sub dump_spam_route {
   );
   $template5->dump_file();
   chown $uid, $gid, $conf->get_option('SRCDIR')."/etc/exim/address_list.pl";
-  chmod o755, $conf->get_option('SRCDIR')."/etc/exim/address_list.pl";
+  chmod 0755, $conf->get_option('SRCDIR')."/etc/exim/address_list.pl";
   return $ret;
 
 }
@@ -723,78 +730,75 @@ local0.err      ".$conf->get_option('VARDIR')."/log/mailscanner/errorlog\n\" > $
 }
 
 #############################
-sub get_exim_config{
-  my $stage = shift;
-
-    my %config = ();
+sub get_exim_config ($stage) {
+  my %config = ();
   my %row = $db->get_hash_row("SELECT * FROM mta_config WHERE stage=$stage");
-    return unless %row;
+  return unless %row;
 
   $config{'__SMTP_ACCEPT_MAX_PER_HOST__'} = $row{'smtp_accept_max_per_host'};
   $config{'__SMTP_ACCEPT_MAX_PER_TRUSTED_HOST__'} = $row{'smtp_accept_max_per_trusted_host'} || 0;
-        $config{'__CIPHERS__'} = $row{'ciphers'};
+  $config{'__CIPHERS__'} = $row{'ciphers'};
   if ($config{'__CIPHERS__'} eq '') {
-                $config{'__CIPHERS__'} = 'ALL:!aNULL:!ADH:!eNULL:!LOW:!EXP:RC4+RSA:+HIGH:+MEDIUM:!SSLv2';
-        }
+    $config{'__CIPHERS__'} = 'ALL:!aNULL:!ADH:!eNULL:!LOW:!EXP:RC4+RSA:+HIGH:+MEDIUM:!SSLv2';
+  }
   $config{'__SMTP_RECEIVE_TIMEOUT__'} = $row{'smtp_receive_timeout'};
   $config{'__SMTP_ACCEPT_MAX__'} = $row{'smtp_accept_max'};
-    $config{'__SMTP_RESERVE__'} = $row{'smtp_reserve'};
+  $config{'__SMTP_RESERVE__'} = $row{'smtp_reserve'};
   $config{'__SMTP_ACCEPT_QUEUE_PER_CONNECTION__'} = $row{'smtp_accept_queue_per_connection'};
-        $config{'__SMTP_ACCEPT_MAX_PER_CONNECTION__'} = $row{'smtp_accept_max_per_connection'};
+  $config{'__SMTP_ACCEPT_MAX_PER_CONNECTION__'} = $row{'smtp_accept_max_per_connection'};
   $config{'__IGNORE_BOUNCE_ERROR_AFTER__'} = $row{'ignore_bounce_after'};
   $config{'__TIMEOUT_FROZEN_AFTER__'} = $row{'timeout_frozen_after'};
   $config{'__RECEIVED_HEADER_TEXT__'} = $row{'header_txt'};
   $config{'__RELAY_FROM_HOSTS__'} = $row{'relay_from_hosts'};
-        if ($config{'__RELAY_FROM_HOSTS__'}) {
-          $config{'__RELAY_FROM_HOSTS__'} = join(' ; ',expand_host_string($config{'__RELAY_FROM_HOSTS__'},{'dumper'=>'exim/relay_from_hosts'}));
-        }
-    my $dns = GetDNS->new();
-    $config{'__NO_RATELIMIT_HOSTS__'} = $dns->get_a($m_infos{'host'}) || '';
-    if (defined( $row{'no_ratelimit_hosts'}) && $row{'no_ratelimit_hosts'} ne '' ) {
-          $config{'__NO_RATELIMIT_HOSTS__'} = join(' ; ',expand_host_string($config{'__NO_RATELIMIT_HOSTS__'} . ' ' . $row{'no_ratelimit_hosts'},{'dumper'=>'exim/no_ratelimit_hosts'}));
-    }
-    if (!defined($config{'__RELAY_FROM_HOSTS__'})) {
-        $config{'__RELAY_FROM_HOSTS__'} = '';
-    }
-    if (defined( $row{'hosts_require_tls'}) ) {
-          $config{'__HOSTS_REQUIRE_TLS__'} = $row{'hosts_require_tls'};
-    } else {
-       $config{'__HOSTS_REQUIRE_TLS__'} = '';
-    }
-    if ($config{'__HOSTS_REQUIRE_TLS__'}) {
-          $config{'__HOSTS_REQUIRE_TLS__'} = join(' ; ',expand_host_string($config{'__HOSTS_REQUIRE_TLS__'},{'dumper'=>'exim/hosts_require_tls'}));
-    }
+  if ($config{'__RELAY_FROM_HOSTS__'}) {
+    $config{'__RELAY_FROM_HOSTS__'} = join(' ; ',expand_host_string($config{'__RELAY_FROM_HOSTS__'},{'dumper'=>'exim/relay_from_hosts'}));
+  }
+  $config{'__NO_RATELIMIT_HOSTS__'} = $dns->get_a($m_infos{'host'}) || '';
+  if (defined( $row{'no_ratelimit_hosts'}) && $row{'no_ratelimit_hosts'} ne '' ) {
+    $config{'__NO_RATELIMIT_HOSTS__'} = join(' ; ',expand_host_string($config{'__NO_RATELIMIT_HOSTS__'} . ' ' . $row{'no_ratelimit_hosts'},{'dumper'=>'exim/no_ratelimit_hosts'}));
+  }
+  if (!defined($config{'__RELAY_FROM_HOSTS__'})) {
+    $config{'__RELAY_FROM_HOSTS__'} = '';
+  }
+  if (defined( $row{'hosts_require_tls'}) ) {
+    $config{'__HOSTS_REQUIRE_TLS__'} = $row{'hosts_require_tls'};
+  } else {
+    $config{'__HOSTS_REQUIRE_TLS__'} = '';
+  }
+  if ($config{'__HOSTS_REQUIRE_TLS__'}) {
+    $config{'__HOSTS_REQUIRE_TLS__'} = join(' ; ',expand_host_string($config{'__HOSTS_REQUIRE_TLS__'},{'dumper'=>'exim/hosts_require_tls'}));
+  }
 
-    if (defined( $row{'hosts_require_incoming_tls'}) ) {
-          $config{'__HOSTS_REQUIRE_INCOMING_TLS__'} = $row{'hosts_require_incoming_tls'};
-    } else {
-         $config{'__HOSTS_REQUIRE_INCOMING_TLS__'} = '';
-    }
-    if ($config{'__HOSTS_REQUIRE_INCOMING_TLS__'}) {
-          $config{'__HOSTS_REQUIRE_INCOMING_TLS__'} =~ s/\r\n/ ; /g;
-          $config{'__HOSTS_REQUIRE_INCOMING_TLS__'} =~ s/\n/ ; /g;
-    }
+  if (defined( $row{'hosts_require_incoming_tls'}) ) {
+    $config{'__HOSTS_REQUIRE_INCOMING_TLS__'} = $row{'hosts_require_incoming_tls'};
+  } else {
+    $config{'__HOSTS_REQUIRE_INCOMING_TLS__'} = '';
+  }
+  if ($config{'__HOSTS_REQUIRE_INCOMING_TLS__'}) {
+    $config{'__HOSTS_REQUIRE_INCOMING_TLS__'} =~ s/\r\n/ ; /g;
+    $config{'__HOSTS_REQUIRE_INCOMING_TLS__'} =~ s/\n/ ; /g;
+  }
 
-    foreach my $f ( ('domains_require_tls_from', 'domains_require_tls_to')) {
-        my $o = '__'.uc($f).'__';
-        if (defined( $row{$f}) ) {
-            $config{$o} = $row{$f};
-        } else {
-            $config{$o} = '';
-        }
-        if ($config{$o}) {
-            $config{$o} =~ s/[:, ]/\n/g;
-        }
+  foreach my $f ( ('domains_require_tls_from', 'domains_require_tls_to')) {
+    my $o = '__'.uc($f).'__';
+    if (defined( $row{$f}) ) {
+      $config{$o} = $row{$f};
+    } else {
+      $config{$o} = '';
     }
-    $config{'relay_refused_to_domain'} = '';
-    if (defined($row{'relay_refused_to_domains'})) {
-        $config{'relay_refused_to_domain'} = $row{'relay_refused_to_domains'};
+    if ($config{$o}) {
+      $config{$o} =~ s/[:, ]/\n/g;
     }
+  }
+  $config{'relay_refused_to_domain'} = '';
+  if (defined($row{'relay_refused_to_domains'})) {
+    $config{'relay_refused_to_domain'} = $row{'relay_refused_to_domains'};
+  }
 
   $config{'__SMTP_CONN_ACCESS__'} = $row{'smtp_conn_access'};
-        if ($config{'__SMTP_CONN_ACCESS__'}) {
-          $config{'__SMTP_CONN_ACCESS__'} = join(' ; ',expand_host_string($config{'__SMTP_CONN_ACCESS__'},{'dumper'=>'exim/smtp_conn_access'}));
-        }
+  if ($config{'__SMTP_CONN_ACCESS__'}) {
+    $config{'__SMTP_CONN_ACCESS__'} = join(' ; ',expand_host_string($config{'__SMTP_CONN_ACCESS__'},{'dumper'=>'exim/smtp_conn_access'}));
+  }
   $config{'__MAX_RCPT__'} = $row{'max_rcpt'};
   $config{'__MAX_RECEIVED__'} = $row{'received_headers_max'};
   $config{'__SMTP_LOAD_RESERVE__'} = $row{'smtp_load_reserve'};
@@ -804,7 +808,7 @@ sub get_exim_config{
     $config{'__GLOBAL_MAXMSGSIZE__'} = '50M';
   }
   if ($row{'verify_sender'}) {
-     $config{'__VERIFY_SENDER__'} = 1;
+    $config{'__VERIFY_SENDER__'} = 1;
   }
   $config{'__SMTP_ENFORCE_SYNC__'} = $row{'smtp_enforce_sync'};
   $config{'__ALLOW_MX_TO_IP__'} = $row{'allow_mx_to_ip'};
@@ -918,10 +922,10 @@ sub get_exim_config{
   $config{'dkim_default_pkey'} = $row{'dkim_default_pkey'};
   $config{'allow_relay_for_unknown_domains'} = $row{'allow_relay_for_unknown_domains'};
   my $vardir = $conf->get_option('VARDIR');
-  my $fh;
   $config{'__FULL_WHITELIST_HOSTS__'} = '';
-  if (-e $vardir.'/spool/spamtagger/full_whitelisted_hosts.list') {
-    open(my $fh, '<', $vardir.'/spool/spamtagger/full_whitelisted_hosts.list');
+  if (-e "$vardir/spool/spamtagger/full_whitelisted_hosts.list") {
+    my $fh;
+    open($fh, '<', "$vardir/spool/spamtagger/full_whitelisted_hosts.list");
     while (<$fh>) {
       $config{'__FULL_WHITELIST_HOSTS__'} .= $_ . ' ';
     }
@@ -934,7 +938,8 @@ sub get_exim_config{
   $config{'__FOLDING__'} = $row{'folding'};
   my $max_length;
   if ( -e $conf->get_option('VARDIR').'/spool/spamtagger/exim_max_line_length' ) {
-    if (open(my $fh, '<', $conf->get_option('VARDIR').'/spool/spamtagger/exim_max_line_length')) {
+    my $fh;
+    if (open($fh, '<', $conf->get_option('VARDIR').'/spool/spamtagger/exim_max_line_length')) {
       $max_length = <$fh>;
       chomp($max_length);
       close($fh);
@@ -949,7 +954,8 @@ sub get_exim_config{
 sub dump_ignore_list ($ignorehosts, $filename) {
   my $file = $tmpdir.'/'.$filename;
   my @list = expand_host_string($ignorehosts,{'dumper'=>'exim/dump_ignore_list/'.$filename});
-  if (open(my $RBLFILE, ">", $file)) {
+  my $RBLFILE;
+  if (open($RBLFILE, ">", $file)) {
     print $RBLFILE $_."\n" foreach (@list);
     close $RBLFILE;
   } else {
@@ -971,7 +977,8 @@ sub dump_blacklists {
   foreach my $file (keys %files) {
     my $filepath = $tmpdir."/".$files{$file};
 
-    if (open(my $FILE, ">", $filepath)) {
+    my $FILE;
+    if (open($FILE, ">", $filepath)) {
       if ($incoming_config{$file}) {
         if ($file =~ /host_reject/) {
           foreach my $host (expand_host_string($incoming_config{$file},{'dumper'=>'exim/dump_blacklists/'.$file})) {
@@ -1002,7 +1009,7 @@ sub dump_lists_ip_domain {
   $request .= "'$_', " foreach (@types);
   $request =~ s/, $/);/;
   my $count = $db->get_count($request);
-  return 0 if ($count eq 0);
+  return 0 if ($count == 0);
 
   foreach my $type (@types) {
     my @row = $db->get_list_of_hash("SELECT sender, recipient FROM wwlists where type = '$type' order by recipient");
@@ -1035,8 +1042,8 @@ sub dump_lists_ip_domain {
 #############################
 sub print_ip_domain_rule ($sender_list, $domain, $type) {
   my $smtp_rule = '';
-  my $FH_IP_DOM;
 
+  my $FH_IP_DOM;
   if  ( ($type eq 'black-ip-dom') || ($type eq 'spam-ip-dom') )  {
     open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . '/spool/tmp/exim_stage1/blacklists/ip-domain';
   } elsif  ($type eq 'white-ip-dom') {
@@ -1065,7 +1072,6 @@ deny    hosts         = <; $sender_list
 
 END
   } elsif ( ($type eq 'white-ip-dom') || ($type eq 'wh-spamc-ip-dom') ) {
-    my @arr = ;
     $smtp_rule .= "$_\n" foreach (split(' ; ', $sender_list));
   }
 
@@ -1080,12 +1086,13 @@ sub dump_certificate ($cert, $key) {
 
   my $cmd;
   my $certfile = $tmpdir."/certificate";
+  my $FILE;
   if (!$cert || $cert =~ /^\s+$/) {
     $cmd = "cp -a ".$backup_path."default.crt ".$certfile;
     `$cmd`;
   } else {
     $cert =~ s/\r\n/\n/g;
-    if (open(my $FILE, ">", $certfile)) {
+    if (open($FILE, ">", $certfile)) {
       print $FILE $cert."\n";
       close $FILE;
     }
@@ -1111,10 +1118,12 @@ sub dump_default_dkim ($stage1_conf) {
   my $keypath = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/dkim";
   mkpath($keypath) if (! -d $keypath);
   my $keyfile = $keypath."/default.pkey";
-  if (open(my $FILE, ">", $keyfile)) {
+  my $FILE;
+  if (open($FILE, ">", $keyfile)) {
     if (defined($stage1_conf->{'dkim_default_domain'})) {
-      if (-e $keypath."/".$stage1_conf->{'dkim_default_domain'}.".pkey" ) {
-        open(my $DEFAULT, '<', $keypath."/".$stage1_conf->{'dkim_default_domain'}.".pkey");
+      if (-e "$keypath/$stage1_conf->{'dkim_default_domain'}.pkey" ) {
+        my $DEFAULT;
+        open($DEFAULT, '<', $keypath."/".$stage1_conf->{'dkim_default_domain'}.".pkey");
         while (<$DEFAULT>) {
           print $FILE $_;
         }
@@ -1133,7 +1142,8 @@ sub dump_tls_force_files {
   foreach my $f ( ('domains_require_tls_from', 'domains_require_tls_to')) {
     my $o = '__'.uc($f).'__';
     my $file = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/".$f.".list";
-    if (open(my $FILE, ">", $file)) {
+    my $FILE;
+    if (open($FILE, ">", $file)) {
       print $FILE $exim_conf{$o};
       close $FILE;
       chown $uid, $gid, $file;
@@ -1164,7 +1174,8 @@ sub get_interfaces {
   my $interface_file = "/etc/network/interfaces";
   my @interfaces;
 
-  open (my $fh, '<', $interface_file) or die "could not open interface file";
+  my $fh;
+  open ($fh, '<', $interface_file) or die "could not open interface file";
   while (my $row = <$fh>){
     chomp $row;
     if($row =~ /^iface\s+(\w+).+$/){

@@ -69,7 +69,8 @@ sub initialise {
      position => 0
   );
 
-  if (open (my $CONFIG, '<', $configfile)) {
+  my $CONFIG;
+  if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
        $MessageSniffer::conf{$1} = $2;
@@ -106,7 +107,7 @@ sub Checks ($this, $message) { ## no critic
     return 0;
   }
 
-  my (@whole_message, $maxsize);
+  my @whole_message;
   push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   push(@whole_message, "\n");
   $message->{store}->ReadBody(\@whole_message, 0);
@@ -253,7 +254,7 @@ sub connect_socket ($this, $host, $port) {
 sub socket_response ($this, $rs, $file) {
     my $buf = '';    # buffer for response
     # blocking timeout for servers who accept but don't answer
-    eval {
+    my $ret = eval {
         local $SIG{ALRM} = sub { die "timeout\n" };    # set up the interrupt
         alarm $MessageSniffer::conf{'SFNTimeout'};                    # set up the alarm
         while (<$rs>) {                                # read the socket

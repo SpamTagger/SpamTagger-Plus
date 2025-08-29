@@ -50,7 +50,8 @@ sub do_htmls_wl {
 
   my $count=0;
 
-  open(my $HTML_WL, '>', $file);
+  my $HTML_WL;
+  open($HTML_WL, '>', $file);
   while (my $ref = $sth->fetchrow_hashref() ) {
     print $HTML_WL $ref->{'sender'}."\n";
     $count++;

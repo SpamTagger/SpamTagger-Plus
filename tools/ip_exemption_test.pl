@@ -51,7 +51,8 @@ if ($file =~ m/^--/) {
 		usage("unknown column '$file'");
 	}
 } else {
-	open(my $fh, '<', $file) || usage("Failed to open $file");
+  my $fh;
+	open($fh, '<', $file) || usage("Failed to open $file");
 	my $raw;
 	$raw .= $_ while (<$fh>);
 	close($fh);

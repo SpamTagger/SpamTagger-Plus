@@ -47,7 +47,7 @@ while (1) {
 if ( @params < 2 ) {
   show_usage('not enough parameters');
 }
-my $daemon = shift @params;
+my $daemon_name = shift @params;
 my $action = pop @params;
 
 if ( $action !~ /^(start|stop|restart|status)$/ ) {
@@ -79,10 +79,10 @@ if ( $0 =~ m/(\S*)\/\S+.pl$/ ) {
 } else {
   show_usage('no daemon available');
 }
-if ( !-f $path . "/" . $daemon . ".pm" ) {
+if ( !-f "$path/$daemon.pm" ) {
   show_usage('not such daemon available');
 }
-require $daemon.".pm";
+require $daemon_name.".pm";
 
 my $daemon = $daemon->( \%options );
 

@@ -84,7 +84,8 @@ my %whats;
 
 my %domains;
 my $domainsfile = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/domains.list";
-if (open(my $DOMAINFILE, '<', $domainsfile)) {
+my $DOMAINFILE;
+if (open($DOMAINFILE, '<', $domainsfile)) {
   while (<$DOMAINFILE>) {
     if (/^(\S+)\:/) {
       $domains{$1} = 1;
@@ -121,10 +122,11 @@ foreach my $what ( @tmpwhats ) {
       $isdomain = 1;
     }
     if (-d $dir) {
-      opendir(my $DIR, $dir);
+      my $DIR;
+      opendir($DIR, $dir);
       while(my $entry = readdir($DIR)) {
         next if $entry =~ /^\./;
-        next unless (-d $dir."/".$entry);
+        next unless (-d "$dir/$entry");
         my $skip = 0;
         foreach (split(//,$entry)) {
           if (unpack("H*",$_) =~ /([01][0-9a-f]|7f)/) {

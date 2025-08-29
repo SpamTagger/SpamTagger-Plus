@@ -39,7 +39,8 @@ sub initialise {
     position => 0
   );
 
-  if (open(my $CONFIG, '<', $configfile)) {
+  my $CONFIG;
+  if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       $Cloudmark::conf{$1} = $2 if (/^(\S+)\s*\=\s*(.*)$/);
     }
@@ -91,7 +92,7 @@ sub Checks ($this, $message) { ## no critic
     return 0;
   }
 
-  my (@whole_message, $maxsize);
+  my @whole_message;
   push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
   push(@whole_message, "\n");
   $message->{store}->ReadBody(\@whole_message, 0);
@@ -147,7 +148,7 @@ sub Checks ($this, $message) { ## no critic
     if ($Cloudmark::conf{'putSpamHeader'}) {
       $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "is spam (".$score.$result_str.", ".$Cloudmark::conf{pos_text} .")");
     }
-    $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{pos_text} .")");
+    $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{pos_text} .")";
 
     return 1;
   }
@@ -155,7 +156,7 @@ sub Checks ($this, $message) { ## no critic
   if ($Cloudmark::conf{'putHamHeader'}) {
     $global::MS->{mta}->AddHeaderToOriginal($message, $Cloudmark::conf{'header'}, "is not spam (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
   }
-  $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")");
+  $message->{prefilterreport} .= ", Cloudmark (".$score.$result_str.", ".$Cloudmark::conf{neg_text} .")";
   return 0;
 }
 

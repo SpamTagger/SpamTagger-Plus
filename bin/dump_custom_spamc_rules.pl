@@ -92,7 +92,8 @@ unlink $rules_file if ( -f $rules_file );
 my @wwlists = $db->get_list_of_hash("SELECT * from wwlists where type = 'SpamC' order by comments ASC, sender DESC");
 $db->db_disconnect();
 exit if (!@wwlists);
-unless (open(my $RULEFILE, '>', $rules_file )) {
+my $RULEFILE;
+unless (open($RULEFILE, '>', $rules_file )) {
   print STDERR "Cannot open full log file: $rules_file\n";
   exit();
 }

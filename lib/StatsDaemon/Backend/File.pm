@@ -78,7 +78,8 @@ sub access_flat_element ($this, $element) {
   my $value = 0;
 
   my ($path, $file, $base, $el_key) = $this->get_path_file_base_and_key_from_element($element);
-  if ( open(my $FILE, '<', $file)) {
+  my $FILE;
+  if ( open($FILE, '<', $file)) {
   	while (<$FILE>) {
   		if (/^([^:\s]+)\s*:\s*(\d+)/) {
   			my $newkey = $1;
@@ -103,9 +104,10 @@ sub stabilize_flat_element ($this, $element) {
     mkpath($path);
   }
 
+  my $FILE;
   if ($this->{daemon}->is_changing_day()) {
   	my $sfile = $path."/".$this->{history_filename};
-  	unless (open(my $FILE, ">>", $sfile)) {
+  	unless (open($FILE, ">>", $sfile)) {
   		return '_CANNOTWRITEHISTORYFILE';
   	}
   	my $cdate = $this->{daemon}->get_current_date();
@@ -118,7 +120,7 @@ sub stabilize_flat_element ($this, $element) {
   }
 
   my %els = ();
-  if ( open(my $FILE, '<', $file)) {
+  if ( open($FILE, '<', $file)) {
     while (<$FILE>) {
       if (/^([^:\s]+)\s*:\s*(\d+)/) {
       	my $key = $1;
@@ -131,7 +133,7 @@ sub stabilize_flat_element ($this, $element) {
     close $FILE;
   }
 
-  if ( open(my $FILE, ">", $file)) {
+  if ( open($FILE, ">", $file)) {
   	flock $FILE, LOCK_EX;
     foreach my $key (keys %els) {
     	print $FILE $key.":".$els{$key}."\n";

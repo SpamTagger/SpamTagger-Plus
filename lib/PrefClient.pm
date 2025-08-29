@@ -43,8 +43,8 @@ sub new ($class) {
     timeout => 5,
   };
 
-  my $conf = ReadConfig::getInstance();
-  $spec_this->{socketpath} = $conf->getOption('VARDIR')."/run/prefdaemon.sock";
+  my $conf = ReadConfig::get_instance();
+  $spec_this->{socketpath} = $conf->get_option('VARDIR')."/run/prefdaemon.sock";
 
   my $this = $class->SUPER::new($spec_this);
 
@@ -65,8 +65,7 @@ sub get_pref ($this, $object, $pref) {
 
   my $query = "PREF $object $pref";
 
-  my $result = $this->query($query);
-  return $result;
+  return $this->query($query);
 }
 
 ## fetch a pref, just like getPref but force pref daemon to fetch domain pref if user pref is not found or not set
@@ -76,8 +75,7 @@ sub get_recursive_pref ($this, $object, $pref) {
 
   my $query = "PREF $object $pref R";
 
-  my $result = $this->query($query);
-  return $result;
+  return $this->query($query);
 }
 
 sub extract_srs_address ($this, $sender) {
@@ -137,24 +135,22 @@ sub is_whitelisted ($this, $object, $sender) {
   return '_BADOBJECT' if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i);
 
   my $query = "WHITE $object $sender";
-  my $result;
   if (my $result = $this->query("WHITE $object $sender")) {
     return $result;
   }
   $sender = $this->extractSender($sender);
-  return $result if ($sender && result = $this->query("WHITE $object $sender"));
+  return if ($sender && result = $this->query("WHITE $object $sender"));
   return 0;
 }
 
 sub is_warnlisted ($this, $object, $sender) {
   return '_BADOBJECT' if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i);
 
-  my $result;
   if (my $result = $this->query("WARN $object $sender")) {
     return $result;
   }
   $sender = $this->extractSender($sender);
-  return $result if ($sender && $result = $this->query("WARN $object $sender"));
+  return if ($sender && $result = $this->query("WARN $object $sender"));
   return 0;
 }
 
@@ -163,7 +159,7 @@ sub is_blacklisted ($this, $object, $sender) {
 
   my $query = "BLACK $object $sender";
   my $result;
-  if (my $result = $this->query("BLACK $object $sender")) {
+  if ($result = $this->query("BLACK $object $sender")) {
     return $result;
   }
   $sender = $this->extractSender($sender);

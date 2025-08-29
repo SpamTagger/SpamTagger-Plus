@@ -54,9 +54,9 @@ sub get_option ($this, $option) {
 
 #############################
 sub _read_config ($configfile) {
-  my ($var, $value);
-
-  open(my $CONFIG, '<', $configfile) or die "Cannot open $configfile: $!\n";
+  my %config;
+  my $CONFIG;
+  open($CONFIG, '<', $configfile) or die "Cannot open $configfile: $!\n";
   while (<$CONFIG>) {
     chomp;                  # no newline
     s/#.*$//;               # no comments

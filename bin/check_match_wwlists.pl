@@ -31,23 +31,21 @@ print_result(\@column_names, $final_list);
 
 ## ------
 
-sub sort_by ($entries, $sort_order_arg, $sort_hash) {
-  my @sort_order = @$sort_order_arg;
-
+sub sort_by ($entries, $sort_order, $sort_hash) {
   my @output;
-  my $order = shift(@sort_order);
+  my $order = shift(@$sort_order);
 
   foreach my $field_value (@{$sort_hash->{$order}}) {
     my @intermediate;
-    foreach my $entry (@$entries) {
+    foreach my $entry (@{$entries}) {
       if ($entry->{$order} eq $field_value){
         push(@intermediate, $entry);
       }
     }
 
     my $sub_sorted;
-    if (@sort_order) {
-      $sub_sorted = sort_by(\@intermediate, \@sort_order, $sort_hash);
+    if (@{$sort_order}) {
+      $sub_sorted = sort_by(\@intermediate, $sort_order, $sort_hash);
     } else {
       my @id_sorted = sort { $a->{id} <=> $b->{id}} @intermediate;
       $sub_sorted = \@id_sorted;

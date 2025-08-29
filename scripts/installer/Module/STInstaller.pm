@@ -77,11 +77,13 @@ sub new {
   }
   # Override with ENV variables, if set
   foreach (keys(%{$this->{config_variables}})) {
-    $this->{config_variables}->{$_} = $ENV{$_} if (defined($ENV{$_}));
+    # Perl::Critic exception. Reading from magic variable %ENV is fine. No 'local' copy needed.
+    $this->{config_variables}->{$_} = $ENV{$_} if (defined($ENV{$_})); ## no critic
   }
   $this->{install_variables}->{'CLIENTTECHMAIL'} = 'support@'.$this->{config_variables}->{'DEFAULTDOMAIN'} if ($this->{config_variables}->{'DEFAULTDOMAIN'} ne '');
   foreach (keys(%{$this->{install_variables}})) {
-    $this->{install_variables}->{$_} = $ENV{$_} if (defined($ENV{$_}));
+    # Perl::Critic exception. Reading from magic variable %ENV is fine. No 'local' copy needed.
+    $this->{install_variables}->{$_} = $ENV{$_} if (defined($ENV{$_})); ## no critic
   }
   # Default hostname unless defined above
   my $hostname = `hostname`;
@@ -288,10 +290,10 @@ sub apply_configuration($this) {
     `cd $this->{SRCDIR}; debian-bootstrap/install.sh`;
   }
   foreach (keys(%{$this->{'config_variables'}})) {
-    $ENV{$_} = $this->{'config_variables'}->{$_};
+    $ENV{$_} = $this->{'config_variables'}->{$_}; ## no critic
   }
   foreach (keys(%{$this->{'install_variables'}})) {
-    $ENV{$_} = $this->{'install_variables'}->{$_};
+    $ENV{$_} = $this->{'install_variables'}->{$_}; ## no critic
   }
   $this->{'install_variables'}->{'WEBADMINPWD'} = $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} if ($this->{'install_variables'} eq 'SAME AS DATABASE PASSWORD');
   print("Running $this->{'config_variables'}->{SRCDIR}/install/install.sh. This will take some time. Installation logs will be saved to /tmp/spamtagger-installer.log\n");
@@ -301,7 +303,8 @@ sub apply_configuration($this) {
   $dlg->clear();
 
   if (! -e '/var/spamtagger/run/first-time-configuration') {
-    if (open(my $fh, '>>', '/var/spamtagger/run/first-time-configuration')) {
+    my $fh;
+    if (open($fh, '>>', '/var/spamtagger/run/first-time-configuration')) {
       print $fh '';
       close $fh;
     }

@@ -28,6 +28,7 @@ our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
 use parent -norequire qw(ManageServices);
+use Env qw(PYENV_VERSION);
 
 sub init ($module, $class) {
   my $this = $class->SUPER::create_module( config($class) );
@@ -68,7 +69,7 @@ sub setup ($this, $class) {
   }
 
   $this->do_log('Dumping Fail2Ban config...', 'daemon');
-  $ENV{'PYENV_VERSION'} = '3.7.7';
+  $PYENV_VERSION = '3.7.7';
   if (system($this->{'VARDIR'}.'/.pyenv/shims/dump_fail2ban_config.py')) {
     $this->do_log('dump_fail2ban_config.py failed', 'daemon');
   }
