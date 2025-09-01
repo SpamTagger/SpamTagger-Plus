@@ -8,156 +8,9 @@ if [ "$SRCDIR" = "" ]; then
   fi
 fi
 
-if [ "$USEDEBS" = "Y" ]; then
-  echo -n " installing libraries binaries packages..."
-  dpkg -i $SRCDIR/install/debs/st-libs*.deb &>/dev/null
-  echo "done."
-  exit
-fi
-
-######
-## OpenSSL
-#if [ ! -d /usr/openssl ]; then
-
-echo "buils openssl ? "
-read REP
-if [ "$REP" = "y" ]; then
-
-  rm -rf /usr/openssl
-  echo -n "    building openssl ... "
-  cd $SRCDIR/install/src
-
-  tar -xvzf openssl.tar.gz 2>&1
-  cd openssl-0.9.8a
-  ./config --prefix=/usr/openssl --shared 2>&1
-  make 2>&1
-  make install 2>&1
-
-  cd $BACK
-  rm -rf $SRCDIR/install/src/openssl-0.9.8a 2>&1
-  #fi
-
-  #echo "/usr/openssl/lib" >> /etc/ld.so.conf
-  ldconfig 2>&1
-
-  echo "done!"
-fi
-
-cd $SRCDIR/install/src
-
-######
-## zlib
-
-echo "buil zlib ? "
-read REP
-if [ "$REP" = "y" ]; then
-
-  rm -rf /usr/zlib
-  tar -xvzf zlib.tar.gz 2>&1
-  cd zlib-1.2.3 2>&1
-  ./configure --shared --prefix=/usr/zlib 2>&1
-  make 2>&1
-  make install 2>&1
-
-  echo "/usr/zlib/lib" >>/etc/ld.so.conf
-  ldconfig 2>&1
-
-  rm -rf $SRCDIR/install/src/zlib-1.2.3
-
-  echo "done!"
-fi
-
-#####
-## libpng for mrtg
-echo "buils libpng ? "
-read REP
-if [ "$REP" = "y" ]; then
-
-  rm -rf /usr/libpng
-  cd $SRCDIR/install/src
-
-  echo -n "    building libpng ..."
-
-  tar -xvzf libpng.tar.gz 2>&1
-  cd libpng-1.2.8
-
-  #./configure --prefix=/usr/libpng 2>&1
-  cp scripts/makefile.linux Makefile
-  perl -pi -e 's/prefix=\/usr\/local/prefix=\/usr\/libpng/' Makefile
-  perl -pi -e 's/ZLIBLIB=\.\.\/zlib/ZLIBLIB=\/usr\/zlib/' Makefile
-  perl -pi -e 's/ZLIBINC=\.\.\/zlib/ZLIBINC=\/usr\/zlib/' Makefile
-  make 2>&1
-  mkdir /usr/libpng
-  mkdir /usr/libpng/include
-  mkdir /usr/libpng/lib
-  make install 2>&1
-
-  cd $BACK
-  rm -rf $SRCDIR/install/src/libpng-1.2.8 2>&1
-  #echo "/usr/libpng/lib" >> /etc/ld.so.conf
-  ldconfig 2>&1
-  echo "done!"
-fi
-
-#####
-## libjpeg
-
-echo "buils libjpeg ? "
-read REP
-if [ "$REP" = "y" ]; then
-
-  rm -rf /usr/libjpeg
-  cd $SRCDIR/install/src
-
-  echo -n "    building libjpeg ..."
-
-  tar -xvzf libjpeg.tar.gz 2>&1
-  cd jpeg-6b
-
-  ./configure --prefix=/usr/libjpeg --enable-shared --enable-static
-  make 2>&1
-  mkdir /usr/libjpeg
-  mkdir /usr/libjpeg/lib
-  mkdir /usr/libjpeg/include
-  mkdir /usr/libjpeg/bin
-  mkdir /usr/libjpeg/man
-  mkdir /usr/libjpeg/man/man1
-  make install 2>&1
-
-  cd $BACK
-  rm -rf $SRCDIR/install/src/jpeg-6b 2>&1
-  ldconfig 2>&1
-  echo "done!"
-
-fi
-
-#####
-## gd for mrtg
-
-echo "buils gd ? "
-read REP
-if [ "$REP" = "y" ]; then
-
-  rm -rf /usr/libgd
-  cd $SRCDIR/install/src
-
-  echo -n "    building GD ..."
-
-  tar -xvzf gd.tar.gz 2>&1
-  cd gd-2.0.33
-
-  export CPPFLAGS="-I /usr/libpng/include"
-  ./configure --prefix=/usr/libgd --with-png=/usr/libpng --with-jpeg=/usr/libjpeg 2>&1
-  make 2>&1
-  make install 2>&1
-
-  cd $BACK
-  rm -rf $SRCDIR/install/src/gd-2.0.33 2>&1
-  #echo "/usr/libgd/lib" >> /etc/ld.so.conf
-  ldconfig 2>&1
-  echo "done!"
-
-fi
+# TODO: sources for these have already been stripped, but we need to ensure that proper dependency
+# installation is done by other means. Ideally, this will be via the package manager. PHP libs can
+# be installed via composer.
 
 #####
 ## imap libs for php
@@ -252,6 +105,7 @@ if [ "$REP" = "y" ]; then
   #echo "/usr/sasl/lib" >> /etc/ld.so.conf
   ldconfig 2>&1
 fi
+
 #####
 ## mhash and mcrypt
 echo "build mhash ? "

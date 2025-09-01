@@ -25,6 +25,12 @@
 #   Usage:
 #           install_perl_libs.sh
 
+# TODO: Install from proper sources, not from anything included in this repository
+
+# Dependencies required from install_ms_tools:
+# Convert::BinHex
+# Net::CIDR
+
 BACK=$(pwd)
 if [ "$SRCDIR" = "" ]; then
   SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)

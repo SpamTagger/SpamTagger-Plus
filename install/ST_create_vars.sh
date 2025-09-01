@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
-if [ "VARDIR" = "" ]; then
+if [ "$VARDIR" == "" ]; then
   VARDIR=/var/spamtagger
 fi
 
@@ -49,12 +49,11 @@ function check_dir {
 check_dir $VARDIR
 
 ####
-# create generic dirs
+# create top-level dirs
 
 check_dir $VARDIR/log
 check_dir $VARDIR/spool
 check_dir $VARDIR/run
-check_dir $VARDIR/spool/tmp
 
 ####
 # create exim dirs
@@ -89,6 +88,7 @@ check_dir $VARDIR/run/mysql_slave mysql spamtagger
 ####
 # create spamtagger dirs
 
+check_dir $VARDIR/spool/tmp
 check_dir $VARDIR/spool/mailscanner/
 check_dir $VARDIR/spool/mailscanner/incoming
 check_dir $VARDIR/spool/mailscanner/quarantine
@@ -111,7 +111,6 @@ check_dir $VARDIR/www/stats
 ####
 # create spamtagger dirs
 
-check_dir $VARDIR/spool/tmp
 check_dir $VARDIR/log/spamtagger
 check_dir $VARDIR/spool/spamtagger
 check_dir $VARDIR/spool/spamtagger/prefs
