@@ -108,6 +108,7 @@ foreach my $stage (@eximids) {
   if ($stage == 1) {
     ## dump the blacklists files
     dump_blacklists();
+    fetch_effective_tlds();
   }
   %exim_conf = get_exim_config($stage) or fatal_error("NOEXIMCONFIGURATIONFOUND", "no exim configuration found for stage $stage");
 
@@ -1193,6 +1194,34 @@ sub is_ipv6_disabled ($interface) {
   return 0
 }
 
+sub fetch_effective_tlds ($filepath = "$VARDIR/spool/spamtagger/effective_tlds.txt") {
+  if (-e $filepath) {
+    require File::stat;
+    if ( File::stat::stat("$VARDIR/spool/spamtagger/effective_domains.txt") > (time())- 86400 ) {
+      return 1;
+    }
+  }
+  require LWP::UserAgent;
+  my $ua = LWP::UserAgent;
+  my $ret = $ua->get("https://publicsuffix.org/list/public_suffix_list.dat");
+  my $output = '';
+  if ($ret->is_success) {
+    $output = $response->decoded_content();
+  } else {
+    print "Failed to download https://publicsuffix.org/list/public_suffix_list.dat\n";
+    if (-e $filepath) {
+      print "Keeping old version of $filepath\n";
+      return 0;
+    } else {
+      print "Creating blank $filepath\n";
+    }
+  }
+  open(my $FH, '>', $filepath) || die "Failed to open $filepath for writing";
+  print $FH $output;
+  close $FH;
+  return 0 if ($output eq '');
+  return 1;
+}
 sub expand_host_string ($string, $args = {}) {
   return $dns->dumper($string,$args);
 }

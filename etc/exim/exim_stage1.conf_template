@@ -171,8 +171,7 @@ smtp_reserve_hosts = ${if eq{$interface_port}{587}{*}{+relay_from_hosts}}
 __IF__ DMARCREPORTING
 dmarc_history_file = VARDIR/spool/tmp/exim/dmarc.history
 __FI__
-dmarc_tld_file = SRCDIR/etc/rbls/effective_tlds.txt
-
+dmarc_tld_file = VARDIR/spool/spamtagger/effective_tlds.txt
 __INCLUDE__ stage1/ldap_callout
 
 STATSADD = ${readsocket{/var/spamtagger/run/statsdaemon.sock}{ADD $acl_c8 1}{2s}{\n}{ \
