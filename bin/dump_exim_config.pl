@@ -1194,10 +1194,10 @@ sub is_ipv6_disabled ($interface) {
   return 0
 }
 
-sub fetch_effective_tlds ($filepath = "$VARDIR/spool/spamtagger/effective_tlds.txt") {
+sub fetch_effective_tlds ($filepath = "$VARDIR/spool/spamtagger/rbls/effective_tlds.txt") {
   if (-e $filepath) {
     require File::stat;
-    if ( File::stat::stat("$VARDIR/spool/spamtagger/effective_domains.txt") > (time())- 86400 ) {
+    if ( File::stat::stat($filepath) > (time())- 86400 ) {
       return 1;
     }
   }
@@ -1222,6 +1222,7 @@ sub fetch_effective_tlds ($filepath = "$VARDIR/spool/spamtagger/effective_tlds.t
   return 0 if ($output eq '');
   return 1;
 }
+
 sub expand_host_string ($string, $args = {}) {
   return $dns->dumper($string,$args);
 }

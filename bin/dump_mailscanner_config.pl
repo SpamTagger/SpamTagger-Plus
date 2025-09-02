@@ -584,3 +584,74 @@ sub log_dns ($str) {
 sub expand_host_string ($string, $args = {}) {
   return $dns->dumper($string,$args);
 }
+
+# TODO: this is a little messy because the 'effective_domains' portion is mostly duplicated from
+# dump_exim_config. However, since MailScanner starts before Exim Stage 1, it needs to already
+# have that file in order to generate the TLD files. Perhaps just move this to STUtils
+sub create_tlds_files {
+  my (@tlds, @second_levels, @effective_tlds);
+  my $effective_path = "$VARDIR/spool/spamtagger/rbls/effective_tlds.txt";
+  my $two_level_path = "$VARDIR/spool/spamtagger/rbls/two-level-tlds.txt";
+  my $tlds_path = "$VARDIR/spool/spamtagger/rbls/tlds.txt";
+  require File::stat;
+  if (-e $effective_path && File::stat::stat($effective_path) > (time())- 86400 ) {
+    # Already up to date
+    if (-e $two_level_path && -e $tlds_path ) {
+      return 1;
+    }
+    if (open(my $fh, '<', $effective_path)) {
+      while (<$fh>) {
+        push(@effective_tlds, $_);
+      }
+      close($fh);
+    } else {
+      touch($two_level_path) unless (-e $two_level_path);
+      touch($tlds_path) unless (-e $tlds_path);
+      return 0;
+    }
+  } else {
+    require LWP::UserAgent;
+    my $ua = LWP::UserAgent;
+    my $ret = $ua->get("https://publicsuffix.org/list/public_suffix_list.dat");
+    my $output = '';
+    if ($ret->is_success) {
+      $output = $response->decoded_content();
+    } else {
+      print "Failed to download https://publicsuffix.org/list/public_suffix_list.dat\n";
+      if (-e $filepath) {
+        print "Keeping old version of $filepath\n";
+        if (-e $two_level_path && -e $tlds_path) {
+          return 0;
+        }
+      } else {
+        print "Creating blank $filepath\n";
+      }
+    }
+    open(my $FH, '>', $effective_path) || die "Failed to open $effective_path for writing";
+    print $FH $output;
+    close $FH;
+    @effective_tlds = split(/\n/, $output);
+  }
+  my @default_seconds = qw( com edu gov net org );
+  foreach (@effective_tlds) {
+    next if ($line =~ /^$/);
+    next if ($line =~ %^//%);
+    if ($line =~ /\*\.(\w\w)/) {
+      push(@second_levels, "$_.$1") foreach (@default_seconds);
+      next;
+    }
+    if ($line =~ /^[\w\d\-]+\.\w+$/) {
+      push(@second_levels, $line);
+      next
+    }
+    push(@tlds, $line) if ($line =~ /^[\w\d\-]+$/);
+  }
+  my $fh;
+  open($fh, '>', $two_level_path);
+  print $fh $_ foreach (@second_levels);
+  close($fh);
+  open($fh, '>', $tlds_path);
+  print $fh $_ foreach (@tlds);
+  close($fh);
+  return 1;
+}

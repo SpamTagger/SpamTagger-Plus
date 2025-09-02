@@ -57,10 +57,10 @@ sub new ($class = "SpamHandler", $myspec_this = {}) {
     rblsDefsPath         => $conf->get_option('SRCDIR') . "/etc/rbls/",
     whitelistDomainsFile => $conf->get_option('SRCDIR')
       . "/etc/rbls/whitelisted_domains.txt",
-    TLDsFiles => $conf->get_option('SRCDIR')
-      . "/etc/rbls/two-level-tlds.txt "
-      . $conf->get_option('SRCDIR')
-      . "/etc/rbls/tlds.txt",
+    TLDsFiles => $conf->get_option('VARDIR')
+      . "/spool/spamtagger/rbls/two-level-tlds.txt "
+      . $conf->get_option('VARDIR')
+      . "/spool/spamtagger/rbls/tlds.txt",
     localDomainsFile => $conf->get_option('VARDIR')
       . "/spool/tmp/spamtagger/domains.list",
     maxurisreports => 10,
