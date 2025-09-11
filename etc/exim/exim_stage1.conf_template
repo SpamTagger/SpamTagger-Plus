@@ -4,9 +4,9 @@
 
 VARDIR = __VARDIR__
 SRCDIR = __SRCDIR__
-BYPASSDIR = VARDIR/spool/tmp/exim_stage1/bypass
-ARCHIVERDIR = VARDIR/spool/tmp/exim_stage1/archiver
-COPYTODIR = VARDIR/spool/tmp/exim_stage1/copyto
+BYPASSDIR = VARDIR/spool/tmp/exim/stage1/bypass
+ARCHIVERDIR = VARDIR/spool/tmp/exim/stage1/archiver
+COPYTODIR = VARDIR/spool/tmp/exim/stage1/copyto
 SENDERBLACKLIST = VARDIR/spool/tmp/exim/blacklists/senders
 RECIPIENTBLACKLIST = VARDIR/spool/tmp/exim/blacklists/recipients
 USERBLACKLIST = VARDIR/spool/tmp/exim/blacklists/users
@@ -17,7 +17,7 @@ ADDRESSESDIR = VARDIR/spool/spamtagger/addresses
 DKIMFILE = VARDIR/spool/tmp/spamtagger/domains_to_dkim.list
 FROZENSENDERS = VARDIR/spool/tmp/exim/frozen_senders
 
-__INCLUDE__ stage1/ldap
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/ldap
 
 av_scanner = clamd:127.0.0.1 3310
 
@@ -59,7 +59,7 @@ __IF__ ERRORS_REPLY_TO
 errors_reply_to = __ERRORS_REPLY_TO__
 __FI__
 
-__INCLUDE__ stage1/log_selector
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/log_selector
 
 message_logs = true
 exim_user = spamtagger
@@ -71,7 +71,7 @@ never_users = root
 helo_allow_chars = _
 __IF_USE_SYSLOG__
 
-__INCLUDE__ stage1/force_disable_ipv6
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/force_disable_ipv6
 
 smtp_enforce_sync = __SMTP_ENFORCE_SYNC__
 smtp_accept_max_per_host = ${if match_ip{$sender_host_address}{+no_ratelimit_hosts}\
@@ -91,7 +91,7 @@ smtp_accept_queue_per_connection = 1000
 smtp_accept_max_per_connection = __SMTP_ACCEPT_MAX_PER_CONNECTION__
 queue_run_max = 5
 
-__INCLUDE__ stage1/cluster_settings
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/cluster_settings
 
 delay_warning = 4h:8h:24h
 delay_warning_condition = ${if or {\
@@ -111,7 +111,7 @@ acl_smtp_mail = acl_check_mail
 acl_smtp_mime = acl_check_mime
 ignore_bounce_errors_after = 0s
 
-__INCLUDE__ stage1/frozen_time
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/frozen_time
 
 message_size_limit = __GLOBAL_MAXMSGSIZE__
 accept_8bitmime = true
@@ -163,7 +163,7 @@ domainlist relayrefuseddomains = VARDIR/spool/tmp/exim/blacklists/relaytodomains
 RELAYDEST = VARDIR/spool/tmp/spamtagger/relay_accepteddest.list
 
 #FULLWHITELIST
-addresslist full_whitelisted_senders = VARDIR/spool/spamtagger/full_whitelisted_senders.list
+addresslist full_whitelisted_senders = /etc/spamtagger/full_whitelisted_senders.list
 
 smtp_accept_reserve = __SMTP_RESERVE__
 smtp_reserve_hosts = ${if eq{$interface_port}{587}{*}{+relay_from_hosts}}
@@ -172,7 +172,7 @@ __IF__ DMARCREPORTING
 dmarc_history_file = VARDIR/spool/tmp/exim/dmarc.history
 __FI__
 dmarc_tld_file = VARDIR/spool/spamtagger/rbls/effective_tlds.txt
-__INCLUDE__ stage1/ldap_callout
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/ldap_callout
 
 STATSADD = ${readsocket{/var/spamtagger/run/statsdaemon.sock}{ADD $acl_c8 1}{2s}{\n}{ \
                ${run,preexpand{/bin/sh -c 'echo "ADD $acl_c8 1" >> /tmp/missed_stats.${tod_logfile}'}{}{command failed}} \
@@ -284,7 +284,7 @@ acl_check_rcpt:
 
 # FULLWHITELIST
   accept
-          hosts         = ${if exists {VARDIR/spool/spamtagger/full_whitelisted_hosts.list}\
+          hosts         = ${if exists {/etc/spamtagger/full_whitelisted_hosts.list}\
                                {+full_whitelisted_hosts}\
                                {+trusted_hosts}\
                           }
@@ -345,7 +345,7 @@ __IF__ __LISTS_PER_DOMAIN__
   warn    set acl_m0    = ${perl{SMTP_WL_IP_Dom}{$domain}{$sender_host_address}}
   warn    set acl_m1    = ${perl{SpamC_WL_IP_Dom}{$domain}{$sender_host_address}}
 __FI__
-  __INCLUDE__ stage1/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/remove_headers
 __IF__ __LISTS_PER_DOMAIN__
   warn    condition    = ${if eq{$acl_m1}{true}{yes}{no}}
           add_header    = X-SpamTagger-White-IP-DOM: WhIPDom
@@ -502,7 +502,7 @@ __FI__
           logwrite      = DEBUG - refused, callout refused (addlist): $local_part@$domain - smtp:refused,smtp:refused:callout
  __FI__
 
- __INCLUDE__ stage1/acl_cluster_settings
+ __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/acl_cluster_settings
 
   deny    domains       = +domains_to_callout : +domains_to_altcallout
           !verify       = recipient/callout=__CALLOUT_TIMEOUT__s,defer_ok
@@ -539,7 +539,7 @@ __FI__
 __IF__ SENDERVERIFY
   deny    !verify       = sender
 
-__INCLUDE__ stage1/sender_verify_wl
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/sender_verify_wl
 
           set acl_c8    = smtp:refused:sender_verify
           set acl_c9    = STATSADD
@@ -632,7 +632,7 @@ __FI__
  __FI__
 __FI__
 
-.include_if_exists  VARDIR/spool/tmp/exim_stage1/blacklists/ip-domain
+.include_if_exists  VARDIR/spool/tmp/exim/stage1/blacklists/ip-domain
 
  defer
           !spf          = pass
@@ -718,9 +718,9 @@ __IF__ USETLS
  __FI__
 __FI__
 
-.include_if_exists  VARDIR/spool/tmp/exim_stage1/custom_acl_encryption
+.include_if_exists  VARDIR/spool/tmp/exim/stage1/custom_acl_encryption
 
-__INCLUDE__ stage1/recipient_verification
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/recipient_verification
 
   warn    domains       = +relay_to_domains
           hosts         = <; 127.0.0.1 ; NORBLHOSTS ; NOSPFDMARCHOSTS ; +trusted_hosts
@@ -831,7 +831,7 @@ __FI__
 acl_check_mime:
 
 # FULLWHITELIST
-  accept  hosts         = ${if exists {VARDIR/spool/spamtagger/full_whitelisted_hosts.list}\
+  accept  hosts         = ${if exists {/etc/spamtagger/full_whitelisted_hosts.list}\
                                {+full_whitelisted_hosts}\
                                {+trusted_hosts}\
                           }
@@ -1002,7 +1002,7 @@ __FI__
 # FULLWHITELIST
   accept  remove_header = X-SpamTagger-FullWhitelist
           remove_header = X-Newsl
-          hosts         = ${if exists {VARDIR/spool/spamtagger/full_whitelisted_hosts.list}\
+          hosts         = ${if exists {/etc/spamtagger/full_whitelisted_hosts.list}\
                                {+full_whitelisted_hosts}\
                                {+trusted_hosts}\
                           }
@@ -1086,7 +1086,7 @@ full_whitelist:
   driver     = accept
   transport  = bypass_full_whitelist
   condition  = ${\
-                   if exists {VARDIR/spool/spamtagger/full_whitelisted_hosts.list} {\
+                   if exists {/etc/spamtagger/full_whitelisted_hosts.list} {\
                        ${\
                            if match_ip{$sender_host_address}{+full_whitelisted_hosts}\
                                {yes}\
@@ -1114,7 +1114,7 @@ send_to_smart_host:
   domains = !+relay_to_domains
   route_data = ${lookup{${domain:$h_from:}}wildlsearch{VARDIR/spool/tmp/spamtagger/domains_smarthost.list}}
 
-__INCLUDE__ stage1/routers_cluster_settings
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/routers_cluster_settings
 
 bypass_router:
   driver = manualroute
@@ -1207,7 +1207,8 @@ filter_forward:
   self = send
   route_list = * 127.0.0.1 byname
   headers_remove = X-SpamTagger:X-SpamTagger-Forced
-__INCLUDE__ stage1/filter_forward
+
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/filter_forward
 
 dnslookup_freeze:
   driver = redirect
@@ -1232,7 +1233,7 @@ dnslookup:
   ignore_target_hosts = <; 0.0.0.0 ; 127.0.0.0/8
   no_more
 
-__INCLUDE__ stage1/routers
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/routers
 
 ######################################################################
 #                      TRANSPORTS CONFIGURATION                      #
@@ -1409,7 +1410,7 @@ address_list_transport:
   timeout = 10m
   log_output = true
 
-__INCLUDE__ stage1/transports
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/transports
 
 ######################################################################
 #                      RETRY CONFIGURATION                           #
@@ -1426,7 +1427,7 @@ begin retry
 #                      REWRITE CONFIGURATION                         #
 ######################################################################
 
-__INCLUDE__ stage1/rewrite_configuration
+__INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/rewrite_configuration
 
 ######################################################################
 #                   AUTHENTICATION CONFIGURATION                     #

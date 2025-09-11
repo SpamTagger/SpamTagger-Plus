@@ -68,8 +68,8 @@ else
   fi
 fi
 
-if [ -e $VARDIR/spool/spamtagger/clamav-unofficial-sigs ]; then
-  if [[ "$(shasum $VARDIR/spool/spamtagger/clamav-unofficial-sigs | cut -d' ' -f1)" == "69c58585c04b136a3694b9546b77bcc414b52b12" ]]; then
+if [ -e /etc/spamtagger/clamav-unofficial-sigs ]; then
+  if [[ "$(shasum /etc/spamtagger/clamav-unofficial-sigs | cut -d' ' -f1)" == "69c58585c04b136a3694b9546b77bcc414b52b12" ]]; then
     if [ ! -e $VARDIR/spool/clamav/unofficial-sigs ]; then
       echo "Installing Unofficial Signatures..." >>$VARDIR/log/clamav/freshclam.log
       mkdir $VARDIR/spool/clamav/unofficial-sigs
@@ -80,7 +80,7 @@ if [ -e $VARDIR/spool/spamtagger/clamav-unofficial-sigs ]; then
       $SRCDIR/scripts/cron/clamav-unofficial-sigs.sh --update >>$VARDIR/log/clamav/freshclam.log
     fi
   else
-    echo "$VARDIR/spool/spamtagger/clamav-unofficial-sigs exists but does not contain the correct information. Please enter exactly:"
+    echo "/etc/spamtagger/clamav-unofficial-sigs exists but does not contain the correct information. Please enter exactly:"
     echo "I have read the terms of use at: https://sanesecurity.com/usage/linux-scripts/"
   fi
 fi

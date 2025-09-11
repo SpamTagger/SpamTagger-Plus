@@ -5,8 +5,8 @@
 VARDIR = __VARDIR__
 SRCDIR = __SRCDIR__
 
-ARCHIVERDIR = VARDIR/spool/tmp/exim_stage1/archiver
-COPYTODIR = VARDIR/spool/tmp/exim_stage1/copyto
+ARCHIVERDIR = VARDIR/spool/tmp/exim/stage1/archiver
+COPYTODIR = VARDIR/spool/tmp/exim/stage1/copyto
 
 primary_hostname = spamtagger
 qualify_domain = __HELO_NAME__
@@ -126,7 +126,7 @@ filter_newsletter:
   headers_remove = Subject
   headers_add = "${perl{getNoNewsTagSubject}}"
   headers_add = X-Auto-Response-Suppress: DR, NDR, RN, NRN, OOF, AutoReply
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 filter_blacklist:
   driver = accept
@@ -135,7 +135,7 @@ filter_blacklist:
   transport = spam_store
   headers_add = X-SpamTagger-Status: Blacklisted (${perl{getBlacklistedFlag}{$local_part}{$domain}})
   headers_remove = X-SpamTagger-Status
-  ___INCLUDE__ stage4/remove_headers
+  ___INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 __IF__ TAGMODEBYPASSWHITELISTS
 filter_checktag_mx:
@@ -153,7 +153,7 @@ filter_checktag_mx:
   headers_add = "${perl{getTaggedSubject}}"
   headers_add = X-Auto-Response-Suppress: DR, NDR, RN, NRN, OOF, AutoReply
 #  headers_add = X-SpamTagger-ReportURL: __REPORT_URL__
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 filter_checktag:
   driver = manualroute
@@ -169,7 +169,7 @@ filter_checktag:
   headers_add = "${perl{getTaggedSubject}}"
   headers_add = X-Auto-Response-Suppress: DR, NDR, RN, NRN, OOF, AutoReply
 #  headers_add = X-SpamTagger-ReportURL: __REPORT_URL__
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 __FI__
 
 filter_checkspam:
@@ -187,7 +187,7 @@ filter_checkbounces:
                      { >{${perl{quarantineBounce}{$local_part}{$domain}}}{0} } \
                    }{yes}{no} \spamtagger     }
   headers_add = X-SpamTagger-Bounce: bounce message
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 __IF__ USEARCHIVER
 archiver_route:
@@ -206,7 +206,7 @@ archiver_route:
                 }
   transport = archiver_smtp_transport
   route_list = * __ARCHIVER_HOST__
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 self = send
   unseen
   no_verify
@@ -230,13 +230,13 @@ copyto_route:
   unseen
   repeat_use = false
   no_verify
-  __INCLUDE__ stage4/remove_headersspamtaggerrward_mx:
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headersspamtaggerrward_mx:
   driver = dnslookup
   transport = remote_smtp
   domains = !@ : +forward_by_mx
   headers_remove = X-SpamTagger-Bounce
   headers_add = X-SpamTagger-ReportURL: __REPORT_URL__
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 filter_forward:
   driver = manualroute
@@ -247,7 +247,7 @@ filter_forward:
   host_find_failed = ignore
   headers_remove = X-SpamTagger-Bounce
   headers_add = X-SpamTagger-ReportURL: __REPORT_URL__
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 dnslookup_gateway:
   driver = manualroute
@@ -256,14 +256,14 @@ dnslookup_gateway:
   transport = remote_smtp
   route_list = wildlsearch;;VARDIR/spool/spamtagger/smtp_proxy.conf $value
   ignore_target_hosts = 0.0.0.0 : 127.0.0.0/8
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 dnslookup:
   driver = dnslookup
   domains = ! +local_domains : ! +relay_to_domains
   transport = remote_smtp
   ignore_target_hosts = 0.0.0.0 : 127.0.0.0/8
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 ####################
 ## local deliveries
@@ -274,7 +274,7 @@ system_aliases:
   data = ${lookup{$local_part}lsearch{/etc/aliases}}
   file_transport = address_file
   pipe_transport = address_pipe
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 userforward:
   driver = redirect
@@ -286,14 +286,14 @@ userforward:
   file_transport = address_file
   pipe_transport = address_pipe
   reply_transport = address_reply
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 localuser:
   driver = accept
   check_local_user
   transport = local_delivery
   cannot_route_message = Unknown user
-  __INCLUDE__ stage4/remove_headers
+  __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
 ######################################################################
 #                      TRANSPORTS CONFIGURATION                      #

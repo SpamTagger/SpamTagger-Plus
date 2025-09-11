@@ -76,17 +76,17 @@ my $tmpdir = $conf->get_option('VARDIR')."/spool/tmp/exim";
 if ( ! -d $tmpdir) {
   mkdir($tmpdir) or fatal_error("COULDNOTCREATETMPDIR", "could not create temporary directory");
 }
-if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim_stage1" ) {
-  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim_stage1") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim/stage1" ) {
+  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim/stage1") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim_stage1/blacklists" ) {
-  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim_stage1/blacklists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim/stage1/blacklists" ) {
+  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim/stage1/blacklists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim_stage1/rblwhitelists" ) {
-  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim_stage1/rblwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim/stage1/rblwhitelists" ) {
+  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim/stage1/rblwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim_stage1/spamcwhitelists" ) {
-  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim_stage1/spamcwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim/stage1/spamcwhitelists" ) {
+  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim/stage1/spamcwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
 
 our $db = DB->db_connect('slave', 'st_config');
@@ -113,27 +113,15 @@ foreach my $stage (@eximids) {
   %exim_conf = get_exim_config($stage) or fatal_error("NOEXIMCONFIGURATIONFOUND", "no exim configuration found for stage $stage");
 
   # Generate the included files and the associated customized files
-  my $custom = 0;
-  while ( $custom != 2) {
-    my $dir;
-    my $dest_dir;
-    if ($custom) {
-      $dir = "/usr/spamtagger/etc/exim/custom/stage$stage";
-      $dest_dir = "custom/stage$stage";
-    } else {
-      $dir = "/usr/spamtagger/etc/exim/stage$stage";
-      $dest_dir = "stage$stage";
+  my $dir = "/usr/spamtagger/etc/exim/stage$stage";
+  my $dest_dir = "stage$stage";
+  if ( -d "$dir") {
+    my @conf_files = glob("$dir/*_template");
+    foreach my $current_file (@conf_files) {
+      $current_file =~ s/.*\///;
+      dump_exim_file($stage, "$dest_dir/$current_file") or fatal_error("CANNOTDUMPEXIMFILE", $lasterror);
     }
-    if ( -d "$dir") {
-      my @conf_files = glob("$dir/*_template");
-      foreach my $current_file (@conf_files) {
-        $current_file =~ s/.*\///;
-        dump_exim_file($stage, "$dest_dir/$current_file") or fatal_error("CANNOTDUMPEXIMFILE", $lasterror);
-      }
-    }
-    $custom ++;
   }
-
 
   dump_exim_file($stage) or fatal_error("CANNOTDUMPEXIMFILE", $lasterror);
 }
@@ -197,47 +185,33 @@ sub dump_exim_file ($stage, $include_file = undef) {
   unless (-e $EXIM_BIN) {
     die "Exim binary not found at $EXIM_BIN\n";
   }
-  my $version = `$EXIM_BIN --version 2> /dev/null`;
-  foreach (split("\n", $version)) {
-    if ($_ =~ m/.*Exim version (4\.\d\d).*/) {
-      $version = $1;
-      last;
-    }
-  }
-  unless ($version =~ m/^4\.\d\d$/) {
-    die "Could not detect Exim version\n";
-  }
-
-  # If include =1 we are generating the files included in the exim configuration
-  my $include = 0;
-  $include = 1 if ( defined($include_file) );
 
   my $srcdir = $conf->get_option('SRCDIR');
   my $template;
-  if ( ! $include ) {
-    if (-e "$srcdir/etc/exim/exim_stage$stage.conf_template_$version") {
-      $template = ConfigTemplate::create(
-        "$srcdir/etc/exim/exim_stage$stage.conf_template_$version",
-        "$srcdir/etc/exim/exim_stage$stage.conf"
-      );
-    } else {
-      $template = ConfigTemplate::create(
-        "$srcdir/etc/exim/exim_stage$stage.conf_template",
-        "$srcdir/etc/exim/exim_stage$stage.conf"
-      );
-    }
-  } else {
+  if ( defined($include_file) ) {
     my $dest_file = $include_file;
     $dest_file =~ s/_template$//;
-    if (-e "$srcdir/etc/exim/${include_file}_$version") {
+    if (-e "/etc/spamtagger/exim/${include_file}") {
       $template = ConfigTemplate::create(
-        "$srcdir/etc/exim/${include_file}_$version",
-        "$srcdir/etc/exim/$dest_file"
+        "/etc/spamtagger/exim/${include_file}",
+        "$var/spool/tmp/exim/$dest_file"
       );
     } else {
       $template = ConfigTemplate::create(
         "$srcdir/etc/exim/$include_file",
-        "$srcdir/etc/exim/$dest_file"
+        "$var/spool/tmp/exim/$dest_file"
+      );
+    }
+  } else {
+    if (-e "/etc/spamtagger/exim/exim_stage$stage.conf_template") {
+      $template = ConfigTemplate::create(
+        "/etc/spamtagger/exim/exim_stage$stage.conf_template",
+        "$var/spool/tmp/exim/exim_stage$stage.conf"
+      );
+    } else {
+      $template = ConfigTemplate::create(
+        "$srcdir/etc/exim/exim_stage$stage.conf_template",
+        "$var/spool/tmp/exim/exim_stage$stage.conf"
       );
     }
   }
@@ -397,6 +371,10 @@ sub dump_exim_file ($stage, $include_file = undef) {
     }
   }
 
+  #TODO: Get variable overrides from TOML file
+  # $template->get_overrides('/usr/spamtagger/etc/exim/custom_variables.toml', 'sys_conf', \%sys_conf);
+  # Fallback to the top-level setting, if one exist, and the setting within the 'sys_conf' table doesn't.
+  # And also for all of the others.
   $template->set_replacements(\%sys_conf);
   $template->set_replacements(\%exim_conf);
 
@@ -1002,9 +980,9 @@ sub dump_blacklists {
 #############################
 sub dump_lists_ip_domain {
   my @types = ('black-ip-dom', 'spam-ip-dom', 'white-ip-dom', 'wh-spamc-ip-dom');
-  unlink $conf->get_option('VARDIR') . '/spool/tmp/exim_stage1/blacklists/ip-domain';
-  unlink glob $conf->get_option('VARDIR') . "/spool/tmp/exim_stage1/rblwhitelists/*";
-  unlink glob $conf->get_option('VARDIR') . "/spool/tmp/exim_stage1/spamcwhitelists/*";
+  unlink $conf->get_option('VARDIR') . '/spool/tmp/exim/stage1/blacklists/ip-domain';
+  unlink glob $conf->get_option('VARDIR') . "/spool/tmp/exim/stage1/rblwhitelists/*";
+  unlink glob $conf->get_option('VARDIR') . "/spool/tmp/exim/stage1/spamcwhitelists/*";
 
   my $request = "SELECT count(*) FROM wwlists where type in (";
   $request .= "'$_', " foreach (@types);
@@ -1046,11 +1024,11 @@ sub print_ip_domain_rule ($sender_list, $domain, $type) {
 
   my $FH_IP_DOM;
   if  ( ($type eq 'black-ip-dom') || ($type eq 'spam-ip-dom') )  {
-    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . '/spool/tmp/exim_stage1/blacklists/ip-domain';
+    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . '/spool/tmp/exim/stage1/blacklists/ip-domain';
   } elsif  ($type eq 'white-ip-dom') {
-    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . "/spool/tmp/exim_stage1/rblwhitelists/$domain";
+    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . "/spool/tmp/exim/stage1/rblwhitelists/$domain";
   } elsif  ($type eq 'wh-spamc-ip-dom') {
-    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . "/spool/tmp/exim_stage1/spamcwhitelists/$domain";
+    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . "/spool/tmp/exim/stage1/spamcwhitelists/$domain";
   }
 
   $sender_list = join(' ; ', expand_host_string($sender_list,{'dumper'=>'exim/sender_list'}));
