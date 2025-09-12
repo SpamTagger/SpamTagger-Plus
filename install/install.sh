@@ -4,7 +4,7 @@ if [ "$LOGFILE" = "" ]; then
   LOGFILE=/tmp/spamtagger.log
 fi
 if [ "$CONFFILE" = "" ]; then
-  CONFFILE=/etc/spamtagger/spamtagger.conf
+  CONFFILE=/etc/spamtagger.conf
 fi
 if [ "$VARDIR" = "" ]; then
   VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
