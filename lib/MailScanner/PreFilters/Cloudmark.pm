@@ -6,6 +6,13 @@ use v5.40;
 use warnings;
 use utf8;
 
+# TODO: This seems to be unusable. The Cloudmark::CMAE::Client module does not exist, nor can I find a copy of it anywhere.
+# There is a plugin Mail::SpamAssassin::Plugin::CMAE referenced in discussion threads, but this source does not appear to be available online. 
+# Proofpoint acquired Cloudmark in 2017, so it is likely that the buisness model may have changed around that time.
+# The Cloudmark Authority product still exists (https://www.cloudmark.com/en/products/email-messaging-security/cloudmark-authority) but it is unclear to me if it is still available as a SpamAssassin plugin.
+# Regardless, it is a commercial add-on which MailCleaner wasn't even bothering to sell anymore, so we certainly won't be offering it unless there is interest from users.
+
+=pod
 use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
@@ -165,4 +172,5 @@ sub dispose {
   return;
 }
 
+=cut
 1;

@@ -31,11 +31,12 @@ our $VERSION   = 1.0;
 use threads();
 use threads::shared();
 use Time::HiRes qw(gettimeofday tv_interval);
-use ReadConfig();
-use DB();
 use Digest::MD5 qw(md5_hex);
 use Date::Calc qw(Add_Delta_Days Today);
 use Devel::Size qw(size total_size);
+use lib '/usr/spamtagger/lib';
+use ReadConfig();
+use DB();
 use StatsClient();
 
 use parent qw(SockTDaemon);
@@ -85,7 +86,7 @@ sub new ($class, $myspec_this) {
   };
 
   # add specific options of child object
-  $spec_this->{$_} = $myspec_this{$_} foreach (keys(%{$myspec_this}));
+  $spec_this->{$_} = $myspec_this->{$_} foreach (keys(%{$myspec_this}));
 
   ## call parent class creation
   my $this = $class->SUPER::new( $spec_this->{'name'}, undef, $spec_this );
@@ -546,7 +547,7 @@ sub calc_stats ($this, $what, $begin, $end) {
   return '_BADSTOPDATE' unless ( $stop !~ /(\d{4})(\d{2})(\d{2})/ );
 
   ## if we need today's stats, stabilize all before querying
-  $this->stabilize_flat_all() ( $stop >= $today );
+  $this->stabilize_flat_all() if ( $stop >= $today );
 
   my $ret = $this->{backend_object}->get_stats($start, $stop, $what, \%data);
   return $ret if ($ret ne 'OK');

@@ -39,7 +39,7 @@ our $VERSION   = 1.0;
 use lib "/usr/spamtagger/lib/";
 use threads();
 use threads::shared();
-use IO::Socket();
+use IO::Socket qw( SOCK_STREAM );
 use IO::Select();
 use Time::HiRes qw(gettimeofday tv_interval);
 use SockClient();
@@ -95,7 +95,7 @@ sub pre_fork_hook ($this) {
   );
 
   $this->{server}->autoflush(1);
-  chmod o777, $this->{socketpath};
+  chmod 0777, $this->{socketpath}; ## no critic (leading zero octal notation)
   $this->do_log( "Listening on socket " . $this->{socketpath}, 'socket' );
 
   return 1;
@@ -219,7 +219,7 @@ sub main_loop_hook ($this) {
       delete($this->{socks_status}{$client});
       undef($this->{socks_status}{$client});
       delete($this->{sock_timer}{$client});
-      undef(sock_timer{$client});
+      undef($this->{sock_timer}{$client});
       close($client);
       $this->do_log( "closed client connection", 'socket' );
     }

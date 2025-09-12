@@ -32,15 +32,15 @@ our $VERSION   = 1.0;
 my $MODULE = "NiceBayes";
 my %conf;
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir."/$MODULE.cf";
-  %NiceBayes::conf = (
+  my $configfile = $confdir."/$class.cf";
+  %conf = (
     command => '/opt/bogofilter/bin/bogofilter -c __CONFIGFILE__ -v',
     configFile => '/opt/bogofilter/etc/bogofilter.cf',
-    header => "X-$MODULE",
+    header => "X-$class",
     putHamHeader => 0,
     putSpamHeader => 1,
     maxSize => 0,
@@ -55,69 +55,69 @@ sub initialise {
     position => 0
   );
 
-  if (open ($CONFIG, '<', $configfile)) {
+  if (open (my $CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-       $NiceBayes::conf{$1} = $2;
+       $conf{$1} = $2;
       }
     }
     close($CONFIG);
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
-  if (-f $NiceBayes::conf{'configFile'}) {
-    my $cmd = "grep 'bogofilter_dir' ".$NiceBayes::conf{'configFile'}." | cut -d'=' -f2";
+  if (-f $conf{'configFile'}) {
+    my $cmd = "grep 'bogofilter_dir' ".$conf{'configFile'}." | cut -d'=' -f2";
     my $database = `$cmd`;
     chomp($database);
     $database .= "/wordlist.db";
     if ( -f $database ) {
-      $NiceBayes::conf{'active'} = 1;
+      $conf{'active'} = 1;
     } else {
-      MailScanner::Log::WarnLog("$MODULE bogofilter database not found (".$database.") ! Disabling $MODULE");
+      MailScanner::Log::WarnLog("$class bogofilter database not found (".$database.") ! Disabling $class");
     }
   } else {
-    MailScanner::Log::WarnLog("$MODULE bogofilter config file (".$NiceBayes::conf{'configFile'}." could not be found ! Disabling $MODULE");
+    MailScanner::Log::WarnLog("$class bogofilter config file (".$conf{'configFile'}." could not be found ! Disabling $class");
   }
 
-  $NiceBayes::conf{'command'} =~ s/__CONFIGFILE__/$NiceBayes::conf{'configFile'}/g;
+  $conf{'command'} =~ s/__CONFIGFILE__/$conf{'configFile'}/g;
 
-  if ($NiceBayes::conf{'pos_decisive'} && ($NiceBayes::conf{'decisive_field'} eq 'pos_decisive' || $NiceBayes::conf{'decisive_field'} eq 'both')) {
-    $NiceBayes::conf{'pos_text'} = 'position : '.$NiceBayes::conf{'position'}.', spam decisive';
+  if ($conf{'pos_decisive'} && ($conf{'decisive_field'} eq 'pos_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', spam decisive';
   } else {
-    $NiceBayes::conf{'pos_text'} = 'position : '.$NiceBayes::conf{'position'}.', not decisive';
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  if ($NiceBayes::conf{'neg_decisive'} && ($NiceBayes::conf{'decisive_field'} eq 'neg_decisive' || $NiceBayes::conf{'decisive_field'} eq 'both')) {
-    $NiceBayes::conf{'neg_text'} = 'position : '.$NiceBayes::conf{'position'}.', ham decisive';
+  if ($conf{'neg_decisive'} && ($conf{'decisive_field'} eq 'neg_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', ham decisive';
   } else {
-    $NiceBayes::conf{'neg_text'} = 'position : '.$NiceBayes::conf{'position'}.', not decisive';
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  return;
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
 sub Checks ($this, $message) { ## no critic
 
   ## check maximum message size
-  my $maxsize = $NiceBayes::conf{'maxSize'};
+  my $maxsize = $this->{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
     MailScanner::Log::InfoLog(
       "Message %s is too big for NiceBayes checks (%d > %d bytes)",
       $message->{id}, $message->{size}, $maxsize
     );
-    $global::MS->{mta}->AddHeaderToOriginal($message, $NiceBayes::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "too big (".$message->{size}." > $maxsize)");
     return 0;
   }
 
-  if ($NiceBayes::conf{'active'} < 1) {
-    MailScanner::Log::WarnLog("$MODULE has been disabled (no database ?)");
-    $global::MS->{mta}->AddHeaderToOriginal($message, $NiceBayes::conf{'header'}, "disabled (no database ?)");
+  if ($this->{'active'} < 1) {
+    MailScanner::Log::WarnLog(blessed($this)." has been disabled (no database ?)");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "disabled (no database ?)");
     return 0;
   }
 
   my $msgtext = "";
   my @whole_message;
   my $toadd = 0;
-  my @avoidheaders = split /,/, $NiceBayes::conf{'avoidHeaders'};
+  my @avoidheaders = split /,/, $this->{'avoidHeaders'};
   foreach my $headerline (@{$message->{headers}}) {
     if ($headerline =~ m/^(\S+):/) {
       my $headermatch = $1;
@@ -144,7 +144,7 @@ sub Checks ($this, $message) { ## no critic
     $msgtext .= $line;
   }
 
-  my $tim = $NiceBayes::conf{'timeOut'};
+  my $tim = $this->{'timeOut'};
   use Mail::SpamAssassin::Timeout;
   my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
   my $is_prespam = 0;
@@ -158,12 +158,12 @@ sub Checks ($this, $message) { ## no critic
 
     $msgtext .= "\n";
     $msgtext =~ s/=[0-9A-F]{2}//g;
-    run3 $NiceBayes::conf{'command'}, \$msgtext, \$out, \$err;
+    run3 $this->{'command'}, \$msgtext, \$out, \$err;
     $res = $out;
   });
   if ($t->timed_out()) {
-    MailScanner::Log::InfoLog("$MODULE timed out for ".$message->{id}."!");
-    $global::MS->{mta}->AddHeaderToOriginal($message, $NiceBayes::conf{'header'}, 'timeout');
+    MailScanner::Log::InfoLog(blessed($this)." timed out for ".$message->{id}."!");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, 'timeout');
     return 0;
   }
   $ret = -1;
@@ -175,29 +175,29 @@ sub Checks ($this, $message) { ## no critic
   }
 
   if ($ret == 2) {
-    MailScanner::Log::InfoLog("$MODULE result is spam ($score%) for ".$message->{id});
-    if ($NiceBayes::conf{'putSpamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $NiceBayes::conf{'header'}, "is spam ($score%) ". $NiceBayes::conf{'pos_text'});
+    MailScanner::Log::InfoLog(blessed($this)." result is spam ($score%) for ".$message->{id});
+    if ($this->{'putSpamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is spam ($score%) ". $this->{'pos_text'});
     }
-    $message->{prefilterreport} .= ", NiceBayes ($score\%, ".$NiceBayes::conf{'pos_text'}.")";
+    $message->{prefilterreport} .= ", NiceBayes ($score\%, ".$this->{'pos_text'}.")";
 
     return 1;
   }
   if ($ret < 0) {
-    MailScanner::Log::InfoLog("$MODULE result is weird ($res ".$NiceBayes::conf{'command'}.") for ".$message->{id});
+    MailScanner::Log::InfoLog(blessed($this)." result is weird ($res ".$this->{'command'}.") for ".$message->{id});
     return 0;
   }
-  MailScanner::Log::InfoLog("$MODULE result is not spam ($score%) for ".$message->{id});
-  if ($NiceBayes::conf{'putHamHeader'}) {
-    $global::MS->{mta}->AddHeaderToOriginal($message, $NiceBayes::conf{'header'}, "is not spam ($score%) ".$NiceBayes::conf{'neg_text'});
+  MailScanner::Log::InfoLog(blessed($this)." result is not spam ($score%) for ".$message->{id});
+  if ($this->{'putHamHeader'}) {
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is not spam ($score%) ".$this->{'neg_text'});
   }
-  $message->{prefilterreport} .= ", NiceBayes ($score\%, ".$NiceBayes::conf{'neg_text'}. ")";
+  $message->{prefilterreport} .= ", NiceBayes ($score\%, ".$this->{'neg_text'}. ")";
 
   return 0;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog("$MODULE module disposing...");
+sub dispose($this) {
+  MailScanner::Log::InfoLog(blessed($this)." module disposing...");
   return;
 }
 

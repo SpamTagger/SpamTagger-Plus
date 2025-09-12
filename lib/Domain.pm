@@ -215,10 +215,10 @@ sub dump_local_addresses ($this, $slave_db) {
   my @res = $slave_db->getListOfHash($query);
   foreach my $addrow (@res) {
     if (defined($addrow->{'address'}) && $addrow->{'address'} =~ m/(\S+)\@/) {
-      print OUTFILE $1."\n";
+      print $OUTFILE $1."\n";
     }
   }
-  close OUTFILE;
+  close $OUTFILE;
   chown $stuid, $file;
   return;
 }

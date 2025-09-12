@@ -26,11 +26,11 @@ sub set_current_rule ($current_rule) {
 }
 
 # rules to detect if the wanted rule did hit for those recipients (/senders)
-sub print_custom_rule ($current_rule, $current_rule_w, $current_sender, @current_rule_domains) {
+sub print_custom_rule ($file, $current_rule, $current_rule_w, $current_sender, @current_rule_domains) {
   my ($rule, $score) = split(' ', $current_rule);
-  print RULEFILE "meta RCPT_CUSTOM_$current_rule_w ( $rule ";
+  print $file "meta RCPT_CUSTOM_$current_rule_w ( $rule ";
   if ($current_sender ne '') {
-    print RULEFILE '&& __SENDER_' .$senders{$current_sender}. ' ';
+    print $file '&& __SENDER_' .$senders{$current_sender}. ' ';
   }
   my $global = 0;
   my $rcpt_string = "&& (";
@@ -44,13 +44,13 @@ sub print_custom_rule ($current_rule, $current_rule_w, $current_sender, @current
   if ($rcpt_string) {
     $rcpt_string =~ s/\ \|\|\ $/\) /;
   }
-  print RULEFILE "$rcpt_string)\n";
-  print RULEFILE "score RCPT_CUSTOM_$current_rule_w $score\n\n";
+  print $file "$rcpt_string)\n";
+  print $file "score RCPT_CUSTOM_$current_rule_w $score\n\n";
   return;
 }
 
 # Rules to identify domains
-sub print_recipient_rules ($recipient) {
+sub print_recipient_rules ($file, $recipient) {
 
   return if defined($domains{$recipient});
   return if $recipient =~ m/\@__global__/;
@@ -60,17 +60,17 @@ sub print_recipient_rules ($recipient) {
   $recipient =~ s/\./\\\./g;
   $recipient =~ s/\@/\\\@/g;
 
-  print RULEFILE "header __RCPT_TO_$rcpt_id  To =~ /$recipient/i\n";
-  print RULEFILE "header __RCPT_CC_$rcpt_id  Cc =~ /$recipient/i\n";
-  print RULEFILE "header __RCPT_BCC_$rcpt_id Bcc =~ /$recipient/i\n";
-  print RULEFILE "meta   __RCPT_$rcpt_id     ( __RCPT_TO_$rcpt_id || __RCPT_CC_$rcpt_id || __RCPT_BCC_$rcpt_id )\n\n";
+  print $file "header __RCPT_TO_$rcpt_id  To =~ /$recipient/i\n";
+  print $file "header __RCPT_CC_$rcpt_id  Cc =~ /$recipient/i\n";
+  print $file "header __RCPT_BCC_$rcpt_id Bcc =~ /$recipient/i\n";
+  print $file "meta   __RCPT_$rcpt_id     ( __RCPT_TO_$rcpt_id || __RCPT_CC_$rcpt_id || __RCPT_BCC_$rcpt_id )\n\n";
 
   $rcpt_id++;
   return;
 }
 
 # Rules to identify senders
-sub print_sender_rules($sender) {
+sub print_sender_rules($file, $sender) {
   return if ($sender eq '');
   return if defined $senders{$sender};
 
@@ -78,7 +78,7 @@ sub print_sender_rules($sender) {
   $sender =~ s/\./\\\./g;
   $sender =~ s/\@/\\\@/g;
 
-  print RULEFILE "header __SENDER_$sender_id  From =~ /$sender/i\n";
+  print $file "header __SENDER_$sender_id  From =~ /$sender/i\n";
 
   $sender_id++;
   return;
@@ -106,7 +106,7 @@ foreach my $l (@wwlists) {
   my %rule = %{$l};
 
   # Do SpamC rules for recipients
-  print_recipient_rules($rule{'recipient'});
+  print_recipient_rules($RULEFILE, $rule{'recipient'});
 
   # Do SpamC rules for senders if needed
   if ( defined ($rule{'sender'}) ) {
@@ -115,7 +115,7 @@ foreach my $l (@wwlists) {
     $rule{'sender'} = '';
   }
   if ( defined ($rule{'sender'}) && ($rule{'sender'} ne '') ) {
-    print_sender_rules($rule{'sender'});
+    print_sender_rules($RULEFILE, $rule{'sender'});
   }
 
   # Make sure rules have the right format or ignore them
@@ -141,7 +141,7 @@ foreach my $l (@wwlists) {
   # If we changed rule, in this script rule means SpamC rule name + score
   if ( ($rule{'comments'} ne $current_rule) || ($rule{'sender'} ne $current_sender) ) {
 
-    print_custom_rule($current_rule, $current_rule_w, $current_sender, @current_rule_domains);
+    print_custom_rule($RULEFILE, $current_rule, $current_rule_w, $current_sender, @current_rule_domains);
 
     ($current_rule, $current_rule_w) = set_current_rule($rule{'comments'});
     $current_sender = $rule{'sender'};
@@ -151,6 +151,6 @@ foreach my $l (@wwlists) {
     push @current_rule_domains, $domain_id;
   }
 }
-print_custom_rule($current_rule, $current_rule_w, $current_sender, @current_rule_domains);
+print_custom_rule($RULEFILE, $current_rule, $current_rule_w, $current_sender, @current_rule_domains);
 
-close RULEFILE;
+close($RULEFILE);

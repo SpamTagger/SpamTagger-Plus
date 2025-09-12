@@ -34,11 +34,8 @@ use v5.40;
 use warnings;
 use utf8;
 
-push(@INC, '/usr/spamtagger/lib');
+use lib '/usr/spamtagger/lib';
 use DB;
-use STUtils qw( read_config );
-
-my %config = read_config("/etc/spamtagger.conf");
 
 my $last_days = shift;
 if (!$last_days || $last_days !~ /^\d+$/) {

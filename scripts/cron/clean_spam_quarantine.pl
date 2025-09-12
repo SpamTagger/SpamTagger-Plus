@@ -4,8 +4,8 @@ use v5.40;
 use warnings;
 use utf8;
 
-push(@INC, '/usr/spamtagger/lib');
-use Date::Calc( Today, Delta_Days, Localtime, Time_to_Date );
+use lib '/usr/spamtagger/lib';
+use Date::Calc qw ( Today Delta_Days Localtime Time_to_Date );
 use String::ShellQuote qw( shell_quote );
 use File::stat();
 use DB();
@@ -106,8 +106,8 @@ while ( my $entry = readdir($QDIR) ) {
               }
             }
         }
+        close($UDIR);
       }
-      close($UDIR);
       my $uid = stat($domain_entry)->uid;
       if ( $uid != $quarantine_owner ) {
         chown $quarantine_owner, $quarantine_group, $domain_entry;

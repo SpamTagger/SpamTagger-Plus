@@ -383,12 +383,12 @@ sub do_start_script {
     print $BLACKLIST "$iptables -I INPUT -m set --match-set $_ src -j REJECT\n";
     print $BLACKLIST "$iptables -I INPUT -m set --match-set $_ src -j LOG\n\n";
   }
-  chmod o755, $blacklist_script;
+  chmod 0755, $blacklist_script; ## no critic (leading zero octal notation)
   print $START "\n$blacklist_script\n";
   close $BLACKLIST;
   close $START;
 
-  chmod o755, $start_script;
+  chmod 0755, $start_script; ## no critic (leading zero octal notation)
   return;
 }
 
@@ -418,7 +418,7 @@ sub do_stop_script {
   }
 
   close $STOP;
-  chmod o755, $stop_script;
+  chmod 0755, $stop_script; ## no critic (leading zero octal notation)
   return;
 }
 

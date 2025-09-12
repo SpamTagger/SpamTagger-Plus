@@ -51,8 +51,8 @@ sub gglapi_domain ($this, $permsgstatus, $body, $body_html) {
   my @all_recipients = split(', ', $recipients);
   my %all_recipients_domains;
   foreach my $recip (@all_recipients) {
-    $r = _domain($r);
-    $all_recipients_domains{$r} = 1;
+    $recip = _domain($recip);
+    $all_recipients_domains{$recip} = 1;
   }
 
   # URI detection

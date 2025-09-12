@@ -36,7 +36,7 @@ my $config = {
 };
 
 # Get values from file
-my $configfile = "$SRCDIR/etc/mailscanner/prefilters/PreRBLs.cf";
+my $configfile = "/usr/spamtagger/etc/mailscanner/prefilters/PreRBLs.cf";
 my $CONFIG;
 if (open($CONFIG, '<', $configfile)) {
   while (<$CONFIG>) {
@@ -153,7 +153,7 @@ foreach my $file (@order) {
     print "Checking $file...\n";
   }
   # Allow for plain IPv4 address as entire input
-  if (scalar(@{@files{$file}}) == 1 && $files{$file}[0] =~ m/((?:\d+\.){3}(?:\d+))/g) {
+  if (scalar(@{$files{$file}}) && $files{$file}[0] =~ m/((?:\d+\.){3}(?:\d+))/g) {
     chomp($files{$file}[0]);
     push(@ips, $files{$file}[0]);
   # Otherwise, treat as an email file

@@ -15,22 +15,21 @@ use HTTP::Request::Common();
 use Mail::SpamAssassin::Timeout();
 
 my $MODULE = "Commtouch";
-my %conf;
-my $lwp;
+my $lwp = LWP::UserAgent->new();
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir."/$MODULE.cf";
-  %Commtouch::conf = (
-    header => "X-$MODULE",
+  my $configfile = $confdir."/$class.cf";
+  my %conf = (
+    header => "X-$class",
     putHamHeader => 0,
     putSpamHeader => 1,
     maxSize => 0,
     active => 1,
     timeOut => 10,
-    lwp => null,
+    lwp => undef,
     use_ctaspd => 1,
     ctaspd_server_host => 'localhost',
     ctaspd_server_port => 8088,
@@ -54,53 +53,53 @@ sub initialise {
   if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-        $Commtouch::conf{$1} = $2;
+        $conf{$1} = $2;
       }
     }
     close($CONFIG);
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
-  $Commtouch::lwp = LWP::UserAgent->new();
+  $lwp = LWP::UserAgent->new() || die("Failed to initialize necessary LWP::UserAgent object!");
 
-  if ($Commtouch::conf{'pos_decisive'} && ($Commtouch::conf{'decisive_field'} eq 'pos_decisive' || $Commtouch::conf{'decisive_field'} eq 'both')) {
-    $Commtouch::conf{'pos_text'} = 'position : '.$Commtouch::conf{'position'}.', spam decisive';
+  if ($conf{'pos_decisive'} && ($conf{'decisive_field'} eq 'pos_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', spam decisive';
   } else {
-    $Commtouch::conf{'pos_text'} = 'position : '.$Commtouch::conf{'position'}.', not decisive';
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  if ($Commtouch::conf{'neg_decisive'} && ($Commtouch::conf{'decisive_field'} eq 'neg_decisive' || $Commtouch::conf{'decisive_field'} eq 'both')) {
-    $Commtouch::conf{'neg_text'} = 'position : '.$Commtouch::conf{'position'}.', ham decisive';
+  if ($conf{'neg_decisive'} && ($conf{'decisive_field'} eq 'neg_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', ham decisive';
   } else {
-    $Commtouch::conf{'neg_text'} = 'position : '.$Commtouch::conf{'position'}.', not decisive';
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  return;
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
 sub Checks ($this, $message) { ## no critic
   ## check maximum message size
-  my $maxsize = $Commtouch::conf{'maxSize'};
+  my $maxsize = $this->{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
     MailScanner::Log::InfoLog(
       "Message %s is too big for Commtouch checks (%d > %d bytes)",
       $message->{id}, $message->{size}, $maxsize
     );
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "too big (".$message->{size}." > $maxsize)");
     return 0;
   }
 
-  if ($Commtouch::conf{'active'} < 1) {
-    MailScanner::Log::WarnLog("$MODULE has been disabled");
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "disabled");
+  if ($this->{'active'} < 1) {
+    MailScanner::Log::WarnLog(blessed($this)." has been disabled");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "disabled");
     return 0;
   }
 
   ### check against ctipd
   my $ctipd_header = '';
-  if ($Commtouch::conf{'use_ctipd'}) {
+  if ($this->{'use_ctipd'}) {
     my $client_ip = $message->{clientip};
 
-    my $url = "http://".$Commtouch::conf{'ctipd_server_host'}.":".$Commtouch::conf{'ctipd_server_port'}."/ctipd/iprep";
+    my $url = "http://".$this->{'ctipd_server_host'}.":".$this->{'ctipd_server_port'}."/ctipd/iprep";
 
     my $request = "x-ctch-request-type: classifyip\r\n".
                   "x-ctch-pver: 1.0\r\n";
@@ -109,17 +108,17 @@ sub Checks ($this, $message) { ## no critic
     # request body
     $request .= "x-ctch-ip: ".$client_ip."\r\n";
 
-    my $tim = $Commtouch::conf{'timeOut'};
+    my $tim = $this->{'timeOut'};
     my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
     my $response = "";
 
     $t->run(sub {
       ## do the job...
-      $response = $Commtouch::lwp->request(POST $url, Content => $request);
+      $response = $this->{$lwp}->post($url, Content => $request);
     });
     if ($t->timed_out()) {
-      MailScanner::Log::InfoLog("$MODULE ctipd timed out for ".$message->{id}."!");
-      $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, 'ctipd timeout');
+      MailScanner::Log::InfoLog(blessed($this)." ctipd timed out for ".$message->{id}."!");
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, 'ctipd timeout');
     } else {
       my $status_line = $response->status_line . "\n";
       chomp $status_line;
@@ -135,8 +134,8 @@ sub Checks ($this, $message) { ## no critic
 
       my $res = $response->content;
       if ($status != 200 || $res eq '') {
-        MailScanner::Log::InfoLog("$MODULE ctipd returned error: ".$status." ".$status_message." for ".$message->{id});
-        $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "$MODULE ctipd returned error: ".$status." ".$status_message);
+        MailScanner::Log::InfoLog(blessed($this)." ctipd returned error: ".$status." ".$status_message." for ".$message->{id});
+        $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, blessed($this)." ctipd returned error: ".$status." ".$status_message);
       } else {
 
         my $refid = '';
@@ -149,14 +148,14 @@ sub Checks ($this, $message) { ## no critic
         }
         $refid =~ s/[\n\r]+//;
         $action_result =~ s/[\n\r]+//;
-        $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}."-ctIPd-RefID", $refid);
+        $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}."-ctIPd-RefID", $refid);
 
-        if ($action_result eq 'permfail' || ($action_result eq 'tempfail' && $Commtouch::conf{'ctipd_blocktempfail'})) {
-          MailScanner::Log::InfoLog("$MODULE result is spam (ip: $action_result) for ".$message->{id});
-          if ($Commtouch::conf{'putSpamHeader'}) {
-            $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "is spam (ip: $action_result, ".$Commtouch::conf{pos_text} .")");
+        if ($action_result eq 'permfail' || ($action_result eq 'tempfail' && $this->{'ctipd_blocktempfail'})) {
+          MailScanner::Log::InfoLog(blessed($this)." result is spam (ip: $action_result) for ".$message->{id});
+          if ($this->{'putSpamHeader'}) {
+            $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is spam (ip: $action_result, ".$this->{pos_text} .")");
           }
-          $message->{prefilterreport} .= ", $MODULE (ip: $action_result, ".$Commtouch::conf{pos_text} .")";
+          $message->{prefilterreport} .= ", ".blessed($this)." (ip: $action_result, ".$this->{pos_text} .")";
           return 1;
         }
         $ctipd_header = "ip: $action_result" if ($action_result eq 'tempfail');
@@ -167,13 +166,13 @@ sub Checks ($this, $message) { ## no critic
   $ctipd_header .= ', ' if ($ctipd_header ne '');
 
   ### check against ctaspd
-  if ($Commtouch::conf{'use_ctaspd'}) {
+  if ($this->{'use_ctaspd'}) {
     my @whole_message;
     push(@whole_message, $global::MS->{mta}->OriginalMsgHeaders($message, "\n"));
     push(@whole_message, "\n");
     $message->{store}->ReadBody(\@whole_message, 0);
 
-    my $tim = $Commtouch::conf{'timeOut'};
+    my $tim = $this->{'timeOut'};
     my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
     my $is_prespam = 0;
     my $ret = -5;
@@ -186,16 +185,16 @@ sub Checks ($this, $message) { ## no critic
     $request .= "\r\n";
     $request .= $_ foreach (@whole_message);
 
-    my $url = "http://".$Commtouch::conf{'ctaspd_server_host'}.":".$Commtouch::conf{'ctaspd_server_port'}."/ctasd/ClassifyMessage_Inline";
+    my $url = "http://".$this->{'ctaspd_server_host'}.":".$this->{'ctaspd_server_port'}."/ctasd/ClassifyMessage_Inline";
 
     $t->run(sub {
       ## do the job...
-      $response = $Commtouch::lwp->request(POST $url, Content => $request);
+      $response = $this->{lwp}->post($url, Content => $request);
     });
 
     if ($t->timed_out()) {
-      MailScanner::Log::InfoLog("$MODULE ctaspd timed out for ".$message->{id}."!");
-      $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, 'ctaspd timeout');
+      MailScanner::Log::InfoLog(blessed($this)." ctaspd timed out for ".$message->{id}."!");
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, 'ctaspd timeout');
       return 0;
     }
     $ret = -1;
@@ -216,8 +215,8 @@ sub Checks ($this, $message) { ## no critic
     }
 
     if ($status != 200 || $res eq '') {
-      MailScanner::Log::InfoLog("$MODULE ctaspd returned error: ".$status." ".$status_message." for ".$message->{id});
-      $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "$MODULE ctaspd returned error: ".$status." ".$status_message);
+      MailScanner::Log::InfoLog(blessed($this)." ctaspd returned error: ".$status." ".$status_message." for ".$message->{id});
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, blessed($this)." ctaspd returned error: ".$status." ".$status_message);
       return 0;
     }
 
@@ -243,49 +242,49 @@ sub Checks ($this, $message) { ## no critic
     $vod_result =~ s/[\n\r]+//;
 
     if ($refid eq '') {
-      MailScanner::Log::InfoLog("$MODULE ctaspd cannot get RefID for ".$message->{id});
-      $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "$MODULE ctaspd cannot get RefID");
+      MailScanner::Log::InfoLog(blessed($this)." ctaspd cannot get RefID for ".$message->{id});
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, blessed($this)." ctaspd cannot get RefID");
       return 0;
     }
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}."-ctasd-RefID", $refid);
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}."-ctasd-RefID", $refid);
 
     ## find out spam and VOD positives
     if ($spam_result eq 'Confirmed' ||
-      ( $spam_result eq 'Bulk' && $Commtouch::conf{'detect_spam_bulk'}) ||
-      ( $spam_result eq 'Suspected' && $Commtouch::conf{'detect_spam_suspected'}) )
+      ( $spam_result eq 'Bulk' && $this->{'detect_spam_bulk'}) ||
+      ( $spam_result eq 'Suspected' && $this->{'detect_spam_suspected'}) )
     {
-      MailScanner::Log::InfoLog("$MODULE result is spam (".$ctipd_header."Spam: $spam_result) for ".$message->{id});
-      if ($Commtouch::conf{'putSpamHeader'}) {
-        $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "is spam (".$ctipd_header."Spam: $spam_result, ".$Commtouch::conf{pos_text}. ")");
+      MailScanner::Log::InfoLog(blessed($this)." result is spam (".$ctipd_header."Spam: $spam_result) for ".$message->{id});
+      if ($this->{'putSpamHeader'}) {
+        $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is spam (".$ctipd_header."Spam: $spam_result, ".$this->{pos_text}. ")");
       }
-      $message->{prefilterreport} .= ", $MODULE ($ctipd_header Spam: $spam_result, ".$Commtouch::conf{pos_text}. ")";
+      $message->{prefilterreport} .= ", ".blessed($this)." ($ctipd_header Spam: $spam_result, ".$this->{pos_text}. ")";
       return 1;
     }
 
     if ($vod_result eq 'Virus' ||
-        ($vod_result eq 'High' && $Commtouch::conf{'detect_vod_high'}) ||
-        ($vod_result eq 'Medium' && $Commtouch::conf{'detect_vod_medium'}) )
+        ($vod_result eq 'High' && $this->{'detect_vod_high'}) ||
+        ($vod_result eq 'Medium' && $this->{'detect_vod_medium'}) )
     {
-      MailScanner::Log::InfoLog("$MODULE result is spam (".$ctipd_header."VOD: $vod_result) for ".$message->{id});
-      if ($Commtouch::conf{'putSpamHeader'}) {
-        $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "is spam (".$ctipd_header."VOD: $vod_result, ".$Commtouch::conf{pos_text}. ")");
+      MailScanner::Log::InfoLog(blessed($this)." result is spam (".$ctipd_header."VOD: $vod_result) for ".$message->{id});
+      if ($this->{'putSpamHeader'}) {
+        $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is spam (".$ctipd_header."VOD: $vod_result, ".$this->{pos_text}. ")");
       }
-      $message->{prefilterreport} .= ", $MODULE ($ctipd_header VOD: $vod_result, ".$Commtouch::conf{pos_text}. ")";
+      $message->{prefilterreport} .= ", ".blessed($this)." ($ctipd_header VOD: $vod_result, ".$this->{pos_text}. ")";
 
       return 1;
     }
 
-    MailScanner::Log::InfoLog("$MODULE result is not spam (".$ctipd_header."Spam: $spam_result, VOD: $vod_result) for ".$message->{id});
-    if ($Commtouch::conf{'putHamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $Commtouch::conf{'header'}, "is not spam (".$ctipd_header."Spam: $spam_result, VOD: $vod_result," .$Commtouch::conf{'neg_text'}. ")");
+    MailScanner::Log::InfoLog(blessed($this)." result is not spam (".$ctipd_header."Spam: $spam_result, VOD: $vod_result) for ".$message->{id});
+    if ($this->{'putHamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is not spam (".$ctipd_header."Spam: $spam_result, VOD: $vod_result," .$this->{'neg_text'}. ")");
     }
-    $message->{prefilterreport} .= ", $MODULE ($ctipd_header VOD: $vod_result, " .$Commtouch::conf{'neg_text'}. ")";
+    $message->{prefilterreport} .= ", ".blessed($this)." ($ctipd_header VOD: $vod_result, " .$this->{'neg_text'}. ")";
   }
   return 0;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog("$MODULE module disposing...");
+sub dispose($this) {
+  MailScanner::Log::InfoLog(blessed($this)." module disposing...");
   return;
 }
 

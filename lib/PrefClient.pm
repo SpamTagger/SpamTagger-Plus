@@ -139,8 +139,8 @@ sub is_whitelisted ($this, $object, $sender) {
     return $result;
   }
   $sender = $this->extractSender($sender);
-  return if ($sender && result = $this->query("WHITE $object $sender"));
-  return 0;
+  return 0 unless ($sender);
+  return $this->query("WHITE $object $sender");
 }
 
 sub is_warnlisted ($this, $object, $sender) {
@@ -150,8 +150,8 @@ sub is_warnlisted ($this, $object, $sender) {
     return $result;
   }
   $sender = $this->extractSender($sender);
-  return if ($sender && $result = $this->query("WARN $object $sender"));
-  return 0;
+  return 0 unless ($sender);
+  return $this->query("WARN $object $sender");
 }
 
 sub is_blacklisted ($this, $object, $sender) {
@@ -163,10 +163,8 @@ sub is_blacklisted ($this, $object, $sender) {
     return $result;
   }
   $sender = $this->extractSender($sender);
-  if ($sender && $result = $this->query("BLACK $object $sender")) {
-    return $result;
-  }
-  return 0;
+  return 0 unless ($sender);
+  return $this->query("BLACK $object $sender");
 }
 
 sub log_stats {

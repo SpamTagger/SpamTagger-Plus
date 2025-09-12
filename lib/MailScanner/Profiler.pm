@@ -32,10 +32,10 @@ use vars qw($VERSION);
 use Time::HiRes qw(gettimeofday tv_interval);
 
 # Constructor.
-sub new (%start_times, %res_times) {
+sub new ($start_times = {}, $res_times = {}) {
   my $this = {
-     %start_times => (),
-     %res_times => (),
+     start_times => %{$start_times},
+     res_times => %{$res_times},
   };
 
   bless $this, 'MailScanner::Profiler';
@@ -62,7 +62,7 @@ sub get_result ($this) {
 
   my $out = "";
 
-  $out .= " ($key:".$this->{res_times}{$key}."s)" foreach (sort(keys(%{$this->{res_times}})));
+  $out .= " ($_:".$this->{res_times}{$_}."s)" foreach (sort(keys(%{$this->{res_times}})));
   return $out;
 }
 

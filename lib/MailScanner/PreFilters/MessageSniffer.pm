@@ -43,17 +43,17 @@ my $rule_code_xlat = {
     63 => 'Experimental Received [ip]',
 };
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir."/$MODULE.cf";
-  %MessageSniffer::conf = (
-     header => "X-$MODULE",
+  my $configfile = $confdir."/$class.cf";
+  %conf = (
+     header => "X-$class",
      putHamHeader => 0,
      putSpamHeader => 1,
      putDetailedHeader => 1,
-     scoreHeader => "X-$MODULE-result",
+     scoreHeader => "X-$class-result",
      maxSize => 0,
      timeOut => 20,
      SFNPort => 9001,
@@ -73,37 +73,37 @@ sub initialise {
   if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-       $MessageSniffer::conf{$1} = $2;
+       $conf{$1} = $2;
       }
     }
     close $CONFIG;
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
 
-  if ($MessageSniffer::conf{'pos_decisive'} && ($MessageSniffer::conf{'decisive_field'} eq 'pos_decisive' || $MessageSniffer::conf{'decisive_field'} eq 'both')) {
-    $MessageSniffer::conf{'pos_text'} = 'position : '.$MessageSniffer::conf{'position'}.', spam decisive';
+  if ($conf{'pos_decisive'} && ($conf{'decisive_field'} eq 'pos_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', spam decisive';
   } else {
-    $MessageSniffer::conf{'pos_text'} = 'position : '.$MessageSniffer::conf{'position'}.', not decisive';
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  if ($MessageSniffer::conf{'neg_decisive'} && ($MessageSniffer::conf{'decisive_field'} eq 'neg_decisive' || $MessageSniffer::conf{'decisive_field'} eq 'both')) {
-    $MessageSniffer::conf{'neg_text'} = 'position : '.$MessageSniffer::conf{'position'}.', ham decisive';
+  if ($conf{'neg_decisive'} && ($conf{'decisive_field'} eq 'neg_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', ham decisive';
   } else {
-    $MessageSniffer::conf{'neg_text'} = 'position : '.$MessageSniffer::conf{'position'}.', not decisive';
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  return;
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
 sub Checks ($this, $message) { ## no critic
 
   ## check maximum message size
-  my $maxsize = $MessageSniffer::conf{'maxSize'};
+  my $maxsize = $this->{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
     MailScanner::Log::InfoLog("Message %s is too big for MessageSniffer checks (%d > %d bytes)",
                               $message->{id}, $message->{size}, $maxsize);
     $message->{prefilterreport} .= ", MessageSniffer (too big)";
-    $global::MS->{mta}->AddHeaderToOriginal($message, $MessageSniffer::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "too big (".$message->{size}." > $maxsize)");
     return 0;
   }
 
@@ -118,12 +118,12 @@ sub Checks ($this, $message) { ## no critic
   }
 
   # Make sure we have a temp dir
-  unless(-d $MessageSniffer::conf{'tmpDir'}) {
-     mkdir($MessageSniffer::conf{'tmpDir'});
-     chmod(o777, $MessageSniffer::conf{'tmpDir'});
+  unless(-d $this->{'tmpDir'}) {
+     mkdir($this->{'tmpDir'});
+     chmod(0777, $this->{'tmpDir'}); ## no critic (leading zero octal notation)
   };
 
-  my $tim = $MessageSniffer::conf{'timeOut'};
+  my $tim = $this->{'timeOut'};
   use Mail::SpamAssassin::Timeout;
   my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
   my $is_prespam = 0;
@@ -134,10 +134,10 @@ sub Checks ($this, $message) { ## no critic
   $t->run(sub {
 
     # Truncate the message.
-    my $mailtext = substr( $msgtext, 0, $MessageSniffer::conf{'MaxTempFileSize'} );
+    my $mailtext = substr( $msgtext, 0, $this->{'MaxTempFileSize'} );
 
     # create our temp file, $filename will contain the full path
-    my ($fh, $filename) = tempfile( DIR => $MessageSniffer::conf{'tmpDir'} );
+    my ($fh, $filename) = tempfile( DIR => $this->{'tmpDir'} );
 
     # spew our mail into the temp file
     my $snf_fh = IO::File->new( $filename, "w" ) || $this->clean_die($filename, "Unable to create temporary file '" . $filename . "'");
@@ -145,20 +145,21 @@ sub Checks ($this, $message) { ## no critic
     $snf_fh->close || $this->clean_die($filename, "Unable to close temporary file '" .  $filename . "'");
 
     # Change permissions.
-    my $cnt = chmod(o666, $filename) || $this->clean_die($filename, "Unable to change permissions of temporary file '" .  $filename . "'");
+    my $cnt = chmod(0666, $filename) ## no critic (leading zero octal notation)
+      || $this->clean_die($filename, "Unable to change permissions of temporary file '" .  $filename . "'");
 
     # xci_scan connects to SNFServer with XCI to scan the message
     $snf_xci_return = $this->xci_scan( $filename, $message->{clientip} );
 
-    MailScanner::Log::DebugLog("$MODULE returned: succes = ".$snf_xci_return->{success}.", code = ".$snf_xci_return->{code}.", message = ".$snf_xci_return->{message});
+    MailScanner::Log::DebugLog(blessed($this)." returned: succes = ".$snf_xci_return->{success}.", code = ".$snf_xci_return->{code}.", message = ".$snf_xci_return->{message});
 
     # Remove the temp file, we are done with it.
     unlink($filename);
 
   });
   if ($t->timed_out()) {
-    MailScanner::Log::InfoLog("$MODULE timed out for ".$message->{id}."!");
-    $global::MS->{mta}->AddHeaderToOriginal($message, $MessagSniffer::conf{'header'}, 'timeout');
+    MailScanner::Log::InfoLog(blessed($this)." timed out for ".$message->{id}."!");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, 'timeout');
     return 0;
   }
   ## not spam per default
@@ -173,27 +174,26 @@ sub Checks ($this, $message) { ## no critic
 
   if ($snf_xci_return->{code} > 0) {
     ## is spam
-    MailScanner::Log::InfoLog("$MODULE result is spam ($desc) for ".$message->{id});
-    if ($MessageSniffer::conf{'putSpamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $MessageSniffer::conf{'header'}, "is spam ($desc, " .$MessageSniffer::conf{pos_text} .")");
+    MailScanner::Log::InfoLog(blessed($this)." result is spam ($desc) for ".$message->{id});
+    if ($this->{'putSpamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is spam ($desc, " .$this->{pos_text} .")");
     }
-    $message->{prefilterreport} .= ", MessageSniffer ($desc, ".$MessageSniffer::conf{pos_text}.")";
+    $message->{prefilterreport} .= ", MessageSniffer ($desc, ".$this->{pos_text}.")";
     return 1;
   } elsif ($snf_xci_return->{code} == 0) {
-    MailScanner::Log::InfoLog("$MODULE result is not spam ($desc) for ".$message->{id});
-    if ($MessageSniffer::conf{'putHamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $MessageSniffer::conf{'header'}, "is not spam ($desc, ".$MessageSniffer::conf{neg_text}. ")");
+    MailScanner::Log::InfoLog(blessed($this)." result is not spam ($desc) for ".$message->{id});
+    if ($this->{'putHamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is not spam ($desc, ".$this->{neg_text}. ")");
     }
-    $message->{prefilterreport} .= ", MessageSniffer ($desc, ".$MessageSniffer::conf{neg_text}.")";
+    $message->{prefilterreport} .= ", MessageSniffer ($desc, ".$this->{neg_text}.")";
   }
   return 0;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog("$MODULE module disposing...");
+sub dispose ($this) {
+  MailScanner::Log::InfoLog(blessed($this)." module disposing...");
   return;
 }
-
 
 # xci_scan( $file , $ip)
 # returns hashref:
@@ -209,7 +209,7 @@ sub xci_scan ($this, $file, $ip ) {
         xml     => undef
     };
 
-    my $xci = $this->connect_socket( $MessageSniffer::conf{'SFNHost'}, $MessageSniffer::conf{'SFNPort'} )
+    my $xci = $this->connect_socket( $this->{'SFNHost'}, $this->{'SFNPort'} )
       or return $this->err_hash("cannot connect to socket ($!)");
 
     if ($ip =~ m/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/) {
@@ -243,7 +243,7 @@ sub connect_socket ($this, $host, $port) {
         PeerAddr => $host,
         PeerPort => $port,
         Proto    => $protoname,
-        Timeout  => $MessageSniffer::conf{'SFNTimeout'} ) or return;
+        Timeout  => $this->{'SFNTimeout'} ) or return;
 
     $xci_socket->autoflush(1);    # make sure autoflush is on -- legacy
     return $xci_socket;           # return the socket handle
@@ -256,7 +256,7 @@ sub socket_response ($this, $rs, $file) {
     # blocking timeout for servers who accept but don't answer
     my $ret = eval {
         local $SIG{ALRM} = sub { die "timeout\n" };    # set up the interrupt
-        alarm $MessageSniffer::conf{'SFNTimeout'};                    # set up the alarm
+        alarm $this->{'SFNTimeout'};                    # set up the alarm
         while (<$rs>) {                                # read the socket
             $buf .= $_;
         }
@@ -286,7 +286,7 @@ sub err_hash ($this, $message) {
 
 sub clean_die ($this, $file, $message) {
    unlink($file);
-   MailScanner::Log::InfoLog("$MODULE failed with error ".$message);
+   MailScanner::Log::InfoLog(blessed($this)." failed with error ".$message);
    exit(1);
 }
 

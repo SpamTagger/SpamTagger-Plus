@@ -43,10 +43,11 @@ use threads();
 use threads::shared qw( share );
 use POSIX();
 use Sys::Syslog();
-use ReadConfig();
-use ConfigTemplate();
 use Proc::ProcessTable();
 use Time::HiRes qw(gettimeofday tv_interval);
+use lib '/usr/spamtagger/lib';
+use ReadConfig();
+use ConfigTemplate();
 
 my $PROFILE = 1;
 my ( %prof_start, %prof_res ) = ();
@@ -57,7 +58,7 @@ our $LOGGERLOG;
 sub new ($class, $daemonname, $conffilepath, $spec_this = {}) {
   $daemoncounts_->{'starttime'} = time();
 
-  my $conf = ReadConfig::get_instance();
+  my $conf = ReadConfig->get_instance();
   if ( !$daemonname ) {
     $daemonname = 'defautThreadedDaemon';
   }

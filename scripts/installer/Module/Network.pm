@@ -128,7 +128,7 @@ sub doint($this, $listh, $configured) {
   my $int = Module::Interface->new($if);
   my $config;
   if ($auto eq $am[0]) {
-    config = $int->dhcp();
+    $config = $int->dhcp();
     $this->{dhcp} = 1;
   } else {
     $int->ask();

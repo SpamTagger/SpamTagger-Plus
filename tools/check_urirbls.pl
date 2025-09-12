@@ -23,7 +23,6 @@ use utf8;
 
 use lib "/usr/spamtagger/lib/";
 use STDnsLists();
-use Regexp::Common qw/URI/;
 use MIME::QuotedPrint();
 use DB();
 use ReadConfig();
@@ -111,10 +110,13 @@ unless (IO::Interactive::is_interactive()) {
 
 # Load each file provided as an argument
 foreach my $file (@ARGV) {
-  if ($file =~ m/$RE{URI}{HTTP}{-scheme => qr(https?)}/) {
-    @{$files{$file}} = ( $file );
+  my $authority = $files{$file}[0] =~ m|(?:(?:[^:/?#]+):)?(?://([^/?#]*))|;
+  # If input object matches a URI, store it directly
+  if (defined($authority)) {
+    @{$files{$file}} = ( $authority );
     next;
   }
+  # Otherwise treat the object as a file path
   my $fh;
   unless (open($fh,'<',$file)) {
     print "Failed to open $file\n";
@@ -161,7 +163,8 @@ foreach my $file (@order) {
     print "Checking $file...\n";
   }
   # Allow for plain URI address as entire input
-  if (scalar(@{$files{$file}}) == 1 && $files{$file}[0] =~ m/$RE{URI}{HTTP}{-scheme => qr(https?)}/g) {
+  my $authority = $files{$file}[0] =~ m|(?:(?:[^:/?#]+):)?(?://([^/?#]*))|;
+  if (defined($authority)) {
     push(@uris, $files{$file}[0]);
   # Otherwise, treat as an email file
   } else {
@@ -177,7 +180,7 @@ foreach my $file (@order) {
       }
     }
     $body = decode_qp($body) || die "Failed to decode $file: $?\n";
-    @uris = $body =~ m/$RE{URI}{HTTP}{-scheme => qr(https?)}/g;
+    @uris = $body =~ m|(?:(?:[^:/?#]+):)?(?://([^/?#]*))|g;
   }
   unless(scalar(@uris)) {
     print "No URIs found\n";

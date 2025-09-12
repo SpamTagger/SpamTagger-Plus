@@ -345,6 +345,7 @@ sub get_quarantine_template ($template, $tmpl, $spams, $type, $lang, $temp_id) {
 
   my $spamblock = '';
   my $newsblock = '';
+  my $alt = 0;
   foreach my $item (@{$spams}) {
     my $tmp = $tmpl;
     if ($type eq 'html') {
@@ -398,14 +399,14 @@ sub get_quarantine_template ($template, $tmpl, $spams, $type, $lang, $temp_id) {
 
     my $decoded = eval { decode("MIME-Header", $s_subject); };
     if ($decoded) {
-       $decoded =~ s/^(.{100}).*$/\1.../;
+       $decoded =~ s/^(.{100}).*$/$1.../;
        my $encoded = encode("utf8", $decoded);
        $text_subject = $decoded;
-       $decoded =~ s/^(.{50}).*$/\1.../;
+       $decoded =~ s/^(.{50}).*$/$1.../;
        $encoded = encode("utf8", $decoded);
        $s_subject = $encoded;
     } else {
-     $s_subject =~ s/^(.{50}).*$/\1.../;
+     $s_subject =~ s/^(.{50}).*$/$1.../;
     }
 
     my $tmpfrom = '';
@@ -440,11 +441,12 @@ sub get_quarantine_template ($template, $tmpl, $spams, $type, $lang, $temp_id) {
     $tmp =~ s/\_\_SCOREPICTO\_\_/$pictoscore/g;
     $tmp =~ s/(\_\_|\?\?)STOREID(\_\_)?/$item->{'store_slave'}/g;
     $tmp =~ s/(\_\_|\?\?)DATE(\_\_)?/$item->{'M_d'}-$item->{'M_m'}-$item->{'M_y'} $item->{'time_in'}/g;
-    if ($i++ % 2) {
+    if ($alt) {
       $tmp =~ s/__ALTCOLOR__(\S{7})/$1/g;
     } else {
       $tmp =~ s/\ bgcolor=\"__ALTCOLOR__\S{7}\"//g;
     }
+    $alt = $alt ^ 1; # Bitwise flip-flop
     if ($item->{'is_newsletter'} > 0 && $type eq 'html') {
       $newsblock .= $tmp;
     } else {

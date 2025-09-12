@@ -32,18 +32,18 @@ our $VERSION   = 1.0;
 my $MODULE = "Spamc";
 my %conf;
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir."/$MODULE.cf";
-  %Spamc::conf = (
+  my $configfile = $confdir."/$class.cf";
+  %conf = (
     command => '/usr/local/bin/spamc -R --socket=__SPAMD_SOCKET__ -s __MAX_SIZE__',
-    header => "X-$MODULE",
+    header => "X-$class",
     putHamHeader => 0,
     putSpamHeader => 1,
     putDetailedHeader => 1,
-    scoreHeader => "X-$MODULE-score",
+    scoreHeader => "X-$class-score",
     maxSize => 0,
     timeOut => 100,
     decisive_field => 'none',
@@ -58,41 +58,41 @@ sub initialise {
   if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-        $Spamc::conf{$1} = $2;
+        $conf{$1} = $2;
       }
     }
     close $CONFIG;
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
-  $Spamc::conf{'command'} =~ s/__CONFIGFILE__/$Spamc::conf{'configFile'}/g;
-  $Spamc::conf{'command'} =~ s/__SPAMD_SOCKET__/$Spamc::conf{'spamdSocket'}/g;
-  $Spamc::conf{'command'} =~ s/__MAX_SIZE__/$Spamc::conf{'maxSize'}/g;
+  $conf{'command'} =~ s/__CONFIGFILE__/$conf{'configFile'}/g;
+  $conf{'command'} =~ s/__SPAMD_SOCKET__/$conf{'spamdSocket'}/g;
+  $conf{'command'} =~ s/__MAX_SIZE__/$conf{'maxSize'}/g;
 
-  if ($Spamc::conf{'pos_decisive'} && ($Spamc::conf{'decisive_field'} eq 'pos_decisive' || $Spamc::conf{'decisive_field'} eq 'both')) {
-    $Spamc::conf{'pos_text'} = 'position : '.$Spamc::conf{'position'}.', spam decisive';
+  if ($conf{'pos_decisive'} && ($conf{'decisive_field'} eq 'pos_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', spam decisive';
   } else {
-    $Spamc::conf{'pos_text'} = 'position : '.$Spamc::conf{'position'}.', not decisive';
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  if ($Spamc::conf{'neg_decisive'} && ($Spamc::conf{'decisive_field'} eq 'neg_decisive' || $Spamc::conf{'decisive_field'} eq 'both')) {
-    $Spamc::conf{'neg_text'} = 'position : '.$Spamc::conf{'position'}.', ham decisive';
+  if ($conf{'neg_decisive'} && ($conf{'decisive_field'} eq 'neg_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', ham decisive';
   } else {
-    $Spamc::conf{'neg_text'} = 'position : '.$Spamc::conf{'position'}.', not decisive';
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  return;
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
 sub Checks ($this, $message) { ## no critic
   ## check maximum message size
-  my $maxsize = $Spamc::conf{'maxSize'};
+  my $maxsize = $this->{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
     MailScanner::Log::InfoLog(
-      "Message %s is too big for Spamc checks (%d > %d bytes)",
+      "Message %s is too big for ".blessed($this)." checks (%d > %d bytes)",
       $message->{id}, $message->{size}, $maxsize
     );
-    $message->{prefilterreport} .= ", Spamc (too big)";
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Spamc::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
+    $message->{prefilterreport} .= ", ".blessed($this)." (too big)";
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "too big (".$message->{size}." > $maxsize)");
     return 0;
   }
 
@@ -108,7 +108,7 @@ sub Checks ($this, $message) { ## no critic
   my $msgtext = "";
   $msgtext .= $_ foreach (@whole_message);
 
-  my $tim = $Spamc::conf{'timeOut'};
+  my $tim = $this->{'timeOut'};
   use Mail::SpamAssassin::Timeout;
   my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
   my $is_prespam = 0;
@@ -122,12 +122,12 @@ sub Checks ($this, $message) { ## no critic
     my $err;
 
     $msgtext .= "\n";
-    run3 $Spamc::conf{'command'}, \$msgtext, \$out, \$err;
+    run3 $this->{'command'}, \$msgtext, \$out, \$err;
     $res = $out;
   });
   if ($t->timed_out()) {
-    MailScanner::Log::InfoLog("$MODULE timed out for ".$message->{id}."!");
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Spamc::conf{'header'}, 'timeout');
+    MailScanner::Log::InfoLog(blessed($this)." timed out for ".$message->{id}."!");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, 'timeout');
     return 0;
   }
   $ret = -1;
@@ -163,28 +163,28 @@ sub Checks ($this, $message) { ## no critic
   }
 
   if ($ret == 2) {
-    MailScanner::Log::InfoLog("$MODULE result is spam ($score/$limit) for ".$message->{id});
-    if ($Spamc::conf{'putSpamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $Spamc::conf{'header'}, "is spam ($score/$limit) ".$Spamc::conf{pos_text});
+    MailScanner::Log::InfoLog(blessed($this)." result is spam ($score/$limit) for ".$message->{id});
+    if ($this->{'putSpamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is spam ($score/$limit) ".$this->{pos_text});
     }
-    $message->{prefilterreport} .= ", Spamc (score=$score, required=$limit, $rulesum, ".$Spamc::conf{pos_text}.")";
+    $message->{prefilterreport} .= ", ".blessed($this)." (score=$score, required=$limit, $rulesum, ".$this->{pos_text}.")";
 
     return 1;
   }
   if ($ret < 0) {
-    MailScanner::Log::InfoLog("$MODULE result is weird ($lines[0]) for ".$message->{id});
+    MailScanner::Log::InfoLog(blessed($this)." result is weird ($lines[0]) for ".$message->{id});
     return 0;
   }
-  MailScanner::Log::InfoLog("$MODULE result is not spam ($score/$limit) for ".$message->{id});
-  if ($Spamc::conf{'putHamHeader'}) {
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Spamc::conf{'header'}, "is not spam ($score/$limit) ".$Spamc::conf{neg_text});
+  MailScanner::Log::InfoLog(blessed($this)." result is not spam ($score/$limit) for ".$message->{id});
+  if ($this->{'putHamHeader'}) {
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is not spam ($score/$limit) ".$this->{neg_text});
   }
-  $message->{prefilterreport} .= ", Spamc (score=$score, required=$limit, $rulesum, ".$Spamc::conf{neg_text}. ")";
+  $message->{prefilterreport} .= ", ".blessed($this)." (score=$score, required=$limit, $rulesum, ".$this->{neg_text}. ")";
   return 0;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog("$MODULE module disposing...");
+sub dispose ($this) {
+  MailScanner::Log::InfoLog(blessed($this)." module disposing...");
   return;
 }
 

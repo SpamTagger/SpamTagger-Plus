@@ -30,19 +30,19 @@ our $VERSION   = 1.0;
 use MIME::Parser();
 use Net::IP();
 use Net::CIDR::Lite();
+use lib '/usr/spamtagger/lib';
 use STDnsLists();
 
 my $MODULE = "UriRBLs";
-my %conf;
 my $dnslists;
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir    = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir . "/$MODULE.cf";
-  %UriRBLs::conf = (
-    header               => "X-$MODULE",
+  my $configfile = $confdir . "/$class.cf";
+  my %conf = (
+    header               => "X-$class",
     putHamHeader         => 0,
     putSpamHeader        => 1,
     maxURIs              => 10,
@@ -71,40 +71,40 @@ sub initialise {
   if (open($CONFIG, '<', $configfile )) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-        $UriRBLs::conf{$1} = $2;
+        $conf{$1} = $2;
       }
     }
     close($CONFIG);
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
 
-  $UriRBLs::dnslists = STDnsLists->new( \&MailScanner::Log::WarnLog, $UriRBLs::conf{debug} );
+  $UriRBLs::dnslists = STDnsLists->new( \&MailScanner::Log::WarnLog, $conf{debug} );
 
   $UriRBLs::dnslists->load_rbls(
-    $UriRBLs::conf{rblsDefsPath}, $UriRBLs::conf{rbls},
-    'URIRBL',                     $UriRBLs::conf{whitelistDomainsFile},
-    $UriRBLs::conf{TLDsFiles},    $UriRBLs::conf{localDomainsFile},
-    $MODULE
+    $conf{rblsDefsPath}, $conf{rbls},
+    'URIRBL',                     $conf{whitelistDomainsFile},
+    $conf{TLDsFiles},    $conf{localDomainsFile},
+    $class
   );
 
-  if ($UriRBLs::conf{'pos_decisive'} && ($UriRBLs::conf{'decisive_field'} eq 'pos_decisive' || $UriRBLs::conf{'decisive_field'} eq 'both')) {
-    $UriRBLs::conf{'pos_text'} = 'position : '.$UriRBLs::conf{'position'}.', spam decisive';
+  if ($conf{'pos_decisive'} && ($conf{'decisive_field'} eq 'pos_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', spam decisive';
   } else {
-    $UriRBLs::conf{'pos_text'} = 'position : '.$UriRBLs::conf{'position'}.', not decisive';
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  if ($UriRBLs::conf{'neg_decisive'} && ($UriRBLs::conf{'decisive_field'} eq 'neg_decisive' || $UriRBLs::conf{'decisive_field'} eq 'both')) {
-    $UriRBLs::conf{'neg_text'} = 'position : '.$UriRBLs::conf{'position'}.', ham decisive';
+  if ($conf{'neg_decisive'} && ($conf{'decisive_field'} eq 'neg_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', ham decisive';
   } else {
-    $UriRBLs::conf{'neg_text'} = 'position : '.$UriRBLs::conf{'position'}.', not decisive';
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  return;
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
-sub Checks { ## no critic
+sub Checks ($this, $message) { ## no critic
   ## check maximum message size
-  my $maxsize     = $UriRBLs::conf{'maxSize'};
+  my $maxsize     = $this->{'maxSize'};
   my $header_size = 0;
   $header_size = -s $message->{headerspath} if ( -e $message->{headerspath} );
   my $body_size = $message->{size} - $header_size;
@@ -115,7 +115,7 @@ sub Checks { ## no critic
       $message->{id}, $message->{size}, $maxsize );
     $global::MS->{mta}->AddHeaderToOriginal(
       $message,
-      $UriRBLs::conf{'header'},
+      $this->{'header'},
       "too big (" . $message->{size} . " > $maxsize)"
     );
     return 0;
@@ -129,35 +129,35 @@ sub Checks { ## no critic
   foreach my $hl ($global::MS->{mta}->OriginalMsgHeaders($message)) {
     if ($senderhostname eq '' && $hl =~ m/^Received: from (\S+) \(\[$senderip\]/) {
       $senderhostname = $1;
-      MailScanner::Log::InfoLog("$MODULE found sender hostname: $senderhostname for $senderip on message ".$message->{id});
+      MailScanner::Log::InfoLog(blessed($this)." found sender hostname: $senderhostname for $senderip on message ".$message->{id});
     }
     ## we can here because X-SpamTagger-SPF will always be after the Received fields.
     last if ($hl =~ m/^X-SpamTagger-SPF: (.*)/);
   }
 
   ## check if in avoided hosts
-  foreach my $avoidhost ( split(/[\ ,\n]/, $UriRBLs::conf{avoidhosts})) {
+  foreach my $avoidhost ( split(/[\ ,\n]/, $this->{avoidhosts})) {
     if ($avoidhost =~ m/^[\d\.\:\/]+$/) {
-      if ($UriRBLs::conf{debug}) {
-        MailScanner::Log::InfoLog("$MODULE should avoid control on IP ".$avoidhost." for message ".$message->{id});
+      if ($this->{debug}) {
+        MailScanner::Log::InfoLog(blessed($this)." should avoid control on IP ".$avoidhost." for message ".$message->{id});
       }
       my $acidr = Net::CIDR::Lite->new();
       my $ret = eval { $acidr->add_any($avoidhost); };
       if ($acidr->find($message->{clientip})) {
-        MailScanner::Log::InfoLog("$MODULE not checking UriRBL on ".$message->{clientip}." because IP is whitelisted for message ".$message->{id});
+        MailScanner::Log::InfoLog(blessed($this)." not checking UriRBL on ".$message->{clientip}." because IP is whitelisted for message ".$message->{id});
         return 0;
       }
     }
     if ($avoidhost =~ m/^[a-zA-Z\.\-\_\d\*]+$/) {
-      $avoidhost =~ s/([^\\])\./\1\\\./g;
+      $avoidhost =~ s/([^\\])\./$1\\\./g;
       $avoidhost =~ s/^\./\\\./g;
-      $avoidhost =~ s/([^\\])\*/\1\.\*/g;
+      $avoidhost =~ s/([^\\])\*/$1\.\*/g;
       $avoidhost =~ s/^\*/.\*/g;
-      if ($UriRBLs::conf{debug}) {
-        MailScanner::Log::InfoLog("$MODULE should avoid control on hostname ".$avoidhost." for message ".$message->{id});
+      if ($this->{debug}) {
+        MailScanner::Log::InfoLog(blessed($this)." should avoid control on hostname ".$avoidhost." for message ".$message->{id});
       }
       if ($senderhostname =~ m/$avoidhost$/) {
-        MailScanner::Log::InfoLog("$MODULE not checking UriRBL on ".$message->{clientip}." because hostname $senderhostname is whitelisted for message ".$message->{id});
+        MailScanner::Log::InfoLog(blessed($this)." not checking UriRBL on ".$message->{clientip}." because hostname $senderhostname is whitelisted for message ".$message->{id});
         return 0;
       }
     }
@@ -170,7 +170,7 @@ sub Checks { ## no critic
   my $parser = MIME::Parser->new();
   $parser->extract_uuencode(1);
   $parser->ignore_errors(1);
-  $parser->output_under( $UriRBLs::conf{'temporarydir'} );
+  $parser->output_under( $this->{'temporarydir'} );
   my $fullmsg = "";
 
   $fullmsg .= "$_\n" foreach ($global::MS->{mta}->OriginalMsgHeaders($message));
@@ -186,17 +186,17 @@ sub Checks { ## no critic
       if ($part->is_multipart) {
         foreach my $second_part ($part->parts) {
           if ($second_part->effective_type =~ m/^text\//) {
-            process_part($message, $second_part, \%uris, \%emails, \%shorts);
+            $this->process_part($message, $second_part, \%uris, \%emails, \%shorts);
           }
         }
       } else {
         if ($part->effective_type =~ m/^text\//) {
-          process_part($message, $part, \%uris, \%emails, \%shorts);
+          $this->process_part($message, $part, \%uris, \%emails, \%shorts);
         }
       }
     }
   } else {
-    process_part($message, $entity, \%uris, \%emails, \%shorts);
+    $this->process_part($message, $entity, \%uris, \%emails, \%shorts);
   }
   $parser->filer->purge();
 
@@ -207,20 +207,20 @@ sub Checks { ## no critic
   foreach my $uri ( keys %uris ) {
     ( $domain, $urihits{$uri}{'count'}, $urihits{$uri}{'header'} ) =
       $UriRBLs::dnslists->check_dns( $uri, 'URIRBL',
-      "$MODULE (" . $message->{id} . ")"
+      blessed($this)." (" . $message->{id} . ")"
     );
     if ( $urihits{$uri}{'count'} > 0 ) {
       $uhits++;
       $fullheader .= " - " . $domain;
       $fullheader .= "/S" if ( defined( $shorts{$domain} ) );
       $fullheader .= ":" . $urihits{$uri}{'header'};
-      if ( $UriRBLs::conf{debug} ) {
-        MailScanner::Log::InfoLog( "$MODULE got hit for: $domain ("
+      if ( $this->{debug} ) {
+        MailScanner::Log::InfoLog( blessed($this)." got hit for: $domain ("
           . $urihits{$uri}{'header'} . ") in "
           . $message->{id}
         );
       }
-      last if ( $uhits >= $UriRBLs::conf{'listeduristobespam'} );
+      last if ( $uhits >= $this->{'listeduristobespam'} );
     }
   }
   my $ehits     = 0;
@@ -229,83 +229,83 @@ sub Checks { ## no critic
   foreach my $email ( keys %emails ) {
     ( $emailres, $emailhits{$email}{'count'}, $emailhits{$email}{'header'} )
       = $UriRBLs::dnslists->check_dns( $email, 'ERBL',
-      "$MODULE (" . $message->{id} . ")"
+      blessed($this)." (" . $message->{id} . ")"
     );
     if ( $emailhits{$email}{'count'} > 0 ) {
       $ehits++;
       $fullheader .= " - " . $email . ":" . $emailhits{$email}{'header'};
-      if ( $UriRBLs::conf{debug} ) {
-        MailScanner::Log::InfoLog( "$MODULE got hit for: $email ("
+      if ( $this->{debug} ) {
+        MailScanner::Log::InfoLog( blessed($this)." got hit for: $email ("
           . $emailhits{$email}{'header'} . ") in "
           . $message->{id} );
       }
-      last if ( $ehits >= $UriRBLs::conf{'listedemailstobespam'} );
+      last if ( $ehits >= $this->{'listedemailstobespam'} );
     }
   }
 
   $fullheader =~ s/^\ -\ //;
 
-  if (   $uhits >= $UriRBLs::conf{'listeduristobespam'}
-    || $ehits >= $UriRBLs::conf{'listedemailtobespam'} )
+  if (   $uhits >= $this->{'listeduristobespam'}
+    || $ehits >= $this->{'listedemailtobespam'} )
   {
     print "HITS: $uhits-$ehits\n";
-    $message->{prefilterreport} .= " $MODULE ($fullheader, ".$UriRBLs::conf{pos_text}.")";
-    MailScanner::Log::InfoLog("$MODULE result is spam (".$fullheader.") for " . $message->{id} );
-    if ( $UriRBLs::conf{'putSpamHeader'} ) {
+    $message->{prefilterreport} .= " ".blessed($this)." ($fullheader, ".$this->{pos_text}.")";
+    MailScanner::Log::InfoLog(blessed($this)." result is spam (".$fullheader.") for " . $message->{id} );
+    if ( $this->{'putSpamHeader'} ) {
       $global::MS->{mta}->AddHeaderToOriginal(
         $message,
-        $UriRBLs::conf{'header'},
-        "is spam ($fullheader) ".$UriRBLs::conf{'pos_text'}
+        $this->{'header'},
+        "is spam ($fullheader) ".$this->{'pos_text'}
       );
     }
     return 1;
   }
-  if ( $UriRBLs::conf{'putHamHeader'} ) {
-    MailScanner::Log::InfoLog("$MODULE result is not spam (".$fullheader.") for " . $message->{id} );
+  if ( $this->{'putHamHeader'} ) {
+    MailScanner::Log::InfoLog(blessed($this)." result is not spam (".$fullheader.") for " . $message->{id} );
     $global::MS->{mta}->AddHeaderToOriginal(
       $message,
-      $UriRBLs::conf{'header'},
-       "is not spam ($fullheader) ".$UriRBLs::conf{'neg_text'}
+      $this->{'header'},
+       "is not spam ($fullheader) ".$this->{'neg_text'}
     );
   }
   return 0;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog("$MODULE module disposing...");
+sub dispose ($this) {
+  MailScanner::Log::InfoLog(blessed($this)." module disposing...");
   return;
 }
 
-sub process_part ($message, $part, $uris, $emails, $shorts) {
+sub process_part ($this, $message, $part, $uris, $emails, $shorts) {
 
   my $body = $part->bodyhandle();
   if (!$body) {
 
-    if ( $UriRBLs::conf{debug} ) {
-      MailScanner::Log::InfoLog( "$MODULE cannot find body handle for part: ".$part->effective_type." in ".$message->{id} );
+    if ( $this->{debug} ) {
+      MailScanner::Log::InfoLog( blessed($this)." cannot find body handle for part: ".$part->effective_type." in ".$message->{id} );
     }
     return 0;
   }
 
   my $msgtext      = "";
-  my $maxuris      = $UriRBLs::conf{'maxURIs'};
-  my $maxurilength = $UriRBLs::conf{'maxURIlength'};
+  my $maxuris      = $this->{'maxURIs'};
+  my $maxurilength = $this->{'maxURIlength'};
 
   my $in_header = 1;
   foreach my $line ($body->as_lines) {
     next if ($line =~ m/^\s*$/);
     my $ret =
       $UriRBLs::dnslists->find_uri( $line,
-      "$MODULE (" . $message->{id} . ")" );
+      blessed($this)." (" . $message->{id} . ")" );
     if ($ret) {
       $uris->{$ret} = 1;
       last if ( keys(%{$uris}) >= $maxuris );
     }
 
-    if ( $UriRBLs::conf{'resolveShorteners'} ) {
+    if ( $this->{'resolveShorteners'} ) {
       $ret =
         $UriRBLs::dnslists->find_uri_shortener( $line,
-        "$MODULE (" . $message->{id} . ")"
+        blessed($this)." (" . $message->{id} . ")"
       );
       if ($ret) {
         $uris->{$ret}   = 1;
@@ -316,7 +316,7 @@ sub process_part ($message, $part, $uris, $emails, $shorts) {
 
     $ret = $UriRBLs::dnslists->find_email(
       $line,
-      "$MODULE (" . $message->{id} . ")" 
+      blessed($this)." (" . $message->{id} . ")" 
     );
 
     if ($ret) {

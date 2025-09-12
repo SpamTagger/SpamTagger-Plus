@@ -29,7 +29,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use IO::Socket qw( close );
+use IO::Socket();
 use IO::Select();
 
 sub new ($class, %spec_this) {

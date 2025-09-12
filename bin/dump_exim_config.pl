@@ -44,6 +44,7 @@ use DB();
 
 my $DEBUG = 1;
 our $conf = ReadConfig::get_instance();
+our $VARDIR = $conf->get_option('VARDIR');
 our $EXIM_BIN="/opt/exim4/bin/exim";
 our $dns = GetDNS->new();
 my $include_debug = 0;
@@ -72,21 +73,21 @@ else {
 }
 
 ## check for tmp dir
-my $tmpdir = $conf->get_option('VARDIR')."/spool/tmp/exim";
+my $tmpdir = "$VARDIR/spool/tmp/exim";
 if ( ! -d $tmpdir) {
   mkdir($tmpdir) or fatal_error("COULDNOTCREATETMPDIR", "could not create temporary directory");
 }
-if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim/stage1" ) {
-  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim/stage1") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d "$VARDIR/spool/tmp/exim/stage1" ) {
+  mkdir("$VARDIR/spool/tmp/exim/stage1") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim/stage1/blacklists" ) {
-  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim/stage1/blacklists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d "$VARDIR/spool/tmp/exim/stage1/blacklists" ) {
+  mkdir("$VARDIR/spool/tmp/exim/stage1/blacklists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim/stage1/rblwhitelists" ) {
-  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim/stage1/rblwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d "$VARDIR/spool/tmp/exim/stage1/rblwhitelists" ) {
+  mkdir("$VARDIR/spool/tmp/exim/stage1/rblwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d $conf->get_option('VARDIR')."/spool/tmp/exim/stage1/spamcwhitelists" ) {
-  mkdir($conf->get_option('VARDIR')."/spool/tmp/exim/stage1/spamcwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d "$VARDIR/spool/tmp/exim/stage1/spamcwhitelists" ) {
+  mkdir("$VARDIR/spool/tmp/exim/stage1/spamcwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
 
 our $db = DB->db_connect('slave', 'st_config');
@@ -94,7 +95,7 @@ my %sys_conf = get_system_config() or fatal_error("NOSYSTEMCONFIGURATIONFOUND", 
 
 ## dump master informations
 my %m_infos = get_master();
-dump_master_file($conf->get_option('VARDIR')."/spool/spamtagger/master.conf", \%m_infos);
+dump_master_file("$VARDIR/spool/spamtagger/master.conf", \%m_infos);
 
 ## dump the outgoing script
 dump_spam_route();
@@ -146,7 +147,7 @@ dump_certificate($stage1_conf{'tls_certificate_data'}, $stage1_conf{'tls_certifi
 dump_stockme_file();
 
 ## dump smtp proxy file
-my $proxyfile = $conf->get_option('VARDIR')."/spool/spamtagger/smtp_proxy.conf";
+my $proxyfile = "$VARDIR/spool/spamtagger/smtp_proxy.conf";
 if (-f $proxyfile) {
   unlink($proxyfile);
 }
@@ -172,9 +173,9 @@ if ( -f "/etc/init.d/rsyslog" ) {
 }
 
 chown $uid, $gid, $proxyfile;
-if (-e $conf->get_option('VARDIR')."/spool/exim_stage${stage}/db/retry") {
-  chown $uid, $gid, $conf->get_option('VARDIR')."/spool/exim_stage${stage}/db/retry";
-    chmod 0640, $conf->get_option('VARDIR')."/spool/exim_stage${stage}/db/retry";
+if (-e "$VARDIR/spool/exim_stage${stage}/db/retry") {
+  chown $uid, $gid, "$VARDIR/spool/exim_stage${stage}/db/retry";
+    chmod 0640, "$VARDIR/spool/exim_stage${stage}/db/retry";
 }
 
 print "DUMPSUCCESSFUL";
@@ -194,24 +195,24 @@ sub dump_exim_file ($stage, $include_file = undef) {
     if (-e "/etc/spamtagger/exim/${include_file}") {
       $template = ConfigTemplate::create(
         "/etc/spamtagger/exim/${include_file}",
-        "$var/spool/tmp/exim/$dest_file"
+        "$VARDIR/spool/tmp/exim/$dest_file"
       );
     } else {
       $template = ConfigTemplate::create(
         "$srcdir/etc/exim/$include_file",
-        "$var/spool/tmp/exim/$dest_file"
+        "$VARDIR/spool/tmp/exim/$dest_file"
       );
     }
   } else {
     if (-e "/etc/spamtagger/exim/exim_stage$stage.conf_template") {
       $template = ConfigTemplate::create(
         "/etc/spamtagger/exim/exim_stage$stage.conf_template",
-        "$var/spool/tmp/exim/exim_stage$stage.conf"
+        "$VARDIR/spool/tmp/exim/exim_stage$stage.conf"
       );
     } else {
       $template = ConfigTemplate::create(
         "$srcdir/etc/exim/exim_stage$stage.conf_template",
-        "$var/spool/tmp/exim/exim_stage$stage.conf"
+        "$VARDIR/spool/tmp/exim/exim_stage$stage.conf"
       );
     }
   }
@@ -287,13 +288,13 @@ sub dump_exim_file ($stage, $include_file = undef) {
     $template->set_condition('TAGMODEBYPASSWHITELISTS', 1);
   }
   if ($sys_conf{'__WHITELISTBOTHFROM__'}) {
-    if ( ! -e $conf->get_option('VARDIR').'/spool/spamtagger/st-wl-on-both-from' ) {
+    if ( ! -e "$VARDIR/spool/spamtagger/st-wl-on-both-from" ) {
       require File::Touch;
-      File::Touch::touch($conf->get_option('VARDIR').'/spool/spamtagger/st-wl-on-both-from');
+      File::Touch::touch("$VARDIR/spool/spamtagger/st-wl-on-both-from");
     }
   } else {
-    if ( -e $conf->get_option('VARDIR').'/spool/spamtagger/st-wl-on-both-from' ) {
-      unlink $conf->get_option('VARDIR').'/spool/spamtagger/st-wl-on-both-from';
+    if ( -e "$VARDIR/spool/spamtagger/st-wl-on-both-from" ) {
+      unlink "$VARDIR/spool/spamtagger/st-wl-on-both-from";
     }
   }
   $template->set_condition('USETLS', $exim_conf{'__USE_INCOMINGTLS__'});
@@ -381,10 +382,10 @@ sub dump_exim_file ($stage, $include_file = undef) {
   my $ret = $template->dump_file();
 
   # Below is not needed when we are generating the files included in exim configuration
-  return $ret if ( $include );
+  return $ret if ( defined($include_file) );
 
   my $target_file = $conf->get_option('SRCDIR')."/etc/exim/exim_stage$stage.conf";
-  my $tmptarget_file = $conf->get_option('VARDIR')."/spool/tmp/exim/exim_stage$stage.conf";
+  my $tmptarget_file = "$VARDIR/spool/tmp/exim/exim_stage$stage.conf";
   copy($target_file, $tmptarget_file);
 
   ## changed for exim 4.73+
@@ -689,9 +690,9 @@ sub dump_syslog_config {
    }
 
    if ( -d "/etc/rsyslog.d" ) {
-      $cmd = "echo \"local0.info     -".$conf->get_option('VARDIR')."/log/mailscanner/infolog \
-local0.warn     -".$conf->get_option('VARDIR')."/log/mailscanner/warnlog \
-local0.err      ".$conf->get_option('VARDIR')."/log/mailscanner/errorlog\n\" > $file";
+      $cmd = "echo \"local0.info     -$VARDIR/log/mailscanner/infolog \
+local0.warn     -$VARDIR/log/mailscanner/warnlog \
+local0.err      -$VARDIR/log/mailscanner/errorlog\n\" > $file";
      `$cmd`;
    }
 
@@ -869,8 +870,8 @@ sub get_exim_config ($stage) {
 
   if ( -f $conf->get_option('SRCDIR')."/etc/spamtagger/version.def" && -f $conf->get_option('SRCDIR')."/etc/edition.def") {
     my ($version, $cmd) = ('', '');
-    unless (-f $conf->get_option('VARDIR').'/spool/spamtagger/hide_smtp_version') {
-      $cmd = "cat ".$conf->get_option('SRCDIR')."/etc/spamtagger/version.def";
+    unless (-f "$VARDIR/spool/spamtagger/hide_smtp_version") {
+      $cmd = "cat $VARDIR/etc/spamtagger/version.def";
       $version = `$cmd`;
       chomp($version);
       $version = ' '.$version;
@@ -900,11 +901,10 @@ sub get_exim_config ($stage) {
   $config{'dkim_default_domain'} = $row{'dkim_default_domain'};
   $config{'dkim_default_pkey'} = $row{'dkim_default_pkey'};
   $config{'allow_relay_for_unknown_domains'} = $row{'allow_relay_for_unknown_domains'};
-  my $vardir = $conf->get_option('VARDIR');
   $config{'__FULL_WHITELIST_HOSTS__'} = '';
-  if (-e "$vardir/spool/spamtagger/full_whitelisted_hosts.list") {
+  if (-e "$VARDIR/spool/spamtagger/full_whitelisted_hosts.list") {
     my $fh;
-    open($fh, '<', "$vardir/spool/spamtagger/full_whitelisted_hosts.list");
+    open($fh, '<', "$VARDIR/spool/spamtagger/full_whitelisted_hosts.list");
     while (<$fh>) {
       $config{'__FULL_WHITELIST_HOSTS__'} .= $_ . ' ';
     }
@@ -916,9 +916,9 @@ sub get_exim_config ($stage) {
   $config{'__ALLOW_LONG__'} = $row{'allow_long'};
   $config{'__FOLDING__'} = $row{'folding'};
   my $max_length;
-  if ( -e $conf->get_option('VARDIR').'/spool/spamtagger/exim_max_line_length' ) {
+  if ( -e "$VARDIR/spool/spamtagger/exim_max_line_length" ) {
     my $fh;
-    if (open($fh, '<', $conf->get_option('VARDIR').'/spool/spamtagger/exim_max_line_length')) {
+    if (open($fh, '<', "$VARDIR/spool/spamtagger/exim_max_line_length")) {
       $max_length = <$fh>;
       chomp($max_length);
       close($fh);
@@ -980,9 +980,9 @@ sub dump_blacklists {
 #############################
 sub dump_lists_ip_domain {
   my @types = ('black-ip-dom', 'spam-ip-dom', 'white-ip-dom', 'wh-spamc-ip-dom');
-  unlink $conf->get_option('VARDIR') . '/spool/tmp/exim/stage1/blacklists/ip-domain';
-  unlink glob $conf->get_option('VARDIR') . "/spool/tmp/exim/stage1/rblwhitelists/*";
-  unlink glob $conf->get_option('VARDIR') . "/spool/tmp/exim/stage1/spamcwhitelists/*";
+  unlink "$VARDIR/spool/tmp/exim/stage1/blacklists/ip-domain";
+  unlink glob "$VARDIR/spool/tmp/exim/stage1/rblwhitelists/*";
+  unlink glob "$VARDIR/spool/tmp/exim/stage1/spamcwhitelists/*";
 
   my $request = "SELECT count(*) FROM wwlists where type in (";
   $request .= "'$_', " foreach (@types);
@@ -1024,11 +1024,11 @@ sub print_ip_domain_rule ($sender_list, $domain, $type) {
 
   my $FH_IP_DOM;
   if  ( ($type eq 'black-ip-dom') || ($type eq 'spam-ip-dom') )  {
-    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . '/spool/tmp/exim/stage1/blacklists/ip-domain';
+    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/blacklists/ip-domain";
   } elsif  ($type eq 'white-ip-dom') {
-    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . "/spool/tmp/exim/stage1/rblwhitelists/$domain";
+    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/rblwhitelists/$domain";
   } elsif  ($type eq 'wh-spamc-ip-dom') {
-    open $FH_IP_DOM, '>>', $conf->get_option('VARDIR') . "/spool/tmp/exim/stage1/spamcwhitelists/$domain";
+    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/spamcwhitelists/$domain";
   }
 
   $sender_list = join(' ; ', expand_host_string($sender_list,{'dumper'=>'exim/sender_list'}));
@@ -1094,7 +1094,7 @@ sub dump_certificate ($cert, $key) {
 #############################
 sub dump_default_dkim ($stage1_conf) {
   return if ($stage != 1);
-  my $keypath = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/dkim";
+  my $keypath = "$VARDIR/spool/tmp/spamtagger/dkim";
   mkpath($keypath) if (! -d $keypath);
   my $keyfile = $keypath."/default.pkey";
   my $FILE;
@@ -1120,7 +1120,7 @@ sub dump_default_dkim ($stage1_conf) {
 sub dump_tls_force_files {
   foreach my $f ( ('domains_require_tls_from', 'domains_require_tls_to')) {
     my $o = '__'.uc($f).'__';
-    my $file = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/".$f.".list";
+    my $file = "$VARDIR/spool/tmp/spamtagger/".$f.".list";
     my $FILE;
     if (open($FILE, ">", $file)) {
       print $FILE $exim_conf{$o};
@@ -1180,10 +1180,10 @@ sub fetch_effective_tlds ($filepath = "$VARDIR/spool/spamtagger/rbls/effective_t
     }
   }
   require LWP::UserAgent;
-  my $ua = LWP::UserAgent;
-  my $ret = $ua->get("https://publicsuffix.org/list/public_suffix_list.dat");
+  my $ua = LWP::UserAgent->new();
+  my $response = $ua->get("https://publicsuffix.org/list/public_suffix_list.dat");
   my $output = '';
-  if ($ret->is_success) {
+  if ($response->is_success) {
     $output = $response->decoded_content();
   } else {
     print "Failed to download https://publicsuffix.org/list/public_suffix_list.dat\n";

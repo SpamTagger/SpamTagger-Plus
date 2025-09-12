@@ -18,7 +18,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-package ElementMappers::DomainMapper;
+package ElementMapper::DomainMapper;
 
 use v5.40;
 use warnings;
@@ -28,7 +28,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-sub new ($class = "ElementMappers::DomainMapper") {
+sub new ($class = "ElementMapper::DomainMapper") {
 
   my @field_domain_o = ('name', 'destination', 'callout', 'altcallout', 'adcheck', 'forward_by_mx', 'greylist');
 

@@ -151,7 +151,7 @@ sub ixhashtest ($this, $permsgstatus,$full,$dnszone) {
       }
     }
 
-    my $digest = compute1sthash($permsgstatus,$body, $tmpfile);
+    my $digest = compute1sthash($permsgstatus, $body, $tmpfile);
     if ($digest){
       dbg ("IXHASH: Now checking $digest.$dnszone");
       # Now check via DNS query
@@ -165,7 +165,7 @@ sub ixhashtest ($this, $permsgstatus,$full,$dnszone) {
       }
     }
     # Only go ahead if $hits ist still 0 - i.e hash #1 didn't score a hit
-    if ($hits == 0 ){
+    if ($hits == 0) {
       $digest = compute2ndhash($permsgstatus,$body, $tmpfile);
       if ($digest){
         dbg ("IXHASH: Now checking $digest.$dnszone");
@@ -181,8 +181,8 @@ sub ixhashtest ($this, $permsgstatus,$full,$dnszone) {
       } # end if $digest
     } # end if $hits
 
-    if ( $hits == 0 ){
-      $digest = compute3rdhash($permsgstatus,$body, $tmpfile);
+    if ($hits == 0) {
+      $digest = compute3rdhash($permsgstatus, $body, $tmpfile);
       if (length($digest) == 32){
         dbg ("IXHASH: Now checking $digest.$dnszone");
         # Now check via DNS query
@@ -199,7 +199,7 @@ sub ixhashtest ($this, $permsgstatus,$full,$dnszone) {
   }); # end of timer->run_and_catch
 
   if ($timer->timed_out()) {
-    dbg("IXHASH: ".$permsgstatus->{main}->{conf}->{'ixhash_timeout'}." second timeout exceeded while checking ".$digest.".".$dnszone."!");
+    dbg("IXHASH: ".$permsgstatus->{main}->{conf}->{'ixhash_timeout'}." second timeout exceeded while checking $dnszone!");
   } elsif ($time_err) {
     chomp $time_err;
     dbg("IXHASH: iXhash lookup failed: $time_err");
@@ -211,26 +211,12 @@ sub ixhashtest ($this, $permsgstatus,$full,$dnszone) {
 sub compute1sthash ($permsgstatus, $body, $tmpfile) {
   my $body_copy = '';
   my $digest = '';
-  #  Creation of hash # 1 if following conditions are met:
-  # - mail contains 20 spaces or tabs or more - changed follwoing a suggestion by Karsten Bräckelmann
-  # - mail consists of at least 2 lines
-  #  This should generate the most hits (according to Bert Ungerer about 70%)
-  #  This also is where you can tweak your plugin if you have problems with short mails FP'ing -
-  #  simply raise that barrier here.
-  # We'll try to find the required hash in this message's metadata first.
-  # This might be the case if another zone has been queried already
-
   if (($permsgstatus->{main}->{conf}->{'use_ixhash_cache'} == 1 ) && ($permsgstatus->{msg}->get_metadata('X-iXhash-hash-1'))) {
     dbg ("IXHASH: Hash value for method #1 found in metadata, re-using that one");
     $digest = $permsgstatus->{msg}->get_metadata('X-iXhash-hash-1');
   } else {
     if (($body =~ /(?>\s.+?){20}/g) || ( $body =~ /\n.*\n/ ) ){
       if ($permsgstatus->{main}->{conf}->{'ixhash_pureperl'} == 1 ){
-        # All space class chars just one time
-        # Do this in two steps to avoid Perl segfaults
-        # if there are more than x identical chars to be replaced
-        # Thanks to Martin Blapp for finding that out and suggesting this workaround concerning spaces only
-        # Thanks to Karsten Bräckelmann for pointing out this would also be the case with _any_ characater, not only spaces
         $body_copy = $body;
         $body_copy =~ s/\r\n/\n/g;
         # Step One

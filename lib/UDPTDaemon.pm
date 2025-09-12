@@ -30,10 +30,11 @@ our $VERSION   = 1.0;
 
 use threads();
 use threads::shared();
-use IO::Socket();
+use IO::Socket qw( AF_INET );
 use IO::Select();
 use Mail::SpamAssassin::Timeout();
 
+use lib "/usr/spamtagger/lib";
 use parent qw(PreForkTDaemon);
 
 my %global_shared : shared;

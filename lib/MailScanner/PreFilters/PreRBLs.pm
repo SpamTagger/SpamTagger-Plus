@@ -31,19 +31,20 @@ our $VERSION   = 1.0;
 
 use Net::IP();
 use Net::CIDR::Lite();
+use lib '/usr/spamtagger/lib';
 use STDnsLists();
 
 my $MODULE = "PreRBLs";
 my %conf;
 my %domains_hostname_map_file;
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir."/$MODULE.cf";
-  %PreRBLs::conf = (
-    header => "X-$MODULE",
+  my $configfile = $confdir."/$class.cf";
+  %conf = (
+    header => "X-$class",
     putHamHeader => 0,
     putSpamHeader => 1,
     timeOut => 30,
@@ -72,45 +73,46 @@ sub initialise {
   if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-        $PreRBLs::conf{$1} = $2;
+        $conf{$1} = $2;
       }
     }
     close($CONFIG);
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
 
-  $PreRBLs::dnslists = STDnsLists->new(\&MailScanner::Log::WarnLog, $PreRBLs::conf{debug});
-  $PreRBLs::dnslists->load_rbls(
-    $PreRBLs::conf{rblsDefsPath}, $PreRBLs::conf{rbls}, 'IPRBL DNSRBL BSRBL',
-    $PreRBLs::conf{whitelistDomainsFile}, $PreRBLs::conf{TLDsFiles},
-    $PreRBLs::conf{localDomainsFile}, $MODULE
+  my $dnslists = STDnsLists->new(\&MailScanner::Log::WarnLog, $conf{debug});
+  $dnslists->load_rbls(
+    $conf{rblsDefsPath}, $conf{rbls}, 'IPRBL DNSRBL BSRBL',
+    $conf{whitelistDomainsFile}, $conf{TLDsFiles},
+    $conf{localDomainsFile}, $class
   );
+  $conf{dnslists} = $dnslists;
 
-  if (-f $PreRBLs::conf{domains_hostname_map_file}) {
+  if (-f $conf{domains_hostname_map_file}) {
     my $MAPFILE;
-    if (open($MAPFILE, '<', $PreRBLs::conf{domains_hostname_map_file})) {
+    if (open($MAPFILE, '<', $conf{domains_hostname_map_file})) {
       while (<$MAPFILE>) {
         if (/^(\S+),(.*)$/) {
           $domains_hostname_map_file{$1} = $2;
-          MailScanner::Log::InfoLog("$MODULE loading domain hostname mapping on $1 to $2");
+          MailScanner::Log::InfoLog("$class loading domain hostname mapping on $1 to $2");
         }
       }
       close($MAPFILE);
     }
   }
 
-  if ($PreRBLs::conf{'pos_decisive'} && ($PreRBLs::conf{'decisive_field'} eq 'pos_decisive' || $PreRBLs::conf{'decisive_field'} eq 'both')) {
-    $PreRBLs::conf{'pos_text'} = 'position : '.$PreRBLs::conf{'position'}.', spam decisive';
+  if ($conf{'pos_decisive'} && ($conf{'decisive_field'} eq 'pos_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', spam decisive';
   } else {
-    $PreRBLs::conf{'pos_text'} = 'position : '.$PreRBLs::conf{'position'}.', not decisive';
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  if ($PreRBLs::conf{'neg_decisive'} && ($PreRBLs::conf{'decisive_field'} eq 'neg_decisive' || $PreRBLs::conf{'decisive_field'} eq 'both')) {
-    $PreRBLs::conf{'neg_text'} = 'position : '.$PreRBLs::conf{'position'}.', ham decisive';
+  if ($conf{'neg_decisive'} && ($conf{'decisive_field'} eq 'neg_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', ham decisive';
   } else {
-    $PreRBLs::conf{'neg_text'} = 'position : '.$PreRBLs::conf{'position'}.', not decisive';
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  return;
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
@@ -131,7 +133,7 @@ sub Checks ($this, $message) { ## no critic
       MailScanner::Log::InfoLog("$MODULE found sender hostname: $senderhostname for $senderip on message ".$message->{id});
     }
     if ($hl =~ m/^X-SpamTagger-SPF: (.*)/) {
-      if ($1 eq 'pass' && $PreRBLs::conf{avoidgoodspf}) {
+      if ($1 eq 'pass' && $this->{avoidgoodspf}) {
         MailScanner::Log::InfoLog("$MODULE not checking against: $senderdomain because of good SPF record for ".$message->{id});
         $continue = 0;
       }
@@ -143,7 +145,7 @@ sub Checks ($this, $message) { ## no critic
   my ($data, $hitcount, $header);
   ## first check IP
   if ($continue) {
-    if ($senderdomain ne '' && ! $PreRBLs::dnslists->is_valid_domain($senderdomain, 1, 'PreRBLs domain validator')) {
+    if ($senderdomain ne '' && ! $this->{dnslists}->is_valid_domain($senderdomain, 1, blessed($this).' domain validator')) {
       my $hostnameregex = $domains_hostname_map_file{$senderdomain};
       if ($hostnameregex &&
         $hostnameregex ne '' &&
@@ -154,9 +156,9 @@ sub Checks ($this, $message) { ## no critic
       }
     }
     ## check if in avoided hosts
-    foreach my $avoidhost (split(/[\ ,\n]/, $PreRBLs::conf{avoidhosts})) {
+    foreach my $avoidhost (split(/[\ ,\n]/, $this->{avoidhosts})) {
       if ($avoidhost =~ m/^[\d\.\:\/]+$/) {
-        if ($PreRBLs::conf{debug}) {
+        if ($this->{debug}) {
           MailScanner::Log::InfoLog("$MODULE should avoid control on IP ".$avoidhost." for message ".$message->{id});
         }
         my $acidr = Net::CIDR::Lite->new();
@@ -167,11 +169,11 @@ sub Checks ($this, $message) { ## no critic
         }
       }
       if ($avoidhost =~ m/^[a-zA-Z\.\-\_\d\*]+$/) {
-        $avoidhost =~ s/([^\\])\./\1\\\./g;
+        $avoidhost =~ s/([^\\])\./$1\\\./g;
         $avoidhost =~ s/^\./\\\./g;
-        $avoidhost =~ s/([^\\])\*/\1\.\*/g;
+        $avoidhost =~ s/([^\\])\*/$1\.\*/g;
         $avoidhost =~ s/^\*/.\*/g;
-        if ($PreRBLs::conf{debug}) {
+        if ($this->{debug}) {
           MailScanner::Log::InfoLog("$MODULE should avoid control on hostname ".$avoidhost." for message ".$message->{id});
         }
         if ($senderhostname =~ m/$avoidhost$/) {
@@ -181,10 +183,10 @@ sub Checks ($this, $message) { ## no critic
       }
     }
     if ($checkip) {
-      ($data, $hitcount, $header) = $PreRBLs::dnslists->check_dns($message->{clientip}, 'IPRBL', "$MODULE (".$message->{id}.")", $PreRBLs::conf{spamhits});
+      ($data, $hitcount, $header) = $this->{dnslists}->check_dns($message->{clientip}, 'IPRBL', "$MODULE (".$message->{id}.")", $this->{spamhits});
       $dnshitcount = $hitcount;
       $wholeheader .= ','.$header;
-      if ($PreRBLs::conf{spamhits} && $dnshitcount >= $PreRBLs::conf{spamhits} && $PreRBLs::conf{'pos_decisive'} == 1) {
+      if ($this->{spamhits} && $dnshitcount >= $this->{spamhits} && $this->{'pos_decisive'} == 1) {
   	    $continue = 0;
   	    $message->{isspam} = 1;
   	    $message->{isrblspam} = 1;
@@ -193,26 +195,26 @@ sub Checks ($this, $message) { ## no critic
   }
 
   ## second check sender domain
-  if ($continue && $PreRBLs::dnslists->is_valid_domain($senderdomain, 1, 'PreRBLs domain validator')) {
-    ($data, $hitcount, $header) = $PreRBLs::dnslists->check_dns($senderdomain, 'DNSRBL', "$MODULE (".$message->{id}.")", $PreRBLs::conf{spamhits});
+  if ($continue && $this->{dnslists}->is_valid_domain($senderdomain, 1, blessed($this).' domain validator')) {
+    ($data, $hitcount, $header) = $this->{dnslists}->check_dns($senderdomain, 'DNSRBL', "$MODULE (".$message->{id}.")", $this->{spamhits});
     $dnshitcount += $hitcount;
     $wholeheader .= ','.$header;
-    if ($PreRBLs::conf{spamhits} && $dnshitcount >= $PreRBLs::conf{spamhits} && $PreRBLs::conf{'pos_decisive'} == 1) {
+    if ($this->{spamhits} && $dnshitcount >= $this->{spamhits} && $this->{'pos_decisive'} == 1) {
       $continue = 0;
       $message->{isspam} = 1;
       $message->{isrblspam} = 1;
     }
-  } elsif ($continue && $PreRBLs::conf{debug}) {
+  } elsif ($continue && $this->{debug}) {
     MailScanner::Log::InfoLog("$MODULE not checking DNSBL against: $senderdomain (whitelisted) for ".$message->{id});
   }
 
   ## third check backscaterrer
   my $bsdnshitcount = 0;
   if ($continue && $message->{from} eq '' && $checkip) {
-    ($data, $hitcount, $header) = $PreRBLs::dnslists->check_dns($message->{clientip}, 'BSRBL', "$MODULE (".$message->{id}.")", $PreRBLs::conf{spamhits}, $PreRBLs::conf{bsspamhits});
+    ($data, $hitcount, $header) = $this->{dnslists}->check_dns($message->{clientip}, 'BSRBL', "$MODULE (".$message->{id}.")", $this->{spamhits}, $this->{bsspamhits});
     $bsdnshitcount = $hitcount;
     $wholeheader .= ','.$header;
-    if ($PreRBLs::conf{bsspamhits} && $bsdnshitcount >= $PreRBLs::conf{bsspamhits} && $PreRBLs::conf{'pos_decisive'} == 1) {
+    if ($this->{bsspamhits} && $bsdnshitcount >= $this->{bsspamhits} && $this->{'pos_decisive'} == 1) {
       $continue = 0;
       $message->{isspam} = 1;
       $message->{isrblspam} = 1;
@@ -225,25 +227,25 @@ sub Checks ($this, $message) { ## no critic
 
   if ($message->{isspam}) {
     MailScanner::Log::InfoLog("$MODULE result is spam ($wholeheader) for ".$message->{id});
-    if ($PreRBLs::conf{'putSpamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $PreRBLs::conf{'header'}, "is spam ($wholeheader) ".$PreRBLs::conf{'pos_text'});
+    if ($this->{'putSpamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is spam ($wholeheader) ".$this->{'pos_text'});
     }
 
-    $message->{prefilterreport} .= ", PreRBLs ($wholeheader, ".$PreRBLs::conf{'pos_text'}.")";
+    $message->{prefilterreport} .= ", ".blessed($this)." ($wholeheader, ".$this->{'pos_text'}.")";
     return 1;
   }
 
   if ($wholeheader ne '') {
     MailScanner::Log::InfoLog("$MODULE result is not spam ($wholeheader) for ".$message->{id});
-    if ($PreRBLs::conf{'putSpamHeader'}) {
-       $global::MS->{mta}->AddHeaderToOriginal($message, $PreRBLs::conf{'header'}, "is not spam ($wholeheader) ".$PreRBLs::conf{'neg_text'});
+    if ($this->{'putSpamHeader'}) {
+       $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is not spam ($wholeheader) ".$this->{'neg_text'});
     }
   }
 
   return 0;
 }
 
-sub dispose {
+sub dispose ($this) {
   MailScanner::Log::InfoLog("$MODULE module disposing...");
   return;
 }

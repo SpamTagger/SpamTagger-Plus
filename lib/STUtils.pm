@@ -40,7 +40,7 @@ sub create_lockfile ($filename, $path = '/var/spamtagger/spool/tmp/', $timeout =
   $path = '/var/spamtagger/spool/tmp/'.$path unless ( $path =~ /^\// );
   $path .= '/' unless ($path  =~ /\/$/);
 
-  make_path($path, {mode => o777});
+  make_path($path, {mode => 0777}); ## no critic (leading zero for octal notation)
 
   my $fullpathname = $path . $filename;
 

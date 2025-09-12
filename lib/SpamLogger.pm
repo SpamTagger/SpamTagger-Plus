@@ -97,17 +97,15 @@ sub process_datas ($this, $datas) {
 #####
 ## logSpam
 #####
-sub log_spam ($this) {
+sub log_spam ($this, @args) {
   my $query = "LOG";
   my $params = "";
   my %msg;
   foreach my $field (@fields) {
-    $msg{$field} = shift;
-    if (defined($msg{$field})) {
-      my $value = encode_base64($msg{$field});
-      chomp($value);
-      $params .= "_".$value;
-    }
+    $msg{$field} = shift(@args) || last;
+    my $value = encode_base64($msg{$field});
+    chomp($value);
+    $params .= "_".$value;
   }
   $params =~ s/^_//;
   $params =~ s/^ //;
@@ -148,8 +146,6 @@ sub log_in_master ($this, $message = {}) {
 ## logInSlave
 #####
 sub log_in_slave ($this, $master_stored, $message = {}) {
-  my $master_stored = shift;
-
   if (!defined($this->{slaveDB}) || !$this->{slaveDB}->ping()) {
     $this->{slaveDB} = DB->db_connect('slave', 'st_spool', 0);
     if ( !defined($this->{slaveDB}) || !$this->{slaveDB}->ping()) { return 0; }

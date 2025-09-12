@@ -57,7 +57,7 @@ my @whats = ('spam', 'ham');
 foreach my $WHAT (@whats) {
   my $whatcount = 0;
   my $HSDIR;
-  opendir($HSDIR, '<', $CENTERPATH."/stock$WHAT") or die("Cannot open $WHAT dir\n");
+  opendir($HSDIR, "$CENTERPATH/stock$WHAT") or die("Cannot open $WHAT dir\n");
   while (my $day = readdir($HSDIR)) {
     next if $day !~ /^\d+/;
     next if ! -d "$CENTERPATH/stock$WHAT/$day";
@@ -115,7 +115,7 @@ foreach my $WHAT (@whats) {
 
   # delete old stocks
   my $QDIR;
-  if (opendir($QDIR, '<', $CENTERPATH."/stock$WHAT/")) {
+  if (opendir($QDIR, "$CENTERPATH/stock$WHAT/")) {
     while(my $entry = readdir($QDIR)) {
       next if $entry !~ /^\d+/;
       $entry = $CENTERPATH."/stock$WHAT/$entry";

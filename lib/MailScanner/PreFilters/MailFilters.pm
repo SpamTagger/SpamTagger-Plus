@@ -6,13 +6,19 @@ use v5.40;
 use warnings;
 use utf8;
 
+# TODO: This module is unused and I don't know its origin.
+#  With a quick search it appears that it might be related to 'Ninja Email Security' given that the port 25080 is associated with that product.
+# Finding information about it seems to be difficult. There is a product by that name from Sunbelt Software, but it appears to be built for Exchange and I can't find information about it being updated beyond 2007. It appears to be duplicated considerably, if not entirely by our other filters.
+
+# This was not used in MailCleaner either, judging by this module crashing during compilation then as well. We can probably just remove this, but we should do a small amount of research to determine if there is any open part of that filter which could be borrowed.
+
+=pod
 use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
 use IO();
 use POSIX qw(:signal_h); # For Solaris 9 SIG bug workaround
-use MailFilters();
 
 my $MODULE = "MailFilters";
 my %conf;
@@ -127,5 +133,5 @@ sub dispose {
   MailScanner::Log::InfoLog("$MODULE module disposing...");
   return;
 }
-
+=cut
 1;

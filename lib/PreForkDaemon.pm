@@ -11,7 +11,7 @@ our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
 use lib "/usr/spamtagger/lib/";
-use POSIX();
+use POSIX qw( SIGINT SIG_BLOCK SIG_UNBLOCK );
 use Sys::Hostname();
 use Socket();
 use Symbol();
@@ -20,6 +20,7 @@ use Data::Dumper();
 use Mail::SpamAssassin::Timeout();
 use ReadConfig();
 use Time::HiRes qw(gettimeofday tv_interval);
+our $LOGGERLOG;
 
 my $PROFILE = 1;
 my (%prof_start, %prof_res) = ();
@@ -86,7 +87,7 @@ sub create_shared ($this) {
     my %options = (
       create    => 'yes',
       exclusive => 0,
-      mode      => o644,
+      mode      => 0644, ## no critic (leading zero octal notation)
       destroy   => 0
     );
 
@@ -146,9 +147,11 @@ sub log_debug ($this, $message) {
 }
 
 sub do_log ($this, $message) {
-  my $LOGGERLOG;
-  open($LOGGERLOG, ">>", $this->{logfile});
-  unless (defined(fileno(LOGGERLOG))) {
+  unless (defined(fileno($LOGGERLOG))) {
+    open($LOGGERLOG, ">>", $this->{logfile});
+    $| = 1; ## no critic
+  }
+  unless (defined(fileno($LOGGERLOG))) {
     open $LOGGERLOG, ">>", "/tmp/".$this->{logfile};
     $| = 1; ## no critic
   }
@@ -231,7 +234,7 @@ sub make_new_child ($this, $pid, $sigset) {
       my %options = (
         create    => 0,
         exclusive => 0,
-        mode      => o644,
+        mode      => 0644, ## no critic (leading zero octal notation)
         destroy   => 0,
       );
       my $glue = $this->{glue};
@@ -311,7 +314,7 @@ sub profile_stop ($var) {
 sub profile_output {
   return unless $PROFILE;
   my $out = "";
-  $out .= " ($_:".$prof_res{$_}."s)" foreach (keys(%{$prof_res}));
+  $out .= " ($_:".$prof_res{$_}."s)" foreach (keys(%prof_res));
   print $out;
   return;
 }

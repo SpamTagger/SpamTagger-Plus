@@ -11,12 +11,12 @@ my $script_name                     = basename($0);
 $script_name                        =~ s/\.[^.]*$//;
 my $mode                            = $ARGV[0] || '';
 
-our $WATCHDOG_BIN           => '/usr/spamtagger/bin/watchdog/';
-our $WATCHDOG_CFG           => '/usr/spamtagger/etc/watchdog/';
+our $WATCHDOG_BIN           = '/usr/spamtagger/bin/watchdog/';
+our $WATCHDOG_CFG           = '/usr/spamtagger/etc/watchdog/';
 # TODO: Verify custom watchdog modules and disabling of build-in via this directory
-our $WATCHDOG_CUSTOM        => '/etc/spamtagger/watchdogs/';
-our $WATCHDOG_TMP           => '/var/spamtagger/spool/watchdog/';
-our $WATCHDOG_PID_FOLDER    => '/var/spamtagger/run/watchdog/';
+our $WATCHDOG_CUSTOM        = '/etc/spamtagger/watchdogs/';
+our $WATCHDOG_TMP           = '/var/spamtagger/spool/watchdog/';
+our $WATCHDOG_PID_FOLDER    = '/var/spamtagger/run/watchdog/';
 
 my $time = time();
 my $WATCHDOG_OUTFILE            = $WATCHDOG_TMP . $script_name. '___' .$mode. '_' .$time. '.out';
@@ -75,7 +75,7 @@ sub load_params ($conf_file, $current_process) {
     next if ( /^\s*#/ ) ;
     next if ( /^\s*$/ ) ;
 
-    ($k, $v) = split('=', $_);
+    my ($k, $v) = split('=', $_);
     chomp($k);
     chomp($v);
 
@@ -107,7 +107,7 @@ my @launched_process = ();
 # Create working directory if it does not already exist.
 my @old = ();
 if( ! -d $WATCHDOG_TMP  ) {
-  mkdir($WATCHDOG_TMP, o755);
+  mkdir($WATCHDOG_TMP, 0755); ## no critic (leading zero octal notation)
 # If it does exist, track all existing files
 } else {
   @old = glob($WATCHDOG_TMP."*");
@@ -131,7 +131,7 @@ foreach my $file (@files) {
   $current_process{file_no_extension} =~ s/\.[^\.]*$//;
   $current_process{name}              = basename($current_process{file_no_extension});
   $current_process{configuration_file} =  $WATCHDOG_CFG.$current_process{file_no_extension}.'.conf';
-  if ($current_process{$file_no_extension} != $current_process{name}) {
+  if ($current_process{file_no_extension} != $current_process{name}) {
     $current_process{name} = 'CUSTOM_'.$current_process{name};
     $current_process{configuration_file} =  $WATCHDOG_CUSTOM.'/etc/'.$current_process{file_no_extension}.'.conf';
   }
@@ -212,7 +212,7 @@ foreach my $current_process (@processes) {
       exit(3) unless defined($pid);
       unless ($pid) {  # child
         # Run in subshell
-        exec $commande;
+        exec $command;
         # Return error if execution failed
         exit(2);
       }
@@ -226,7 +226,7 @@ foreach my $current_process (@processes) {
 
     # Execute sequential items
     } else {
-      system(split(/ /, $commande));
+      system(split(/ /, $command));
       $current_process->{pid} = 'NA';
       $current_process->{return_code}  = $?>>8;
       unlink $current_process->{pid_file};

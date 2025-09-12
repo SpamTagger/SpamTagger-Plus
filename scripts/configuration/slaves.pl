@@ -4,9 +4,9 @@ use v5.40;
 use warnings;
 use utf8;
 
-push(@INC, '/usr/spamtagger/lib');
+use lib '/usr/spamtagger/lib';
 use DB();
-use Term::ReadKey();
+use Term::ReadKey qw(ReadKey ReadMode);
 use ReadConfig();
 
 my $config = ReadConfig::get_instance();
@@ -203,7 +203,7 @@ sub set_as_slave {
   if ( -s $logfile) {
     print "\n  ** ERROR ** ";
     my $ERRORLOG;
-    if (open($ERRORLOG, '<', $logfile) {
+    if (open($ERRORLOG, '<', $logfile)) {
       while(<$ERRORLOG>) {
         if (m/Access denied/) {
           print "Access on master is denied. Please double check the master password and try again.\n";

@@ -22,7 +22,7 @@ use v5.40;
 use warnings;
 use utf8;
 
-use lib '/usr/spamtagger/lib/';
+use lib '/usr/spamtagger/scripts/installer/';
 
 use Module::Network();
 use Module::Hostname();

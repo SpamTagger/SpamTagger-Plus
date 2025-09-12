@@ -91,7 +91,7 @@ sub new ($class, $id, $daemon, $batchid) {
   $this->{headers} = {};
 
   $this->{accounting} = undef;
-  $accounting = "MailScanner::Accounting";
+  my $accounting = "MailScanner::Accounting";
   if (eval { "require $accounting" }) {
     $this->{accounting} = $accounting->new('post');
   }
@@ -1086,7 +1086,6 @@ sub end_timer ($this, $timer) {
 }
 
 sub get_timers ($this) {
-  my $this = shift;
   return $this->{'timers'};
 }
 

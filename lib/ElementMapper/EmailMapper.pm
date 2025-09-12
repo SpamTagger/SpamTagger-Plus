@@ -18,7 +18,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-package ElementMappers::EmailMapper;
+package ElementMapper::EmailMapper;
 
 use v5.40;
 use warnings;
@@ -28,17 +28,17 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-sub create {
+sub new ($class = "ElementMapper::EmailMapper") {
   my $this = {
-     %prefs => (),
-     %field_email => (),
+     prefs => (),
+     field_email => (),
   };
 
-  bless $this, "ElementMappers::EmailMapper";
+  bless $this, "ElementMapper::EmailMapper";
   $this->{prefs}{'address'} = '';
   $this->{field_email} = {'address' => 1, 'user' => 1, 'is_main' => 1};
 
-  return $this;
+  return bless $this, $class;
 }
 
 sub set_new_default ($this, $defstr) {

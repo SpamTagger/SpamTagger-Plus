@@ -32,7 +32,7 @@ use warnings;
 die "Feature not currently supported by SpamTagger\n";
 
 =pod
-push(@INC, '/usr/spamtagger/lib');
+use lib '/usr/spamtagger/lib';
 use DB();
 use Net::SMTP();
 use MIME::Lite();

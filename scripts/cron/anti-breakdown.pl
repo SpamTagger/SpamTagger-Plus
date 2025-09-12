@@ -29,7 +29,7 @@ use utf8;
 die "Feature not currently supported by SpamTagger";
 
 =pod Ignore for perlcritic
-push(@INC, '/usr/spamtagger/lib/');
+use lib '/usr/spamtagger/lib';
 use Net::DNS();
 use Net::Ping();
 use File::Touch();

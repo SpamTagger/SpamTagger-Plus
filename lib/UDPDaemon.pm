@@ -30,14 +30,14 @@ our $VERSION   = 1.0;
 
 use lib "/usr/spamtagger/lib/";
 use ReadConfig();
-use POSIX();
+use POSIX qw( SIGINT SIG_BLOCK SIG_UNBLOCK );
 use Sys::Hostname();
 use Socket();
 use Symbol();
 use IO::Socket::INET();
 use Mail::SpamAssassin::Timeout();
 
-our $LOGGERFILE;
+our $LOGGERLOG;
 
 sub new ($class, $daemonname, $conffilepath) {
   my $conf = ReadConfig::get_instance();

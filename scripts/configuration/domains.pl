@@ -4,7 +4,7 @@ use v5.40;
 use warnings;
 use utf8;
 
-push(@INC, '/usr/spamtagger/lib');
+use lib '/usr/spamtagger/lib';
 use DB();
 use Term::ReadKey;
 use ReadConfig;

@@ -3,6 +3,8 @@
 use v5.40;
 use warnings;
 
+# TODO: this has been significantly refactored and needs testing
+
 my $headers = 1;
 while (<>) {
   if ($headers && $_ =~ m/^$/) {
@@ -17,54 +19,43 @@ while (<>) {
     my $indent;
     while (scalar(@words)) {
       my $word = shift(@words);
+
+      # Account for left padding if already on folded line.
       $indent = 1 if (scalar(@lines) > 1);
-      # Append word until 998 is exceeded, including preceeding space and indent
-      if ((length($lines[scalar(@lines)-1]) + length($word) + 1 + $indent) >= 998) {
-        # Also try to break at comma if possible
-        my @commas = split(/,/, $word, -1);
-        if (scalar(@commas) > 1) {
-          # Append as many commas as possible
-          while (scalar(@commas)) {
-            my $c = shift(@commas);
-            if ((length($lines[scalar(@lines)-1]) + length($c) + 1) < 998) {
-              $lines[scalar(@lines)-1] .= $c.',';
-            # Add remainder back to list
-            } else {
-              my $prepend = join(',', ($c, @commas));
-              unshift(@words, $prepend);
-              push(@lines,'');
-              last;
-            }
-          }
-        } else {
-          # If cannot split at comma, split mid-word
-          if (length($c)+$indent > 998) {
-            if ($lines[scalar(@lines)-1]) {
-              push(@lines, '');
-              unshift(@words, $c);
-            } else {
-              my ($a, $b) = $c =~ m/^(.){997}(.*)/;
-              $lines[scalar(@lines)-1] .= $a;
-              unshift(@words, $b);
-            }
-          } else {
-            $lines[scalar(@lnes)-1] .= $c;
-          }
-        }
-      } else {
-        $lines[scalar(@lines)-1] .= $word;
+
+      # Calculate remaining available characters
+      my $span = 998 - length(($indent ? ' ' : '').$lines[-1]);
+
+      # Append words until available space is exceeded
+      if (length($word) + 1 <= $span) {
+        $lines[-1] .= ($lines[-1] eq '' ? '' : ' ').$word;
+        next;
       }
+
+      # If current word does not fit on this line, but it does fit entirely on next, put it there
+      if (length($word) < 997) {
+        push(@lines, $word);
+        next;
+      }
+
+      # Break at commas, if possible
+      my ($before, $after) = $word =~ m/^([^,]*),(.*)/;
+      if (length($before)+1 < $span) {
+        $lines[-1] .= " $before,";
+        unshift(@words, $after);
+        next;
+      }
+
+      # If it cannot fit entirely on a new line, and can't be broken, put as possible on this line
+      my ($fits, $excess) =~ m/^(.{$span})(.*)/;
+      $lines[-1] .= $fits;
+      # Load the excess back into the word list for the next iteration
+      unshift(@words, $excess);
+      # Start a new line (which we know will have content)
+      push(@lines, '');
     }
-    if ($line[scalar(@lines)-1] eq '') {
-      delete($line[scalar(@lines)-1]);
-    }
-		my $out;
-		foreach (@lines) {
-			$_ =~ s/\s*$//;
-			$out .= $_ . "\n ";
-		}
-		$out =~ s/ $//;
-		print $out;
+
+    print join("\n ", @lines)."\n";
   } else {
     print "$_";
   }

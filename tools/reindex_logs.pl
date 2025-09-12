@@ -103,7 +103,8 @@ our $services = {
     'files' => {
       'mainlog' => [ '%Y-%m-%d' ],
       'paniclog' => [ '%Y-%m-%d' ],
-      'rejectlog' => [ /usr/spamtagger},
+      'rejectlog' => [ '%Y-%m-%d' ],
+     },
   },
   'exim_stage4' => {
     'uid' => $stuid,
@@ -124,7 +125,8 @@ our $services = {
     'files' => {
       'st-fail2ban.log' => [ '%Y-%m-%d' ],
     },
-  },/usr/spamtagger=> {
+  },
+  'spamtagger' => {
     'uid' => $stuid,
     'gid' => $stgid,
     'files' => {

@@ -32,7 +32,7 @@ use lib "/usr/spamtagger/scripts/installer/";
 use ReadConfig();
 use Exporter();
 use DialogFactory();
-use Term::ReadKey();
+use Term::ReadKey qw( ReadKey ReadMode );
 
 sub new {
   my $this = {};

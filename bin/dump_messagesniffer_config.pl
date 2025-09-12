@@ -66,7 +66,7 @@ chown $uid, $gid, "identity.xml";
 dump_file("getRulebase");
 chown $uid, $gid, "getRulebase";
 
-chmod o755, "$SRCDIR'}/etc/messagesniffer/getRulebase";
+chmod 0755, "$SRCDIR/etc/messagesniffer/getRulebase"; ## no critic (leading zero octal notation)
 
 print "DUMPSUCCESSFUL";
 
@@ -123,6 +123,7 @@ sub get_messagesniffer_config {
 
   return if ($sth->rows < 1);
 
+  my $ref = $sth->fetchrow_hashref();
   $config{'__LICENSEID__'} = $ref->{'licenseid'};
   $config{'__AUTHENTICATION__'} = $ref->{'authentication'};
 

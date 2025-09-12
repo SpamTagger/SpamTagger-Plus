@@ -32,18 +32,18 @@ our $VERSION   = 1.0;
 my $MODULE = "Newsl";
 my %conf;
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir."/$MODULE.cf";
-  %Newsl::conf = (
+  my $configfile = $confdir."/$class.cf";
+  %conf = (
      command => '/usr/local/bin/spamc -R --socket=__NEWSLD_SOCKET__ -s __MAX_SIZE__',
-     header => "X-$MODULE",
+     header => "X-$class",
      putHamHeader => 1,
      putSpamHeader => 1,
      putDetailedHeader => 1,
-     scoreHeader => "X-$MODULE-Score",
+     scoreHeader => "X-$class-Score",
      maxSize => 0,
      timeOut => 100,
      decisive_field => 'none',
@@ -58,43 +58,43 @@ sub initialise {
   if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-       $Newsl::conf{$1} = $2;
+       $conf{$1} = $2;
       }
     }
     close $CONFIG;
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
 
-  $Newsl::conf{'command'} =~ s/__CONFIGFILE__/$Newsl::conf{'configFile'}/g;
-  $Newsl::conf{'command'} =~ s/__NEWSLD_SOCKET__/$Newsl::conf{'spamdSocket'}/g;
-  $Newsl::conf{'command'} =~ s/__MAX_SIZE__/$Newsl::conf{'maxSize'}/g;
+  $conf{'command'} =~ s/__CONFIGFILE__/$conf{'configFile'}/g;
+  $conf{'command'} =~ s/__NEWSLD_SOCKET__/$conf{'spamdSocket'}/g;
+  $conf{'command'} =~ s/__MAX_SIZE__/$conf{'maxSize'}/g;
 
   # Unless something significant changes, the Newsletter module should NEVER be decisive. It is hard-coded with position 0, so it would override all other modules. There is a separate step to check for newsletters.
-  if ($Newsl::conf{'pos_decisive'} && ($Newsl::conf{'decisive_field'} eq 'pos_decisive' || $Newsl::conf{'decisive_field'} eq 'both')) {
-    $Newsl::conf{'pos_text'} = 'position : '.$Newsl::conf{'position'}.', newsl decisive';
+  if ($conf{'pos_decisive'} && ($conf{'decisive_field'} eq 'pos_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', newsl decisive';
   } else {
-    $Newsl::conf{'pos_text'} = 'position : '.$Newsl::conf{'position'}.', not decisive';
+    $conf{'pos_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  if ($Newsl::conf{'neg_decisive'} && ($Newsl::conf{'decisive_field'} eq 'neg_decisive' || $Newsl::conf{'decisive_field'} eq 'both')) {
-    $Newsl::conf{'neg_text'} = 'position : '.$Newsl::conf{'position'}.', ham decisive';
+  if ($conf{'neg_decisive'} && ($conf{'decisive_field'} eq 'neg_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', ham decisive';
   } else {
-    $Newsl::conf{'neg_text'} = 'position : '.$Newsl::conf{'position'}.', not decisive';
+    $conf{'neg_text'} = 'position : '.$conf{'position'}.', not decisive';
   }
-  return;
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
 sub Checks ($this, $message) { ## no critic
   ## check maximum message size
-  my $maxsize = $Newsl::conf{'maxSize'};
+  my $maxsize = $this->{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
-    MailScanner::Log::InfoLog("Message %s is too big for Newsl checks (%d > %d bytes)",
+    MailScanner::Log::InfoLog("Message %s is too big for ".blessed($this)." checks (%d > %d bytes)",
     $message->{id}, $message->{size}, $maxsize);
-    $message->{prefilterreport} .= ", Newsl (too big)";
-    MailScanner::Log::InfoLog("$MODULE module checking 2.....");
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
-    MailScanner::Log::InfoLog("$MODULE module checking 3.....");
+    $message->{prefilterreport} .= ", ".blessed($this)." (too big)";
+    MailScanner::Log::InfoLog(blessed($this)." module checking 2.....");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "too big (".$message->{size}." > $maxsize)");
+    MailScanner::Log::InfoLog(blessed($this)." module checking 3.....");
     return 0;
   }
 
@@ -111,7 +111,7 @@ sub Checks ($this, $message) { ## no critic
     $msgtext .= $line;
   }
 
-  my $tim = $Newsl::conf{'timeOut'};
+  my $tim = $this->{'timeOut'};
   use Mail::SpamAssassin::Timeout;
   my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
   my $is_prespam = 0;
@@ -125,12 +125,12 @@ sub Checks ($this, $message) { ## no critic
     my $err;
 
     $msgtext .= "\n";
-    run3 $Newsl::conf{'command'}, \$msgtext, \$out, \$err;
+    run3 $this->{'command'}, \$msgtext, \$out, \$err;
     $res = $out;
   });
   if ($t->timed_out()) {
-    MailScanner::Log::InfoLog("$MODULE timed out for ".$message->{id}."!");
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, 'timeout');
+    MailScanner::Log::InfoLog(blessed($this)." timed out for ".$message->{id}."!");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, 'timeout');
     return 0;
   }
   $ret = -1;
@@ -158,29 +158,29 @@ sub Checks ($this, $message) { ## no critic
   }
 
   if ($ret == 2) {
-    MailScanner::Log::InfoLog( "$MODULE result is newsletter ($score/$limit) for " .$message->{id} );
-    if ($Newsl::conf{'putHamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, "is newsletter ($score/$limit) " .$Newsl::conf{'pos_text'});
+    MailScanner::Log::InfoLog( blessed($this)." result is newsletter ($score/$limit) for " .$message->{id} );
+    if ($this->{'putHamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is newsletter ($score/$limit) " .$this->{'pos_text'});
     }
-    $message->{prefilterreport} .= ", Newsl (score=$score, required=$limit, $rulesum, " .$Newsl::conf{pos_text}. ")";
+    $message->{prefilterreport} .= ", ".blessed($this)." (score=$score, required=$limit, $rulesum, " .$this->{pos_text}. ")";
     return -1; # Set to 1 to put in spam quarantine, -1 to newsletter
   }
 
   if ($ret < 0) {
-    MailScanner::Log::InfoLog("$MODULE result is weird ($lines[0]) for ".$message->{id});
+    MailScanner::Log::InfoLog(blessed($this)." result is weird ($lines[0]) for ".$message->{id});
     return 0;
   }
 
-  MailScanner::Log::InfoLog( "$MODULE result is not newsletter ($score/$limit) for " .$message->{id} );
-  if ($Newsl::conf{'putSpamHeader'}) {
-    $global::MS->{mta}->AddHeaderToOriginal($message, $Newsl::conf{'header'}, "is not newsletter ($score/$limit) " .$Newsl::conf{'neg_text'});
+  MailScanner::Log::InfoLog( blessed($this)." result is not newsletter ($score/$limit) for " .$message->{id} );
+  if ($this->{'putSpamHeader'}) {
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is not newsletter ($score/$limit) " .$this->{'neg_text'});
   }
-  $message->{prefilterreport} .= ", Newsl (score=$score, required=$limit, $rulesum, " .$Newsl::conf{neg_text}. ")";
+  $message->{prefilterreport} .= ", ".blessed($this)." (score=$score, required=$limit, $rulesum, " .$this->{neg_text}. ")";
   return 0;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog("$MODULE module disposing...");
+sub dispose ($this) {
+  MailScanner::Log::InfoLog(blessed($this)." module disposing...");
   return;
 }
 

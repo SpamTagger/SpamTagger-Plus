@@ -34,7 +34,6 @@ our $VERSION   = 1.0;
 
 use lib "/usr/spamtagger/lib/";
 use ReadConfig();
-use SNMP();
 use Net::SNMP();
 use RRDTool::OO();
 use File::Path();
@@ -257,13 +256,9 @@ sub get_snmp_value ($this, $host, $oids, $dynamic) {
 
   my $value;
   my $op = '+';
-  foreach my $oid (split /\s([+-])\s/, $oids) {
-    if ($oid eq '+') {
-      $op = '+';
-      next;
-    }
-    if ($oid eq '-') {
-      $op = '-';
+  foreach my $oid (split /\s([+\-])\s/, $oids) {
+    if ($oid =~ /^([+\-])$/) {
+      $op = $1;
       next;
     }
     if ($oid =~ m/__([A-Z_]+)__/ ) {
@@ -271,9 +266,7 @@ sub get_snmp_value ($this, $host, $oids, $dynamic) {
     }
     my $rvalue = 0;
     $oid = SNMP::translate_obj($oid);
-    unless (defined $oid) {
-      return 0;
-    }
+    return 0 unless (defined $oid);
     my $result = $this->{snmp}->{$host}->get_request(-varbindlist => [$oid]);
     my $error = $this->{snmp}->{$host}->error();
     if (defined($error) && ! $error eq "") {

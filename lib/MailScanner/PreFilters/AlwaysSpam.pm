@@ -10,19 +10,21 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-sub initialise {
-  MailScanner::Log::InfoLog('AlwaysSpam module initializing...');
-  return;
+our $MODULE = 'AlwaysSpam';
+
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
+  return bless {}, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
-sub Checks ($message) { ## no critic
-  MailScanner::Log::InfoLog('AlwaysSpam module checking... well guess what ? it\'s spam !');
+sub Checks ($this, $message) { ## no critic
+  MailScanner::Log::InfoLog(blessed($this).' module checking... well guess what ? it\'s spam !');
   return 1;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog('AlwaysSpam module disposing...');
+sub dispose ($this) {
+  MailScanner::Log::InfoLog(blessed($this).' module disposing...');
   return;
 }
 

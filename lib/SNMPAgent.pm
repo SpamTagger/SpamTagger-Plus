@@ -37,10 +37,11 @@ use NetSNMP::agent;
 use NetSNMP::OID (':all');
 use NetSNMP::agent (':all');
 use NetSNMP::ASN (':all');
+use lib '/usr/spamtagger/lib';
 use ReadConfig();
 
 my $rootoid = ".1.3.6.1.4.1.36661";
-our $LOGGERFILE;
+our $LOGGERLOG;
 
 ## debug
 my $logfile = '/tmp/snmpd.debug';

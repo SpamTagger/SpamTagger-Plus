@@ -33,14 +33,14 @@ our $VERSION   = 1.0;
 use lib "/usr/spamtagger/lib/";
 use ReadConfig();
 use DB();
-use POSIX();
+use POSIX qw( SIGINT SIG_BLOCK SIG_UNBLOCK );
 use Sys::Hostname();
 use Socket();
 use Symbol();
 use IO::Socket::INET();
 use Mail::SpamAssassin::Timeout();
 
-our $LOGGERFILE;
+our $LOGGERLOG;
 
 sub new ($class) {
   my $conf = ReadConfig::get_instance();
@@ -125,7 +125,7 @@ sub new ($class) {
 
 sub log_message ($this, $message) {
   if ($this->{debug}) {
-    unless (defined(fileno(LOGGERLOG))) {
+    unless (defined(fileno($LOGGERLOG))) {
        open($LOGGERLOG, ">>", "/tmp/".$this->{logfile});
        $| = 1; ## no critic
     }
@@ -221,7 +221,6 @@ sub launch_children ($this) {
 }
 
 sub make_child ($this) {
-  my $this = shift;
   my $pid;
   my $sigset;
 

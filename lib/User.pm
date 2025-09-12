@@ -197,7 +197,7 @@ sub load_prefs ($this) {
     my $query = "SELECT p.* FROM user u, user_pref p WHERE u.pref=p.id AND u.id=".$this->{id};
     my %res = $this->{db}->getHashRow($query);
     return 0 if ( !%res || !$res{id} );
-    $this->{prefs}->{$_} = $res{$_} foreach (keys(%{$res}));
+    $this->{prefs}->{$_} = $res{$_} foreach (keys(%res));
   }
   return;
 }

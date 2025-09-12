@@ -361,7 +361,7 @@ sub search_mailscanner ($file, $store) {
   return if ! -f $file;
   $ffile = "zcat $file |" if ($file =~ /.gz$/);
   my $fh;
-  unless (open($fh, '<', $ffile) {
+  unless (open($fh, '<', $ffile)) {
     print "Warning, cannot open file: $file !\n";
     return;
   }

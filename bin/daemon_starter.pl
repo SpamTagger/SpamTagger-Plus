@@ -79,12 +79,12 @@ if ( $0 =~ m/(\S*)\/\S+.pl$/ ) {
 } else {
   show_usage('no daemon available');
 }
-if ( !-f "$path/$daemon.pm" ) {
+if ( !-f "$path/$daemon_name.pm" ) {
   show_usage('not such daemon available');
 }
 require $daemon_name.".pm";
 
-my $daemon = $daemon->( \%options );
+my $daemon = $daemon_name->new( \%options );
 
 if ( $action eq 'start' ) {
   $daemon->init_daemon();

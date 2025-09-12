@@ -28,7 +28,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use IO::Socket();
+use IO::Socket qw( SOCK_STREAM );
 use IO::Select();
 use Time::HiRes qw(setitimer time);
 
@@ -46,8 +46,6 @@ sub new ($class, $spec_this = {}) {
 }
 
 sub sock_connect ($this) {
-  my $this = shift;
-
   ## untaint some values
   $this->{socketpath} = $1 if ($this->{socketpath} =~ m/^(\S+)/);
   $this->{timeout} = $1 if ($this->{timeout} =~ m/^(\d+)$/);

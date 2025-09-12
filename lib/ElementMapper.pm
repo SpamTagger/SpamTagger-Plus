@@ -35,12 +35,12 @@ sub get_element_mapper ($what) {
   my $el;
 
   if ($what eq "domain") {
-    require ElementMappers::DomainMapper;
-    $el = ElementMappers::DomainMapper->new();
+    require ElementMapper::DomainMapper;
+    $el = ElementMapper::DomainMapper->new();
   }
   if ($what eq "email") {
-    require ElementMappers::EmailMapper;
-    $el = ElementMappers::EmailMapper->new();
+    require ElementMapper::EmailMapper;
+    $el = ElementMapper::EmailMapper->new();
   }
 
   $el->{db} = DB->db_connect('master', 'st_config', 0);

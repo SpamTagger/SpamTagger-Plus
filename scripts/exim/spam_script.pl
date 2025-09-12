@@ -21,7 +21,7 @@ use v5.40;
 use warnings;
 use utf8;
 
-push(@INC, '/usr/spamtagger/lib');
+use lib '/usr/spamtagger/lib';
 use DB();
 use Net::SMTP;
 use ReadConfig;
@@ -220,7 +220,7 @@ sub get_delivery_type {
 
 ##########################################
 
-sub get_pref ($pref, $defa, $verbose) {
+sub get_pref ($pref, $default, $verbose) {
   if ( defined $config_dbh ) {
     my $sth =
       $config_dbh->prepare(

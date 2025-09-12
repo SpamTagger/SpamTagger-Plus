@@ -106,7 +106,7 @@ sub dump_file ($file) {
     }
   }
 
-  while($line = <$TEMPLATE>) {
+  while(my $line = <$TEMPLATE>) {
     $line =~ s/__VARDIR__/$VARDIR/g;
     $line =~ s/__SRCDIR__/$SRCDIR/g;
     if ($proxy_server =~ m/\S+/) {

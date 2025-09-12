@@ -27,7 +27,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use parent -norequire qw(ManageServices);
+use parent -norequire, qw(ManageServices);
 use Env qw(PYENV_VERSION);
 
 sub init ($module, $class) {
@@ -88,7 +88,7 @@ sub main_loop ($this, $class) {
     mkdir($class->{'conf'}->get_option('VARDIR').'/run/fail2ban')
       || die("Could not create ".$class->{'conf'}->get_option('VARDIR').'/run/fail2ban');
   }
-  my $cmd = $this->{'cmd'} . " -c " . $self->{'confpath'} . " start";
+  my $cmd = $this->{'cmd'} . " -c " . $this->{'confpath'} . " start";
 
   $this->do_log("Running $cmd", 'daemon');
   system(split(/ /,$cmd));

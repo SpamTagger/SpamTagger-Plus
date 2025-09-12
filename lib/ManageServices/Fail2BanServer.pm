@@ -27,7 +27,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use parent -norequire qw(ManageServices);
+use parent -norequire, qw(ManageServices);
 use Env qw(PYENV_VERSION);
 
 sub init ($module, $class) {
@@ -82,8 +82,8 @@ sub pre_fork ($this, $class) {
 }
 
 sub main_loop ($this, $class) {
-  $this->do_log("Running $self->{'cmd'} -b -s $self->{'socket'} -p $self->{'pidfile'}", 'daemon');
-  system($this->{'cmd'}, "-b", "-s", $self->{'socket'}, "-p", $self->{'pidfile'});
+  $this->do_log("Running $this->{'cmd'} -b -s $this->{'socket'} -p $this->{'pidfile'}", 'daemon');
+  system($this->{'cmd'}, "-b", "-s", $this->{'socket'}, "-p", $this->{'pidfile'});
 
   return 1;
 }

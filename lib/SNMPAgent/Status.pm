@@ -67,7 +67,8 @@ my %processes_tmpl = (
   '10' => {'name'=>'Scheduler', 'pstring'=>'/usr/sbin/cron'},
   '11' => {'name'=>'Preferences daemon', 'pstring'=>'PrefTDaemon'},
   '12' => {'name'=>'SpamAssassin daemon', 'pstring'=>'spamd.sock'},
-  '13' => {'name'=>'AntiVirus daemon', 'pstring'=>'clamd.conf''14' => {'name'=>'ClamSpam daemon', 'pstring'=>'clamspamd.conf'},
+  '13' => {'name'=>'AntiVirus daemon', 'pstring'=>'clamd.conf'},
+  '14' => {'name'=>'ClamSpam daemon', 'pstring'=>'clamspamd.conf'},
   '15' => {'name'=>'SpamHandler daemon', 'pstring'=>'SpamHandler'},
   '16' => {'name'=>'Statistics Daemon', 'pstring'=>'StatsDaemon'}
 );
@@ -99,7 +100,7 @@ sub get_full_version {
   my ($versiontype, $version) = get_version();
   my ($patchtype, $patchlevel) = get_patch_level();
 
-  return (ASN_OCTET_STR, 'SpamTagger '.$edition." ".$version." (".$patchlevel.")";
+  return (ASN_OCTET_STR, 'SpamTagger '.$edition." ".$version." (".$patchlevel.")");
 }
 
 sub get_edition {
@@ -170,7 +171,7 @@ sub get_spool ($oid) {
   my @oid = $oid->to_array();
 
   my $spool = pop(@oid);
-  spool = 1 unless ($spool =~ /^[124]$/);
+  $spool = 1 unless ($spool =~ /^[124]$/);
   my $cmd = $EXIMBIN." -C ".$conf->get_option('SRCDIR')."/etc/exim/exim_stage".$spool.".conf -bpc";
   my $res = `$cmd`;
   chomp($res);

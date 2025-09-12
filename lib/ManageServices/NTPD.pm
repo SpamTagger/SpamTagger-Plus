@@ -27,7 +27,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use parent -norequire qw(ManageServices);
+use parent -norequire, qw(ManageServices);
 
 sub init ($module, $class) {
   my $this = $class->SUPER::create_module( config($class) );
@@ -58,8 +58,8 @@ sub config ($class) {
 }
 
 sub setup ($this, $class) {
-  $this->{'cmd'} .= ' -p ' . $self->{'pidfile'} . ' -g -u ' .
-    $this->{'uid'} . ':' . $self->{'gid'};
+  $this->{'cmd'} .= ' -p ' . $this->{'pidfile'} . ' -g -u ' .
+    $this->{'uid'} . ':' . $this->{'gid'};
 
   return 1;
 }
@@ -69,7 +69,7 @@ sub pre_fork ($this, $class) {
 }
 
 sub main_loop ($this, $class) {
-  $this->do_log("Running $self->{'cmd'}", 'daemon');
+  $this->do_log("Running $this->{'cmd'}", 'daemon');
   system($this->{'cmd'});
 
   return 1;

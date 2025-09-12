@@ -32,16 +32,16 @@ our $VERSION   = 1.0;
 my $MODULE = "TrustedIPs";
 my %conf;
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir."/$MODULE.cf";
-  %TrustedIPs::conf = (
-    header => "X-$MODULE",
+  my $configfile = $confdir."/$class.cf";
+  %conf = (
+    header => "X-$class",
     putHamHeader => 0,
     putDetailedHeader => 1,
-    scoreHeader => "X-$MODULE-score",
+    scoreHeader => "X-$class-score",
     maxSize => 0,
     timeOut => 100,
     debug => 0,
@@ -55,16 +55,16 @@ sub initialise {
   if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-        $TrustedIPs::conf{$1} = $2;
+        $conf{$1} = $2;
       }
     }
     close $CONFIG;
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
 
-  $TrustedIPs::conf{'neg_text'} = 'position : '.$TrustedIPs::conf{'position'}.', ham decisive';
-  return;
+  $conf{'neg_text'} = 'position : '.$conf{'position'}.', ham decisive';
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
@@ -72,26 +72,26 @@ sub Checks ($this, $message) { ## no critic
   foreach my $hl ($global::MS->{mta}->OriginalMsgHeaders($message)) {
     if ($hl =~ m/^X-SpamTagger-TrustedIPs: Ok/i) {
       my $string = 'sending IP is in Trusted IPs';
-      if ($TrustedIPs::conf{debug}) {
-          MailScanner::Log::InfoLog("$MODULE result is ham ($string) for ".$message->{id});
+      if ($this->{debug}) {
+          MailScanner::Log::InfoLog(blessed($this)." result is ham ($string) for ".$message->{id});
       }
-      if ($TrustedIPs::conf{'putHamHeader'}) {
-        $global::MS->{mta}->AddHeaderToOriginal($message, $TrustedIPs::conf{'header'}, "is ham ($string) ".'position : '.$TrustedIPs::conf{'position'}.', ham decisive');
+      if ($this->{'putHamHeader'}) {
+        $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is ham ($string) ".'position : '.$this->{'position'}.', ham decisive');
       }
-      $message->{prefilterreport} .= ", $MODULE ($string, ".'position : '.$TrustedIPs::conf{'position'}.', ham decisive'.")";
+      $message->{prefilterreport} .= ", ".blessed($this)." ($string, ".'position : '.$this->{'position'}.', ham decisive'.")";
 
       return 0;
     }
 
     if ($hl =~ m/^X-SpamTagger-White-IP-DOM: WhIPDom/i) {
       my $string = 'sending IP is whitelisted for this domain';
-      if ($TrustedIPs::conf{debug}) {
-          MailScanner::Log::InfoLog("$MODULE result is ham ($string) for ".$message->{id});
+      if ($this->{debug}) {
+          MailScanner::Log::InfoLog(blessed($this)." result is ham ($string) for ".$message->{id});
       }
-      if ($TrustedIPs::conf{'putHamHeader'}) {
-        $global::MS->{mta}->AddHeaderToOriginal($message, $TrustedIPs::conf{'header'}, "is ham ($string) ".'position : '.$TrustedIPs::conf{'position'}.', ham decisive');
+      if ($this->{'putHamHeader'}) {
+        $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is ham ($string) ".'position : '.$this->{'position'}.', ham decisive');
       }
-      $message->{prefilterreport} .= ", $MODULE ($string, ".$TrustedIPs::conf{'position'}.', ham decisive'.")";
+      $message->{prefilterreport} .= ", ".blessed($this)." ($string, ".$this->{'position'}.', ham decisive'.")";
 
       return 0;
     }
@@ -99,8 +99,8 @@ sub Checks ($this, $message) { ## no critic
   return 1;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog("$MODULE module disposing...");
+sub dispose ($this) {
+  MailScanner::Log::InfoLog(blessed($this)." module disposing...");
   return;
 }
 

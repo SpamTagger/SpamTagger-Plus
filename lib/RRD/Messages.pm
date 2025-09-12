@@ -30,7 +30,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use lib "/usr/rrdtools/lib/perl/";
+use lib "/usr/spamtagger/lib";
 use RRD::Generic();
 
 sub new ($statfile, $reset) {

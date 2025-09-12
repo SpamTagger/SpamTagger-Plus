@@ -73,7 +73,7 @@ sub get_greylist_config {
 }
 
 #############################
-sub dump_domain_to_avoid ($domain) {
+sub dump_domain_to_avoid ($domains) {
    my @domains_to_avoid;
    if (! $domains eq "") {
      @domains_to_avoid = split /\s*[\,\:\;]\s*/, $domains;

@@ -13,18 +13,18 @@ our $VERSION   = 1.0;
 my $MODULE = "ClamSpam";
 my %conf;
 
-sub initialise {
-  MailScanner::Log::InfoLog("$MODULE module initializing...");
+sub initialise ($class = $MODULE) {
+  MailScanner::Log::InfoLog("$class module initializing...");
 
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
-  my $configfile = $confdir."/$MODULE.cf";
-  %ClamSpam::conf = (
+  my $configfile = $confdir."/$class.cf";
+  %conf = (
     command => '/opt/clamav/bin/clamdscan --no-summary --config-file=__CONFIGFILE__ -',
-    header => "X-$MODULE",
+    header => "X-$class",
     putHamHeader => 0,
     putSpamHeader => 1,
     putDetailedHeader => 1,
-    scoreHeader => "X-$MODULE-result",
+    scoreHeader => "X-$class-result",
     maxSize => 0,
     timeOut => 20,
     decisive_field => 'none',
@@ -37,33 +37,33 @@ sub initialise {
   if (open($CONFIG, '<', $configfile)) {
     while (<$CONFIG>) {
       if (/^(\S+)\s*\=\s*(.*)$/) {
-       $ClamSpam::conf{$1} = $2;
+       $conf{$1} = $2;
       }
     }
     close($CONFIG);
   } else {
-    MailScanner::Log::WarnLog("$MODULE configuration file ($configfile) could not be found !");
+    MailScanner::Log::WarnLog("$class configuration file ($configfile) could not be found !");
   }
-  $ClamSpam::conf{'command'} =~ s/__CONFIGFILE__/$ClamSpam::conf{'configFile'}/g;
-  $ClamSpam::conf{'command'} =~ s/__CLAM_DB__/$ClamSpam::conf{'clamdb'}/g;
+  $conf{'command'} =~ s/__CONFIGFILE__/$conf{'configFile'}/g;
+  $conf{'command'} =~ s/__CLAM_DB__/$conf{'clamdb'}/g;
 
-  if ($ClamSpam::conf{'pos_decisive'} && ($ClamSpam::conf{'decisive_field'} eq 'pos_decisive' || $ClamSpam::conf{'decisive_field'} eq 'both')) {
-    $ClamSpam::conf{'pos_text'} = 'position : '.$ClamSpam::conf{'position'}. ', spam decisive';
+  if ($conf{'pos_decisive'} && ($conf{'decisive_field'} eq 'pos_decisive' || $conf{'decisive_field'} eq 'both')) {
+    $conf{'pos_text'} = 'position : '.$conf{'position'}. ', spam decisive';
   } else {
-    $ClamSpam::conf{'pos_text'} = 'position : '.$ClamSpam::conf{'position'}. 'not decisive';
+    $conf{'pos_text'} = 'position : '.$conf{'position'}. 'not decisive';
   }
-  return;
+  return bless \%conf, $class;
 }
 
 # TODO: Mixed case function name, hard-coded into MailScanner. Ignore in Perl::Critic
 sub Checks ($this, $message) { ## no critic
   ## check maximum message size
-  my $maxsize = $ClamSpam::conf{'maxSize'};
+  my $maxsize = $this->{'maxSize'};
   if ($maxsize > 0 && $message->{size} > $maxsize) {
     MailScanner::Log::InfoLog("Message %s is too big for ClamSpam checks (%d > %d bytes)",
                               $message->{id}, $message->{size}, $maxsize);
     $message->{prefilterreport} .= ", ClamSpam (too big)";
-    $global::MS->{mta}->AddHeaderToOriginal($message, $ClamSpam::conf{'header'}, "too big (".$message->{size}." > $maxsize)");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "too big (".$message->{size}." > $maxsize)");
     return 0;
   }
 
@@ -77,7 +77,7 @@ sub Checks ($this, $message) { ## no critic
     $msgtext .= $line;
   }
 
-  my $tim = $ClamSpam::conf{'timeOut'};
+  my $tim = $this->{'timeOut'};
   use Mail::SpamAssassin::Timeout;
   my $t = Mail::SpamAssassin::Timeout->new({ secs => $tim });
   my $is_prespam = 0;
@@ -91,12 +91,12 @@ sub Checks ($this, $message) { ## no critic
     my $err;
 
     $msgtext .= "\n";
-    run3 $ClamSpam::conf{'command'}, \$msgtext, \$out, \$err;
+    run3 $this->{'command'}, \$msgtext, \$out, \$err;
     $res = $out;
   });
   if ($t->timed_out()) {
-    MailScanner::Log::InfoLog("$MODULE timed out for ".$message->{id}."!");
-    $global::MS->{mta}->AddHeaderToOriginal($message, $ClamSpam::conf{'header'}, 'timeout');
+    MailScanner::Log::InfoLog(blessed($this)." timed out for ".$message->{id}."!");
+    $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, 'timeout');
     return 0;
   }
   ## not spam per default
@@ -114,19 +114,19 @@ sub Checks ($this, $message) { ## no critic
   $spamfound =~ s/^, //;
 
   if ($ret == 2) {
-    MailScanner::Log::InfoLog("$MODULE result is spam ($spamfound) for ".$message->{id});
-    if ($ClamSpam::conf{'putSpamHeader'}) {
-      $global::MS->{mta}->AddHeaderToOriginal($message, $ClamSpam::conf{'header'}, "is spam ($spamfound) " .$ClamSpam::conf{'pos_text'});
+    MailScanner::Log::InfoLog(blessed($this)." result is spam ($spamfound) for ".$message->{id});
+    if ($this->{'putSpamHeader'}) {
+      $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, "is spam ($spamfound) " .$this->{'pos_text'});
     }
-    $message->{prefilterreport} .= ", ClamSpam ($spamfound, " .$ClamSpam::conf{pos_text}.")";
+    $message->{prefilterreport} .= ", ClamSpam ($spamfound, " .$this->{pos_text}.")";
 
     return 1;
   }
   return 0;
 }
 
-sub dispose {
-  MailScanner::Log::InfoLog("$MODULE module disposing...");
+sub dispose ($this) {
+  MailScanner::Log::InfoLog(blessed($this)." module disposing...");
   return;
 }
 

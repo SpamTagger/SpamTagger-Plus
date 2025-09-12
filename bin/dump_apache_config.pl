@@ -52,14 +52,14 @@ my %apache_conf;
 
 dump_apache_file("/etc/apache/httpd.conf_template", "/etc/apache/httpd.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 
-if (-e "$config{'SRCDIR'}/etc/apache/sites/spamtagger.conf.disabled") {
-  unlink("$config{'SRCDIR'}/etc/apache/sites/spamtagger.conf");
+if (-e "$SRCDIR/etc/apache/sites/spamtagger.conf.disabled") {
+  unlink("$SRCDIR/etc/apache/sites/spamtagger.conf");
 } else {
   dump_apache_file("/etc/apache/sites/spamtagger.conf_template", "/etc/apache/sites/spamtagger.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 }
 
-if (-e "$config{'SRCDIR'}/etc/apache/sites/configurator.conf.disabled") {
-  unlink("$config{'SRCDIR'}/etc/apache/sites/configurator.conf");
+if (-e "$SRCDIR/etc/apache/sites/configurator.conf.disabled") {
+  unlink("$SRCDIR/etc/apache/sites/configurator.conf");
 } else {
   dump_apache_file("/etc/apache/sites/configurator.conf_template", "/etc/apache/sites/configurator.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 }
@@ -117,7 +117,7 @@ sub dump_apache_file ($filetmpl, $filedst) {
       next;
     }
 
-    print TARGET $line if ( (! $inssl) || ($apache_conf{'__USESSL__'} =~ /true/) );
+    print $TARGET $line if ( (! $inssl) || ($apache_conf{'__USESSL__'} =~ /true/) );
   }
 
   close $TEMPLATE;

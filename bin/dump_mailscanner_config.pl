@@ -37,6 +37,7 @@ use GetDNS();
 our $db = DB->db_connect('slave', 'st_config');
 my $conf = ReadConfig::get_instance();
 our $dns = GetDNS->new();
+our $VARDIR = $conf->get_option('VARDIR');
 
 my $DEBUG = 1;
 my $lasterror = "";
@@ -571,7 +572,7 @@ sub dump_dnsblacklists_conf {
 }
 
 #############################
-sub fatal_error ($msg) {
+sub fatal_error ($msg, $full) {
   print $msg;
   print "\n Full information: $full \n" if ($DEBUG);
   exit(0);
@@ -611,20 +612,20 @@ sub create_tlds_files {
     }
   } else {
     require LWP::UserAgent;
-    my $ua = LWP::UserAgent;
-    my $ret = $ua->get("https://publicsuffix.org/list/public_suffix_list.dat");
+    my $ua = LWP::UserAgent->new();
+    my $response = $ua->get("https://publicsuffix.org/list/public_suffix_list.dat");
     my $output = '';
-    if ($ret->is_success) {
+    if ($response->is_success) {
       $output = $response->decoded_content();
     } else {
       print "Failed to download https://publicsuffix.org/list/public_suffix_list.dat\n";
-      if (-e $filepath) {
-        print "Keeping old version of $filepath\n";
+      if (-e $effective_path) {
+        print "Keeping old version of $effective_path\n";
         if (-e $two_level_path && -e $tlds_path) {
           return 0;
         }
       } else {
-        print "Creating blank $filepath\n";
+        print "Creating blank $effective_path\n";
       }
     }
     open(my $FH, '>', $effective_path) || die "Failed to open $effective_path for writing";
@@ -633,9 +634,9 @@ sub create_tlds_files {
     @effective_tlds = split(/\n/, $output);
   }
   my @default_seconds = qw( com edu gov net org );
-  foreach (@effective_tlds) {
-    next if ($line =~ /^$/);
-    next if ($line =~ %^//%);
+  foreach my $line (@effective_tlds) {
+    next if ($line =~ m/^$/);
+    next if ($line =~ m%^//%);
     if ($line =~ /\*\.(\w\w)/) {
       push(@second_levels, "$_.$1") foreach (@default_seconds);
       next;
