@@ -29,7 +29,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use Net::SMTP_auth;
+use Net::SMTP();
 
 sub new ($server, $port, $params = {}) {
   $port = 25 if ($port < 1 );
@@ -37,7 +37,7 @@ sub new ($server, $port, $params = {}) {
     error_text => "",
     error_code => -1,
     server => $server,
-    port => $port
+    port => $port,
   };
   $this->{$_} = $params->{$_} foreach (keys(%{$params}));
 
@@ -46,15 +46,20 @@ sub new ($server, $port, $params = {}) {
 }
 
 sub authenticate ($this, $username, $password) {
-  unless ($smtp = Net::SMTP_auth->new($this->{server}.":".$this->{port})) {
+  my $smtp;
+  unless ($smtp = Net::SMTP->new($this->{server}.":".$this->{port})) {
     $this->{'error_code'} = 0;
     $this->{'error_text'} = 'Cannot connect to server: '.$this->{server}.' on port '.$this->{port};
     return 0;
   }
 
   my $auth_type = 'LOGIN';
-  my @auths = split('\s', $smtp->auth_types());
-  $auth_type = shift(@auths)  if (@auths);
+  if (exists ${*$smtp}{'net_smtp_esmtp'} && exists ${*$smtp}{'net_smtp_esmtp'}->{AUTH}) {
+    my @auths = split('\s+', ${*$smtp}{'net_smtp_esmtp'}->{AUTH});
+    foreach (qw( plain login cram-md5 digest-md5 )) {
+      $auth_type = $_ if (grep { /^$_$/i } @auths);
+    }
+  }
 
   if ($smtp->auth($auth_type, $username, $password)) {
     $this->{'error_code'} = 0;
