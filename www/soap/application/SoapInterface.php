@@ -154,47 +154,6 @@ class SoapInterface
 	    return STSoap_Config::Config_saveSTConfigOption($options);
 	}
 
-  /**
-   * This function will save and validate registration number
-   *
-   * @param  string  serial number
-   * @return string
-   */
-	static public function Config_saveRegistration($serial) {
-		return STSoap_Config::Config_saveRegistration($serial);
-	}
-
- /**
-   * This function will register this host
-   *
-   * @param  array   registration data
-   * @return string
-   */
-        static public function Config_register($data) {
-            return STSoap_Config::Config_register($data);
-       }
-
-
-/**
-   * This function will register this host
-   * @param  array   registration data
-   * @return string
-   */
-        static public function Config_register_ce($data) {
-            return STSoap_Config::Config_register_ce($data);
-       }
-
-
-/**
-   * This function will register this host
-   * @param  array   registration data
-   * @return string
-   */
-        static public function Config_unregister($data) {
-            return STSoap_Config::Config_unregister($data);
-       }
-
-
 /**
    * This function will change the host id
    * @param  array   registration data

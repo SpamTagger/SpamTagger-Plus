@@ -43,7 +43,6 @@ class BaseconfigurationController extends Zend_Controller_Action
     	$this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Localization', 'id' => 'localization', 'action' => 'localization', 'controller' => 'baseconfiguration')));
     	$this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Date and time', 'id' => 'dateandtime', 'action' => 'dateandtime', 'controller' => 'baseconfiguration')));
     	$this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Proxies', 'id' => 'proxies', 'action' => 'proxies', 'controller' => 'baseconfiguration')));
-    	$this->config_menu->addPage(new Zend_Navigation_Page_Mvc(array('label' => 'Registration', 'id' => 'registration', 'action' => 'registration', 'controller' => 'baseconfiguration')));
         $view->config_menu = $this->config_menu;
 
         $view->headScript()->appendFile($view->scripts_path.'/baseconfig.js', 'text/javascript');
@@ -320,53 +319,6 @@ class BaseconfigurationController extends Zend_Controller_Action
 
 
     	$view->form = $form;
-    	$view->message = $message;
-    }
-
-    public function registrationAction() {
-    	$this->config_menu->findOneBy('id', 'registration')->class = 'generalconfigmenuselected';
-    	$layout = Zend_Layout::getMvcInstance();
-    	$view=$layout->getView();
-    	$view->selectedConfigMenuLabel = $this->config_menu->findOneBy('id', 'registration')->label;
-    	$message = '';
-
-    	$mgr = new Default_Model_RegistrationManager();
-    	$mgr->load();
-
-	$mgrce = new Default_Model_RegistrationCEManager();
-	$mgrce->load();
-
-	$unmgr = new Default_Model_UnRegistrationManager();
-	$unmgr->load();
-
-	$mgrhostid = new Default_Model_HostIdManager();
-        $mgrhostid->load();
-
-        $sysconf = SpamTagger_Config::getInstance();
-
-	$formhostid = new Default_Form_ChangeHostId($mgrhostid);
-
-	if ($this->getRequest()->isPost()) {
-    		if ($this->getRequest()->getParam('changehostid') && $formhostid->isValid($this->getRequest()->getPost())) {
-				$mgrhostid->setData('host_id', $this->getRequest()->getParam('host_id'));
-                                $message = $mgrhostid->save();
-                                if (preg_match('/^OK/', $message)) {
-                                        $message = 'OK Host Id has been changed';
-                                } else {
-                                        $message = "NOK Host Id can't be changed, please check parameters and system.";
-                                }
-			} else {
-			}
-    		} else {
-    			$message = 'NOK bad settings';
-    		}
-    	}
-
-    	$view->form = $form;
-	$view->formCE = $formce;
-	$view->formun = $formun;
-	$view->formhostid = $formhostid;
-
     	$view->message = $message;
     }
 
