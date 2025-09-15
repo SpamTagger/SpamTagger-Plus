@@ -32,6 +32,7 @@ our $VERSION   = 1.0;
 
 use threads();
 use threads::shared();
+use lib '/usr/spamtagger/lib';
 use DB();
 
 my $_current_table : shared = '';
@@ -53,7 +54,9 @@ sub new ($class, $daemon) {
 
   $this->do_log("backend loaded", 'statsdaemon');
 
-  $this->{data} = $StatsDaemon::data_;
+  use StatsDaemon;
+  my $statsdaemon = StatsDaemon->new();
+  $this->{data} = $statsdaemon->{data_};
   return $this;
 }
 
@@ -369,8 +372,7 @@ sub connect_backend ($this) {
   return 1;
 }
 
-sub create_current_table() {
-  my $this = shift;
+sub create_current_table($this) {
 
   if ( $_current_table_creating == 1 ) {
     return 0;

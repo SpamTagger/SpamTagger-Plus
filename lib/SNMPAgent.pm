@@ -32,12 +32,12 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use DB();
 use NetSNMP::agent;
 use NetSNMP::OID (':all');
 use NetSNMP::agent (':all');
 use NetSNMP::ASN (':all');
 use lib '/usr/spamtagger/lib';
+use DB();
 use ReadConfig();
 
 my $rootoid = ".1.3.6.1.4.1.36661";

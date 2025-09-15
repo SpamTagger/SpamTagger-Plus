@@ -31,10 +31,10 @@ use warnings;
 use utf8;
 
 use Net::SMTP;
-use DB();
 
 use lib '/usr/spamtagger/lib/';
 use ReadConfig;
+use DB();
 
 our $config = ReadConfig::get_instance();
 

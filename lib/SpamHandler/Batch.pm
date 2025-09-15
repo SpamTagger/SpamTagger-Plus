@@ -181,9 +181,6 @@ sub add_timers ($this, $msgtimers) {
 #######
 ## profiling timers
 sub start_timer ($this, $timer) {
-  my $this  = shift;
-  my $timer = shift;
-
   $this->{'timers'}{$timer} = [gettimeofday];
   return;
 }

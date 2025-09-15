@@ -77,7 +77,9 @@ sub new ($class, $daemon) {
   }
   $this->do_log("backend loaded", 'statsdaemon');
 
-  $this->{data} = $StatsDaemon::data_;
+  use StatsDaemon;
+  my $statsdaemon = StatsDaemon->new();
+  $this->{data} = $statsdaemon->{data_};
   return $this;
 }
 

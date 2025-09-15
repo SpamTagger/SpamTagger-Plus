@@ -30,9 +30,9 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
-use lib "/usr/spamtagger/lib/";
 use threads();
 use threads::shared();
+use lib "/usr/spamtagger/lib";
 use ReadConfig();
 use File::Path qw(mkpath);
 use Fcntl qw(:flock SEEK_END);
@@ -65,7 +65,9 @@ sub new ($class, $daemon) {
   }
   $this->do_log("backend loaded", 'statsdaemon');
 
-  $this->{data} = $StatsDaemon::data_;
+  use StatsDaemon;
+  my $statsdaemon = StatsDaemon->new();
+  $this->{data} = $statsdaemon->{data_};
   return $this;
 }
 
