@@ -1,14 +1,25 @@
-#!/bin/bash
+##!/bin/bash
 
-ERRORS=0
+COUNT=0
+FILES=()
 for ext in php phtml tmpl; do
   for i in $( find /usr/spamtagger -name "*.$ext" ); do
-    php -l $i | grep -v 'No syntax errors detected'
-    RET=$?
-    if [ $RET ]; then
-      let ERRORS=$((ERRORS+1));
-    fi
+    FILES[$COUNT]=$i
+    let COUNT=$((COUNT+1))
   done
 done
 
-exit $ERRORS
+echo 1..$COUNT
+
+COUNT=0
+for i in ${FILES[*]}; do
+  let COUNT=$((COUNT+1))
+  E=$(php -l $i)
+  RET=$?
+  if [ $RET != 0 ]; then
+    echo not ok $COUNT - $i \($RET\)
+    echo $E 2>/dev/null
+  else
+    echo ok $COUNT - $i
+  fi
+done
