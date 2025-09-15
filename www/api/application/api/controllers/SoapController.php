@@ -26,7 +26,7 @@ class SoapController extends Zend_Controller_Action
 			$this->_url = 'https://';
 		}
 		$this->_url .= 'localhost'.":".$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI']."?wsdl";
-		$this->_options{'uri'} = $this->_url;
+		$this->_options['uri'] = $this->_url;
 
 		require_once('SoapInterface.php');
 
