@@ -49,7 +49,7 @@ use Date::Calc qw(Add_Delta_Days Today Date_to_Text Date_to_Text_Long);
 use DateTime();
 use Encode();
 use MIME::QuotedPrint();
-use Digest::SHA1 qw(sha1_hex);
+use Digest::SHA qw(sha1_hex);
 
 my $conf = ReadConfig::get_instance();
 if ($conf->get_option('ISMASTER') !~ /^[y|Y]$/) {
