@@ -1,5 +1,0 @@
-EMAIL="git@john.me.tz"
-EXTRA_MODULES=""
-PERL_VERSION="5.40.2"
-PERL_PREFIX="/usr/bin/"
-
