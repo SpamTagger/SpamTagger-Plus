@@ -7,6 +7,7 @@ dnf -y install --setopt=install_weak_deps=False --allowerasing \
 # Install Perl::Critic which provides `prove` with TAP compatible testing
 dnf -y install --setopt=install_weak_deps=False --allowerasing \
   perl \
-  perl-Perl-Critic
+  perl-Perl-Critic \
+  perl-Test2-Suite
 
 prove /usr/spamtagger/tests/
