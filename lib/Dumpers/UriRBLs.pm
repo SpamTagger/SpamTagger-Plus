@@ -29,6 +29,7 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
+use lib '/usr/spamtagger/lib';
 use DB();
 
 sub get_specific_config {
