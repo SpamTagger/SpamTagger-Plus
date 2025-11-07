@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
 
-# (Re)enable Enterprise Linux repo which contains Perl::Critic
-dnf -y install --setopt=install_weak_deps=False --allowerasing \
-  epel-release
-
-# Install Perl::Critic which provides `prove` with TAP compatible testing
-dnf -y install --setopt=install_weak_deps=False --allowerasing \
-  perl \
-  perl-Perl-Critic \
-  perl-Test2-Suite
+apt-get update
+apt install --assume-yes --no-install-recommends --no-install-suggests \
+  libperl-critic-perl \
+  libtest2-suite-perl
 
 prove /usr/spamtagger/tests/
