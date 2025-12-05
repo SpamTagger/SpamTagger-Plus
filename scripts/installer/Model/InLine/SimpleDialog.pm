@@ -31,16 +31,13 @@ our $VERSION   = 1.0;
 use Term::ReadKey qw( ReadMode ReadKey );
 
 sub new ($class) {
-  my $text = '';
-  my $default = '';
 
   my $this =  {
-    text => $text,
-    default => $default
+    text => '',
+    default => ''
   };
 
-  bless $this, $class;
-  return $this;
+  return bless $this, $class;
 }
 
 sub build($this, $text, $default='') {
@@ -53,7 +50,7 @@ sub build($this, $text, $default='') {
 sub display($this) {
   print $this->{text}.' '.(defined($this->{default}) ? "[".$this->{default}."]" : '[\'q\' to skip]').": ";
   ReadMode 'normal';
-  my $result = ReadLine(0);
+  my $result = <STDIN>;
   chomp $result;
   return 0 if ($result eq 'q');
   if ( $result eq "") {

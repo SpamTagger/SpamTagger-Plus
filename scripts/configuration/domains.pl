@@ -73,9 +73,8 @@ sub view_domains {
 sub delete_domain {
   system("clear");
   printf "Please enter domain id to delete: ";
-  my $d_id = ReadLine(0);
-  $d_id =~ s/^\s+//;
-  $d_id =~ s/\s+$//;
+  my $d_id = <STDIN>;
+  ($d_id) = $d_id =~ m/\s*(\S+)\s*$/;
 
   my $sth =  $master_dbh->prepare("DELETE FROM domain WHERE id='$d_id'");
   if (! $sth->execute()) {
@@ -94,13 +93,11 @@ sub delete_domain {
 sub add_domain {
   system("clear");
   printf "Enter domain name: ";
-  my $name = ReadLine(0);
-  $name =~ s/^\s+//;
-  $name =~ s/\s+$//;
+  my $name = <STDIN>;
+  ($name) = $name =~ m/\s*(\S+)\s*$/;
   printf "Enter destination server: ";
-  my $destination = ReadLine(0);
-  $destination =~ s/^\s+//;
-  $destination =~ s/\s+$//;
+  my $destination = <STDIN>;
+  ($destination) = $destination =~ m/\s*(\S+)\s*$/;
 
   if ( $name =~ /^[A-Z,a-z,0-9,\.,\_,\-,\*]{1,200}$/) {
 

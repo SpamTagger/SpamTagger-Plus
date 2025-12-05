@@ -33,15 +33,14 @@ use DialogFactory();
 
 my @levels = ( 'layout', 'language', 'variant', 'keymap' );
 
-sub new {
+sub new($class) {
   my $this = {
     dlg => '',
     mapfile => "/usr/share/console/lists/keymaps/console-data.keymaps",
     mapdir => '/usr/share/keymaps/i386'
   };
 
-  bless $this, 'Module::Keyboard';
-  return $this;
+  return bless $this, $class;
 }
 
 sub run($this) {

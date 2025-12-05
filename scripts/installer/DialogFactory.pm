@@ -37,8 +37,7 @@ sub new ($class, $model) {
   my $this = {
     model => $model
   };
-  bless $this, $class;
-  return $this;
+  return bless $this, $class;
 }
 
 sub simple ($this) {

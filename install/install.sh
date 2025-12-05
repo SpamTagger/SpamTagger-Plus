@@ -35,8 +35,10 @@ if [ ! -d $VARDIR/.ssh ]; then
   mkdir $VARDIR/.ssh
 fi
 
-ssh-keygen -q -t ed25519 -f $VARDIR/.ssh/id_ed25519 -N ""
-chown -R spamtagger:spamtagger $VARDIR/.ssh
+if [ ! -f $VARDIR/.ssh/id_ed25519 ]; then
+  ssh-keygen -q -t ed25519 -f $VARDIR/.ssh/id_ed25519 -N ""
+  chown -R spamtagger:spamtagger $VARDIR/.ssh
+fi
 
 if [ "$ISMASTER" = "Y" ]; then
   MASTERHOST=127.0.0.1

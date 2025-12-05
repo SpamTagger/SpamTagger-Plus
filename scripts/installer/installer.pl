@@ -34,7 +34,7 @@ use Module::RootPassword();
 use DialogFactory();
 
 my $d = DialogFactory->new('InLine');
-my $dlg = $d->list_dialog();
+my $dlg = $d->list();
 
 my @basemenu = (
   'Keyboard configuration', 

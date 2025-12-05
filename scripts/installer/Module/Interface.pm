@@ -31,8 +31,8 @@ our $VERSION   = 1.0;
 use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
 
-sub new($interface) {
-  my %dns;
+sub new($class, $interface) {
+  printf("Interface: $interface, Class: $class");
 
   my $this = {
     interface => $interface,
@@ -40,11 +40,10 @@ sub new($interface) {
     mask => '',
     gateway => '',
     broadcast => '',
-    dns => '',
+    dns => (),
   };
 
-  bless $this, 'Module::Interface';
-  return $this;
+  return bless $this, $class;
 }
 
 sub dhcp($this) {

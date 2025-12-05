@@ -31,11 +31,8 @@ our $VERSION   = 1.0;
 use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
 
-sub new {
-  my $this = {};
-
-  bless $this, 'Module::RootPassword';
-  return $this;
+sub new ($class) {
+  return bless {}, $class;
 }
 
 sub run($this) {

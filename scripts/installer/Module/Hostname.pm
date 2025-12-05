@@ -31,14 +31,13 @@ our $VERSION   = 1.0;
 use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
 
-sub new {
+sub new($class) {
   my $this = {
     hostnamefile => "/etc/hostname",
     hostsfile => "/etc/hosts"
   };
 
-  bless $this, 'Module::Hostname';
-  return $this;
+  return bless $this, $class;
 }
 
 sub run($this) {

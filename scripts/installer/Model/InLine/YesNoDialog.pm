@@ -30,46 +30,43 @@ our $VERSION   = 1.0;
 
 use Term::ReadKey qw( ReadMode ReadKey );
 
-sub new ($class) {
-  my $text = '';
-  my $default = '';
+sub new ($class, $text='', $default='') {
 
   my $this =  {
     text => $text,
     default => $default
   };
 
-  bless $this, $class;
-  return $this;
+  return bless $this, $class;
 }
 
-sub build($this, $text, $default='') {
+sub build($this, $text, $default='no') {
   $this->{text} = $text;
-  $this->{default} = $this->get_yes_no($default);
+  $this->{default} = $default;
 
   return $this;
 }
 
 sub display($this) {
   print $this->{text}."\n";
-  print "Enter \"yes\" or \"no\" [".$this->{default}."]: ";
+  my $result = '';
   ReadMode 'normal';
-  my $result = ReadLine(0);
-  chomp $result;
-  if ( $result eq "") {
-    $result = $this->{default};
-  }
-  return $this->get_yes_no($result);
+  do {
+    print("$result is an invalid selection. Try again.\n") if ($result);
+    print "Enter \"yes\" or \"no\" [".($this->{default} eq 'yes' ? 'yes' : 'no')."]: ";
+    $result = <STDIN>;
+    chomp $result;
+    if ($result eq "") {
+      $result = $this->{default};
+    }
+  } while ($result !~ /^(y|yes|n|no)$/);
+  return 1 if ($result =~ m/^(y|yes)$/i);
+  return 0;
 }
 
 sub clear($this) {
   system('clear');
   return;
-}
-
-sub get_yes_no($this, $value='no') {
-  return 'yes' if ($value =~ m/^(y|yes)$/i);
-  return 'no';
 }
 
 1;

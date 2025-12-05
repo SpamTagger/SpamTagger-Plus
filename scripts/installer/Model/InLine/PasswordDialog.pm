@@ -30,17 +30,14 @@ our $VERSION   = 1.0;
 
 use Term::ReadKey qw( ReadMode ReadKey );
 
-sub new ($class) {
-  my $text = '';
-  my $default = '';
+sub new($class, $text='', $default='') {
 
   my $this =  {
     text => $text,
     default => $default
   };
 
-  bless $this, $class;
-  return $this;
+  return bless $this, $class;
 }
 
 sub build($this, $text, $default='') {

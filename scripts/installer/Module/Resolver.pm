@@ -31,18 +31,15 @@ our $VERSION   = 1.0;
 use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
 
-sub new($dhcp=undef) {
-  my %dns;
-
+sub new($class, $dhcp=undef) {
   my $this = {
     domain => '',
-    %dns => (),
+    dns => {},
     dnss => '',
     dhcp => $dhcp
   };
 
-  bless $this, 'Module::Resolver';
-  return $this;
+  return bless $this, $class;
 }
 
 sub set_dns($this, $pos, $value) {

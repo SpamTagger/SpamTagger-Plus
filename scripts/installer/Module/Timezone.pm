@@ -28,46 +28,41 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
+use File::Basename qw( basename );
 use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
 
-sub new {
+sub new($class) {
   my $this = {
     dlg => '',
     mapdir => '/usr/share/zoneinfo/'
   };
-
-  bless $this, 'Module::Timezone';
-  return $this;
+  return bless $this, $class;
 }
 
 sub run($this) {
   my $dfact = DialogFactory->new('InLine');
-  $this->{dlg} = $dfact->list_dialog();
+  $this->{dlg} = $dfact->list();
 
-  my @dlglist = ('Africa', 'America', 'US time zones', 'Canada time zones', 'Asia', 'Atlantic Ocean', 'Australia', 'Europe', 'Indian Ocean', 'Pacific Ocean', 'Use System V style time zones', 'None of the above') ;
-  $this->{dlg}->build('Choose your continent', \@dlglist, 1, 1);
-  my $cont = $this->{dlg}->display();
+  my $relative = '';
+  while (1) {
+    my @dlglist = map { basename($_) } glob($this->{mapdir}.$relative."/[A-Z]*");
 
-  $cont = 'US' if ($cont eq 'US time zones');
-  $cont = 'Canada' if ($cont eq 'Canada time zones');
-  $cont = 'Atlantic' if ($cont eq 'Atlantic Ocean');
-  $cont = 'Indian' if ($cont eq 'Indian Ocean');
-  $cont = 'Pacific' if ($cont eq 'Pacific Ocean');
-  $cont = 'SystemV' if ($cont eq 'Use System V style time zones');
-  $cont = 'Etc' if ($cont eq 'None of the above');
+    $this->{dlg}->build('Choose your '.($relative?'closest city/country':'continent/region'), \@dlglist, 1, 1);
+    $relative .= $this->{dlg}->display();
+    if ( !-e $this->{mapdir} ) {
+      die("Invalid Timezone selection: $relative\n");
+    } elsif ( -f $this->{mapdir}.$relative ) {
+      last;
+    } else {
+      $relative .= '/';
+    }
+  }
 
-  my $zone = $this->dolist($this->{mapdir}."/$cont", $cont);
-
-  my $onlyzone = $zone;
-  my $dir = $this->{mapdir};
-  $onlyzone =~ s/$dir//;
-  $onlyzone =~ s/^\///;
-
-  my $cmd = "echo '$onlyzone' > /etc/timezone";
+  my $cmd = "echo '$relative' > /etc/timezone";
   `$cmd`;
   `rm /etc/localtime 2>&1 > /dev/null`;
-  $cmd = "ln -s ".$zone."  /etc/localtime";
+  $cmd = "ln -s $this->{mapdir}$relative  /etc/localtime";
   `$cmd`;
   return;
 }

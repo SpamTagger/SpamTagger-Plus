@@ -37,8 +37,9 @@ while (! $quit) {
   printf "\nEnter your choice: ";
 
   ReadMode 'cbreak';
-  my $key = ReadKey(0);
+  my $key = <STDIN>;
   ReadMode 'normal';
+  chomp($key);
 
   if ($key =~ /q/) {
     $quit=1;
@@ -80,9 +81,9 @@ exit 0;
 sub change_host {
   system("clear");
   printf "Enter this hostname (fully qualified name or ip): ";
-  my $hostname = ReadLine(0);
-  $hostname =~ s/^\s+//;
-  $hostname =~ s/\s+$//;
+  my $hostname = <STDIN>;
+  # TODO: Better validation of hostname
+  ($hostname) = $hostname =~ m/\s*(\S+)\s*$/;
   my $sth =  $master_dbh->prepare("UPDATE slave SET hostname='$hostname' WHERE id=$HOSTID");
   $sth->execute() or die ("error in UPDATE");
   $sth->finish();
@@ -113,9 +114,8 @@ sub view_slaves {
 sub delete_slave {
   system("clear");
   printf "Please enter slave id to delete: ";
-  my $d_id = ReadLine(0);
-  $d_id =~ s/^\s+//;
-  $d_id =~ s/\s+$//;
+  my $d_id = <STDIN>;
+  ($d_id) = $d_id =~ m/\s*([1-9]\d*)\s*$/;
 
   my $sth =  $master_dbh->prepare("DELETE FROM slave WHERE id='$d_id'");
   if (! $sth->execute()) {
@@ -126,34 +126,28 @@ sub delete_slave {
   }
   printf "\n******\ntype any key to return to main menu";
   ReadMode 'cbreak';
-  my $key = ReadKey(0);
+  my $key = <stdin>;
   ReadMode 'normal';
+  chomp($key);
   return;
 }
 
 sub add_slave {
   system("clear");
   printf "Enter slave ID (unique!): ";
-  my $id = ReadLine(0);
-  $id =~ s/^\s+//;
-  $id =~ s/\s+$//;
+  my $id = <STDIN>;
+  ($id) = $id =~ m/\s*([1-9]\d*)\s*$/;
   printf "Enter slave hostname: ";
-  my $hostname = ReadLine(0);
-  $hostname =~ s/^\s+//;
-  $hostname =~ s/\s+$//;
-  #printf "Enter slave sql port: ";
-  #my $port = ReadLine(0);
-  #$port =~ s/^\s+//;
-  #$port =~ s/\s+$//;
+  my $hostname = <STDIN>;
+  ($hostname) = $hostname =~ m/\s*(\S+)\s*$/;
   printf "Enter slave password: ";
-  my $password = ReadLine(0);
-  $password =~ s/^\s+//;
-  $password =~ s/\s+$//;
-  #printf "Enter slave host key: ";
-  #my $key = ReadLine(0);
+  my $password = <STDIN>;
+  ($password) = $password =~ m/\s*(\S.*\S?)\s*$/;
   my $port = 3307;
+  # TODO: Verify that we're actually fetching the key...
   my $key = "";
 
+  # TODO: Better verification of hostname back when it is asked instead of here
   if ( $hostname =~ /^[A-Z,a-z,0-9,\.,\_,\-]{1,200}$/) {
     my $sth =  $master_dbh->prepare("INSERT INTO slave (id, hostname, port, password, ssh_pub_key) VALUES('$id', '$hostname', '$port', '$password', '$key')");
     if (!$sth->execute()) {
@@ -167,7 +161,7 @@ sub add_slave {
   }
   printf "\n******\ntype any key to return to main menu";
   ReadMode 'cbreak';
-  $key = ReadKey(0);
+  $key = <STDIN>;
   ReadMode 'normal';
   return;
 }
@@ -188,13 +182,10 @@ sub check_host {
 sub set_as_slave {
   system("clear");
   printf "Enter master hostname: ";
-  my $master = ReadLine(0);
-  $master =~ s/^\s+//;
-  $master =~ s/\s+$//;
+  my $master = <STDIN>;
+  ($master) = $master =~ m/\s*(\S+)\s*$/;
   printf "Enter master password: ";
-  my $password = ReadLine(0);
-  $password =~ s/^\s+//;
-  $password =~ s/\s+$//;
+  chomp($password);
 
   print "Syncing to master host (this may take a few minutes)... ";
   my $logfile = '/tmp/syncerror.log';
@@ -211,7 +202,7 @@ sub set_as_slave {
           ReadKey(0);
           return;
         }
-        if (m/Can't connect to MySQL server/) {
+        if (m/Can't connect to MariaDB server/) {
           print "Master server is not responsive. Make sure you ran this script on the master host first to advise it of this new slave.\n";
           print "  ** ERROR ** Also make sure there is not firewall blocking port TCP 3306 between this host and the master.\n";
           print "Press any key to continue...\n";
@@ -228,6 +219,7 @@ sub set_as_slave {
   }
   print "done.\n";
 
+  # TODO: We should (and may) have a library to update these values rather than creating a shell
   `perl -pi -e 's/ISMASTER = Y/ISMASTER = N/' /etc/spamtagger.conf`;
   `perl -pi -e 's/(.*collect_rrd.*)/#\$1/' /var/spool/cron/crontabs/root`;
   `crontab /var/spool/cron/crontabs/root 2>&1`;

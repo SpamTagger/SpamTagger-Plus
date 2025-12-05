@@ -32,11 +32,12 @@ use lib '/usr/spamtagger/lib/';
 use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
 use ReadConfig();
+use STUtils qw( valid_rfc822_email );
 
 my $conf = {};
 $conf = ReadConfig::get_instance() if (-e '/etc/spamtagger.conf');
 
-sub new {
+sub new($class) {
   my $this = {
     dfact => DialogFactory->new('InLine'),
     logfile => '/tmp/spamtagger_install.log',
@@ -54,9 +55,9 @@ sub new {
     },
     install_variables => {
       'WEBADMINPWD' => undef,
-      'ORGANIZATION' => 'Anonymous',
+      'ORGANIZATION' => undef,
       'STHOSTNAME' => 'spamtagger',
-      'CLIENTTECHMAIL' => 'root@localhost',
+      'CLIENTTECHMAIL' => undef,
     },
     default_configs => {
       'HOSTID' => 1,
@@ -91,8 +92,7 @@ sub new {
   $this->{config_variables}->{HELONAME} = $hostname unless (defined($this->{'config_variables'}->{'HELONAME'} && $this->{'config_variables'}->{'HELONAME'} ne ''));
   $this->{install_variables}->{STHOSTNAME} = $hostname unless (defined($this->{'install_variables'}->{'STHOSTNAME'} && $this->{'install_variables'}->{'STHOSTNAME'} ne ''));
 
-  bless $this, 'Module::STInstaller';
-  return $this;
+  return bless $this, $class;
 }
 
 sub run($this) {
@@ -121,7 +121,12 @@ sub do_menu($this, $basemenu, $currentstep, $error) {
   return 0 if $res eq 'Exit';
 
   if ($res eq 'Host ID') {
-    $this->{'config_variables'}->{'HOSTID'} = $this->host_id();
+    my $suggest = 1;
+    do {
+      print("Host ID must be a non-zero integer. Try again.\n") if ($suggest != 1);
+      $suggest = $this->host_id()
+    } while ($suggest !~ /[1-9]\d*/);
+    $this->{'config_variables'}->{'HOSTID'} = $suggest;
     $$currentstep = 2;
     return 1;
   }
@@ -140,8 +145,8 @@ sub do_menu($this, $basemenu, $currentstep, $error) {
   }
 
   if ($res eq 'Admin details') {
-  $this->{'install_variables'}->{'ORGANIZATION'} = $this->organization();
-  $this->{'install_variables'}->{'CLIENTTECHMAIL'} = $this->support_email();
+    $this->{'install_variables'}->{'ORGANIZATION'} = $this->organization();
+    $this->{'install_variables'}->{'CLIENTTECHMAIL'} = $this->support_email();
     $$currentstep = 5;
     return 1;
   }
@@ -158,7 +163,7 @@ sub do_menu($this, $basemenu, $currentstep, $error) {
         $$currentstep = $ret;
       } 
     }
-    return 0;
+    return $ret;
   }
 
   die "Invalid selection: $res\n";
@@ -239,16 +244,26 @@ sub organization($this) {
   my $dlg = $this->{'dfact'}->simple();
   my $suggest = $this->{'install_variables'}->{'ORGANIZATION'} || 'Anonymous';
   $dlg->build('Enter your organization name', $suggest);
-  $this->{'install_variables'}->{'ORGANIZATION'} = $dlg->display();
-  return;
+  return $dlg->display();
 }
 
 sub support_email($this) {
   my $dlg = $this->{'dfact'}->simple();
-  my $suggest = $this->{'install_variables'}->{'CLIENTTECHMAIL'} || 'root@localhost';
-  $dlg->build('Support email address for your users', $suggest);
-  $this->{'install_variables'}->{'CLIENTTECHMAIL'} = $dlg->display();
-  return;
+  my $suggest;
+  if (defined($this->{'install_variables'}->{'CLIENTTECHMAIL'})) {
+    $suggest = $this->{'install_variables'}->{'CLIENTTECHMAIL'};
+  } elsif (valid_rfc822_email('a@'.$this->{'install_variables'}->{'ORGANIZATION'})) {
+    $suggest = lc('support@'.$this->{'install_variables'}->{'ORGANIZATION'});
+  } else {
+    $suggest = 'root@localhost';
+  }
+  my $answer;
+  do {
+    print("$answer is not a valid email address. Try again.\n") if ($answer);
+    $dlg->build('Support email address for your users', $suggest);
+    $answer = $dlg->display();
+  } until (valid_rfc822_email($answer));
+  return lc($answer);
 }
 
 sub check_variables($this) {
@@ -280,7 +295,7 @@ sub apply_configuration($this) {
   return $check if ($check);
 
   my $yndlg = $this->{'dfact'}->yes_no();
-  $yndlg->build('WARNING: this operation will overwrite any existing SpamTagger Plus database, if one exists. Do you want to proceed?', 'n');
+  $yndlg->build('WARNING: this operation will overwrite any existing SpamTagger Plus database, if one exists. Do you want to proceed?', 'no');
 
   return 254 unless ($yndlg->display());
   return 255 unless ($this->write_config());

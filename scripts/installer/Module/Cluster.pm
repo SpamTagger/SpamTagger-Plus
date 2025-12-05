@@ -34,21 +34,19 @@ use Exporter();
 use DialogFactory();
 use Term::ReadKey qw( ReadKey ReadMode );
 
-sub new {
-  my $this = {};
-  bless $this, 'Module::Cluster';
-  return $this;
+sub new($class) {
+  return bless {}, $class;
 }
 
 sub run($this) {
-  my ($SRCDIR, $MYMAILCLENARPWD);
+  my ($SRCDIR, $MYSPAMTAGGERPWD);
   my $conf = ReadConfig::get_instance();
   $SRCDIR = $conf->get_option('SRCDIR');
-  $MYMAILCLENARPWD = $conf->get_option('MYMAILCLENARPWD') || undef;
-  unless (defined($MYMAILCLENARPWD)) {
-    print "Database password is not configured in `/etc/mailcleaner.conf`. Please run previous step. [Enter]\n";
+  $MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD') || undef;
+  unless (defined($MYSPAMTAGGERPWD)) {
+    print "Database password is not configured in `/etc/spamtagger.conf`. Please run previous step. [Enter]\n";
     ReadMode 'normal';
-    my $null = ReadLine(0);
+    my $null = <STDIN>;
     return 0;
   }
   `$SRCDIR/scripts/configuration/slaves.pl --setmaster`;

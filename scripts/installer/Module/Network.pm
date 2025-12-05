@@ -33,15 +33,14 @@ use DialogFactory();
 use Module::Interface();
 use Module::Resolver();
 
-sub new {
+sub new ($class) {
   my $this = {
     networkfile => "/etc/network/interfaces",
     resolvfile => "/etc/resolv.conf",
     dhcp => 0
   };
 
-  bless $this, 'Module::Network';
-  return $this;
+  return bless $this, $class;
 }
 
 sub run($this) {
@@ -125,6 +124,7 @@ sub doint($this, $listh, $configured) {
   my @am = ( 'auto (DHCP)', 'manual' );
   $dlg->build("Configuration mode [auto]:", \@am, 1, 1);
   my $auto = $dlg->display();
+  printf("Interface: $if\n");
   my $int = Module::Interface->new($if);
   my $config;
   if ($auto eq $am[0]) {
