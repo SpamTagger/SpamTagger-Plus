@@ -222,12 +222,12 @@ sub get_services ($init = $init_dir) {
       #'module'  => 'MailScanner',
       #'critical'  => 1,
     #},
-    #'mariadb_master'  => {
+    #'mariadb_source'  => {
       #'name'    => 'Master database',
       #'module'  => 'MySQL',
       #'critical'  => 1,
     #},
-    #'mariadb_slave'  => {
+    #'mariadb_replica'  => {
       #'name'    => 'Slave database',
       #'module'  => 'MySQL',
       #'critical'  => 1,

@@ -43,18 +43,18 @@ close $AFILE;
 print "OK ".$ret." - address list saved in $afile\n";
 
 if ($conf->get_option('ISMASTER') =~ m/^(Y|y|yes|YES)$/) {
-  my $slave_db = DB->db_connect('slave', 'st_config');
-  my @masters = $slave_db->getListOfHash("SELECT hostname from master");
-  my @slaves = $slave_db->getListOfHash("SELECT hostname from slave");
-  $slave_db->db_disconnect();
-  foreach my $s (@slaves) {
+  my $replica_db = DB->db_connect('replica', 'st_config');
+  my @sources = $replica_db->getListOfHash("SELECT hostname from source");
+  my @replicas = $replica_db->getListOfHash("SELECT hostname from replica");
+  $replica_db->db_disconnect();
+  foreach my $s (@replicas) {
     my $do = 1;
-    foreach my $m (@masters) {
+    foreach my $m (@sources) {
       if ($m->{'hostname'} eq $s->{'hostname'}) {
         $do = 0;
       }
       if ($do) {
-        send_to_slave($s->{'hostname'});
+        send_to_replica($s->{'hostname'});
       }
     }
   }
@@ -62,17 +62,17 @@ if ($conf->get_option('ISMASTER') =~ m/^(Y|y|yes|YES)$/) {
 
 exit 0;
 
-sub send_to_slave ($slave) {
-  my $smtp = Net::SMTP->new($slave);
+sub send_to_replica ($replica) {
+  my $smtp = Net::SMTP->new($replica);
   if (!$smtp) {
-    print STDERR "Cannot connect to $slave for propagating address list\n";
+    print STDERR "Cannot connect to $replica for propagating address list\n";
     return 0;
   }
   $smtp->mail($sender);
   $smtp->to($recipient);
   my $err = $smtp->code();
   if ($err > 299) {
-    print STDERR "Cannot send propagation message to $slave, error code: $err\n";
+    print STDERR "Cannot send propagation message to $replica, error code: $err\n";
     return 0;
   }
   $smtp->data();
@@ -80,9 +80,9 @@ sub send_to_slave ($slave) {
   $smtp->dataend();
   $err = $smtp->code();
   if ($err < 300) {
-    print "Porpagation done to $slave\n";
+    print "Porpagation done to $replica\n";
     return 1;
   }
-  print STDERR "Propagation failed to $slave\n";
+  print STDERR "Propagation failed to $replica\n";
   return 0;
 }

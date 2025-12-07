@@ -257,10 +257,10 @@ echo "DELETE FROM update_patch WHERE id='${patchID}';" | ${SRCDIR}/bin/st_mariad
 echo "INSERT INTO update_patch VALUES ('${patchID}', '${patchDate}', '${patchTime}', 'OK', '${reason}');" | ${SRCDIR}/bin/st_mariadb -s st_config
 
 echo "Reset MySQL Binary logs"
-echo 'STOP SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_slave/mariadbd.sock -uroot -p"$dbPassword"
-echo 'RESET SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_slave/mariadbd.sock -uroot -p"$dbPassword"
-echo 'RESET MASTER' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_master/mariadbd.sock -uroot -p"$dbPassword"
-echo 'START SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_slave/mariadbd.sock -uroot -p"$dbPassword"
+echo 'STOP SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
+echo 'RESET SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
+echo 'RESET MASTER' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_source/mariadbd.sock -uroot -p"$dbPassword"
+echo 'START SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
 
 ${SRCDIR}/etc/init.d/spamtagger stop
 
@@ -281,8 +281,8 @@ echo Delete Others data files not useful anymore
 cdel -rf "${STARTERSPATH}/others"
 
 echo Delete ST logs
-cdel -rf "${VARDIR}/log/"{apache,clamav,exim_stage1,exim_stage2,exim_stage4,spamtagger,mailscanner,mariadb_slave}"/*"
-cdel -rf "${VARDIR}/log/mariadb_master/*.log*"
+cdel -rf "${VARDIR}/log/"{apache,clamav,exim_stage1,exim_stage2,exim_stage4,spamtagger,mailscanner,mariadb_replica}"/*"
+cdel -rf "${VARDIR}/log/mariadb_source/*.log*"
 cdel -rf "/root/Updater4ST/*.log"
 
 echo Delete old system logs and Empty recent logs files

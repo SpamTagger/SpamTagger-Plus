@@ -23,10 +23,10 @@ class AdminList extends ListManager
  */
 public function Load() {
   require_once('helpers/DM_SlaveConfig.php');
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
 
   $query = "SELECT username FROM administrator";
-  $row = $db_slaveconf->getList($query);
+  $row = $db_replicaconf->getList($query);
   foreach( $row as $admin) {
     $this->setElement($admin, $admin);
   }

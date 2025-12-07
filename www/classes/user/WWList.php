@@ -36,7 +36,7 @@ public function reload() {
   }
 
   require_once('helpers/DM_MasterConfig.php');
-  $db_masterconf = DM_MasterConfig :: getInstance();
+  $db_sourceconf = DM_MasterConfig :: getInstance();
 
   if ($this->address_ == '0') {
     $this->address_ = '';
@@ -57,7 +57,7 @@ public function reload() {
 
   $query = $query." AND recipient='".$this->address_."' ORDER BY sender";
 
-  $row = $db_masterconf->getList($query);
+  $row = $db_sourceconf->getList($query);
   $this->clearList();
   foreach( $row as $id) {
     $entry = new WWEntry();

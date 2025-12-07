@@ -70,7 +70,7 @@ sub get_system_config {
 
   my %default = (days_to_keep_spams => 30, sysadmin => 'support@localhost', summary_subject => 'SpamTagger Plus analysis request', summary_from => 'support@localhost', servername => 'localhost', analyse_to => 'analyse@localhost');
 
-  my $dbh = DB->db_connect('slave', 'st_config');
+  my $dbh = DB->db_connect('replica', 'st_config');
 
   my $sth =  $dbh->prepare(
     "SELECT s.days_to_keep_spams, s.sysadmin, s.summary_subject, s.summary_from, h.servername, s.analyse_to, s.falsepos_to FROM system_conf s, httpd_config h"
@@ -94,7 +94,7 @@ sub get_system_config {
 sub get_domain_config ($d) {
   my %default = (language => 'en', support_email => '');
 
-  my $dbh = DB->db_connect('slave', 'st_config');
+  my $dbh = DB->db_connect('replica', 'st_config');
 
   my $sth =  $dbh->prepare("SELECT dp.language, dp.support_email, dp.falsepos_to, dp.systemsender FROM domain_pref dp, domain d WHERE d.prefs=dp.id AND (d.name='$d' or d.name='*') order by name DESC LIMIT 1")
                                    or die "cannot prepare query | get_domain_config() |";

@@ -36,11 +36,11 @@ class FileNameList {
 public function load() {
 
   $query = "SELECT id FROM filename";
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
 
   unset($this->filenames_);
   $this->filenames_ = array();
-  $list = $db_slaveconf->getList($query);
+  $list = $db_replicaconf->getList($query);
   foreach ($list as $id) {
     if ($id != 0) {
       $this->filenames_[$id] = new FileName();

@@ -25,10 +25,10 @@ class ReasonSet
     private $total_score_ = 0;
 
 /**
- * fetch the reason set from the slave host
+ * fetch the reason set from the replica host
  * @param   $msg_id      string  message id
  * @param   $destination string  destination address of the message
- * @param   $host        string  slave host where the message is stored
+ * @param   $host        string  replica host where the message is stored
  * @return               boolean true on success, false on failure
  */
 public function getReasons($msg_id, $destination, $host) {

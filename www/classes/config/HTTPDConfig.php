@@ -17,7 +17,7 @@ class HTTPDConfig extends PrefHandler {
    */
   private $pref_ = array(
      'use_ssl' => 'true',
-     'serveradmin' => 'postmaster@localhost',
+     'serveradmin' => 'postsource@localhost',
      'servername' => 'localhost',
      'timeout' => 300,
      'keepalivetimeout' => 100,

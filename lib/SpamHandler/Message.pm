@@ -955,7 +955,7 @@ sub quarantine ($this) {
 # TODO: SpamHandler::Message::do_log only used once in Batch.pm (as $msg->do_log).
 # Since the actual logging here is done using the logger for the daemon, we should
 # just be able to move the contents of this function to that place in Batch.pm
-sub do_log ($this, $dbname, $inmasterh) {
+sub do_log ($this, $dbname, $insourceh) {
   return 1 if ( $this->{quarantined} < 1 );
 
   $this->start_timer('Message logging');
@@ -986,7 +986,7 @@ sub do_log ($this, $dbname, $inmasterh) {
     $this->{env_sender}, $this->{exim_id},
     $this->{sc_spamc},   $this->{sc_prerbls},
     $this->{prefilters}, $this->{headers}{subject},
-    $this->{sc_global},  $$inmasterh, $is_newsletter
+    $this->{sc_global},  $$insourceh, $is_newsletter
   );
   if ( !$res ) {
     $this->{daemon}->do_log(
@@ -1002,7 +1002,7 @@ sub do_log ($this, $dbname, $inmasterh) {
       $this->{env_sender}, $this->{exim_id},
       $this->{sc_spamc},   $this->{sc_prerbls},
       $this->{prefilters}, $this->{headers}{subject},
-      $this->{sc_global},  $$inmasterh, $is_newsletter
+      $this->{sc_global},  $$insourceh, $is_newsletter
     );
 
     if ( !$res ) {
@@ -1021,8 +1021,8 @@ sub do_log ($this, $dbname, $inmasterh) {
   $this->{daemon}->do_log(
     " Message " . $this->{exim_id} . " logged in database \"$dbname\"",
     'spamhandler', 'debug' );
-  if ( $dbname eq 'realmaster' ) {
-    $$inmasterh = 1;
+  if ( $dbname eq 'realsource' ) {
+    $$insourceh = 1;
   }
   $this->start_timer('Message logging');
   return $loggedonce;

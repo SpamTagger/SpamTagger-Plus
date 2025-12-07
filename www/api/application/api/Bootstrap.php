@@ -47,7 +47,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
 		$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
-                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mariadb_master/mariadbd.sock",
+                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mariadb_source/mariadbd.sock",
                               'username'    => 'spamtagger',
                               'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_config'
@@ -60,7 +60,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	{
                 $config = SpamTagger_Config::getInstance();
                 if ($config->getOption('ISMASTER') != 'Y' ) {
-                   Zend_Registry::get('response')->setResponse(404, 'API is only available on master host');
+                   Zend_Registry::get('response')->setResponse(404, 'API is only available on source host');
                 }
 
 		function netMatch ($CIDR,$IP) {

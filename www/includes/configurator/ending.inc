@@ -33,7 +33,7 @@ if ('ending.inc' == basename($_SERVER['SCRIPT_FILENAME']))
 	<li>Disable Configuration interface once you are sure you can access your SpamTagger at <strong> Configuration > Base system > Network settings</strong> and uncheck <strong>Enable configurator interface (192.168.1.42)</strong></li>
 	<li>Read the documentation</li>
 	<li>Consult the KnowledgeBase</li>
-	<li>[Optionnal] Setup some SpamTagger slaves to setup a Cluster</li>
+	<li>[Optionnal] Setup some SpamTagger replicas to setup a Cluster</li>
 	<li>[Optionnal] Open a ticket on Commercial Support page or ask help of community on SpamTagger Community Forum</li>
 	<li>Drink a beer and watch spam to be catch in Tracing !</li>
 	</ol>

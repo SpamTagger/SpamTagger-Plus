@@ -7,10 +7,10 @@
  */
 ?>
 <div class="hoststatusbloc">
-<?php foreach ($this->slaves as $slave) {?>
-<div class="hostbloc" id='hostbloc_<?echo $slave->getId();?>'>
+<?php foreach ($this->replicas as $replica) {?>
+<div class="hostbloc" id='hostbloc_<?echo $replica->getId();?>'>
  <?php  echo $this->partial('ajax/monitorstatus/hoststatus.phtml', array(
-                         'slave' => $slave,
+                         'replica' => $replica,
                          'images_path' => $this->images_path,
                          't' => $this->t,
                          'columns' => $this->columns,
@@ -19,6 +19,6 @@
                          'salt' => $this->salt
 )); ?>
 </div>
-<div class="hidden" id="hostbloc_<?echo $slave->getId();?>_hidden"></div>
+<div class="hidden" id="hostbloc_<?echo $replica->getId();?>_hidden"></div>
 <?php }?>
 </div>

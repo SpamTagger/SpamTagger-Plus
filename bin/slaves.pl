@@ -11,18 +11,18 @@ use ReadConfig;
 
 our $config = ReadConfig::get_instance();
 
-my $slave_dbh = DBI->connect(
-  "DBI:mariadb:database=st_config;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock",
+my $replica_dbh = DBI->connect(
+  "DBI:mariadb:database=st_config;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_replica/mariadbd.sock",
   "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
 );
 
-unless ($slave_dbh) {
-  printf ("ERROR: no slave database found on this system.\n");
+unless ($replica_dbh) {
+  printf ("ERROR: no replica database found on this system.\n");
   exit 1;
 }
 
-sub view_slaves {
-  my $sth =  $slave_dbh->prepare("SELECT id, hostname, port, ssh_pub_key  FROM slave") or die ("error in SELECT");
+sub view_replicas {
+  my $sth =  $replica_dbh->prepare("SELECT id, hostname, port, ssh_pub_key  FROM replica") or die ("error in SELECT");
   $sth->execute() or die ("error in SELECT");
   my $el=$sth->rows;
   while (my $ref=$sth->fetchrow_hashref()) {
@@ -32,4 +32,4 @@ sub view_slaves {
   return;
 }
 
-view_slaves();
+view_replicas();

@@ -24,8 +24,8 @@ global $admin_;
 global $sysconf_;
 global $lang_;
 
-// not allowed if we are not a master
-if ($sysconf_->ismaster_ < 1) { exit; }
+// not allowed if we are not a source
+if ($sysconf_->issource_ < 1) { exit; }
 // check authorizations
 $admin_->checkPermissions(array('can_view_stats'));
 
@@ -35,30 +35,30 @@ $gload = 0;
 $gspools = array('in' => 0, 'fi' => 0, 'out' => 0);
 $gcounts = array('msgs' => 0, 'spams' => 0, 'viruses' => 0);
 
-// get and check each slaves
-$slaves = $sysconf_->getSlaves();
-foreach ($slaves as $slave) {
+// get and check each replicas
+$replicas = $sysconf_->getSlaves();
+foreach ($replicas as $replica) {
   // first decrease soap timeout
-  $slave->setSoapTimeout(5);
-  if (!$slave->isAvailable()) {
+  $replica->setSoapTimeout(5);
+  if (!$replica->isAvailable()) {
     $gstatus = 0;
     continue;
   }
 
   // get processes status
-  $status = $slave->getProcessesStatus();
+  $status = $replica->getProcessesStatus();
   if (!SoapProcesses::isOK($status)) {
     $gstatus = 0;
   }
 
   // get load values
-  $load = $slave->getLoads();
+  $load = $replica->getLoads();
   if ($load->avg15 > $gload) {
     $gload = $load->avg15;
   }
 
   // get spools
-  $spools = $slave->getSpoolsCount();
+  $spools = $replica->getSpoolsCount();
   if ($spools->incoming > $gspools['in']) {
     $gspools['in'] = $spools->incoming_;
   }
@@ -70,7 +70,7 @@ foreach ($slaves as $slave) {
   }
 
   // get counts
-  $counts = $slave->getTodaysCounts();
+  $counts = $replica->getTodaysCounts();
   $gcounts['msgs'] += $counts->msg;
   $gcounts['spams'] += $counts->spam;
   $gcounts['viruses'] += $counts->virus;

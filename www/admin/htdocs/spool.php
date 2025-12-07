@@ -9,7 +9,7 @@
  */
 
 /**
- * requires systemconfig, admin and soap/slave stuff
+ * requires systemconfig, admin and soap/replica stuff
  */
 require_once('variables.php');
 require_once('system/SystemConfig.php');

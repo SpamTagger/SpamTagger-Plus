@@ -83,8 +83,8 @@ class ServicesController extends Zend_Controller_Action
                  }
 
                  $message = 'OK data saved';
-            	 $slaves = new Default_Model_Slave();
-            	 $slaves->sendSoapToAll('Service_setServiceToRestart', array('apache', 'firewall'));
+            	 $replicas = new Default_Model_Slave();
+            	 $replicas->sendSoapToAll('Service_setServiceToRestart', array('apache', 'firewall'));
                } catch (Exception $e) {
                	  $view->ssl_display_class = '';
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
@@ -129,8 +129,8 @@ class ServicesController extends Zend_Controller_Action
                try {
                  $form->setParams($request, $snmpdconfig, $fwrule);
                  $message = 'OK data saved';
-            	 $slaves = new Default_Model_Slave();
-            	 $slaves->sendSoapToAll('Service_setServiceToRestart', array('snmpd', 'firewall'));
+            	 $replicas = new Default_Model_Slave();
+            	 $replicas->sendSoapToAll('Service_setServiceToRestart', array('snmpd', 'firewall'));
                } catch (Exception $e) {
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
                }
@@ -173,8 +173,8 @@ class ServicesController extends Zend_Controller_Action
                try {
                  $form->setParams($request, $fwrule);
                  $message = 'OK data saved';
-            	 $slaves = new Default_Model_Slave();
-            	 $slaves->sendSoapToAll('Service_setServiceToRestart', array('firewall'));
+            	 $replicas = new Default_Model_Slave();
+            	 $replicas->sendSoapToAll('Service_setServiceToRestart', array('firewall'));
                } catch (Exception $e) {
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
                }

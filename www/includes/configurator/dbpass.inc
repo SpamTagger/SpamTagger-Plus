@@ -55,59 +55,59 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
   	      if (!empty($_POST['oldpassdb']) && !empty($_POST['newpassdb']) && !empty($_POST['confnewpassdb'])) {
 	        if ($_POST['newpassdb'] == $_POST['confnewpassdb']) {
 		require_once('db_functions.php');
-		$master = getDb('', 'root', $_POST['oldpassdb']);
-		$slave = getDb('', 'root', $_POST['oldpassdb'], false);
-                if($master) {
+		$source = getDb('', 'root', $_POST['oldpassdb']);
+		$replica = getDb('', 'root', $_POST['oldpassdb'], false);
+                if($source) {
 		      $users = array("'spamtagger'@'%'", "'root'@'127.0.0.1'", "'root'@'::1'", "'root'@'spamtagger'", "'root'@'localhost'");
 
 		      $sql = "SET PASSWORD FOR ".$users[0]." = PASSWORD(:newpassdb)";
-		      $sth = $master->prepare($sql);
+		      $sth = $source->prepare($sql);
 		      $retdb3 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 		      $sql = "SET PASSWORD FOR ".$users[0]." = PASSWORD(:newpassdb)";
-                      $sth = $slave->prepare($sql);
+                      $sth = $replica->prepare($sql);
                       $retdb4 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 		      exec("sudo /usr/spamtagger/scripts/configuration/set_pass_in_db.sh ".$_POST['newpassdb'], $outputdbconf, $retdbconf);
 		      $sql = "SET PASSWORD FOR ".$users[1]." = PASSWORD(:newpassdb)";
-                      $sth = $master->prepare($sql);
+                      $sth = $source->prepare($sql);
                       $retdb5 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 		      $sql = "SET PASSWORD FOR ".$users[2]." = PASSWORD(:newpassdb)";
-                      $sth = $master->prepare($sql);
+                      $sth = $source->prepare($sql);
                       $retdb6 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 		      $sql = "SET PASSWORD FOR ".$users[3]." = PASSWORD(:newpassdb)";
-                      $sth = $master->prepare($sql);
+                      $sth = $source->prepare($sql);
                       $retdb7 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 		      $sql = "SET PASSWORD FOR ".$users[1]." = PASSWORD(:newpassdb)";
-                      $sth = $slave->prepare($sql);
+                      $sth = $replica->prepare($sql);
                       $retdb8 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 		      $sql = "SET PASSWORD FOR ".$users[2]." = PASSWORD(:newpassdb)";
-                      $sth = $slave->prepare($sql);
+                      $sth = $replica->prepare($sql);
                       $retdb9 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
                       $sql = "SET PASSWORD FOR ".$users[3]." = PASSWORD(:newpassdb)";
-                      $sth = $slave->prepare($sql);
+                      $sth = $replica->prepare($sql);
                       $retdb10 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 		      $actual_hostid = shell_exec("grep HOSTID /etc/spamtagger.conf |cut -d' ' -f3");
-                      $sth = $master->prepare("UPDATE st_config.master SET password=:newpassdb");
-                      $retdbmaster = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
-                      $sth = $master->prepare("UPDATE st_config.slave SET password=:newpassdb where id=:hostid");
-                      $retdbslave = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;
+                      $sth = $source->prepare("UPDATE st_config.source SET password=:newpassdb");
+                      $retdbsource = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
+                      $sth = $source->prepare("UPDATE st_config.replica SET password=:newpassdb where id=:hostid");
+                      $retdbreplica = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;
 		      $sql = "SET PASSWORD FOR ".$users[4]." = PASSWORD(:newpassdb)";
-                      $sth = $master->prepare($sql);
+                      $sth = $source->prepare($sql);
 		      $retdb1 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
                       $sql = "SET PASSWORD FOR ".$users[4]." = PASSWORD(:newpassdb)";
-                      $sth = $slave->prepare($sql);
+                      $sth = $replica->prepare($sql);
 		      $retdb2 = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
 
-		      $sth = $slave->prepare("UPDATE st_config.master SET password=:newpassdb");
-                      $retdbslavemaster = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
-                      $sth = $slave->prepare("UPDATE st_config.slave SET password=:newpassdb where id=:hostid");
-                      $retdbslaveslave = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;
+		      $sth = $replica->prepare("UPDATE st_config.source SET password=:newpassdb");
+                      $retdbreplicasource = $sth->execute(array(':newpassdb' => $_POST['newpassdb'])) == true ? 0 : 1;
+                      $sth = $replica->prepare("UPDATE st_config.replica SET password=:newpassdb where id=:hostid");
+                      $retdbreplicareplica = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;
 
-		      $sth = $slave->prepare("STOP SLAVE; CHANGE MASTER TO MASTER_PASSWORD=:masterpass; START SLAVE;");
-                      $retdbreplic = $sth->execute(array(':masterpass' => $_POST['newpassdb'])) == true ? 0 : 1;
+		      $sth = $replica->prepare("STOP SLAVE; CHANGE MASTER TO MASTER_PASSWORD=:sourcepass; START SLAVE;");
+                      $retdbreplic = $sth->execute(array(':sourcepass' => $_POST['newpassdb'])) == true ? 0 : 1;
 
                       touch('/var/spamtagger/run/configurator/dbpass');
                 } else {
-                      $retdb1 = $retdbconf = $retdbreplic = $retdbmaster = $retdbslave = 1;
+                      $retdb1 = $retdbconf = $retdbreplic = $retdbsource = $retdbreplica = 1;
 		      for($i = 1; $i <= 10; $i++)
 			  ${'retdb' . $i} = 1;
                 }
@@ -124,10 +124,10 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                 ($retdb10 == 0) ? $retdb10 = "<span class='text-success'>Slave instance Database root@spamtagger password changed</span>" : $retdb10 = "<span class='text-danger'>Failed to change Slave instance Database root@spamtagger password</span>";
                 ($retdbconf == 0) ? $retdbconf = "<span class='text-success'>Master and Slave instance Database passwords changed in configuration</span>" : $retdbconf = "<span class='text-danger'>Failed to change Master and Slave instance Database password in conf</span>";
                 ($retdbreplic == 0) ? $retdbreplic = "<span class='text-success'>Mysql Replication password changed</span>" : $retdbreplic = "<span class='text-danger'>Failed to change Mysql Replication password</span>";
-                ($retdbmaster == 0) ? $retdbmaster = "<span class='text-success'>Mysql password changed in table master on instance master</span>" : $retdbmaster = "<span class='text-danger'>Failed to change Mysql password in table master on instance master</span>";
-                ($retdbslavemaster == 0) ? $retdbslavemaster = "<span class='text-success'>Mysql password changed in table master on instance slave</span>" : $retdbslavemaster = "<span class='text-danger'>Failed to change Mysql password in table master on instance slave</span>";
-                ($retdbslave == 0) ? $retdbslave = "<span class='text-success'>Mysql password changed in table slave on instance master</span>" : $retdbslave = "<span class='text-danger'>Failed to change Mysql password in table slave on instance master</span>";
-                ($retdbslaveslave == 0) ? $retdbslaveslave = "<span class='text-success'>Mysql password changed in table slave on instance slave</span>" : $retdbslaveslave = "<span class='text-danger'>Failed to change Mysql password in table slave on instance slave</span>";
+                ($retdbsource == 0) ? $retdbsource = "<span class='text-success'>Mysql password changed in table source on instance source</span>" : $retdbsource = "<span class='text-danger'>Failed to change Mysql password in table source on instance source</span>";
+                ($retdbreplicasource == 0) ? $retdbreplicasource = "<span class='text-success'>Mysql password changed in table source on instance replica</span>" : $retdbreplicasource = "<span class='text-danger'>Failed to change Mysql password in table source on instance replica</span>";
+                ($retdbreplica == 0) ? $retdbreplica = "<span class='text-success'>Mysql password changed in table replica on instance source</span>" : $retdbreplica = "<span class='text-danger'>Failed to change Mysql password in table replica on instance source</span>";
+                ($retdbreplicareplica == 0) ? $retdbreplicareplica = "<span class='text-success'>Mysql password changed in table replica on instance replica</span>" : $retdbreplicareplica = "<span class='text-danger'>Failed to change Mysql password in table replica on instance replica</span>";
                 echo $retdb1;
                 echo "<br/>";
                 echo $retdb2;
@@ -152,13 +152,13 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                 echo "<br/>";
                 echo $retdbreplic;
                 echo "<br/>";
-                echo $retdbmaster;
+                echo $retdbsource;
                 echo "<br/>";
-                echo $retdbslave;
+                echo $retdbreplica;
 		echo "<br/>";
-                echo $retdbslavemaster;
+                echo $retdbreplicasource;
                 echo "<br/>";
-                echo $retdbslaveslave;
+                echo $retdbreplicareplica;
 		} else {
 	          echo "<span class='text-danger'>New Password and Re-type Password field have to be identical !</span>";
 	        }

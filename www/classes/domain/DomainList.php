@@ -23,12 +23,12 @@ class DomainList extends ListManager
  */
 public function Load() {
   require_once('helpers/DM_SlaveConfig.php');
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
 
   global $admin_;
 
   $query = "SELECT name FROM domain WHERE name != '__global__'";
-  $row = $db_slaveconf->getList($query);
+  $row = $db_replicaconf->getList($query);
   foreach( $row as $domain) {
     if ($admin_->canManageDomain($domain)) {
       $d = new Domain();

@@ -80,8 +80,8 @@ class AntispamController extends Zend_Controller_Action
             	  $antispam->save();
 
             	  $message = 'OK data saved';
-            	  $slaves = new Default_Model_Slave();
-            	  $slaves->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1','mailscanner'));
+            	  $replicas = new Default_Model_Slave();
+            	  $replicas->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1','mailscanner'));
             	} catch (Exception $e) {
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
             	  if (preg_match('/Duplicate entry/', $message )) {
@@ -126,8 +126,8 @@ class AntispamController extends Zend_Controller_Action
             	  $modules = $module->fetchAll();
             	  $view->modules = $modules;
             	  $message = 'OK data saved';
-            	  $slaves = new Default_Model_Slave();
-            	  $slaves->sendSoapToAll('Service_setServiceToRestart', array('mailscanner'));
+            	  $replicas = new Default_Model_Slave();
+            	  $replicas->sendSoapToAll('Service_setServiceToRestart', array('mailscanner'));
             	} catch (Exception $e) {
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
             	}

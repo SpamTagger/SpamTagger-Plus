@@ -175,9 +175,9 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 			$view->release_status = $t->_('Bad parameters');
 		}
 
-		$slave = new Default_Model_Slave();
-		$slave->find($s);
-		$res = $slave->sendSoapRequest('Content_release', array('id' => $id, 'soap_timeout' => 40));
+		$replica = new Default_Model_Slave();
+		$replica->find($s);
+		$res = $replica->sendSoapRequest('Content_release', array('id' => $id, 'soap_timeout' => 40));
 		if ($res['status'] == 1) {
             	        $view->release_status = $t->_('Message released');
 		} else {
@@ -214,9 +214,9 @@ class ManagecontentquarantineController extends Zend_Controller_Action
 			$view->release_status = $t->_('Bad parameters');
 		}
 
-		$slave = new Default_Model_Slave();
-		$slave->find($s);
-		$res = $slave->sendSoapRequest('Content_find', array('id' => $id));
+		$replica = new Default_Model_Slave();
+		$replica->find($s);
+		$res = $replica->sendSoapRequest('Content_find', array('id' => $id));
 		if (! isset($res['error'])) {
 			## fill fields
 			$msg = new Default_Model_QuarantinedContent();

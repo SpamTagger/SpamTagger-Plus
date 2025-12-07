@@ -18,7 +18,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#   This script will compare the actual slave or master database with
+#   This script will compare the actual replica or source database with
 #   the up-to-date database from SpamTagger Update Services
 #
 #   Usage:
@@ -34,7 +34,7 @@ use DB();
 
 my $VERBOSE = 0;
 ## default behaviour
-my $dbtype = 'master';
+my $dbtype = 'source';
 my $databases = 'st_config,st_spool,st_stats';
 my $updatemode = 0;
 my $checkmode = 0;
@@ -45,9 +45,9 @@ my $repfix = 0;
 ## parse arguments
 while (my $arg=shift) {
  if ($arg eq "-s") {
-   $dbtype='slave';
+   $dbtype='replica';
  } elsif ($arg eq '-m') {
-   $dbtype='master';
+   $dbtype='source';
  } elsif ($arg eq '--update') {
    $updatemode=1;
  } elsif ($arg eq '--mycheck') {
@@ -90,8 +90,8 @@ if ($repfix > 0) {
 ## process each database
 foreach my $database (split(',', $databases)) {
   output("Processing database: $database");
-  if ($database eq "st_stats" && $dbtype eq 'master') {
-    output(" avoiding st_stats on a master database");
+  if ($database eq "st_stats" && $dbtype eq 'source') {
+    output(" avoiding st_stats on a source database");
     next;
   }
 
@@ -116,7 +116,7 @@ foreach my $database (split(',', $databases)) {
   output("Disconnected from database");
 }
 
-if ($updatemode && $dbtype eq 'master') {
+if ($updatemode && $dbtype eq 'source') {
   foreach my $dbname ('dmarc_reporting') {
     my $db = DB->db_connect($dbtype, $dbname, 0);
     if ($db && !$db->get_type()) {
@@ -270,7 +270,7 @@ sub my_check_repair_database ($db_ref, $repair) {
 #######################
 ## add permission to database
 sub add_database ($dbtype, $dbname) {
-  $dbtype = 'master' if ($dbtype ne 'slave');
+  $dbtype = 'source' if ($dbtype ne 'replica');
 
   my $mariadbd = $conf->get_option('SRCDIR')."/etc/init.d/mariadb_".$dbtype;
   print "Restarting $dbtype database to change permissions...\n";
@@ -289,7 +289,7 @@ sub add_database ($dbtype, $dbname) {
   if (-f $descfile) {
     print "Creating schema...\n";
     my $mariadb = $conf->get_option('SRCDIR')."/bin/st_mariadb";
-    if ($dbtype eq 'slave') {
+    if ($dbtype eq 'replica') {
       $mariadb .= " -s $dbname";
     } else {
       $mariadb .= " -m $dbname";
@@ -305,9 +305,9 @@ sub add_database ($dbtype, $dbname) {
 ## check replication status and try to fix if wanted
 sub check_replication_status ($fix) {
   my $haserror = 0;
-  my $logfile = $conf->get_option('VARDIR')."/log/mariadb_slave/mariadb.log";
+  my $logfile = $conf->get_option('VARDIR')."/log/mariadb_replica/mariadb.log";
   if (! -f $logfile) {
-    print "WARNING: slave mariadb log file not found ! ($logfile)\n";
+    print "WARNING: replica mariadb log file not found ! ($logfile)\n";
     return 0;
   }
   my $outlog = `tail -4 $logfile`;
@@ -325,9 +325,9 @@ sub check_replication_status ($fix) {
     if ($fix) {
       print " ...trying to fix... ";
       my $query = "ALTER TABLE $3 DROP COLUMN $1;";
-      my $dbr = DB->db_connect('slave', $2);
+      my $dbr = DB->db_connect('replica', $2);
       if ( $dbr->execute($query)) {
-       my $cmd = $conf->get_option('SRCDIR')."/etc/init.d/mariadb_slave restart >/dev/null 2>&1";
+       my $cmd = $conf->get_option('SRCDIR')."/etc/init.d/mariadb_replica restart >/dev/null 2>&1";
        my $resexec = `$cmd`;
        print " should be fixed!\n";
       } else {
@@ -357,7 +357,7 @@ sub compare_update_database ($db_ref, $dbname, $update) {
       print "     MISSING table $table..";
       if ($update) {
         my $type = '-m';
-        if ($dbtype eq 'slave') {
+        if ($dbtype eq 'replica') {
           $type = '-s';
         }
         my $cmd = $conf->get_option('SRCDIR')."/bin/st_mariadb $type < ".$reftables{$table} ." 2>&1";

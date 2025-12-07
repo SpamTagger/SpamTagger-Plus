@@ -53,10 +53,10 @@ class SystemConfig extends PrefHandler {
      */
     var $VARDIR_ = '/var/spamtagger';
     /**
-     * Define if this host is a master or not
+     * Define if this host is a source or not
      * @var  number
      */
-    var $ismaster_ = 0;
+    var $issource_ = 0;
 
     /**
      * Instance of this singleton
@@ -114,10 +114,10 @@ class SystemConfig extends PrefHandler {
                   );
 
     /**
-     * array of slaves. Key are slave name or ip, value is the Slave_ object
+     * array of replicas. Key are replica name or ip, value is the Slave_ object
      * @var array
      */
-    var $slaves_ = array ();
+    var $replicas_ = array ();
     /**
      * array of available user interface templates
      * @var array
@@ -157,7 +157,7 @@ class SystemConfig extends PrefHandler {
                     break;
                 case 'ISMASTER' :
                     if ($value == "Y") {
-                        $this->ismaster_ = 1;
+                        $this->issource_ = 1;
                     }
                     break;
                 case 'HOSTID' :
@@ -191,7 +191,7 @@ class SystemConfig extends PrefHandler {
      * @return  bool  true on success, false on failure
      */
     private function loadFromDB() {
-        $db_slaveconf = DM_SlaveConfig :: getInstance();
+        $db_replicaconf = DM_SlaveConfig :: getInstance();
         $query = "SELECT ";
         foreach ($this->pref_ as $pref => $val) {
             $query .= $pref.", ";
@@ -200,7 +200,7 @@ class SystemConfig extends PrefHandler {
         $query = rtrim($query, '\,');
         $query .= " FROM system_conf";
 
-        $res = $db_slaveconf->getHash($query);
+        $res = $db_replicaconf->getHash($query);
         foreach ($res as $key => $value) {
             $this->setPref($key, $value);
         }
@@ -217,7 +217,7 @@ class SystemConfig extends PrefHandler {
         global $admin_;
         $domains = array ();
 
-        $db_slaveconf = DM_SlaveConfig :: getInstance();
+        $db_replicaconf = DM_SlaveConfig :: getInstance();
 
         $query = "SELECT name FROM domain WHERE (active='true' OR active=1) AND name != '__global__'";
         if (isset ($admin_) && $admin_->getPref('domains') != '*') {
@@ -230,42 +230,42 @@ class SystemConfig extends PrefHandler {
 
         $query .= " ORDER BY name";
 
-        $domains = $db_slaveconf->getList($query);
+        $domains = $db_replicaconf->getList($query);
         return $domains;
     }
 
     /**
-     * Load the slave hosts configured for this system
-     * Load the slave objects configured for this system
+     * Load the replica hosts configured for this system
+     * Load the replica objects configured for this system
      * @return  bool    true on success, false on failure
      */
     public function loadSlaves() {
 
-        $db_slaveconf = DM_SlaveConfig :: getInstance();
+        $db_replicaconf = DM_SlaveConfig :: getInstance();
 
-        $query = "SELECT id FROM slave ORDER BY id";
-        $slaves = $db_slaveconf->getList($query);
+        $query = "SELECT id FROM replica ORDER BY id";
+        $replicas = $db_replicaconf->getList($query);
 
-        foreach ($slaves as $slave) {
-            $this->slaves_[$slave] = new Slave();
-            $this->slaves_[$slave]->load($slave);
+        foreach ($replicas as $replica) {
+            $this->replicas_[$replica] = new Slave();
+            $this->replicas_[$replica]->load($replica);
         }
         return true;
     }
 
     /**
-     * Dump a configuration file through all slaves
+     * Dump a configuration file through all replicas
      * @param  $config   string   configuration to dump
      * @param  $params   string   command line parameters
      * @return           boolean  true on success, false on failures
      */
     public function dumpConfiguration($config, $params) {
-    	if (count($this->slaves_) < 1) {
+    	if (count($this->replicas_) < 1) {
             $this->loadSlaves();
         }
 
-        foreach ($this->slaves_ as $slave) {
-        	if (!$slave->dumpConfiguration($config, $params)) {
+        foreach ($this->replicas_ as $replica) {
+        	if (!$replica->dumpConfiguration($config, $params)) {
         		return false;
         	}
         }
@@ -279,91 +279,91 @@ class SystemConfig extends PrefHandler {
      * @return          boolean true on success, false on failure
      */
     public function setProcessToBeRestarted($process) {
-    	if (count($this->slaves_) < 1) {
+    	if (count($this->replicas_) < 1) {
             $this->loadSlaves();
         }
 
-        foreach ($this->slaves_ as $slave) {
-            if (!$slave->setProcessToBeRestarted($process)) {
+        foreach ($this->replicas_ as $replica) {
+            if (!$replica->setProcessToBeRestarted($process)) {
                 return false;
             }
         }
         return true;
     }
     /**
-     * Get the slave hosts configured for this system
-     * Get the slave objects configured for this system
+     * Get the replica hosts configured for this system
+     * Get the replica objects configured for this system
      * @return array  array of Slaves_ objects
      */
     public function getSlaves() {
-        if (count($this->slaves_) < 1) {
+        if (count($this->replicas_) < 1) {
             $this->loadSlaves();
         }
 
-        return $this->slaves_;
+        return $this->replicas_;
     }
 
     /**
-     * get slave host name/ip from its id
-     * @param  $slaveid  numeric slave id
-     * @return           string  slave name or ip
+     * get replica host name/ip from its id
+     * @param  $replicaid  numeric replica id
+     * @return           string  replica name or ip
      */
-    public function getSlaveName($slaveid) {
-        if (count($this->slaves_) < 1) {
+    public function getSlaveName($replicaid) {
+        if (count($this->replicas_) < 1) {
             $this->loadSlaves();
         }
-        if (!isset($this->slaves_[$slaveid])) {
+        if (!isset($this->replicas_[$replicaid])) {
           return "";
         }
-        $slave = $this->slaves_[$slaveid];
-        return $slave->getPref('hostname');
+        $replica = $this->replicas_[$replicaid];
+        return $replica->getPref('hostname');
     }
 
     /**
-     * Get the slave names or ip configured for this system
+     * Get the replica names or ip configured for this system
      * @return array array of name/ip (string)
      */
     public function getSlavesName() {
-        $slaves = array ();
-        if (count($this->slaves_) < 1) {
+        $replicas = array ();
+        if (count($this->replicas_) < 1) {
             $this->loadSlaves();
         }
-        foreach ($this->slaves_ as $id => $host) {
-            $slaves[$host->getPref('hostname')." ($id)"] = $host->getPref('hostname');
+        foreach ($this->replicas_ as $id => $host) {
+            $replicas[$host->getPref('hostname')." ($id)"] = $host->getPref('hostname');
         }
-        return $slaves;
+        return $replicas;
     }
 
     /**
-     * Get the master(s) name or ip configured fot this system
+     * Get the source(s) name or ip configured fot this system
      * @return array array of name/ip (string)
      */
     public function getMastersName() {
 
-        $db_slaveconf = DM_SlaveConfig :: getInstance();
+        $db_replicaconf = DM_SlaveConfig :: getInstance();
 
-        $masters = array ();
-        $query = "SELECT hostname FROM master";
-        $masters = $db_slaveconf->getList($query);
-        foreach ($masters as $master) {
-            $masters[$master] = $master;
+        $sources = array ();
+        $query = "SELECT hostname FROM source";
+        $sources = $db_replicaconf->getList($query);
+        foreach ($sources as $source) {
+            $sources[$source] = $source;
         }
 
-        return $masters;
+        return $sources;
     }
 
     /**
-     * Get the slaves port, password and id as an array
-     * @param  $slave  string  slave name
+     * Get the replicas port, password and id as an array
+     * @param  $replica  string  replica name
      * @return array array of array hosts information ((port, password, id))
      */
-    public function getSlavePortPasswordID($slave) {
-        if (count($this->slaves_) < 1) {
+    public function getSlavePortPasswordID($replica) {
+        if (count($this->replicas_) < 1) {
             $this->loadSlaves();
         }
 
-        foreach ($this->slaves_ as $id => $s) {
-            if ($s->getPref('hostname') == $slave) {
+        foreach ($this->replicas_ as $id => $s) {
+            if ($s->getPref('hostname') == $replica) {
                 return array ($s->getPref('port'), $s->getPref('password'), $s->getPref('id'));
             }
         }

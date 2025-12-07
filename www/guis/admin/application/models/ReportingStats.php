@@ -450,28 +450,28 @@ class Default_Model_ReportingStats
 		return $els;
 	}
 
-	public function getTodayValues($what, $slaveid, $type = 'unknown') {
-	    $slave = new Default_Model_Slave();
-	    $slaves = array();
-	    if (is_numeric($slaveid) && $slaveid > 0) {
-	    	$slave->find($slaveid);
-	    	$slaves = array($slave);
+	public function getTodayValues($what, $replicaid, $type = 'unknown') {
+	    $replica = new Default_Model_Slave();
+	    $replicas = array();
+	    if (is_numeric($replicaid) && $replicaid > 0) {
+	    	$replica->find($replicaid);
+	    	$replicas = array($replica);
 	    } else {
-            $slaves = $slave->fetchAll();
+            $replicas = $replica->fetchAll();
 	    }
         $total = array();
 
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
             $total = $this->cumulStats($total, $s->getTodaySNMPStats($what));
         }
 
         if (!$type || $type == '') {
         	$type = 'unknown';
         }
-        if (count($slaves) > 1) {
+        if (count($replicas) > 1) {
            $cachefile = $this->_statscachefile.".".$type;
         } else {
-        	$ts = array_pop($slaves);
+        	$ts = array_pop($replicas);
         	$cachefile = $this->_statscachefile.".".$ts->getId().".".$type;
         }
 		file_put_contents($cachefile, serialize($total));
@@ -485,12 +485,12 @@ class Default_Model_ReportingStats
 		return $total;
 	}
 
-	public function getTodayPie($what, $slaveid, $usecache, $type = 'global', $graph_params = array()) {
+	public function getTodayPie($what, $replicaid, $usecache, $type = 'global', $graph_params = array()) {
 
     	$total = null;
     	$cachefile = $this->_statscachefile.".".$type;
-    	if (is_numeric($slaveid) && $slaveid > 0) {
-    		$cachefile = $this->_statscachefile.".".$slaveid.".".$type;
+    	if (is_numeric($replicaid) && $replicaid > 0) {
+    		$cachefile = $this->_statscachefile.".".$replicaid.".".$type;
     	}
 		if ($usecache && file_exists($cachefile)) {
 			$lmod = filemtime($cachefile);
@@ -501,7 +501,7 @@ class Default_Model_ReportingStats
 			}
 	    }
 	    if (!$total) {
-	    	$total = $this->getTodayValues($what, $slaveid, $type);
+	    	$total = $this->getTodayValues($what, $replicaid, $type);
 		}
     	$stats = new Default_Model_ReportingStats();
         $params = array('render'=>true, 'no_label'=>true);

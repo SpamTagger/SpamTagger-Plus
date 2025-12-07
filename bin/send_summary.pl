@@ -88,8 +88,8 @@ if ($opts =~ /^nodigest$/) {
 my $sysconf = SystemPref::get_instance();
 my $spamnbdays = $sysconf->get_pref('days_to_keep_spams');
 
-my $db = DB->db_connect('master', 'st_spool', 0);
-my $conf_db = DB->db_connect('master', 'st_config', 0);
+my $db = DB->db_connect('source', 'st_spool', 0);
+my $conf_db = DB->db_connect('source', 'st_config', 0);
 ## and do the job, either for one or all addresses
 my @addresses = get_all_addresses($address);
 
@@ -299,7 +299,7 @@ sub get_full_quarantine ($address, $spams_h, $email) {
     }
   }
 
-  my $spams_query = "SELECT exim_id, sender, to_domain, to_user, time_in, HOUR(time_in) as T_h, MINUTE(time_in) as T_m, SECOND(time_in) as T_s, YEAR(date_in) as M_y, MONTH(date_in) as M_m, DAYOFMONTH(date_in) as M_d, M_subject, store_slave, M_score, M_prefilter, M_globalscore, is_newsletter FROM $table  WHERE ($addwhere) AND TO_DAYS(NOW())-TO_DAYS(date_in) < $days+1 GROUP BY exim_id ORDER BY date_in DESC, time_in DESC";
+  my $spams_query = "SELECT exim_id, sender, to_domain, to_user, time_in, HOUR(time_in) as T_h, MINUTE(time_in) as T_m, SECOND(time_in) as T_s, YEAR(date_in) as M_y, MONTH(date_in) as M_m, DAYOFMONTH(date_in) as M_d, M_subject, store_replica, M_score, M_prefilter, M_globalscore, is_newsletter FROM $table  WHERE ($addwhere) AND TO_DAYS(NOW())-TO_DAYS(date_in) < $days+1 GROUP BY exim_id ORDER BY date_in DESC, time_in DESC";
   if ($db && $db->ping()) {
     @{$spams_h} = $db->get_list_of_hash($spams_query);
   }
@@ -439,7 +439,7 @@ sub get_quarantine_template ($template, $tmpl, $spams, $type, $lang, $temp_id) {
     $tmp =~ s/(\_\_|\?\?)ADDRESS(\_\_)?/$tmprcpt/g;
     $tmp =~ s/\_\_SCORE\_\_/$gscore/g;
     $tmp =~ s/\_\_SCOREPICTO\_\_/$pictoscore/g;
-    $tmp =~ s/(\_\_|\?\?)STOREID(\_\_)?/$item->{'store_slave'}/g;
+    $tmp =~ s/(\_\_|\?\?)STOREID(\_\_)?/$item->{'store_replica'}/g;
     $tmp =~ s/(\_\_|\?\?)DATE(\_\_)?/$item->{'M_d'}-$item->{'M_m'}-$item->{'M_y'} $item->{'time_in'}/g;
     if ($alt) {
       $tmp =~ s/__ALTCOLOR__(\S{7})/$1/g;

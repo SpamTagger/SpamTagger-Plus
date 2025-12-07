@@ -32,7 +32,7 @@ class Content {
        'size' => 0,
        'spamreport' => '',
        'headers' => '',
-       'slave' => 0,
+       'replica' => 0,
        'content_forced' => 0
   );
 
@@ -111,18 +111,18 @@ public function load($id) {
     return 'BADSEARCHID';
   }
 
-  // we have to loop on all slaves to found where the content has been detected and stored
+  // we have to loop on all replicas to found where the content has been detected and stored
   foreach ($sysconf_->getSlaves() as $s) {
 
     require_once ('helpers/DM_Custom.php');
-    $slave = $sysconf_->getSlavePortPasswordID($s->getPref('hostname'));
-    $slave_id = $slave[2];
-    if ($slave[0] == 0) {
-      $slaves = $sysconf_->getSlaves();
-      $slave = $slaves[0];
-      $slave_id = 1;
+    $replica = $sysconf_->getSlavePortPasswordID($s->getPref('hostname'));
+    $replica_id = $replica[2];
+    if ($replica[0] == 0) {
+      $replicas = $sysconf_->getSlaves();
+      $replica = $replicas[0];
+      $replica_id = 1;
     }
-    $db = DM_Custom :: getInstance($s->getPref('hostname'), $slave[0], 'spamtagger', $slave[1], 'st_stats');
+    $db = DM_Custom :: getInstance($s->getPref('hostname'), $replica[0], 'spamtagger', $replica[1], 'st_stats');
 
     $clean_id = $db->sanitize($id);
 
@@ -138,11 +138,11 @@ public function load($id) {
     if (!empty($res)) {
       // and populate the datas
       $this->setDatas($res);
-      $this->setPref('slave', $slave_id);
+      $this->setPref('replica', $replica_id);
       break;
     }
   }
-  if ($this->getPref('slave') < 1) {
+  if ($this->getPref('replica') < 1) {
     return "CONTENTIDNOTFOUND";
   }
   return $ret;
@@ -159,9 +159,9 @@ public function force() {
   $path = $this->getPathToFile();
   if (! preg_match('/\d{8}\/([a-z,A-Z,0-9]{6}-[a-z,A-Z,0-9]{6,11}-[a-z,A-Z,0-9]{2,4})$/', $path) ) { return 'CANNOTFINDFILEPATH'; }
 
-  // we have to call the soap service on the correct slave in order to do that
+  // we have to call the soap service on the correct replica in order to do that
   $soaper = new Soaper();
-  if (!$soaper->load($sysconf_->getSlaveName($this->getPref('slave')))) {
+  if (!$soaper->load($sysconf_->getSlaveName($this->getPref('replica')))) {
       return false;
   }
   $sid = $soaper->authenticateAdmin();

@@ -27,7 +27,7 @@
 RES=$(echo "Received: by stage2 with id 1CRoEF-00079h-3m
         for <noone@nowhere>; Wed, 10 Nov 2004 09:53:23 +0100
 Subject: test
-X-SpamTagger-Information: Please contact postmaster@fastnet.ch for more information
+X-SpamTagger-Information: Please contact postsource@fastnet.ch for more information
 X-SpamTagger: Found to be clean
 X-SpamTagger-SpamCheck: polluriel, SpamAssassin (score=1001.654, requis 5,
         GTUBE 1000.00, MISSING_DATE 0.02, RAZOR2_CF_RANGE_51_100 1.49,

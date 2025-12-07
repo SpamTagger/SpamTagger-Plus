@@ -442,8 +442,8 @@ class DomainController extends Zend_Controller_Action
         $request = $this->getRequest();
         $domain_name = $request->getParam('name');
 
-        $slave = new Default_Model_Slave();
-        $slave->sendSoapToAll('Service_clearSMTPAutCache', array('domain' => $domain_name));
+        $replica = new Default_Model_Slave();
+        $replica->sendSoapToAll('Service_clearSMTPAutCache', array('domain' => $domain_name));
         $view->message = 'OK';
     }
 }

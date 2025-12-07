@@ -147,7 +147,7 @@ util_rb_tld zip zm zone zuerich zw
 # updated as per bug 5815
 # cleanup in progress per bug 6795 (axb)
 # Unsorted sources:
-# .ua : http://hostmaster.ua
+# .ua : http://hostsource.ua
 # .hu : http://www.domain.hu/domain/English/szabalyzat/sld.html
 
 util_rb_2tld com.ac edu.ac gov.ac mil.ac net.ac org.ac

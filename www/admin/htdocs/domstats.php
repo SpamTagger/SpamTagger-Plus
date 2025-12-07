@@ -26,8 +26,8 @@ global $admin_;
 global $sysconf_;
 global $lang_;
 
-// not allowed if we are not a master
-if ($sysconf_->ismaster_ < 1) { exit; }
+// not allowed if we are not a source
+if ($sysconf_->issource_ < 1) { exit; }
 // check authorizations
 $admin_->checkPermissions(array('can_view_stats'));
 
@@ -44,16 +44,16 @@ if (!isset($posted['stop'])) {
 }
 if (isset($posted['domain']) && isset($posted['start']) && isset($posted['stop'])) {
 
-  // get and check each slaves
-  $slaves = $sysconf_->getSlaves();
-  foreach ($slaves as $slave) {
-    if (!$slave->isAvailable()) {
+  // get and check each replicas
+  $replicas = $sysconf_->getSlaves();
+  foreach ($replicas as $replica) {
+    if (!$replica->isAvailable()) {
       $gstatus = 0;
       continue;
     }
 
     // get counts
-    $counts = $slave->getStats($posted['domain'], $posted['start'], $posted['stop']);
+    $counts = $replica->getStats($posted['domain'], $posted['start'], $posted['stop']);
     $gcounts['msgs'] += $counts->msg;
     $gcounts['spams'] += $counts->spam;
     $gcounts['viruses'] += $counts->virus;

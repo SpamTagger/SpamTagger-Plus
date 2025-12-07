@@ -38,10 +38,10 @@ public function requestForm($alias) {
 
     //check if address is already registered
     require_once('helpers/DataManager.php');
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
-    $alias = $db_slaveconf->sanitize($alias);
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
+    $alias = $db_replicaconf->sanitize($alias);
     $query = "SELECT address FROM email where address='$alias' and user!=0";
-	$res = $db_slaveconf->getHash($query);
+	$res = $db_replicaconf->getHash($query);
     if (is_array($res) && isset($res['address']) && $res['address'] == $alias) {
       return 'ALIASALREADYREGISTERD';
     }
@@ -50,11 +50,11 @@ public function requestForm($alias) {
 
     // first delete old records
     $query = "DELETE FROM pending_alias WHERE date_in != CURDATE();";
-    $db_slaveconf->doExecute($query);
+    $db_replicaconf->doExecute($query);
 
     // and the check if still pending requests exists
     $query = "SELECT alias FROM pending_alias WHERE alias='$alias'";
-    $res = $db_slaveconf->getHash($query);
+    $res = $db_replicaconf->getHash($query);
     if (is_array($res) && isset($res['alias']) &&  $res['alias'] == $alias) {
       return 'ALIASALREADYPENDING';
     }
@@ -67,7 +67,7 @@ public function requestForm($alias) {
     // generate unique id
     $token = md5 (uniqid (rand()));
     $query = "INSERT INTO pending_alias SET id='$token', date_in=NOW(), alias='$alias', user='".$user_->getID()."'";
-	$db_slaveconf->doExecute($query);
+	$db_replicaconf->doExecute($query);
 
 /*
     // generate and send the confirmation mail
@@ -148,14 +148,14 @@ public function addAlias($id, $alias) {
         return false;
     }
     require_once('helpers/DataManager.php');
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
-    $alias = $db_slaveconf->sanitize($alias);
-    $id = $db_slaveconf->sanitize($id);
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
+    $alias = $db_replicaconf->sanitize($alias);
+    $id = $db_replicaconf->sanitize($id);
     $lang_ = Language::getInstance('user');
 
     // check if pending alias exists and id is correct
     $query = "SELECT a.user, u.username, u.id, u.domain FROM pending_alias a, user u WHERE a.id='$id' AND a.alias='$alias' AND a.user=u.id";
-    $res = $db_slaveconf->getHash($query);
+    $res = $db_replicaconf->getHash($query);
 
     if (!is_array($res) || ! isset($res['username'])) {
         return 'ALIASNOTPENDING';
@@ -169,7 +169,7 @@ public function addAlias($id, $alias) {
 
     // and we delete the pending request
 	$query = "DELETE FROM pending_alias WHERE id='$id' AND alias='$alias'";
-	$db_slaveconf->doExecute($query);
+	$db_replicaconf->doExecute($query);
 
     // finally, we add the address to the user
     //@todo check return codes
@@ -190,21 +190,21 @@ public function remAlias($id, $alias) {
         return false;
     }
     require_once('helpers/DataManager.php');
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
-    $alias = $db_slaveconf->sanitize($alias);
-    $id = $db_slaveconf->sanitize($id);
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
+    $alias = $db_replicaconf->sanitize($alias);
+    $id = $db_replicaconf->sanitize($id);
     $lang_ = Language::getInstance('user');
 
     // check if pending alias exists and id is correct
     $query = "SELECT a.user, u.username, u.id, u.domain FROM pending_alias a, user u WHERE a.id='$id' AND a.alias='$alias' AND a.user=u.id";
-    $res = $db_slaveconf->getHash($query);
+    $res = $db_replicaconf->getHash($query);
 
     if (!is_array($res)) {
         return "<font color=\"red\">".$lang_->print_txt('ALIASNOTPENDING')."</font><br/><br/>";
     }
 
 	$query = "DELETE FROM pending_alias WHERE id='$id' AND alias='$alias'";
-	$db_slaveconf->doExecute($query);
+	$db_replicaconf->doExecute($query);
 
 	return 'ALIASREQUESTREMOVED';
 }
@@ -214,11 +214,11 @@ public function remAliasWithoutID($alias) {
         return false;
     }
     require_once('helpers/DataManager.php');
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
-    $alias = $db_slaveconf->sanitize($alias);
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
+    $alias = $db_replicaconf->sanitize($alias);
 
     $query = "DELETE FROM pending_alias WHERE alias='$alias'";
-    $db_slaveconf->doExecute($query);
+    $db_replicaconf->doExecute($query);
     return 'ALIASREQUESTREMOVED';
 }
 

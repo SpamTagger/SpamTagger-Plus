@@ -12,7 +12,7 @@
 require_once ('helpers/DataManager.php');
 
 /**
- * connect to the master spool database
+ * connect to the source spool database
  */
 class DM_MasterSpool extends DataManager {
 
@@ -21,7 +21,7 @@ class DM_MasterSpool extends DataManager {
     public function __construct() {
         parent :: __construct();
 
-        $socket = $this->getConfig('VARDIR')."/run/mariadb_master/mariadbd.sock";
+        $socket = $this->getConfig('VARDIR')."/run/mariadb_source/mariadbd.sock";
         $this->setOption('SOCKET', $socket);
         $this->setOption('DATABASE', 'st_spool');
     }

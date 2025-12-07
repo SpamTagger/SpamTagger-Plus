@@ -15,7 +15,7 @@ Le courriel a été conservé sur la passerelle. Il peut donc vous être rendu s
 Résultats de l'analyse du courriel:
 $report
 
-Contactez $localpostmaster pour plus d'informations.
+Contactez $localpostsource pour plus d'informations.
 
 Information de repérage: $hostname:$datenumber/$id
 

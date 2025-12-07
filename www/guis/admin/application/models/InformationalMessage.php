@@ -12,7 +12,7 @@ class Default_Model_InformationalMessage
 {
 	protected $_title = 'Unknown message';
 	protected $_description = '';
-	protected $_slaves = array();
+	protected $_replicas = array();
 	protected $_toshow = false;
 	protected $_link = array();
 
@@ -42,12 +42,12 @@ class Default_Model_InformationalMessage
 	}
 
 	public function getSlavesList() {
-		return implode(', ',$this->_slaves);
+		return implode(', ',$this->_replicas);
 	}
 
-	public function addSlave($slave) {
-           if (!in_array($slave, $this->_slaves)) {
-    		array_push($this->_slaves, $slave);
+	public function addSlave($replica) {
+           if (!in_array($replica, $this->_replicas)) {
+    		array_push($this->_replicas, $replica);
 	   }
         }
 }

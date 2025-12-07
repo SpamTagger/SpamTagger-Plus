@@ -60,7 +60,7 @@ sub new ($class) {
   my $cachedomain = 120;
   my $cacheuser = 30;
   my $cleancache = 3600;
-  my $slave_db;
+  my $replica_db;
   my %childrens;
   my %cache;
   my %wwusercache;
@@ -91,7 +91,7 @@ sub new ($class) {
     cacheuser => $cacheuser,
     cleancache => $cleancache,
     lastcleanup => 0,
-    slave_db => $slave_db,
+    replica_db => $replica_db,
     childrens => {},
     cache => {},
     time_to_die => 0,
@@ -252,8 +252,8 @@ sub make_child ($this) {
 }
 
 sub connect_db ($this) {
-  $this->{slave_db} = DB->db_connect('slave', 'st_config', 0);
-  if ($this->{slave_db}->ping()) {
+  $this->{replica_db} = DB->db_connect('replica', 'st_config', 0);
+  if ($this->{replica_db}->ping()) {
     $this->logMessage("Connected to configuration database");
     return 1;
   }
@@ -364,14 +364,14 @@ sub fetch_ww ($this, $type, $dest, $sender) {
 }
 
 sub fetch_database_ww ($this, $type, $recipient, $sender, $atype) {
-  unless ($this->{slave_db}->ping()) {
+  unless ($this->{replica_db}->ping()) {
     return 'NOTFOUND' unless ($this->connect_db());
   }
   $recipient = "" if ($recipient eq "_");
   $sender =~ s/[\/\'\"\<\>\:\;\?\*\%\&\+]//g;
   $recipient =~ s/[\/\'\"\<\>\:\;\?\*\%\&\+]//g;
   my $query = "SELECT sender FROM wwlists WHERE type='$type' AND ( recipient='$recipient' OR recipient='' ) AND status=1";
-  my @entries = $this->{slave_db}->getListOfHash($query);
+  my @entries = $this->{replica_db}->getListOfHash($query);
   foreach my $entry (@entries) {
     my %entryv = %$entry;
     my $test = $entryv{sender};
@@ -387,18 +387,18 @@ sub fetch_database_ww ($this, $type, $recipient, $sender, $atype) {
 }
 
 sub fetch_address_pref ($this, $who, $what) {
-  unless ($this->{slave_db}->ping()) {
+  unless ($this->{replica_db}->ping()) {
     return 'NOTFOUND' unless ($this->connect_db());
   }
 
   my $query = "SELECT $what FROM user_pref p, email e WHERE p.id=e.pref AND e.address='$who'";
-  my %res = $this->{slave_db}->getHashRow($query);
+  my %res = $this->{replica_db}->getHashRow($query);
   return $res{$what} if (defined($res{$what}));
   return "NOTFOUND";
 }
 
 sub fetch_domain_pref ($this, $who, $what) {
-  unless ($this->{slave_db}->ping()) {
+  unless ($this->{replica_db}->ping()) {
     return 'NOTFOUND' unless ($this->connect_db());
   }
 
@@ -407,26 +407,26 @@ sub fetch_domain_pref ($this, $who, $what) {
   $what = 'enable_blacklists' if ($what eq 'has_blacklist');
   ## check this domain
   my $query = "SELECT $what FROM domain_pref p, domain d WHERE p.id=d.prefs AND d.name='$who'";
-  my %res = $this->{slave_db}->getHashRow($query);
+  my %res = $this->{replica_db}->getHashRow($query);
   return $res{$what} if (defined($res{$what}));
   ## check for jocker domain
   $query = "SELECT $what FROM domain_pref p, domain d WHERE p.id=d.prefs AND d.name='*'";
-  %res = $this->{slave_db}->getHashRow($query);
+  %res = $this->{replica_db}->getHashRow($query);
   return $res{$what} if (defined($res{$what}));
   ## check for default domain
   my $dd = $this->fetchGlobalPref('default_domain');
   $query = "SELECT $what FROM domain_pref p, domain d WHERE p.id=d.prefs AND d.name='$dd'";
-  %res = $this->{slave_db}->getHashRow($query);
+  %res = $this->{replica_db}->getHashRow($query);
   return $res{$what} if (defined($res{$what}));
   return "NOTFOUND";
 }
 
 sub fetch_global_pref ($this, $what) {
-  unless ($this->{slave_db}->ping()) {
+  unless ($this->{replica_db}->ping()) {
     return 'NOTFOUND' unless ($this->connect_db());
   }
   my $query = "SELECT $what FROM system_conf, antispam, antivirus, httpd_config";
-  my %res = $this->{slave_db}->getHashRow($query);
+  my %res = $this->{replica_db}->getHashRow($query);
   return $res{$what} if (defined($res{$what}));
   return "NOTFOUND";
 }

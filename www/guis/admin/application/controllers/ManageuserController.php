@@ -342,9 +342,9 @@ class ManageuserController extends Zend_Controller_Action
 					$view->form = $panelform;
 
 					if ($panel == 'archiving' || $panel == 'addresssettings') {
-						$slave = new Default_Model_Slave();
+						$replica = new Default_Model_Slave();
 						$soapparams = array('what' => 'archiving');
-						$res = $slave->sendSoapToAll('Service_silentDump', $soapparams);
+						$res = $replica->sendSoapToAll('Service_silentDump', $soapparams);
 					}
 
 				} catch (Exception $e) {

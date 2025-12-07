@@ -217,9 +217,9 @@ class PrefHandler
         $query .= " WHERE ".$where_clause;
     }
     require_once ('helpers/DataManager.php');
-    $db_masterconf = DM_MasterConfig :: getInstance();
+    $db_sourceconf = DM_MasterConfig :: getInstance();
     $this->last_query_ = $query;
-    $res = $db_masterconf->getHash($query);
+    $res = $db_sourceconf->getHash($query);
     if (!is_array($res) || empty($res)) {
         return false;
     }
@@ -276,7 +276,7 @@ class PrefHandler
   protected function savePrefs($additional_fields, $where_clause, $w_table) {
     $retok = "NOTOK";
     require_once ('helpers/DataManager.php');
-    $db_masterconf = DM_MasterConfig :: getInstance();
+    $db_sourceconf = DM_MasterConfig :: getInstance();
     if ($this->shouldUpdate()) {
         foreach ($this->pref_tables_ as $table_name => $table) {
             $query = "UPDATE $table_name ";
@@ -297,7 +297,7 @@ class PrefHandler
                 }
             }
             $this->last_query = $query;
-            if (!$db_masterconf->doExecute($query)) {
+            if (!$db_sourceconf->doExecute($query)) {
                 return 'ERR_SAVEPREF_EXECUTEQUERY';
             }
             continue;
@@ -323,15 +323,15 @@ class PrefHandler
         }
         foreach ($query as $q_table => $q) {
             $this->last_query_ = $q;
-            if (!$db_masterconf->doExecute($q)) {
-                if ($db_masterconf->getLastError() == "RECORDALREADYEXISTS") {
-                	return $db_masterconf->getLastError();
+            if (!$db_sourceconf->doExecute($q)) {
+                if ($db_sourceconf->getLastError() == "RECORDALREADYEXISTS") {
+                	return $db_sourceconf->getLastError();
                 }
                 return 'ERR_SADDPREF_EXECUTEQUERY';
             }
             // get last_id
             $id_query = "SELECT LAST_INSERT_ID() as id";
-            $res = $db_masterconf->getHash($id_query);
+            $res = $db_sourceconf->getHash($id_query);
             if (is_array($res)) {
                $this->record_ids_[$this->tables_shortcuts_[$q_table]] = $res['id'];
             }
@@ -350,9 +350,9 @@ class PrefHandler
   private function getSQLPrefSet($table_name) {
     $ret = "";
     require_once ('helpers/DataManager.php');
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
     foreach ($this->pref_tables_[$table_name] as $pref => $value) {
-        $ret .= $pref."='".$db_slaveconf->sanitize($value)."', ";
+        $ret .= $pref."='".$db_replicaconf->sanitize($value)."', ";
     }
     $ret = rtrim($ret);
     $ret = rtrim($ret, '\,');
@@ -377,7 +377,7 @@ class PrefHandler
    */
   protected function deletePrefs($where_clause) {
     require_once ('helpers/DataManager.php');
-    $db_masterconf = DM_MasterConfig :: getInstance();
+    $db_sourceconf = DM_MasterConfig :: getInstance();
     foreach ($this->pref_tables_ as $table_name => $table) {
         $query = "DELETE FROM ".$table_name;
         if ($this->use_ids_) {
@@ -392,7 +392,7 @@ class PrefHandler
           }
         }
         $this->last_query_ = $query;
-        if (!$db_masterconf->doExecute($query)) {
+        if (!$db_sourceconf->doExecute($query)) {
             return 'ERR_DELETEPREF_EXECUTEQUERY';
         }
     }

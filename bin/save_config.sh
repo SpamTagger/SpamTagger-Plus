@@ -29,7 +29,7 @@ if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
-SOCKET=$VARDIR/run/mariadb_master/mariadbd.sock
+SOCKET=$VARDIR/run/mariadb_source/mariadbd.sock
 MYSPAMTAGGERPWD=$(grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 DATE=$(date '+%d-%m-%Y')

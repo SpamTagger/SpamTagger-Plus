@@ -9,15 +9,15 @@ if [ "$SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
 
-PREVPROC=$(pgrep -f /etc/mariadb/my_master.cnf)
+PREVPROC=$(pgrep -f /etc/mariadb/my_source.cnf)
 if [ ! "$PREVPROC" = "" ]; then
   echo -n "ALREADYRUNNING"
   exit
 fi
 
-$SRCDIR/etc/init.d/mariadb_master start 2>&1 >/dev/null
+$SRCDIR/etc/init.d/mariadb_source start 2>&1 >/dev/null
 sleep $DELAY
-PREVPROC=$(pgrep -f /etc/mariadb/my_master.cnf)
+PREVPROC=$(pgrep -f /etc/mariadb/my_source.cnf)
 if [ "$PREVPROC" = "" ]; then
   echo -n "ERRORSTARTING"
   exit

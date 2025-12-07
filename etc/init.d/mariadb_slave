@@ -23,43 +23,43 @@ if [ "$skip" = "nopass" ]; then
   SKIPGRANT="--skip-grant-table"
 fi
 
-conf=$SRCDIR/etc/mariadb/my_slave.cnf
-datadir=$VARDIR/spool/mariadb_slave
-pid_file=$VARDIR/run/mariadb_slave/mariadbd.pid
-log_file=$VARDIR/log/mariadb_slave/mariadb.log
-binlog=$VARDIR/log/mariadb_slave/mariadb_bin.log
-socket=$VARDIR/run/mariadb_slave/mariadbd.sock
+conf=$SRCDIR/etc/mariadb/my_replica.cnf
+datadir=$VARDIR/spool/mariadb_replica
+pid_file=$VARDIR/run/mariadb_replica/mariadbd.pid
+log_file=$VARDIR/log/mariadb_replica/mariadb.log
+binlog=$VARDIR/log/mariadb_replica/mariadb_bin.log
+socket=$VARDIR/run/mariadb_replica/mariadbd.sock
 
 prepare() {
-  chown mariadb:spamtagger $VARDIR/log/mariadb_slave/mariadb.log >/dev/null 2>&1
+  chown mariadb:spamtagger $VARDIR/log/mariadb_replica/mariadb.log >/dev/null 2>&1
 
   $SRCDIR/bin/dump_mariadb_config.pl >/dev/null 2>&1
 }
 
 case "$mode" in
 'start')
-  touch $VARDIR/run/mariadb_slave.start.rs
+  touch $VARDIR/run/mariadb_replica.start.rs
   # Start daemon
-  echo -n "  Starting slave DB: "
+  echo -n "  Starting replica DB: "
   prepare
   if test -x mariadb_safe; then
     mariadb_safe --defaults-file=$conf --datadir=$datadir --pid-file=$pid_file --log-bin=$binlog --log-error=$log_file --socket=$socket $SKIPGRANT >/dev/null 2>&1 &
   else
     echo "Can't execute mariadb_safe"
   fi
-  if [ -f $VARDIR/run/mariadb_slave.rn ]; then
-    rm $VARDIR/run/mariadb_slave.rn
+  if [ -f $VARDIR/run/mariadb_replica.rn ]; then
+    rm $VARDIR/run/mariadb_replica.rn
   fi
   echo "started."
-  rm $VARDIR/run/mariadb_slave.stopped >/dev/null 2>&1
-  rm $VARDIR/run/mariadb_slave.*.rs >/dev/null 2>&1
+  rm $VARDIR/run/mariadb_replica.stopped >/dev/null 2>&1
+  rm $VARDIR/run/mariadb_replica.*.rs >/dev/null 2>&1
   ;;
 
 'stop')
-  touch $VARDIR/run/mariadb_slave.stop.rs
+  touch $VARDIR/run/mariadb_replica.stop.rs
   # Stop daemon. We use a signal here to avoid having to know the
   # root password.
-  echo -n "  Stopping slave DB: "
+  echo -n "  Stopping replica DB: "
   if test -s "$pid_file"; then
     mariadbd_pid=$(cat $pid_file)
     #echo "Killing mariadbd with pid $mariadbd_pid"
@@ -80,15 +80,15 @@ case "$mode" in
   else
     echo -n "No mariadbd pid file found. Looked for $pid_file. "
   fi
-  kill -KILL $(pgrep -f my_slave.cnf) >/dev/null 2>&1
+  kill -KILL $(pgrep -f my_replica.cnf) >/dev/null 2>&1
   sleep 2
   echo "stopped."
-  rm $VARDIR/run/mariadb_slave.stop.rs >/dev/null 2>&1
-  touch $VARDIR/run/mariadb_slave.stopped
+  rm $VARDIR/run/mariadb_replica.stop.rs >/dev/null 2>&1
+  touch $VARDIR/run/mariadb_replica.stopped
   ;;
 
 'restart')
-  touch $VARDIR/run/mariadb_slave.restart.rs
+  touch $VARDIR/run/mariadb_replica.restart.rs
   # Stop the service and regardless of whether it was
   # running or not, start it again.
   $0 stop

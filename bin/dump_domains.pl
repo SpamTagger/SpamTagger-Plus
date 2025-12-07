@@ -49,16 +49,16 @@ my $gid = getgrnam( 'spamtagger' );
 my $conf = ReadConfig::get_instance();
 my $op = $conf->get_option('SRCDIR');
 
-my $slave_db = DB->db_connect('slave', 'st_config');
+my $replica_db = DB->db_connect('replica', 'st_config');
 
-my @masters = $slave_db->get_list_of_hash("SELECT hostname from master");
-my %exim_conf = $slave_db->get_hash_row("SELECT * from mta_config WHERE stage=1");
+my @sources = $replica_db->get_list_of_hash("SELECT hostname from source");
+my %exim_conf = $replica_db->get_hash_row("SELECT * from mta_config WHERE stage=1");
 
 $time_in{'gathering_config'} = time() - $previous_time;
 $previous_time = time();
 
 ######### Dump domains list
-my @domain_list = $slave_db->get_list_of_hash("SELECT * FROM domain d, domain_pref dp WHERE (d.active='true' || d.active=1) AND d.name != '__global__' AND d.prefs=dp.id");
+my @domain_list = $replica_db->get_list_of_hash("SELECT * FROM domain d, domain_pref dp WHERE (d.active='true' || d.active=1) AND d.name != '__global__' AND d.prefs=dp.id");
 
 if (!@domain_list) {
  die('file not dumped, no domain could be retrieved');
@@ -79,7 +79,7 @@ if ( ! -d $filepath ) {
 }
 if ( !dump_domains_file(\%dest_hosts, $filepath)) {
   print "CANNOTDUMPFILE\n";
-  $slave_db->db_disconnect();
+  $replica_db->db_disconnect();
   exit 1;
 }
 
@@ -91,7 +91,7 @@ $previous_time = time();
 my $syspref = SystemPref::get_instance();
 if ( ! $syspref->dump_prefs()) {
   print "CANNOTDUMPSYSTEMPREF\n";
-  $slave_db->db_disconnect();
+  $replica_db->db_disconnect();
   exit 1;
 }
 
@@ -105,16 +105,16 @@ if (defined($domain) && $domain eq "-a") {
     my $do = Domain::create($$d{name});
     $do->dump_prefs_from_row($d);
     if ($$d{'addlistcallout'} eq 'true') {
-        $do->dump_local_addresses($slave_db);
+        $do->dump_local_addresses($replica_db);
     }
   }
 } elsif (defined($domain)) {
 ######### Dump a domain configuration
   $domain = Domain::create($domain);
   if ($domain->get_pref('addlistcallout') eq 'true') {
-      $domain->dump_local_addresses($slave_db);
+      $domain->dump_local_addresses($replica_db);
   }
-  if (!$domain->dump_prefs($slave_db)) {
+  if (!$domain->dump_prefs($replica_db)) {
     exit 1;
   }
 }
@@ -130,7 +130,7 @@ $time_in{'dumping_archiving'} = time() - $previous_time;
 print_time('dumping_archiving');
 $previous_time = time();
 
-$slave_db->db_disconnect();
+$replica_db->db_disconnect();
 print "DUMPSUCCESSFUL";
 if ($debug_time) {
 
@@ -347,7 +347,7 @@ sub dump_domains_file ($d_ref, $filepath) {
           foreach my $p (@posters) {
            print $ADDLISTPOSTERS $p."\n";
           }
-          foreach my $p (@masters) {
+          foreach my $p (@sources) {
            print $ADDLISTPOSTERS $p->{'hostname'}."\n";
           }
         }

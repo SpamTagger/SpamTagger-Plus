@@ -13,8 +13,8 @@ fi
 
 source ${SRCDIR}/lib/lib_utils.sh
 
-if [ $(slaveSynchronized) == "false" ]; then
-  echo "The slave database is not synchronized, quitting..."
+if [ $(replicaSynchronized) == "false" ]; then
+  echo "The replica database is not synchronized, quitting..."
   exit 1
 fi
 

@@ -134,7 +134,7 @@ sub bad_usage {
 
 ##########################################
 sub mark_forced ($id) {
-  my $dbh = DB->db_connect('slave', 'st_stats') || return;
+  my $dbh = DB->db_connect('replica', 'st_stats') || return;
 
   my $query = "UPDATE maillog SET content_forced='1' WHERE id='$id'";
   my $sth = $dbh->prepare($query);

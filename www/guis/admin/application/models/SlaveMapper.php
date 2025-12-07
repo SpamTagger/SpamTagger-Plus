@@ -33,16 +33,16 @@ class Default_Model_SlaveMapper
         return $this->_dbTable;
     }
 
-    public function find($id, Default_Model_Slave $slave)
+    public function find($id, Default_Model_Slave $replica)
     {
         $result = $this->getDbTable()->find($id);
         if (0 == count($result)) {
             return;
         }
-        $slave->setId($id);
+        $replica->setId($id);
         $row = $result->current();
-        $slave->setHostname($row->hostname, $row->password);
-        $slave->setPassword($row->password);
+        $replica->setHostname($row->hostname, $row->password);
+        $replica->setPassword($row->password);
     }
 
     public function fetchAll()

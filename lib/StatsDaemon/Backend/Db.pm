@@ -354,7 +354,7 @@ sub announce_month_change ($this) {
 sub connect_backend ($this) {
   return 1 if ( defined( $this->{db} ) && $this->{db}->ping() );
 
-  $this->{db} = DB->db_connect( 'slave', 'st_stats', 0 );
+  $this->{db} = DB->db_connect( 'replica', 'st_stats', 0 );
   if ( !$this->{db}->ping() ) {
     $this->do_log( "WARNING, could not connect to statistics database",
       'statsdaemon', 'error' );

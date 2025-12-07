@@ -50,8 +50,8 @@ $conf->get_option('SRCDIR');
 my @stats = ('cpu', 'load', 'network', 'memory', 'disks', 'messages', 'spools');
 
 # get hosts to query
-my $slave_db = DB->db_connect('slave', 'st_config');
-my @hosts = $slave_db->get_list_of_hash("SELECT id, hostname FROM slave");
+my $replica_db = DB->db_connect('replica', 'st_config');
+my @hosts = $replica_db->get_list_of_hash("SELECT id, hostname FROM replica");
 
 ## main hosts loops
 foreach my $host (@hosts) {
@@ -72,15 +72,15 @@ foreach my $host (@hosts) {
 
 ## new rrd collecting scheme
 my %collections;
-my @collections_list = $slave_db->get_list_of_hash("SELECT id, name, type FROM rrd_stats");
+my @collections_list = $replica_db->get_list_of_hash("SELECT id, name, type FROM rrd_stats");
 my %dynamic_oids;
 foreach my $collection (@collections_list) {
   my $c = RRDArchive::new($collection->{'id'}, $collection->{'name'}, $collection->{'type'});
   $c->get_dynamic_oids(\%dynamic_oids) if (keys %dynamic_oids < 1);
-  my @elements = $slave_db->get_list_of_hash("SELECT name, type, function, oid, min, max FROM rrd_stats_element WHERE stats_id=".$collection->{'id'}." order by draw_order");
+  my @elements = $replica_db->get_list_of_hash("SELECT name, type, function, oid, min, max FROM rrd_stats_element WHERE stats_id=".$collection->{'id'}." order by draw_order");
   $c->add_element($_) foreach (@elements);
   $c->collect(\%dynamic_oids);
 }
 
-$slave_db->disconnect();
+$replica_db->disconnect();
 print "SUCCESSFULL\n";

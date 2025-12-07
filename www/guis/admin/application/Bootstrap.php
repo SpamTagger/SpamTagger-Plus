@@ -34,7 +34,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
     	$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
-                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mariadb_master/mariadbd.sock",
+                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mariadb_source/mariadbd.sock",
                               'username'    => 'spamtagger',
                               'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_config'
@@ -44,7 +44,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         $spoolDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
-                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mariadb_master/mariadbd.sock",
+                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mariadb_source/mariadbd.sock",
                               'username'    => 'spamtagger',
                               'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_spool'
@@ -102,9 +102,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         $sysconf = SpamTagger_Config::getInstance();
 
-        $view->is_slave = 1;
+        $view->is_replica = 1;
         if ($sysconf->getOption('ISMASTER') == 'Y') {
-             $view->is_slave = 0;
+             $view->is_replica = 0;
         }
 
     	return $layout;

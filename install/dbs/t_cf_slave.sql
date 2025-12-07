@@ -1,8 +1,8 @@
 use st_config;
 
-DROP TABLE IF EXISTS slave;
+DROP TABLE IF EXISTS replica;
 
-CREATE TABLE slave (
+CREATE TABLE replica (
   id          int(11) not NULL,
   hostname    varchar(150) NOT NULL DEFAULT 'localhost',
   port        int(11) NOT NULL DEFAULT 3307,

@@ -42,9 +42,9 @@ sub new ($hostname) {
   my $pictdir = $conf->get_option('VARDIR')."/www/mrtg/".$hostname;
   my %stats = ();
 
-  my $slave_db = DB->db_connect('slave', 'st_config');
-  my %row = $slave_db->getHashRow("SELECT community FROM snmpd_config WHERE set_id=1");
-  $slave_db->db_disconnect();
+  my $replica_db = DB->db_connect('replica', 'st_config');
+  my %row = $replica_db->getHashRow("SELECT community FROM snmpd_config WHERE set_id=1");
+  $replica_db->db_disconnect();
   my $community = $row{'community'};
 
   my $this = {

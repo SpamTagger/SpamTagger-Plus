@@ -51,11 +51,11 @@ sub new ($id, $name, $type, $hosts_status) {
   my %snmp;
   my %dynamic_vars;
 
-  my $slave_db = DB->db_connect('slave', 'st_config');
-  my @hostsa = $slave_db->getListOfHash("SELECT id, hostname FROM slave");
+  my $replica_db = DB->db_connect('replica', 'st_config');
+  my @hostsa = $replica_db->getListOfHash("SELECT id, hostname FROM replica");
   push @hosts, $_->{'hostname'} foreach (@hostsa);
 
-  my %community = $slave_db->getHashRow("SELECT community FROM snmpd_config");
+  my %community = $replica_db->getHashRow("SELECT community FROM snmpd_config");
   my $community = $community{'community'};
 
   my $spooldir = $conf->get_option('VARDIR')."/spool/newrrds/".$name."_".$type;

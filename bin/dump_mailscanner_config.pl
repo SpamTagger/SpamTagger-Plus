@@ -34,7 +34,7 @@ use DB();
 use STDnsLists();
 use GetDNS();
 
-our $db = DB->db_connect('slave', 'st_config');
+our $db = DB->db_connect('replica', 'st_config');
 my $conf = ReadConfig::get_instance();
 our $dns = GetDNS->new();
 our $VARDIR = $conf->get_option('VARDIR');

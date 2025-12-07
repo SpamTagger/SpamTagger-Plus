@@ -141,8 +141,8 @@ public function load($name) {
   }
 
   require_once('helpers/DM_SlaveConfig.php');
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
-  $name = $db_slaveconf->sanitize($name);
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
+  $name = $db_replicaconf->sanitize($name);
   $where = "username='".$name."'";
   $ret = $this->loadPrefs('username as a_id, ', $where, false);
   $domains = split(',', $this->getPref('domains'));
@@ -240,12 +240,12 @@ public function isNew() {
 public function canSeeBlock($access) {
   global $sysconf_;
   $access = strtolower($access);
-  // not allowed if we are on a slave except for base config
-  if (!$sysconf_->ismaster_ && $access != 'baseconfig') {
+  // not allowed if we are on a replica except for base config
+  if (!$sysconf_->issource_ && $access != 'baseconfig') {
     return false;
   }
-  // do not show base config if master
-  if ($sysconf_->ismaster_ && $access == 'baseconfig') {
+  // do not show base config if source
+  if ($sysconf_->issource_ && $access == 'baseconfig') {
     return false;
   }
   if ($access == 'baseconfig') {

@@ -107,7 +107,7 @@ $txt['SUMMTEXT']                    = "plain text";
 $txt['TAGMODE']                     = "tag";
 $txt['QUARANTINEMODE']              = "quarantine";
 $txt['DROPMODE']                    = "drop";
-$txt['QUARBOUNCES']                 = "Quarantine postmaster errors";
+$txt['QUARBOUNCES']                 = "Quarantine postsource errors";
 
 $txt['MONTHLY']                     = "monthly";
 $txt['WEEKLY']                      = "weekly";
@@ -543,8 +543,8 @@ $txt['LOGFILE']                     = "Log file";
 $txt['TODAY']                       = "Today";
 $txt['LOGLINES']                    = "Number of line displayed";
 
-$txt['ISNOTAMASTER']                = "is NOT a master";
-$txt['ISAMASTER']                   = "is a master";
+$txt['ISNOTAMASTER']                = "is NOT a source";
+$txt['ISAMASTER']                   = "is a source";
 
 $txt['FIREWALL']                    = "Firewall";
 

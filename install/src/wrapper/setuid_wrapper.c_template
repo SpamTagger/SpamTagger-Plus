@@ -15,8 +15,8 @@ For security reasons, launched scripts will be hardcoded here.
 #define EXIM1 __SRCDIR"/etc/init.d/exim_stage1"
 #define EXIM2 __SRCDIR"/etc/init.d/exim_stage2"
 #define EXIM4 __SRCDIR"/etc/init.d/exim_stage4"
-#define MYSQL_SLAVE __SRCDIR"/etc/init.d/mariadb_slave"
-#define MYSQL_MASTER __SRCDIR"/etc/init.d/mariadb_master"
+#define MYSQL_SLAVE __SRCDIR"/etc/init.d/mariadb_replica"
+#define MYSQL_MASTER __SRCDIR"/etc/init.d/mariadb_source"
 #define FIREWALL __SRCDIR"/etc/init.d/firewall"
 #define DCC __SRCDIR"/etc/init.d/rcDCC"
 #define APACHE __SRCDIR"/etc/init.d/apache"
@@ -32,10 +32,10 @@ services are:
 4: exim stage2 STOP
 5: exim stage4 START
 6: exim stage4 STOP
-7: mariadb slave START
-8: mariadb slave STOP
-9: mariadb master START
-10: mariadb master STOP
+7: mariadb replica START
+8: mariadb replica STOP
+9: mariadb source START
+10: mariadb source STOP
 11: apache START
 12: apache STOP
 13: dcc START

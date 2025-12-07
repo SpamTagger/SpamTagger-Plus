@@ -49,7 +49,7 @@ sub new ($class, $name, $file) {
   my $this = $class->SUPER::create($class, $name, $file);
 
   my $conf = ReadConfig::get_instance();
-  $this->{slaveID} = $conf->get_option('HOSTID');
+  $this->{replicaID} = $conf->get_option('HOSTID');
   bless $this, $class;
   return $this;
 }
@@ -76,20 +76,20 @@ sub process_datas ($this, $datas) {
       $this->log_message("WARNING ! no id found for message ($tmp)");
       next;
     }
-    my $logged_in_master = $this->log_in_master(\%msg);
-    if (!$logged_in_master) {
-      $this->log_message("Message ".$msg{id}." cannot be logged in master DB !");
+    my $logged_in_source = $this->log_in_source(\%msg);
+    if (!$logged_in_source) {
+      $this->log_message("Message ".$msg{id}." cannot be logged in source DB !");
     }
-    my $logged_in_slave = $this->log_in_slave($logged_in_master, \%msg);
-    if (!$logged_in_slave) {
-      $this->log_message("Message ".$msg{id}." cannot be logged in slave DB !");
+    my $logged_in_replica = $this->log_in_replica($logged_in_source, \%msg);
+    if (!$logged_in_replica) {
+      $this->log_message("Message ".$msg{id}." cannot be logged in replica DB !");
     }
 
-    if ($logged_in_master && $logged_in_slave) {
+    if ($logged_in_source && $logged_in_replica) {
       $this->log_message("Message ".$msg{id}." logged both");
       return "LOGGED BOTH";
     }
-    return "LOGGED $logged_in_slave $logged_in_master";
+    return "LOGGED $logged_in_replica $logged_in_source";
   }
   return "UNKNOWN COMMAND";
 }
@@ -118,10 +118,10 @@ sub log_spam ($this, @args) {
 #####
 ## logInMaster
 #####
-sub log_in_master ($this, $message = {}) {
-  unless (defined($this->{masterDB}) && $this->{masterDB}->ping()) {
-    $this->{masterDB} = DB->db_connect('realmaster', 'st_spool', 0);
-    return 0 unless ( defined($this->{masterDB}) && $this->{masterDB}->ping());
+sub log_in_source ($this, $message = {}) {
+  unless (defined($this->{sourceDB}) && $this->{sourceDB}->ping()) {
+    $this->{sourceDB} = DB->db_connect('realsource', 'st_spool', 0);
+    return 0 unless ( defined($this->{sourceDB}) && $this->{sourceDB}->ping());
   }
 
   my $table = "misc";
@@ -133,22 +133,22 @@ sub log_in_master ($this, $message = {}) {
     $table = 'misc';
   }
   my $query =
-    "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_master, store_slave) ".
+    "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_source, store_replica) ".
     "VALUES (NOW(), NOW(), '".$message->{todomain}."', '".$message->{tolocal}."', ".
     "'".$message->{sender}."', '".$message->{id}."', ".
-    "'".$message->{score}."', '".$message->{rbls}."', '". $message->{prefilter}."', '".$message->{subject}."', '".$message->{globalscore}."', '0', '0', '".$this->{slaveID}."')";
+    "'".$message->{score}."', '".$message->{rbls}."', '". $message->{prefilter}."', '".$message->{subject}."', '".$message->{globalscore}."', '0', '0', '".$this->{replicaID}."')";
 
-  return 0 unless ($this->{masterDB}->execute($query));
+  return 0 unless ($this->{sourceDB}->execute($query));
   return 1;
 }
 
 #####
 ## logInSlave
 #####
-sub log_in_slave ($this, $master_stored, $message = {}) {
-  if (!defined($this->{slaveDB}) || !$this->{slaveDB}->ping()) {
-    $this->{slaveDB} = DB->db_connect('slave', 'st_spool', 0);
-    if ( !defined($this->{slaveDB}) || !$this->{slaveDB}->ping()) { return 0; }
+sub log_in_replica ($this, $source_stored, $message = {}) {
+  if (!defined($this->{replicaDB}) || !$this->{replicaDB}->ping()) {
+    $this->{replicaDB} = DB->db_connect('replica', 'st_spool', 0);
+    if ( !defined($this->{replicaDB}) || !$this->{replicaDB}->ping()) { return 0; }
   }
 
   my $table = "misc";
@@ -160,12 +160,12 @@ sub log_in_slave ($this, $master_stored, $message = {}) {
     $table = 'misc';
   }
   my $query =
-    "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_master, store_slave) ".
+    "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_source, store_replica) ".
     "VALUES (NOW(), NOW(), '".$message->{todomain}."', '".$message->{tolocal}."', ".
     "'".$message->{sender}."', '".$message->{id}."', ".
-    "'".$message->{score}."', '".$message->{rbls}."', '". $message->{prefilter}."', '".$message->{subject}."', '".$message->{globalscore}."', '0', '".$master_stored."', '".$this->{slaveID}."')";
+    "'".$message->{score}."', '".$message->{rbls}."', '". $message->{prefilter}."', '".$message->{subject}."', '".$message->{globalscore}."', '0', '".$source_stored."', '".$this->{replicaID}."')";
 
-  return 0 unless ($this->{slaveDB}->execute($query));
+  return 0 unless ($this->{replicaDB}->execute($query));
   return 1;
 }
 

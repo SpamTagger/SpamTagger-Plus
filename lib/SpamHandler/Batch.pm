@@ -140,9 +140,9 @@ sub run ($this) {
 
     ## then log
     my %prepared = %{ $this->{daemon}->{prepared} };
-    my $inmaster = 0;
+    my $insource = 0;
     foreach my $dbname ( keys %prepared ) {
-      $msg->do_log( $dbname, \$inmaster );
+      $msg->do_log( $dbname, \$insource );
     }
     $msg->purge();
     my $msgtimers = $msg->get_timers();

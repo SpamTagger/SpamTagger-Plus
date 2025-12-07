@@ -74,11 +74,11 @@ class EmailList extends ListManager
     $log_->log('-- BEGIN searching local email list: ('.$this->s_local_part_.",".$this->s_domain_part_.")", PEAR_LOG_INFO);
     global $sysconf_;
 
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
     $query = "SELECT address FROM email WHERE ";
-    $query .= "address LIKE '".$db_slaveconf->sanitize($this->s_local_part_)."%@".$db_slaveconf->sanitize($this->s_domain_part_)."'";
+    $query .= "address LIKE '".$db_replicaconf->sanitize($this->s_local_part_)."%@".$db_replicaconf->sanitize($this->s_domain_part_)."'";
 
-    $res = $db_slaveconf->getList($query);
+    $res = $db_replicaconf->getList($query);
     foreach ($res as $email) {
       $email = strtolower($email);
       $this->setElement($email, $email);

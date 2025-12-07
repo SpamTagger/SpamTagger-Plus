@@ -26,9 +26,9 @@ $documentor = new Documentor();
 
 // prepare select fields
 $hosts = array();
-$slaves = $sysconf_->getSlaves();
-foreach ($slaves as $slave) {
-    $hosts[$slave->getPref('hostname')." (".$slave->getPref('id').")"] = $slave->getPref('hostname');
+$replicas = $sysconf_->getSlaves();
+foreach ($replicas as $replica) {
+    $hosts[$replica->getPref('hostname')." (".$replica->getPref('id').")"] = $replica->getPref('hostname');
 }
 
 $logs_ = array ($lang_->print_txt('MTA1') => 'mta1', $lang_->print_txt('MTA2') => 'mta2', $lang_->print_txt('MTA4') => 'mta4', $lang_->print_txt('ENGINE') => 'engine', $lang_->print_txt('HTTPD') => 'httpd',);

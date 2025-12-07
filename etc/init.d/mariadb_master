@@ -23,43 +23,43 @@ if [ "$skip" = "nopass" ]; then
   SKIPGRANT="--skip-grant-table"
 fi
 
-conf=$SRCDIR/etc/mariadb/my_master.cnf
-datadir=$VARDIR/spool/mariadb_master
-pid_file=$VARDIR/run/mariadb_master/mariadbd.pid
-log_file=$VARDIR/log/mariadb_master/mariadb.log
-binlog=$VARDIR/log/mariadb_master/mariadb_bin.log
-socket=$VARDIR/run/mariadb_master/mariadbd.sock
+conf=$SRCDIR/etc/mariadb/my_source.cnf
+datadir=$VARDIR/spool/mariadb_source
+pid_file=$VARDIR/run/mariadb_source/mariadbd.pid
+log_file=$VARDIR/log/mariadb_source/mariadb.log
+binlog=$VARDIR/log/mariadb_source/mariadb_bin.log
+socket=$VARDIR/run/mariadb_source/mariadbd.sock
 
 prepare() {
-  chown mysql:spamtagger $VARDIR/log/mariadb_master/mariadb.log >/dev/null 2>&1
+  chown mysql:spamtagger $VARDIR/log/mariadb_source/mariadb.log >/dev/null 2>&1
 
   $SRCDIR/bin/dump_mariadb_config.pl >/dev/null 2>&1
 }
 
 case "$mode" in
 'start')
-  touch $VARDIR/run/mariadb_master.start.rs
+  touch $VARDIR/run/mariadb_source.start.rs
   # Start daemon
-  echo -n "  Starting master DB: "
+  echo -n "  Starting source DB: "
   prepare
   if test -x mariadb_safe; then
     mariadb_safe --defaults-file=$conf --datadir=$datadir --pid-file=$pid_file --log-bin=$binlog --log-error=$log_file --socket=$socket $SKIPGRANT >/dev/null 2>&1 &
   else
     echo "Can't execute mariadb_safe"
   fi
-  if [ -f $VARDIR/run/mariadb_master.rn ]; then
-    rm $VARDIR/run/mariadb_master.rn
+  if [ -f $VARDIR/run/mariadb_source.rn ]; then
+    rm $VARDIR/run/mariadb_source.rn
   fi
   echo "started."
-  rm $VARDIR/run/mariadb_master.stopped >/dev/null 2>&1
-  rm $VARDIR/run/mariadb_master.*.rs >/dev/null 2>&1
+  rm $VARDIR/run/mariadb_source.stopped >/dev/null 2>&1
+  rm $VARDIR/run/mariadb_source.*.rs >/dev/null 2>&1
   ;;
 
 'stop')
-  touch $VARDIR/run/mariadb_master.stop.rs
+  touch $VARDIR/run/mariadb_source.stop.rs
   # Stop daemon. We use a signal here to avoid having to know the
   # root password.
-  echo -n "  Stopping master DB: "
+  echo -n "  Stopping source DB: "
   if test -s "$pid_file"; then
     mariadbd_pid=$(cat $pid_file)
     #echo "Killing mariadbd with pid $mariadbd_pid"
@@ -80,15 +80,15 @@ case "$mode" in
   else
     echo -n "No mariadbd pid file found. Looked for $pid_file. "
   fi
-  kill -KILL $(pgrep -f my_master.cnf) >/dev/null 2>&1
+  kill -KILL $(pgrep -f my_source.cnf) >/dev/null 2>&1
   sleep 2
   echo "stopped."
-  rm $VARDIR/run/mariadb_master.stop.rs >/dev/null 2>&1
-  touch $VARDIR/run/mariadb_master.stopped
+  rm $VARDIR/run/mariadb_source.stop.rs >/dev/null 2>&1
+  touch $VARDIR/run/mariadb_source.stopped
   ;;
 
 'restart')
-  touch $VARDIR/run/mariadb_master.restart.rs
+  touch $VARDIR/run/mariadb_source.restart.rs
   # Stop the service and regardless of whether it was
   # running or not, start it again.
   $0 stop

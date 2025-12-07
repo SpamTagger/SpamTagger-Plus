@@ -315,10 +315,10 @@ function cinfos(msgid, storeid) {
 			+ ',toolbar=0,resizable=1,status=0,scrollbars=1');
 }
 
-function showLogExtract(slaveid, msgid) {
-   trid = 'tracelog_'+slaveid+'_'+msgid;
-   tdid = 'tracelogmsg_'+slaveid+'_'+msgid;
-   imgid = 'img_logextract_'+slaveid+'_'+msgid;
+function showLogExtract(replicaid, msgid) {
+   trid = 'tracelog_'+replicaid+'_'+msgid;
+   tdid = 'tracelogmsg_'+replicaid+'_'+msgid;
+   imgid = 'img_logextract_'+replicaid+'_'+msgid;
    imgsrc = $("."+imgid).attr('src');
    var patt=new RegExp("_up.");
    if (patt.test(imgsrc)) {
@@ -335,7 +335,7 @@ function showLogExtract(slaveid, msgid) {
       return;
    }
    $("."+tdid).html(loadingimg);
-   url = baseurl+'/managetracing/logextract/s/'+slaveid+'/m/'+msgid;
+   url = baseurl+'/managetracing/logextract/s/'+replicaid+'/m/'+msgid;
    //alert(tdid+' -- '+$("."+tdid).html());
    extractrequest = $.ajax({
                   type: "GET",

@@ -27,8 +27,8 @@ class Default_Model_QuarantinedContentMapper
 
 	public function fetchAll($params)
 	{
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
         $entriesflat = array();
         $sortarray = array();
@@ -43,7 +43,7 @@ class Default_Model_QuarantinedContentMapper
         		$params['orderfield'] = 'from_address';
         	}
         }
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
         	$res = $s->sendSoapRequest('Content_fetchAll', $params, 10000);
         	foreach ($res as $r) {
         		$r['store_id'] = $s->getId();

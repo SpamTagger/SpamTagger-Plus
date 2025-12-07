@@ -41,11 +41,11 @@ public function load($service) {
   }
   $this->service_ = $service;
 
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
-  $this->service_ = $db_slaveconf->sanitize($service);
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
+  $this->service_ = $db_replicaconf->sanitize($service);
   $query = "SELECT id FROM external_access WHERE service='".$this->service_."'";
 
-  $list = $db_slaveconf->getList($query);
+  $list = $db_replicaconf->getList($query);
   if (!is_array($list)) {
     return false;
   }

@@ -43,7 +43,7 @@ sub get_element_mapper ($what) {
     $el = ElementMapper::EmailMapper->new();
   }
 
-  $el->{db} = DB->db_connect('master', 'st_config', 0);
+  $el->{db} = DB->db_connect('source', 'st_config', 0);
   if (! $el->{db}->ping()) {
     print "Cannot connect to configuration database";
     return;

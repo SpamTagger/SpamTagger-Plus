@@ -82,12 +82,12 @@ function drawHostList($t) {
 
   // global objects
   $sysconf_ = SystemConfig::getInstance();
-  $slaves_ = $sysconf_->getSlaves();
+  $replicas_ = $sysconf_->getSlaves();
 
   $ret = "";
   $i = 0;
-  foreach( $slaves_ as $slave ) {
-    $retsoap = $slave->isAvailable();
+  foreach( $replicas_ as $replica ) {
+    $retsoap = $replica->isAvailable();
 
     if ($retsoap == "OK") {
       if ($i++ % 2) {
@@ -95,20 +95,20 @@ function drawHostList($t) {
       } else {
         $tmp = preg_replace("/__COLOR1__(\S{7})__COLOR2__(\S{7})/", "$2", $t->getTemplate('HOSTLIST'));
       }
-      $tmp = str_replace('__HOSTID__', $slave->getPref('id'), $tmp);
-      $tmp = str_replace('__HOST__', $slave->getPref('hostname'), $tmp);
-      $tmp = str_replace('__PROCESSES__', $slave->showProcesses($t->getTemplate('PROCESSESOPEN'), $colors, $needrestart, $restarter_height, $restarter_width), $tmp);
-      $tmp = str_replace('__SPOOLS__', $slave->showSpools($t->getTemplate('SPOOLS'), $spoolview_width, $spoolview_height), $tmp);
-      $tmp = str_replace('__LOAD__', $slave->showLoad($t->getTemplate('LOAD')), $tmp);
-      $tmp = str_replace('__DISKUSAGE__', $slave->showDiskUsage($t->getTemplate('DISK')), $tmp);
-      $tmp = str_replace('__MEMORYUSAGE__', $slave->showMemUsage($t->getTemplate('MEMORY'), $colors), $tmp);
-      $tmp = str_replace('__LASTPATCH__', $slave->getLastPatch(), $tmp);
-      $tmp = str_replace('__TODAYSCOUNTS__', $slave->showTodaysCounts($t->getTemplate('COUNTS'), $colors), $tmp);
-      $tmp = preg_replace('/__LINK_LASTPATCH__/', "javascript:open_popup('view_patches.php?h=".$slave->getPref('id')."',$patchview_width,$patchview_width);", $tmp);
+      $tmp = str_replace('__HOSTID__', $replica->getPref('id'), $tmp);
+      $tmp = str_replace('__HOST__', $replica->getPref('hostname'), $tmp);
+      $tmp = str_replace('__PROCESSES__', $replica->showProcesses($t->getTemplate('PROCESSESOPEN'), $colors, $needrestart, $restarter_height, $restarter_width), $tmp);
+      $tmp = str_replace('__SPOOLS__', $replica->showSpools($t->getTemplate('SPOOLS'), $spoolview_width, $spoolview_height), $tmp);
+      $tmp = str_replace('__LOAD__', $replica->showLoad($t->getTemplate('LOAD')), $tmp);
+      $tmp = str_replace('__DISKUSAGE__', $replica->showDiskUsage($t->getTemplate('DISK')), $tmp);
+      $tmp = str_replace('__MEMORYUSAGE__', $replica->showMemUsage($t->getTemplate('MEMORY'), $colors), $tmp);
+      $tmp = str_replace('__LASTPATCH__', $replica->getLastPatch(), $tmp);
+      $tmp = str_replace('__TODAYSCOUNTS__', $replica->showTodaysCounts($t->getTemplate('COUNTS'), $colors), $tmp);
+      $tmp = preg_replace('/__LINK_LASTPATCH__/', "javascript:open_popup('view_patches.php?h=".$replica->getPref('id')."',$patchview_width,$patchview_width);", $tmp);
 
       $ret .= $tmp;
     } else {
-      $ret .= "<tr bgcolor=\"white\"><td>".$slave->getPref('id')."</td><td align=\"center\" colspan=\"7\"><font color=\"red\">host not responding ($retsoap)</font></td></tr>";
+      $ret .= "<tr bgcolor=\"white\"><td>".$replica->getPref('id')."</td><td align=\"center\" colspan=\"7\"><font color=\"red\">host not responding ($retsoap)</font></td></tr>";
     }
   }
   return $ret;

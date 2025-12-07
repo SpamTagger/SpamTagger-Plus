@@ -11,19 +11,19 @@
  */
 require_once('helpers/PrefHandler.php');
 /**
- * a slave object may connect to his own web service
+ * a replica object may connect to his own web service
  */
 require_once('system/Soaper.php');
 require_once('system/SoapTypes.php');
 
 /**
- * this class takes care of the slave configuration and actions
+ * this class takes care of the replica configuration and actions
  */
 class Slave extends PrefHandler
 {
 
     /**
-     * slave configuration settings
+     * replica configuration settings
      * @var array
      */
 	private $pref_ = array(
@@ -35,7 +35,7 @@ class Slave extends PrefHandler
 	               );
 
      /**
-      * soap connector to the slave
+      * soap connector to the replica
       * @var Soaper
       */
      private $soaper_;
@@ -52,12 +52,12 @@ class Slave extends PrefHandler
  * constructor
  */
 public function __construct() {
-  $this->addPrefSet('slave', 's', $this->pref_);
+  $this->addPrefSet('replica', 's', $this->pref_);
 }
 
 /**
- * load slave datas from database
- * @param  $id  numeric   slave id in the spamtagger cluster
+ * load replica datas from database
+ * @param  $id  numeric   replica id in the spamtagger cluster
  * @return      boolean   true on success, false on failure
  */
 public function load($id) {
@@ -85,7 +85,7 @@ public function delete() {
 }
 
 /**
- * connect to the soap service of the slave
+ * connect to the soap service of the replica
  * @return  boolean  true on success, false on failure
  */
 private function connect() {
@@ -123,7 +123,7 @@ public function setSoapTimeout($timeout) {
 }
 
 /**
- * check if the slave can be joined by soap services
+ * check if the replica can be joined by soap services
  * @return  string  'OK' on success, error code on failure
  */
 public function isAvailable() {
@@ -142,7 +142,7 @@ public function getLastSoapError() {
 }
 
 /**
- * get the processes status of the slave
+ * get the processes status of the replica
  * @return  array    status, array with process as key and status as value
  */
 public function getProcessesStatus() {
@@ -221,8 +221,8 @@ public function showProcesses($t, $colors, $nr, $rh, $rw) {
                     'MTA4' => $status->mtaoutgoing,
                     'HTTPD' => $status->httpd,
                     'ENGINE' => $status->engine,
-                    'MASTERDB' => $status->masterdb,
-                    'SLAVEDB' => $status->slavedb,
+                    'MASTERDB' => $status->sourcedb,
+                    'SLAVEDB' => $status->replicadb,
                     'SNMPD' => $status->snmpd,
                     'GREYLISTD' => $status->greylistd,
                     'CRON' => $status->cron,

@@ -327,7 +327,7 @@ There are three different ways that SpamTagger can handle messages determined to
 	</ul>
 <h2>Tag: </h2>
 This is the tag that would be inserted in the subject line if \"tag\" is selected as the Action to take, above.
-<h2>Quarantine postmaster errors: </h2>
+<h2>Quarantine postsource errors: </h2>
 If enabled, all non-delivery reports (NDRs) sent to this address are tagged or
 quarantined, depending on the \"Action on spam\" setting.  This is useful when
 a user's address has been used as the sender's address in a spam or virus
@@ -876,7 +876,7 @@ Web services are used primarily for synchronization between servers in a multi-s
 $help['MONGLOBALHOSTID'] =
 "The status page gives you a bird's eye view of every SpamTagger server in your SpamTagger installation.
 <h1>ID</h1>
-The ID number of the SpamTagger server. The master server is #1. In a single server installation, you will only see #1.
+The ID number of the SpamTagger server. The source server is #1. In a single server installation, you will only see #1.
 ";
 
 
@@ -1049,7 +1049,7 @@ In the message that the user forwards to the administrator, you will find an att
 $help['HOSTLISTTITLE'] = "
 <h1>Host list</h1>
 This is the list of SpamTagger servers in your installation.
-The first column indicates the unique Host ID of the SpamTagger server in your installation. The server with a Host ID of 1 is the master server; any others are slaves.<br/><br/>
+The first column indicates the unique Host ID of the SpamTagger server in your installation. The server with a Host ID of 1 is the source server; any others are replicas.<br/><br/>
 The second column is the fully qualified domain name of the server.
 In this list, you can edit (<img src=\"images/pencil.gif\" border=\"0\">) or delete (<img src=\"images/erase.gif\">) hosts.
 ";

@@ -66,7 +66,7 @@ function getRestartStatus() {
 
     if (isset($_SESSION['restart_manager_'])) {
       foreach ($_SESSION['restart_manager_'] as $service => $status) {
-        if (count($_SESSION['restarted'][$service]) >= count($sysconf_->slaves_)) {
+        if (count($_SESSION['restarted'][$service]) >= count($sysconf_->replicas_)) {
            unset($_SESSION['restart_manager_'][$service]);
            unset($_SESSION['restarted'][$service]);
         }

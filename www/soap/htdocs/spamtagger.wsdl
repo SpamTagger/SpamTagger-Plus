@@ -26,8 +26,8 @@
          <xsd:element name="mtaoutgoing" type="xsd:int"/>
          <xsd:element name="httpd" type="xsd:int"/>
          <xsd:element name="engine" type="xsd:int"/>
-         <xsd:element name="masterdb" type="xsd:int"/>
-         <xsd:element name="slavedb" type="xsd:int"/>
+         <xsd:element name="sourcedb" type="xsd:int"/>
+         <xsd:element name="replicadb" type="xsd:int"/>
          <xsd:element name="snmpd" type="xsd:int"/>
          <xsd:element name="greylistd" type="xsd:int"/>
          <xsd:element name="cron" type="xsd:int"/>

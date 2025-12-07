@@ -14,7 +14,7 @@ my $days_to_keep = shift;
 
 if (! $days_to_keep) {
   if (! $days_to_keep) {
-    my $config_dbh = DB->db_connect("slave", "st_config");
+    my $config_dbh = DB->db_connect("replica", "st_config");
     if ($config_dbh) {
       my $config_sth = $config_dbh->prepare("SELECT days_to_keep_virus FROM system_conf");
       $config_sth->execute();

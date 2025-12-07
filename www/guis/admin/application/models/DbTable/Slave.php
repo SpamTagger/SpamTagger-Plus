@@ -10,7 +10,7 @@
 
 class Default_Model_DbTable_Slave extends Zend_Db_Table_Abstract
 {
-    protected $_name    = 'slave';
+    protected $_name    = 'replica';
 
     public function __construct() {
     	$this->_db = Zend_Registry::get('writedb');

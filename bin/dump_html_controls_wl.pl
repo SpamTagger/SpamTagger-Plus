@@ -41,7 +41,7 @@ do_htmls_wl();
 ############################
 sub do_htmls_wl {
   my $dbh;
-  $dbh = DBI->connect("DBI:mariadb:database=st_config;host=localhost;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock",
+  $dbh = DBI->connect("DBI:mariadb:database=st_config;host=localhost;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_replica/mariadbd.sock",
       "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0})
       or return;
 

@@ -38,7 +38,7 @@ if ($user && $user->getUserType() == 'administrator') {
     echo "</div></div></div>";
 }
 
-if (!$this->is_slave) {
+if (!$this->is_replica) {
 ?>
 <div id="globalstatsbloc" class="globalbloc globalstatbloc">
     <div id="countsbloc1" class="countsbloc">
@@ -62,13 +62,13 @@ if (!$this->is_slave) {
 <?php
 
         $watchdogs = '';
-        $slave = new Default_Model_Slave();
+        $replica = new Default_Model_Slave();
         if ($user && $user->getUserType() == 'administrator') {
             $urltoget = '/admin/downloads/watchdogs.html';
             $curl = curl_init();
 
             $id = 1;
-            foreach ($slave->fetchAll() as $s) {
+            foreach ($replica->fetchAll() as $s) {
 	            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 3);
 	            curl_setopt($curl, CURLOPT_TIMEOUT, 3); //timeout in seconds
                 curl_setopt_array($curl, array(

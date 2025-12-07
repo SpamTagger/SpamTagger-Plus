@@ -74,11 +74,11 @@ private function doRegisteredUsers() {
   $log_->log('-- BEGIN searching local user list: ('.$this->s_username_.",".$this->s_domain_.")", PEAR_LOG_INFO);
   global $sysconf_;
 
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
   $query = "SELECT username FROM user WHERE ";
-  $query .= "username LIKE '%".$db_slaveconf->sanitize($this->s_username_)."%' AND domain='".$db_slaveconf->sanitize($this->s_domain_)."'";
+  $query .= "username LIKE '%".$db_replicaconf->sanitize($this->s_username_)."%' AND domain='".$db_replicaconf->sanitize($this->s_domain_)."'";
 
-  $res = $db_slaveconf->getList($query);
+  $res = $db_replicaconf->getList($query);
   foreach ($res as $user) {
     $username = $user;
     if ($username != $this->s_username_) {

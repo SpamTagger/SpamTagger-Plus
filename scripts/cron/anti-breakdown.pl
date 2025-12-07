@@ -113,9 +113,9 @@ sub remove_and_save_ST_RBLs {
   my $sth;
   my $reboot_service = 0;
 
-  my $master_dbh = DB->db_connect('master', 'st_config');
-  if ( ! defined($master_dbh) ) {
-    warn "CANNOTCONNECTMASTERDB\n", $master_dbh->errstr;
+  my $source_dbh = DB->db_connect('source', 'st_config');
+  if ( ! defined($source_dbh) ) {
+    warn "CANNOTCONNECTMASTERDB\n", $source_dbh->errstr;
     return 0;
   }
 
@@ -125,7 +125,7 @@ sub remove_and_save_ST_RBLs {
   foreach my $table (keys %rbl_field) {
     my $field = $rbl_field{$table};
 
-    $sth = $master_dbh->prepare("select $field from $table;");
+    $sth = $source_dbh->prepare("select $field from $table;");
     $sth->execute() or return 0;
     my $ref = $sth->fetchrow_hashref();
     my $original_field = $ref->{$field};
@@ -144,7 +144,7 @@ sub remove_and_save_ST_RBLs {
     $nw =~ s/\s*$//;
 
     if ($nw ne $original_field) {
-      $sth = $master_dbh->prepare("update $table set $field ='$nw';");
+      $sth = $source_dbh->prepare("update $table set $field ='$nw';");
       $sth->execute();
       $reboot_service = 1;
     }
@@ -152,7 +152,7 @@ sub remove_and_save_ST_RBLs {
   close $FH;
 
   $sth->finish() if ( defined($sth) );
-  $master_dbh->db_disconnect();
+  $source_dbh->db_disconnect();
 
   if ($reboot_service) {
     system('/usr/spamtagger/etc/init.d/mailscanner', 'restart');
@@ -166,9 +166,9 @@ sub handle_dns_ok {
     my $sth;
 
     # Database connexion
-    my $master_dbh = DB->db_connect('master', 'st_config');
-    if ( ! defined($master_dbh) ) {
-      warn "CANNOTCONNECTMASTERDB\n", $master_dbh->errstr;
+    my $source_dbh = DB->db_connect('source', 'st_config');
+    if ( ! defined($source_dbh) ) {
+      warn "CANNOTCONNECTMASTERDB\n", $source_dbh->errstr;
       return 0;
     }
 
@@ -176,13 +176,13 @@ sub handle_dns_ok {
     my $FH;
     open($FH, $rbl_sql_file or warn "Cannot open $rbl_sql_file: $!\n";
     while (<$FH>) {
-      $sth = $master_dbh->prepare($_);
+      $sth = $source_dbh->prepare($_);
       $sth->execute();
     }
     close $FH;
 
     $sth->finish() if ( defined($sth) );
-    $master_dbh->db_disconnect();
+    $source_dbh->db_disconnect();
 
     # Restarting associated services
     system('/usr/spamtagger/etc/init.d/mailscanner', 'restart');

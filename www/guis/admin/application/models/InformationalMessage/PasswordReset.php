@@ -22,10 +22,10 @@ class Default_Model_InformationalMessage_PasswordReset extends Default_Model_Inf
 			// Check in DB if use_ssl is true and configurator enabled
 			$url=".";
 			require_once ('helpers/DataManager.php');
-			$db_masterconf = DM_MasterConfig :: getInstance();
-			$configurator_enabled=$db_masterconf->getHash("select * from external_access where service='configurator' AND protocol='TCP' AND port='4242'");
+			$db_sourceconf = DM_MasterConfig :: getInstance();
+			$configurator_enabled=$db_sourceconf->getHash("select * from external_access where service='configurator' AND protocol='TCP' AND port='4242'");
 			if ( isset($configurator_enabled['id']) && !empty($configurator_enabled['id'])) {
-				$res=$db_masterconf->getHash("select use_ssl from httpd_config;");
+				$res=$db_sourceconf->getHash("select use_ssl from httpd_config;");
 				$protocol=$res['use_ssl']=="true" ? 'https://' : 'http://';
 				$url=" (<a href='".$protocol.$_SERVER['SERVER_NAME'].":4242'>Click here to access the wizard</a>).";
 			}

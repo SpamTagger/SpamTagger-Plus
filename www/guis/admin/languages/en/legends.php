@@ -192,7 +192,7 @@ return array(
 
 ## domains callout
    'sendingtorandom' => 'Sending to random recipient',
-   'sendingtopostmaster' => 'Sending to postmaster',
+   'sendingtopostsource' => 'Sending to postsource',
    'nodestinationset' => 'No valid destination server set',
 
 ## user authentication
@@ -233,8 +233,8 @@ return array(
    'process_exim_stage4' => 'Outgoing MTA',
    'process_apache'  => 'Web access',
    'process_mailscanner' => 'Filtering engine',
-   'process_mariadb_master' => 'Master database',
-   'process_mariadb_slave' => 'Slave database',
+   'process_mariadb_source' => 'Master database',
+   'process_mariadb_replica' => 'Slave database',
    'process_snmpd'  => 'SNMP daemon',
    'process_greylistd' => 'Greylist daemon',
    'process_cron' => 'Scheduler',

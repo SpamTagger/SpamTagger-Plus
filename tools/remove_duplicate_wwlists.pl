@@ -33,7 +33,7 @@ if (defined($ARGV[0])) {
   }
 }
 
-my $db = DB->db_connect('master', 'st_config');
+my $db = DB->db_connect('source', 'st_config');
 my @rows = $db->get_list_of_hash("SELECT id, recipient, sender, type FROM wwlists");
 die "Failed to fetch wwlists\n" unless @rows;
 

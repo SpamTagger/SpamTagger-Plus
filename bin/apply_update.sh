@@ -51,7 +51,7 @@ fi
 
 DESC=$(grep "# DESCRIPTION: " $PATCHFILE | cut -d':' -f2)
 
-EXISTS=$(echo "SELECT id FROM update_patch WHERE id='$PATCHID';" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_slave/mariadbd.sock st_config)
+EXISTS=$(echo "SELECT id FROM update_patch WHERE id='$PATCHID';" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config)
 if [ ! "$EXISTS" = "" ]; then
   echo "ERROR: patch $PATCHID already applied"
   exit 1
@@ -66,7 +66,7 @@ RES=$($PATCHFILE)
 echo "res is: $RES"
 if [ "$RES" = "OK" ]; then
   echo "["$(date "+%Y-%m-%d %H:%M:%S")"] [$PATCHID] done with update, status: $RES" >>$LOGFILE
-  echo "INSERT INTO update_patch VALUES('$PATCHID', NOW(), NOW(), '$RES', '$DESC');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_slave/mariadbd.sock st_config
+  echo "INSERT INTO update_patch VALUES('$PATCHID', NOW(), NOW(), '$RES', '$DESC');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config
 else
   echo "["$(date "+%Y-%m-%d %H:%M:%S")"] [$PATCHID] aborted, will retry later, reason is: $RES" >>$LOGFILE
 fi

@@ -9,9 +9,9 @@ if [ "$SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
 
-$SRCDIR/etc/init.d/mariadb_slave stop 2>&1 >/dev/null
+$SRCDIR/etc/init.d/mariadb_replica stop 2>&1 >/dev/null
 sleep $DELAY
-PREVPROC=$(pgrep -f /etc/mariadb/my_slave.cnf)
+PREVPROC=$(pgrep -f /etc/mariadb/my_replica.cnf)
 if [ ! "$PREVPROC" = "" ]; then
   echo -n "FAILED"
   exit

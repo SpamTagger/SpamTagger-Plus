@@ -34,7 +34,7 @@ if [ "SRCDIR" = "" ]; then
 fi
 MYSPAMTAGGERPWD=$(grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
-SOCKET=$VARDIR/run/mariadb_slave/mariadbd.sock
+SOCKET=$VARDIR/run/mariadb_replica/mariadbd.sock
 COMMAND=/usr/bin/mariadb
 
 if [[ -z $1 ]]; then

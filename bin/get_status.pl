@@ -67,8 +67,8 @@ my @order = (
     { 'id' => 'exim_stage4', 'proc' => 'exim/exim_stage4.conf', 'human' => 'Outgoing' },
     { 'id' => 'apache', 'proc' => 'apache/httpd.conf', 'human' => 'Web Server' },
     { 'id' => 'mailscanner', 'proc' => 'MailScanner', 'human' => 'Filtering Engine' },
-    { 'id' => 'mariadb_master', 'proc' => 'mariadb/my_master.cnf', 'human' => 'Master Database' },
-    { 'id' => 'mariadb_slave', 'proc' => 'mariadb/my_slave.cnf', 'human' => 'Slave Database' },
+    { 'id' => 'mariadb_source', 'proc' => 'mariadb/my_source.cnf', 'human' => 'Master Database' },
+    { 'id' => 'mariadb_replica', 'proc' => 'mariadb/my_replica.cnf', 'human' => 'Slave Database' },
     { 'id' => 'snmpd', 'proc' => 'snmpd.conf', 'human' => 'SNMP Daemon' },
     { 'id' => 'greylistd', 'proc' => 'greylistd/greylistd.conf', 'human' => 'Greylist Daemon' },
     { 'id' => 'cron', 'proc' => '/usr/sbin/cron', 'human' => 'Scheduler' },
@@ -216,7 +216,7 @@ if ($mode_given =~ /s/) {
         print($res."\n");
     }
 } elsif ($mode_given =~ /u/) {
-    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /usr/bin/mariadb --skip-column-names -S $VARDIR/run/mariadb_slave/mariadbd.sock -uspamtagger -p".$config->get_option('MYSPAMTAGGERPWD');
+    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /usr/bin/mariadb --skip-column-names -S $VARDIR/run/mariadb_replica/mariadbd.sock -uspamtagger -p".$config->get_option('MYSPAMTAGGERPWD');
     $res = `$cmd`;
     my $patch = "";
     if ($res =~ /^(\d+)\s+(\S+)$/) {

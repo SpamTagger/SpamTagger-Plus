@@ -52,7 +52,7 @@ if (open($CONFIG, '<', $configfile)) {
 }
 
 # SMTP settings
-my $db = DB->db_connect('slave', 'st_config');
+my $db = DB->db_connect('replica', 'st_config');
 my %mta_row = $db->get_hash_row("SELECT rbls FROM mta_config WHERE stage=1");
 die "Failed to fetch SMTP config\n" unless %mta_row;
 

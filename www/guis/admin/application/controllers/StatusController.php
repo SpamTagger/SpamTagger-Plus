@@ -22,13 +22,13 @@ class StatusController extends Zend_Controller_Action
         $view->spools_status = 'cannotgetdata';
         $view->load_status = 'cannotgetdata';
 
-        $slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+        $replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
         $users = 0;
 
         $out = [ 'hardware' => [], 'spools' => [], 'load' => [] ];
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
             $id = $s->getId();
             foreach (array_keys($out) as $what) {
                 $status = $s->getStatus($what);
@@ -49,7 +49,7 @@ class StatusController extends Zend_Controller_Action
                 elseif ($key == 'load') { $view->$var = loadlow; }
             } else {
                 $o = '';
-                foreach ($slaves as $s) {
+                foreach ($replicas as $s) {
                     if (isset($out[$key][$s->getId()])) {
                         $o .= "Host ".$s->getId()." (".$out[$key][$s->getId()]."); ";
                     }
@@ -70,9 +70,9 @@ class StatusController extends Zend_Controller_Action
 
         $m = new Default_Model_InformationalMessage();
 
-        $slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
-        foreach ($slaves as $s) {
+        $replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
+        foreach ($replicas as $s) {
             $msgs = $s->getInformationalMessages();
             foreach ($msgs as $m) {
                 if (! $m instanceof Default_Model_InformationalMessage) {

@@ -117,51 +117,51 @@ if (open($fh, '>>', "$VARDIR/log/spamtagger/spam_sync.log")) {
 # we may have done only one query for the time instead of repeating it
 # but in future we may think of different times for daily/weekly or monthly jobs
 
-my $slave_dbh = DB->connect("slave", "st_config");
-if (!$slave_dbh) {
-  printf ("ERROR: no slave database found on this system ! \n");
+my $replica_dbh = DB->connect("replica", "st_config");
+if (!$replica_dbh) {
+  printf ("ERROR: no replica database found on this system ! \n");
   ## try to properly kill all databases
-  `$SRCDIR/etc/init.d/mariadb_slave stop`;
-  `$SRCDIR/etc/init.d/mariadb_master stop`;
+  `$SRCDIR/etc/init.d/mariadb_replica stop`;
+  `$SRCDIR/etc/init.d/mariadb_source stop`;
   sleep 5;
   ## kill them hard
   `killall -KILL mariadbd mariadbd_safe`;
   sleep 2;
   ## and restart them
-  `$SRCDIR/etc/init.d/mariadb_master start`;
+  `$SRCDIR/etc/init.d/mariadb_source start`;
   sleep 2;
-  `$SRCDIR/etc/init.d/mariadb_slave start`;
+  `$SRCDIR/etc/init.d/mariadb_replica start`;
   exit 1;
 }
 
-my $sth =  $slave_dbh->prepare("SELECT hostid FROM system_conf WHERE (0=HOUR(NOW())) AND ((MINUTE(NOW()) >= 0) AND (MINUTE(NOW()) < 0+$cron_occurence))");
+my $sth =  $replica_dbh->prepare("SELECT hostid FROM system_conf WHERE (0=HOUR(NOW())) AND ((MINUTE(NOW()) >= 0) AND (MINUTE(NOW()) < 0+$cron_occurence))");
 $sth->execute() or die ("error in SELECT");
 if ($sth->rows > 0) {
   $itsmidnight=1;
 }
 $sth->finish();
 
-$sth =  $slave_dbh->prepare("SELECT hostid FROM system_conf WHERE (HOUR(cron_time)=HOUR(NOW())) AND ((MINUTE(NOW()) >= MINUTE(cron_time)) AND (MINUTE(NOW()) < MINUTE(cron_time)+$cron_occurence))");
+$sth =  $replica_dbh->prepare("SELECT hostid FROM system_conf WHERE (HOUR(cron_time)=HOUR(NOW())) AND ((MINUTE(NOW()) >= MINUTE(cron_time)) AND (MINUTE(NOW()) < MINUTE(cron_time)+$cron_occurence))");
 $sth->execute() or die ("error in SELECT");
 if ($sth->rows > 0) {
   $itstime=1;
 }
 $sth->finish();
 
-$sth =  $slave_dbh->prepare("SELECT hostid FROM system_conf WHERE (DAYOFWEEK(NOW())=cron_weekday AND HOUR(cron_time)=HOUR(NOW())) AND ((MINUTE(NOW()) >= MINUTE(cron_time)) AND (MINUTE(NOW()) < MINUTE(cron_time)+$cron_occurence))");
+$sth =  $replica_dbh->prepare("SELECT hostid FROM system_conf WHERE (DAYOFWEEK(NOW())=cron_weekday AND HOUR(cron_time)=HOUR(NOW())) AND ((MINUTE(NOW()) >= MINUTE(cron_time)) AND (MINUTE(NOW()) < MINUTE(cron_time)+$cron_occurence))");
 $sth->execute() or die ("error in SELECT");
 if ($sth->rows > 0) {
   $itsweekday=1;
 }
 $sth->finish();
 
-$sth =  $slave_dbh->prepare("SELECT hostid FROM system_conf WHERE (DAYOFMONTH(NOW())=cron_monthday AND HOUR(cron_time)=HOUR(NOW())) AND ((MINUTE(NOW()) >= MINUTE(cron_time)) AND (MINUTE(NOW()) < MINUTE(cron_time)+$cron_occurence))");
+$sth =  $replica_dbh->prepare("SELECT hostid FROM system_conf WHERE (DAYOFMONTH(NOW())=cron_monthday AND HOUR(cron_time)=HOUR(NOW())) AND ((MINUTE(NOW()) >= MINUTE(cron_time)) AND (MINUTE(NOW()) < MINUTE(cron_time)+$cron_occurence))");
 $sth->execute() or die ("error in SELECT");
 if ($sth->rows > 0) {
   $itsmonthday=1;
 }
 $sth->finish();
-$slave_dbh->db_disconnect();
+$replica_dbh->db_disconnect();
 
 #############################################
 # Skip minute/hourly tasks if lockfile exists
@@ -217,8 +217,8 @@ unless ($skip) {
     'exim_stage4' => 0,
     'apache' => 0,
     'mailscanner' => 0,
-    'mariadb_master' => 0,
-    'mariadb_slave' => 0,
+    'mariadb_source' => 0,
+    'mariadb_replica' => 0,
     'snmpd' => 0,
     'greylistd' => 0,
     'cron' => 0,
@@ -228,7 +228,7 @@ unless ($skip) {
     'clamspamd' => 0,
     'spamhandler' => 0,
   );
-  ($tmp, $proc{'exim_stage1'}, $proc{'exim_stage2'}, $proc{'exim_stage4'}, $proc{'apache'}, $proc{'mailscanner'}, $proc{'mariadb_master'}, $proc{'mariadb_slave'}, $proc{'snmpd'},$proc{'greylistd'},$proc{'cron'},$proc{'preftdaemon'},$proc{'spamd'},$proc{'clamd'},$proc{'clamspamd'},$proc{'spamhandler'}) = split('\|', $res);
+  ($tmp, $proc{'exim_stage1'}, $proc{'exim_stage2'}, $proc{'exim_stage4'}, $proc{'apache'}, $proc{'mailscanner'}, $proc{'mariadb_source'}, $proc{'mariadb_replica'}, $proc{'snmpd'},$proc{'greylistd'},$proc{'cron'},$proc{'preftdaemon'},$proc{'spamd'},$proc{'clamd'},$proc{'clamspamd'},$proc{'spamhandler'}) = split('\|', $res);
 
   foreach my $key (keys %proc) {
     if ($proc{$key} < 1) {
@@ -368,7 +368,7 @@ if ($itsmidnight) {
   ###############
   ## log rotation
   ###############
-  ## first do the log rotation and NOT fork as it shut down mariadb_slave which is used by others scripts
+  ## first do the log rotation and NOT fork as it shut down mariadb_replica which is used by others scripts
   print "rotating logs...\n";
   $rc = create_lockfile('rotate.lock', '/tmp/', time+4*60*60, 'rotate_logs');
   if ($rc!=0) {

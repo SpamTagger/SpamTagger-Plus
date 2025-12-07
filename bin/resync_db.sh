@@ -23,13 +23,13 @@
 #  usage: resync_db.sh [-F] [-C] [MHOST MPASS]
 #  -F     Force resync. Ignore sync test
 #  -C     Run as cron. Sends STDOUT to $LOGDIR
-#  MHOST  master hostname
-#  MPASS  master password
+#  MHOST  source hostname
+#  MPASS  source password
 
 function check_status() {
-  echo "Checking slave status..."
+  echo "Checking replica status..."
 
-  STATUS=$(echo 'show slave status\G' | /usr/spamtagger/bin/st_mariadb -s)
+  STATUS=$(echo 'show replica status\G' | /usr/spamtagger/bin/st_mariadb -s)
   if grep -vq "Slave_SQL_Running: Yes" <<<$(echo $STATUS); then
     echo "Slave_SQL_Running failed"
     RUN=1
@@ -66,10 +66,10 @@ for var in "$@"; do
         exit
       fi
     fi
-  # First default is master host
+  # First default is source host
   elif [[ $MHOST == '' ]]; then
     MHOST=$var
-  # Second default is master pass
+  # Second default is source pass
   elif [[ $MPASS == '' ]]; then
     MPASS=$var
   # If both of the above are set, this var is excess
@@ -78,8 +78,8 @@ for var in "$@"; do
 usage: $0 [-F] [MHOST MPASS]
   -F     Force resync. Ignore sync test
   -C     Run as cron. Sends STDOUT to $LOGDIR
-  MHOST  master hostname
-  MPASS  master password"
+  MHOST  source hostname
+  MPASS  source password"
     exit
   fi
 done
@@ -103,8 +103,8 @@ if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
 
-echo "starting slave db..."
-$SRCDIR/etc/init.d/mariadb_slave start
+echo "starting replica db..."
+$SRCDIR/etc/init.d/mariadb_replica start
 sleep 5
 
 check_status
@@ -120,46 +120,46 @@ fi
 # Resync
 
 MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
-echo "select hostname, password from master;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
+echo "select hostname, password from source;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/source.conf
 
 if [ "$MHOST" != "" ]; then
   export MHOST
 else
-  export MHOST=$(cat /var/tmp/master.conf | cut -d':' -f1)
+  export MHOST=$(cat /var/tmp/source.conf | cut -d':' -f1)
 fi
 if [ "$MPASS" != "" ]; then
   export MPASS
 else
-  export MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
+  export MPASS=$(cat /var/tmp/source.conf | cut -d':' -f2)
 fi
 
-/usr/bin/mariadb-dump -S$VARDIR/run/mariadb_slave/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD st_config update_patch >/var/tmp/updates.sql
+/usr/bin/mariadb-dump -S$VARDIR/run/mariadb_replica/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD st_config update_patch >/var/tmp/updates.sql
 
-/usr/bin/mariadb-dump -h $MHOST -uspamtagger -p$MPASS --master-data st_config >/var/tmp/master.sql
-$SRCDIR/etc/init.d/mariadb_slave stop
+/usr/bin/mariadb-dump -h $MHOST -uspamtagger -p$MPASS --source-data st_config >/var/tmp/source.sql
+$SRCDIR/etc/init.d/mariadb_replica stop
 sleep 2
-rm $VARDIR/spool/mariadb_slave/master.info >/dev/null 2>&1
-rm $VARDIR/spool/mariadb_slave/mariadbd-relay* >/dev/null 2>&1
-rm $VARDIR/spool/mariadb_slave/relay-log.info >/dev/null 2>&1
-$SRCDIR/etc/init.d/mariadb_slave start nopass
+rm $VARDIR/spool/mariadb_replica/source.info >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_replica/mariadbd-relay* >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
+$SRCDIR/etc/init.d/mariadb_replica start nopass
 sleep 5
 echo "STOP SLAVE;" | $SRCDIR/bin/st_mariadb -s
 sleep 2
-rm $VARDIR/spool/mariadb_slave/master.info >/dev/null 2>&1
-rm $VARDIR/spool/mariadb_slave/mariadbd-relay* >/dev/null 2>&1
-rm $VARDIR/spool/mariadb_slave/relay-log.info >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_replica/source.info >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_replica/mariadbd-relay* >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
 
-$SRCDIR/bin/st_mariadb -s st_config </var/tmp/master.sql
+$SRCDIR/bin/st_mariadb -s st_config </var/tmp/source.sql
 
 sleep 2
-echo "CHANGE MASTER TO master_host='$MHOST', master_user='spamtagger', master_password='$MPASS'; " | $SRCDIR/bin/st_mariadb -s
+echo "CHANGE MASTER TO source_host='$MHOST', source_user='spamtagger', source_password='$MPASS'; " | $SRCDIR/bin/st_mariadb -s
 # Return code should be 0 if there are no errors. Log code to RUN to catch errors that might not be presented with 'check_status'
-$SRCDIR/bin/st_mariadb -s st_config </var/tmp/master.sql
+$SRCDIR/bin/st_mariadb -s st_config </var/tmp/source.sql
 RUN=$?
 echo "START SLAVE;" | $SRCDIR/bin/st_mariadb -s
 sleep 5
 
-$SRCDIR/etc/init.d/mariadb_slave restart
+$SRCDIR/etc/init.d/mariadb_replica restart
 sleep 5
 $SRCDIR/bin/st_mariadb -s st_config </var/tmp/updates.sql
 

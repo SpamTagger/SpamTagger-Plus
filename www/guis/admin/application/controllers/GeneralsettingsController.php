@@ -257,9 +257,9 @@ class GeneralsettingsController extends Zend_Controller_Action
             	} else {
                     try {
                 	    $defaults->save();
-                	    $slaves = new Default_Model_Slave();
-                	    $slaves->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1', 'exim_stage4', 'mailscanner'));
-                	    $message = $slaves->sendSoapToAll('Services_restartSyslog', array());
+                	    $replicas = new Default_Model_Slave();
+                	    $replicas->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1', 'exim_stage4', 'mailscanner'));
+                	    $message = $replicas->sendSoapToAll('Services_restartSyslog', array());
                         if (preg_match('/^OK/', $message)) {
                         	$message = "OK data saved, services may need to be restarted";
                         }
@@ -299,8 +299,8 @@ class GeneralsettingsController extends Zend_Controller_Action
                 try {
                 	$form->setParams($request, $defaults);
     			    $defaults->save();
-    				$slaves = new Default_Model_Slave();
-    				$message = $slaves->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1', 'exim_stage4'));
+    				$replicas = new Default_Model_Slave();
+    				$message = $replicas->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1', 'exim_stage4'));
     				if (preg_match('/^OK/', $message)) {
     				    $message = "OK data saved";
     				}

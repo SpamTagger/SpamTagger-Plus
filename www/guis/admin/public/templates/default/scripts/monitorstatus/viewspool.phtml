@@ -21,7 +21,7 @@
            var message = '';
            var thisurl = '<?php echo $this->baseurl?>';
 
-           var slave = '<?php echo $this->slave->getId() ?>';
+           var replica = '<?php echo $this->replica->getId() ?>';
            var spool = '<?php echo $this->spool ?>';
 
            var limit = 25;
@@ -40,7 +40,7 @@
 
 <div class="spoolbloc">
 <?php echo $this->partial('ajax/monitorstatus/viewspool.phtml', array(
-                         'slave' => $this->slave,
+                         'replica' => $this->replica,
                          'spool' => $this->spool,
                          'msgs' => $this->msgs,
                          'nbmsgs' => $this->nbmsgs,

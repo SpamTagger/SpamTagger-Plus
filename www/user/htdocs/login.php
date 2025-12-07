@@ -25,8 +25,8 @@ ini_set('error_reporting', E_ALL & ~E_STRICT);
 // get global objects instances
 $sysconf_ = SystemConfig :: getInstance();
 $lang_ = Language :: getInstance('user');
-// do not let user log in if we are not a master !
-if ($sysconf_->ismaster_ < 1) {
+// do not let user log in if we are not a source !
+if ($sysconf_->issource_ < 1) {
   exit;
 }
 

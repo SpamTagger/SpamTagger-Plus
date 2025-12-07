@@ -7,7 +7,7 @@ if [ "$SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
 
-$SRCDIR/etc/init.d/mariadb_slave restart 2>&1 >/dev/null
+$SRCDIR/etc/init.d/mariadb_replica restart 2>&1 >/dev/null
 if test $? -ne 0; then
   echo -n "FAILED"
   exit 1

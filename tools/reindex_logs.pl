@@ -151,20 +151,20 @@ our $services = {
       'warnlog' => [ '%b %d' ],
     },
   },
-  'mariadb_master' => {
+  'mariadb_source' => {
     'uid' => $myuid,
     'gid' => $stuid,
-    'start' => '/usr/spamtagger/etc/init.d/mariadb_master start',
-    'stop' => '/usr/spamtagger/etc/init.d/mariadb_master stop',
+    'start' => '/usr/spamtagger/etc/init.d/mariadb_source start',
+    'stop' => '/usr/spamtagger/etc/init.d/mariadb_source stop',
     'files' => {
       'mariadb.log' => [ '%y%m%d' ],
     },
   },
-  'mariadb_slave' => {
+  'mariadb_replica' => {
     'uid' => $myuid,
     'gid' => $stuid,
-    'start' => '/usr/spamtagger/etc/init.d/mariadb_slave start',
-    'stop' => '/usr/spamtagger/etc/init.d/mariadb_slave stop',
+    'start' => '/usr/spamtagger/etc/init.d/mariadb_replica start',
+    'stop' => '/usr/spamtagger/etc/init.d/mariadb_replica stop',
     'files' => {
       'mariadb.log' => [ '%y%m%d' ],
     },

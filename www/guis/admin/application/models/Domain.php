@@ -213,14 +213,14 @@ class Default_Model_Domain
                 $givenparams = $this->getParamArray();
 		$ret = $this->getMapper()->save($this);
 
-        $slave = new Default_Model_Slave();
+        $replica = new Default_Model_Slave();
         ## first dump all domain's preferences
 		$params = array('what' => 'domains', 'domain' => $this->getParam('name'));
-		$res = $slave->sendSoapToAll('Service_silentDump', $params);
+		$res = $replica->sendSoapToAll('Service_silentDump', $params);
 
         ## then save main domains list in case we're adding
         $params = array('what' => 'domains');
-        $res = $slave->sendSoapToAll('Service_silentDump', $params);
+        $res = $replica->sendSoapToAll('Service_silentDump', $params);
 
 		return $ret;
 	}
@@ -245,8 +245,8 @@ class Default_Model_Domain
                 }
 
 		$params = array('what' => 'domains');
-        $slave = new Default_Model_Slave();
-        $res = $slave->sendSoapToAll('Service_silentDump', $params);
+        $replica = new Default_Model_Slave();
+        $res = $replica->sendSoapToAll('Service_silentDump', $params);
 
 		return $ret;
 	}
@@ -341,8 +341,8 @@ class Default_Model_Domain
 			}
 		}
                 $params = array('what' => 'domains');
-                $slave = new Default_Model_Slave();
-                $res = $slave->sendSoapToAll('Service_silentDump', $params);
+                $replica = new Default_Model_Slave();
+                $res = $replica->sendSoapToAll('Service_silentDump', $params);
 	}
 
 	public function setAsAliasOf($domain) {
@@ -824,7 +824,7 @@ class Default_Model_Domain
 		}
 		$action = array(
              'sendingtorandom' => array('address' => Default_Model_SMTPDestinationServer::getRandomString(20).'@'.$this->getParam('name'), 'expected' => 'NOK'),
-             'sendingtopostmaster' => array('address' => 'postmaster@'.$this->getParam('name'), 'expected' => 'OK'));
+             'sendingtopostsource' => array('address' => 'postsource@'.$this->getParam('name'), 'expected' => 'OK'));
 		$file = sys_get_temp_dir()."/callouttest.status";
 		if (file_exists($file) && $reset) {
 			unlink($file);

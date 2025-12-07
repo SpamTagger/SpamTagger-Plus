@@ -19,13 +19,13 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This script give you a MySQL shel to either the master or the slave
+#   This script give you a MySQL shel to either the source or the replica
 #   database as the spamtagger user.
 #
 #   Usage:
 #           st_mariadb [-s, -m]
-#   -s: connect to the slave database
-#   -m: connect to the master database
+#   -s: connect to the replica database
+#   -m: connect to the source database
 
 VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
@@ -34,14 +34,14 @@ fi
 
 case $1 in
 
-"-s" | "-slave")
-  SOCKET=$VARDIR/run/mariadb_slave/mariadbd.sock
+"-s" | "-replica")
+  SOCKET=$VARDIR/run/mariadb_replica/mariadbd.sock
   ;;
-"-m" | "-master")
-  SOCKET=$VARDIR/run/mariadb_master/mariadbd.sock
+"-m" | "-source")
+  SOCKET=$VARDIR/run/mariadb_source/mariadbd.sock
   ;;
 *)
-  echo "bad usage: use -s or -m flag to connect to slave or master database"
+  echo "bad usage: use -s or -m flag to connect to replica or source database"
   exit
   ;;
 esac

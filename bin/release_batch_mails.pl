@@ -142,7 +142,7 @@ $SRCDIR="/usr/spamtagger" if ( $SRCDIR eq '' );
 my $MYSPAMTAGGERPWD=`grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3`;
 chomp $MYSPAMTAGGERPWD;
 
-my $SOCKET="$VARDIR/run/mariadb_slave/mariadbd.sock";
+my $SOCKET="$VARDIR/run/mariadb_replica/mariadbd.sock";
 my $COMMAND="/usr/bin/mariadb";
 
 my $QUERY="SELECT exim_id, to_user, to_domain, sender, M_score, is_newsletter, M_subject FROM spam WHERE";

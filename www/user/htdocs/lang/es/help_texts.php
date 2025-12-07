@@ -18,7 +18,7 @@ that you have the best tool to prevent viral attacks, intrusion of dangerous fil
 
 $htxt['FIRSTCONTACT'] = '
 <h1>Take a couple of minutes to discover how SpamTagger works with your e-mail software.</h1>
-<p>This chapter contains all the necessary information to help you master your new antivirus and anti-spam system in just a few minutes.
+<p>This chapter contains all the necessary information to help you source your new antivirus and anti-spam system in just a few minutes.
 The default configuration of the SpamTagger filter immediately provides you with maximum protection, so you can rely on SpamTagger from the very start.</p>
 <p>SpamTagger requires only minimal attention on your part. It works autonomously to eradicate viruses, identify dangerous content and remove spam from your e-mail 24 hours a day.
 SpamTagger works transparently, and you will receive regular quarantine reports that will tell you everything about its activity.</p>
@@ -101,7 +101,7 @@ Copy the e-mail address, as it will be needed in the subsequent steps.</p>
 Doing so will prevent the transmission of the long header in the original message which is needed to properly analyze the spam.
 Regardless of your e-mail software or operating system (PC or Mac), you should only use the Resend function (or its equivalent) to send your filter adjustment request. </p>
 <h2>Improving your knowledge of SpamTagger</h2>
-<p>After mastering the basics, you will undoubtedly want to learn more about customizing SpamTagger to precisely fit your needs.</p>
+<p>After sourceing the basics, you will undoubtedly want to learn more about customizing SpamTagger to precisely fit your needs.</p>
 ';
 
 $htxt['MANUAL_FULL_NAME'] = 'spamtagger_manual_de_usuario.pdf';

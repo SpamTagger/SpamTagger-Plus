@@ -37,7 +37,7 @@ my $sender = shift;
 err("DESTNOTVALID") if (not is_valid_email($dest));
 err("SENDERNOTVALID") if (not is_valid_email($sender));
 
-my $dbh = DB->db_connect('master', 'st_config') || err("CANNOTCONNECTDB");
+my $dbh = DB->db_connect('source', 'st_config') || err("CANNOTCONNECTDB");
 
 # Remove content after plus in address so that rule applies to base address
 $dest =~ s/([^\+]+)\+([^\@]+)\@(.*)/$1\@$3/;

@@ -9,7 +9,7 @@ card numbers.
 
 
 If you wish to receive a copy of the original attachment, please
-e-mail the administrator at $localpostmaster and include the whole of
+e-mail the administrator at $localpostsource and include the whole of
 this message in your request. Alternatively, you can call them, with
 the contents of this message to hand when you call.
 

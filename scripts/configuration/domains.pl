@@ -12,9 +12,9 @@ use ReadConfig;
 my $config = ReadConfig::get_instance();
 my $VARDIR = $config->get_option('VARDIR');
 
-our $master_dbh = DB->db_connect('master', 'st_config');
-if (!$master_dbh) {
-  printf ("ERROR: no master database found on this system. This script will only run on a SpamTagger master host.\n");
+our $source_dbh = DB->db_connect('source', 'st_config');
+if (!$source_dbh) {
+  printf ("ERROR: no source database found on this system. This script will only run on a SpamTagger source host.\n");
   exit 1;
 }
 
@@ -43,19 +43,19 @@ while (! $quit) {
   } elsif ($key =~ /3/) {
     add_domain();
   } elsif ($key =~ /4/) {
-    synchronize_slaves();
+    synchronize_replicas();
   }
 }
 
 printf "\n\n";
 
-$master_dbh->db_disconnect();
+$source_dbh->db_disconnect();
 
 exit 0;
 
 sub view_domains {
   system("clear");
-  my $sth =  $master_dbh->prepare("SELECT id, name, active, destination, prefs FROM domain ORDER BY name") or die ("error in SELECT");
+  my $sth =  $source_dbh->prepare("SELECT id, name, active, destination, prefs FROM domain ORDER BY name") or die ("error in SELECT");
   $sth->execute() or die ("error in SELECT");
   my $el=$sth->rows;
   printf "Domain list: ($el element(s))\n";
@@ -76,7 +76,7 @@ sub delete_domain {
   my $d_id = <STDIN>;
   ($d_id) = $d_id =~ m/\s*(\S+)\s*$/;
 
-  my $sth =  $master_dbh->prepare("DELETE FROM domain WHERE id='$d_id'");
+  my $sth =  $source_dbh->prepare("DELETE FROM domain WHERE id='$d_id'");
   if (! $sth->execute()) {
     printf "no domain deleted..\n";
   } else {
@@ -101,12 +101,12 @@ sub add_domain {
 
   if ( $name =~ /^[A-Z,a-z,0-9,\.,\_,\-,\*]{1,200}$/) {
 
-    my $sth =  $master_dbh->prepare("INSERT INTO domain_pref SET auth_server='$destination', auth_modif='att_add'");
+    my $sth =  $source_dbh->prepare("INSERT INTO domain_pref SET auth_server='$destination', auth_modif='att_add'");
     if (!$sth->execute()) {
       printf "Domain prefs NOT added !\n";
       return;
     }
-    $sth =  $master_dbh->prepare("SELECT LAST_INSERT_ID() id");
+    $sth =  $source_dbh->prepare("SELECT LAST_INSERT_ID() id");
     if (!$sth->execute()) {
       printf "Domain prefs could NOT be found !\n";
       return;
@@ -117,7 +117,7 @@ sub add_domain {
       return;
     }
 
-    $sth =  $master_dbh->prepare("INSERT INTO domain (name, destination, prefs) VALUES('$name', '$destination', '".$ref->{'id'}."')");
+    $sth =  $source_dbh->prepare("INSERT INTO domain (name, destination, prefs) VALUES('$name', '$destination', '".$ref->{'id'}."')");
     if (!$sth->execute()) {
       printf "Domain NOT added !\n";
     } else {

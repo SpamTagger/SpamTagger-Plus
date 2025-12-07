@@ -1,8 +1,8 @@
 use st_config;
 
-DROP TABLE IF EXISTS master;
+DROP TABLE IF EXISTS source;
 
-CREATE TABLE master (
+CREATE TABLE source (
   hostname    varchar(150) NOT NULL DEFAULT 'localhost',
   port        int(11) NOT NULL DEFAULT 3306,
   password    varchar(100),

@@ -33,7 +33,7 @@ class ContentQuarantine extends Quarantine {
    */
   protected  $filters_ = array(
                       'searchid'      => '',
-                      'slave'         => '127.0.0.1',
+                      'replica'         => '127.0.0.1',
                       'to_local'      => '',
                       'to_domain'     => '',
                       'from'          => '',
@@ -118,19 +118,19 @@ public function load() {
 
    // required here for sanity checks
    require_once ('helpers/DM_Custom.php');
-   $slaves = $sysconf_->getSlaves();
-   $slave = $sysconf_->getSlavePortPasswordID($this->getFilter('slave'));
-   if ($slave[0] == 0) {
-     $current = current($slaves);
-     $slave = $sysconf_->getSlavePortPasswordID($current->getPref('hostname'));
+   $replicas = $sysconf_->getSlaves();
+   $replica = $sysconf_->getSlavePortPasswordID($this->getFilter('replica'));
+   if ($replica[0] == 0) {
+     $current = current($replicas);
+     $replica = $sysconf_->getSlavePortPasswordID($current->getPref('hostname'));
    }
-   $slave_id = $slave[3];
-   if ($slave[0] == 0) {
-     $slaves = $sysconf_->getSlaves();
-     $slave = $slaves[0];
-     $slave_id = 1;
+   $replica_id = $replica[3];
+   if ($replica[0] == 0) {
+     $replicas = $sysconf_->getSlaves();
+     $replica = $replicas[0];
+     $replica_id = 1;
    }
-   $db = DM_Custom :: getInstance($this->getFilter('slave'), $slave[0], 'spamtagger', $slave[1], 'st_stats');
+   $db = DM_Custom :: getInstance($this->getFilter('replica'), $replica[0], 'spamtagger', $replica[1], 'st_stats');
    // now we clean up the filter criteria
    // now we clean up the filter criteria
    if (!is_numeric($this->getFilter('days'))) {
@@ -197,7 +197,7 @@ public function load() {
    foreach ($content_list as $content) {
      $this->elements_[$content['id']] = new Content();
      $this->elements_[$content['id']]->setDatas($content);
-     $this->elements_[$content['id']]->slave_ = $slave_id;
+     $this->elements_[$content['id']]->replica_ = $replica_id;
    }
 
    if ($this->getFilter('page') > $this->getNBPages()) {

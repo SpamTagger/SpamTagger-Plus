@@ -87,8 +87,8 @@ class MonitorlogsController extends Zend_Controller_Action
 		$log = new Default_Model_Logfile();
 		$logs = $log->fetchAll($this->getSearchParams());
 
-		$slave = new Default_Model_Slave();
-		$view->slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+		$view->replicas = $replica->fetchAll();
 
 		$view->downloadLink = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('download', 'monitorlogs', NULL, array());
 		$view->viewLink = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('view', 'monitorlogs', NULL, array());
@@ -114,17 +114,17 @@ class MonitorlogsController extends Zend_Controller_Action
 		}
 
 		$file = $matches[2];
-		$slave_id = $matches[1];
+		$replica_id = $matches[1];
 
-		$slave = new Default_Model_Slave();
-		$slave->find($slave_id);
-		if ($slave->getHostname() == '') {
+		$replica = new Default_Model_Slave();
+		$replica->find($replica_id);
+		if ($replica->getHostname() == '') {
 			header("HTTP/1.0 404 Not Found");
 			echo "Host not found";
 			return;
 		}
 
-		$url = 'http://'.$slave->getHostname().':5132/soap/DownloadLog.php?file='.$file;
+		$url = 'http://'.$replica->getHostname().':5132/soap/DownloadLog.php?file='.$file;
 
 		$headers = get_headers($url);
 		$size = 0;
@@ -180,8 +180,8 @@ class MonitorlogsController extends Zend_Controller_Action
 
         $file = $matches[2];
         $view->thisfile = $file;
-        $slave_id = $matches[1];
-        $view->slaveid = $slave_id;
+        $replica_id = $matches[1];
+        $view->replicaid = $replica_id;
 
         $log = new Default_Model_Logfile();
         $log->loadByFileName($file);
@@ -198,16 +198,16 @@ class MonitorlogsController extends Zend_Controller_Action
 				$toline = $request->getParam('tl');
 			}
 
-			$slave = new Default_Model_Slave();
-                        $hosts = $slave->fetchAll();
+			$replica = new Default_Model_Slave();
+                        $hosts = $replica->fetchAll();
                         $view->otherHosts = array();
                         foreach ($hosts as $h) {
-                            if ($h->getID() != $slave_id) {
+                            if ($h->getID() != $replica_id) {
                                $view->otherHosts[] = $h;
                             }
                         }
-			$slave->find($slave_id);
-			if ($slave->getHostname() == '') {
+			$replica->find($replica_id);
+			if ($replica->getHostname() == '') {
 				header("HTTP/1.0 404 Not Found");
 				echo "Host not found";
 				return;
@@ -224,7 +224,7 @@ class MonitorlogsController extends Zend_Controller_Action
             $params['maxchars'] = $request->getParam('maxchars');
 			$view->params = $params;
 
-			$res = $slave->sendSoapRequest('Logs_GetLogLines', $params);
+			$res = $replica->sendSoapRequest('Logs_GetLogLines', $params);
 			if (isset($res['error'])) {
 				$view->logtext = $res['error'];
 			}
@@ -254,7 +254,7 @@ class MonitorlogsController extends Zend_Controller_Action
             if ($res['msgid']) {
             	$nextlog = $log->getNextLog();
             	if ($nextlog) {
-                    $nextlog_link = $slave->getId()."-".preg_replace('/\//', '-', $nextlog)."/s/".urlencode($res['msgid']);
+                    $nextlog_link = $replica->getId()."-".preg_replace('/\//', '-', $nextlog)."/s/".urlencode($res['msgid']);
 
             	}
             }
@@ -264,15 +264,15 @@ class MonitorlogsController extends Zend_Controller_Action
 			$view->res = $res;
 
 		} else {
-			$slave = new Default_Model_Slave();
-            $slave->find($slave_id);
+			$replica = new Default_Model_Slave();
+            $replica->find($replica_id);
 
             if ($request->getParam('s')) {
                $view->initial_search = $request->getParam('s');
             }
 
             $t = Zend_Registry::get('translate');
-            $view->headTitle($t->_('Log view')." - ".$slave_id." (".$slave->getHostname().") - ".$t->_($log->getParam('name')));
+            $view->headTitle($t->_('Log view')." - ".$replica_id." (".$replica->getHostname().") - ".$t->_($log->getParam('name')));
 		}
 	}
 }

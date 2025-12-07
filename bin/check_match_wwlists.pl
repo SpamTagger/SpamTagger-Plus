@@ -57,7 +57,7 @@ sub sort_by ($entries, $sort_order, $sort_hash) {
 
 sub get_wlist_matches ($sender, $recipient, $column_names) {
 
-  my $db = DB->db_connect('slave', 'st_config');
+  my $db = DB->db_connect('replica', 'st_config');
   my $query_cols = join(",", @$column_names);
 
   my @recipients = @{get_possible_recipients($recipient)};

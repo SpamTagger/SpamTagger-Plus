@@ -48,10 +48,10 @@ function removeLockFile() {
   echo $?
 }
 
-function slaveSynchronized() {
-  slave_status=$(echo "SHOW SLAVE STATUS\G" | ${SRCDIR}/bin/st_mariadb -s)
-  Last_IO_Errno=$(echo "${slave_status}" | awk '/Last_IO_Errno/{print $NF}')
-  Last_SQL_Errno=$(echo "${slave_status}" | awk '/Last_SQL_Errno/{print $NF}')
+function replicaSynchronized() {
+  replica_status=$(echo "SHOW SLAVE STATUS\G" | ${SRCDIR}/bin/st_mariadb -s)
+  Last_IO_Errno=$(echo "${replica_status}" | awk '/Last_IO_Errno/{print $NF}')
+  Last_SQL_Errno=$(echo "${replica_status}" | awk '/Last_SQL_Errno/{print $NF}')
   if [[ $Last_IO_Errno == "0" && $Last_SQL_Errno == "0" ]]; then
     echo "true"
   else
@@ -60,8 +60,8 @@ function slaveSynchronized() {
 }
 
 function isMaster() {
-  is_master=$(grep 'ISMASTER' $CONFFILE | cut -d ' ' -f3)
-  if [[ "${is_master}" == "Y" || "${is_master}" == "y" ]]; then
+  is_source=$(grep 'ISMASTER' $CONFFILE | cut -d ' ' -f3)
+  if [[ "${is_source}" == "Y" || "${is_source}" == "y" ]]; then
     echo 1
   else
     echo 0

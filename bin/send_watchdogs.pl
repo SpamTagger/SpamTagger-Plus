@@ -67,13 +67,13 @@ my $email = Email::create($recipient);
 
 my $template = MailTemplate::create('reports', 'watchdog', $temp_id, \$email, $lang, 'html');
 
-## get slaves
-my %slaves;
-my $conf_db = DB->db_connect('master', 'st_config', 0);
-my $sth = $conf_db->prepare("SELECT id, hostname FROM slave");
+## get replicas
+my %replicas;
+my $conf_db = DB->db_connect('source', 'st_config', 0);
+my $sth = $conf_db->prepare("SELECT id, hostname FROM replica");
 $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $conf_db->errstr);
 while (my $ref = $sth->fetchrow_hashref()) {
-  $slaves{$ref->{'id'}}->{'hostname'} = $ref->{'hostname'};
+  $replicas{$ref->{'id'}}->{'hostname'} = $ref->{'hostname'};
 }
 $sth->finish();
 
@@ -97,30 +97,30 @@ while (my $ref = $sth->fetchrow_hashref()) {
 $sth->finish();
 $conf_db->db_disconnect();
 
-## fetch the watchdog report from each slave
+## fetch the watchdog report from each replica
 my $ua = LWP::UserAgent->new('verify_hostname' => 0);
-foreach my $host (keys(%slaves)) {
-  my $response = $ua->get("$https://".$slaves{$host}->{'hostname'}.$port."/admin/downloads/watchdogs.html");
+foreach my $host (keys(%replicas)) {
+  my $response = $ua->get("$https://".$replicas{$host}->{'hostname'}.$port."/admin/downloads/watchdogs.html");
   unless ($response->is_success) {
     die "Unable to fetch watchdog report from host $host\n";
   }
-  $slaves{$host}->{'warnings'} = $response->decoded_content();
-  chomp($slaves{$host}->{'warnings'});
-  if ($slaves{$host}->{'warnings'} eq '<br/>') {
-    delete($slaves{$host});
+  $replicas{$host}->{'warnings'} = $response->decoded_content();
+  chomp($replicas{$host}->{'warnings'});
+  if ($replicas{$host}->{'warnings'} eq '<br/>') {
+    delete($replicas{$host});
   }
 }
 
-unless (scalar(keys(%slaves))) {
+unless (scalar(keys(%replicas))) {
   die("No watchdogs to report\n");
 }
 
 ## assemble report body
 my $report = '';
-my @err_hosts = sort {$a cmp $b} (keys %slaves);
+my @err_hosts = sort {$a cmp $b} (keys %replicas);
 foreach my $host (@err_hosts) {
   $report .= "<h3>Host $host:</h3>";
-  $report .= $slaves{$host}->{'warnings'};
+  $report .= $replicas{$host}->{'warnings'};
 }
 
 ## set subject

@@ -48,27 +48,27 @@ function setAuthenticated($username, $usertype, $hostname) {
 
  // required here for sanity checks
  require_once ('helpers/DM_SlaveSpool.php');
- $db_slavespool = DM_SlaveSpool :: getInstance();
- if (! $db_slavespool instanceof DM_SlaveSpool) {
+ $db_replicaspool = DM_SlaveSpool :: getInstance();
+ if (! $db_replicaspool instanceof DM_SlaveSpool) {
    return "ERRORWITHDBCONNECTOR";
  }
 
  // set session id
  $id = md5 (uniqid (rand()));
- $clean_sql['username'] = $db_slavespool->sanitize($username);
+ $clean_sql['username'] = $db_replicaspool->sanitize($username);
  if ($usertype != 'admin') {
     $usertype = 'user';
  }
- $clean_sql['hostname'] = $db_slavespool->sanitize($hostname);
+ $clean_sql['hostname'] = $db_replicaspool->sanitize($hostname);
  $query = "INSERT INTO soap_auth SET id='$id', time=NOW(), user='".$clean_sql['username']."', user_type='$usertype', host='".$clean_sql['hostname']."'";
 
- if (!$db_slavespool->doExecute($query)) {
+ if (!$db_replicaspool->doExecute($query)) {
     return 'ERRORWHILESETTINGSESSION';
  }
 
  // purge old sessions
  $query = "DELETE FROM soap_auth WHERE CAST(UNIX_TIMESTAMP(NOW()) AS SIGNED) - CAST(UNIX_TIMESTAMP(time) AS SIGNED) >= $soapsession_timeout";
- $db_slavespool->doExecute($query);
+ $db_replicaspool->doExecute($query);
 
  return $id;
 }
@@ -86,15 +86,15 @@ function getAdmin($sid) {
 
   // required here for sanity checks
   require_once ('helpers/DM_SlaveSpool.php');
-  $db_slavespool = DM_SlaveSpool :: getInstance();
-  if (! $db_slavespool instanceof DM_SlaveSpool) {
+  $db_replicaspool = DM_SlaveSpool :: getInstance();
+  if (! $db_replicaspool instanceof DM_SlaveSpool) {
     return "ERRORWITHDBCONNECTOR";
   }
-  $clean_sid = $db_slavespool->sanitize($sid);
+  $clean_sid = $db_replicaspool->sanitize($sid);
 
   // fetch session datas in database
   $query = "SELECT user FROM soap_auth WHERE id='$clean_sid' AND (CAST(UNIX_TIMESTAMP(NOW()) AS SIGNED) - CAST(UNIX_TIMESTAMP(time) AS SIGNED) < $soapsession_timeout) AND user_type='admin'";
-  $res = $db_slavespool->getHash($query);
+  $res = $db_replicaspool->getHash($query);
   if (!is_array($res) || empty($res)) {
     return "NOSUCHADMIN ($clean_sid)";
   }

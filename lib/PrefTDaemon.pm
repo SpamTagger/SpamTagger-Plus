@@ -93,7 +93,7 @@ sub init_thread_hook ($this) {
 sub connect_backend ($this) {
   return 1 if ( defined( $this->{backend} ) && $this->{backend}->ping() );
 
-  $this->{backend} = DB->db_connect( 'slave', 'st_config', 0 );
+  $this->{backend} = DB->db_connect( 'replica', 'st_config', 0 );
   if ( $this->{backend}->ping() ) {
     $this->do_log("Connected to configuration database", 'prefdaemon');
     return 1;

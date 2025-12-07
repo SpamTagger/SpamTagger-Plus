@@ -62,7 +62,7 @@ sub do_log ($message, $cat, $level) {
 }
 
 ##### Handlers
-sub is_master {
+sub is_source {
   return (ASN_INTEGER, 1) if ($conf->get_option('ISMASTER') eq 'Y');
   return (ASN_INTEGER, 0);
 }

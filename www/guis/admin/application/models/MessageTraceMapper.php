@@ -27,10 +27,10 @@ class Default_Model_MessageTraceMapper
 
 	public function startFetchAll($params) {
 		$trace_id = 0;
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
         	$res = $s->sendSoapRequest('Logs_StartTrace', $params);
         	if (isset($res['trace_id'])) {
         		$trace_id = $res['trace_id'];
@@ -44,14 +44,14 @@ class Default_Model_MessageTraceMapper
 
 	public function getStatusFetchAll($params) {
 		$res = array('finished' => 0, 'count' => 0, 'data' => array());
-	    $slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+	    $replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
         $params['noresults'] = 1;
-        $stillrunning = count($slaves);
+        $stillrunning = count($replicas);
         $globalrows = 0;
         $params['soap_timeout'] = 20;
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
         	$sres = $s->sendSoapRequest('Logs_GetTraceResult', $params);
         	if (isset($sres['error']) && $sres['error'] != "") {
                         $stillrunning--;
@@ -72,10 +72,10 @@ class Default_Model_MessageTraceMapper
 	}
 
     public function abortFetchAll($params) {
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
         	$res = $s->sendSoapRequest('Logs_AbortTrace', $params);
         }
         return $res;
@@ -83,18 +83,18 @@ class Default_Model_MessageTraceMapper
 
 	public function fetchAll($params)
 	{
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
         $entriesflat = array();
         $sortarray = array();
-        $slaveentries = array();
+        $replicaentries = array();
 
         $params['noresults'] = 0;
         $params['soap_timeout'] = 20;
-        $stillrunning = count($slaves);
+        $stillrunning = count($replicas);
         $globalrows = 0;
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
             $sres = $s->sendSoapRequest('Logs_GetTraceResult', $params);
         	if (isset($sres['error']) && $sres['error'] != "") {
                         $stillrunning--;
@@ -112,7 +112,7 @@ class Default_Model_MessageTraceMapper
                     $id = md5(uniqid(mt_rand(), true));
         			$sortarray[$id] = $matches[1];
         			$entriesflat[$id] = $line;
-        			$slaveentries[$id] = $s->getId();
+        			$replicaentries[$id] = $s->getId();
         		}
         	}
         }
@@ -134,7 +134,7 @@ class Default_Model_MessageTraceMapper
         	$e = $entriesflat[$se];
         	$entry = new Default_Model_MessageTrace();
         	$entry->loadFromLine($e);
-        	$entry->setParam('slave_id', $slaveentries[$se]);
+        	$entry->setParam('replica_id', $replicaentries[$se]);
         	$entries[] = $entry;
         }
 

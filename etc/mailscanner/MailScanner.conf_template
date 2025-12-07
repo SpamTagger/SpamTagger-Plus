@@ -269,7 +269,7 @@ Hide Incoming Work Dir in Notices = no
 Notice Signature =
 Notices From = SpamTagger
 Notices To = __NOTICETO__
-Local Postmaster = &LocalPostmaster
+Local Postsource = &LocalPostsource
 
 Pre Filters = __PREFILTERS__
 Pre Filter Timeout = 100

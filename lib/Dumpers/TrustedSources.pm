@@ -33,7 +33,7 @@ use lib '/usr/spamtagger/lib';
 use DB();
 
 sub get_specific_config {
-  my $db = DB->db_connect('slave', 'st_config');
+  my $db = DB->db_connect('replica', 'st_config');
 
   my %config = ();
   my %row = $db->get_hash_row("SELECT use_alltrusted, use_authservers, useSPFOnLocal, useSPFOnGlobal, authservers, authstring, domainsToSPF, whiterbls FROM trustedSources");

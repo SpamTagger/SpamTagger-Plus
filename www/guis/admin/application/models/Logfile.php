@@ -24,7 +24,7 @@ class Default_Model_Logfile
 	      'freshclam' =>  array('basefile' => 'clamav/freshclam.log', 'cat' => 'Updates', 'name' => 'Antivirus engine', 'pos' => 1),
 
 	      'apache' => array('basefile' => 'apache/access.log', 'cat' => 'Misc', 'name' => 'Web server', 'pos' => 1),
-	      'mariadb_slave' => array('basefile' => 'mariadb_slave/mariadb.log', 'cat' => 'Misc', 'name' => 'Local database', 'pos' => 2),
+	      'mariadb_replica' => array('basefile' => 'mariadb_replica/mariadb.log', 'cat' => 'Misc', 'name' => 'Local database', 'pos' => 2),
 	);
 
 	protected $_values = array(
@@ -32,7 +32,7 @@ class Default_Model_Logfile
 	      'linkname' => '',
 	      'date' => '',
 	      'size' => '',
-	      'slave_id' => '',
+	      'replica_id' => '',
 	      'type' => '',
 	      'category' => '',
 	      'name' => '',
@@ -80,9 +80,9 @@ class Default_Model_Logfile
 		return $ret;
 	}
 
-	public function find($type, $pdate, $slave = 1)
+	public function find($type, $pdate, $replica = 1)
 	{
-		if (!$type || !isset($this->_available_types[$type]) || !$pdate || !preg_match('/^\d{8}$/', $pdate, $matches) || !$slave || !is_numeric($slave)) {
+		if (!$type || !isset($this->_available_types[$type]) || !$pdate || !preg_match('/^\d{8}$/', $pdate, $matches) || !$replica || !is_numeric($replica)) {
 			return $this;
 		}
 		$date = new Zend_Date($pdate, 'yyyyMMdd');
@@ -99,18 +99,18 @@ class Default_Model_Logfile
 	public function fetchAll($params = NULL) {
 		$res = array();
 
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
         $params['files'] = array();
         foreach ($this->_available_types as $c => $v) {
         	$params['files'][] = $v['basefile'];
         }
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
             $sres = $s->sendSoapRequest('Logs_FindLogFiles', $params);
             foreach ($sres['files'] as $f ) {
                 $l = new Default_Model_Logfile();
-                $l->setParam('slave_id', $s->getId());
+                $l->setParam('replica_id', $s->getId());
                 $l->setParam('file', $f['file']);
                 if (isset($f['size'])) {
                     $l->setParam('size', $f['size']);

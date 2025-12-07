@@ -22,7 +22,7 @@ class Soaper {
 
 /**
  * load and connect soap client
- * @param  $host  string  slave host
+ * @param  $host  string  replica host
  * @return        string  'OK' on success, error message on failure
  */
 public function load($host, $timeout = 20) {

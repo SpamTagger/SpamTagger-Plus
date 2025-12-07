@@ -90,12 +90,12 @@ if ( ! -d "$VARDIR/spool/tmp/exim/stage1/spamcwhitelists" ) {
   mkdir("$VARDIR/spool/tmp/exim/stage1/spamcwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
 
-our $db = DB->db_connect('slave', 'st_config');
+our $db = DB->db_connect('replica', 'st_config');
 my %sys_conf = get_system_config() or fatal_error("NOSYSTEMCONFIGURATIONFOUND", "no record found for system configuration");
 
-## dump master informations
-my %m_infos = get_master();
-dump_master_file("$VARDIR/spool/spamtagger/master.conf", \%m_infos);
+## dump source informations
+my %m_infos = get_source();
+dump_source_file("$VARDIR/spool/spamtagger/source.conf", \%m_infos);
 
 ## dump the outgoing script
 dump_spam_route();
@@ -558,27 +558,27 @@ sub get_system_config {
 }
 
 #############################
-sub get_master {
-  my %master = ();
+sub get_source {
+  my %source = ();
 
-  my %row = $db->get_hash_row("SELECT hostname, port, password FROM master");
+  my %row = $db->get_hash_row("SELECT hostname, port, password FROM source");
   return unless %row;
 
-  $master{'host'} = $row{'hostname'};
-  $master{'port'} = $row{'port'};
-  $master{'password'} = $row{'password'};
+  $source{'host'} = $row{'hostname'};
+  $source{'port'} = $row{'port'};
+  $source{'password'} = $row{'password'};
 
-  return %master;
+  return %source;
 }
 
 #############################
-sub dump_master_file ($file, $master) {
+sub dump_source_file ($file, $source) {
   my $MASTERFILE;
   return 0 unless (open($MASTERFILE, ">", $file));
 
-  print $MASTERFILE "HOST ".$master->{'host'}."\n";
-  print $MASTERFILE "PORT ".$master->{'port'}."\n";
-  print $MASTERFILE "PASS ".$master->{'password'}."\n";
+  print $MASTERFILE "HOST ".$source->{'host'}."\n";
+  print $MASTERFILE "PORT ".$source->{'port'}."\n";
+  print $MASTERFILE "PASS ".$source->{'password'}."\n";
   close $MASTERFILE;
   return 1;
 }

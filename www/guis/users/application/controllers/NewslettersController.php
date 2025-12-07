@@ -34,7 +34,7 @@ class NewslettersController extends Zend_Controller_Action
 
             $recipient = $row->to_user.'@'.$row->to_domain;
 
-	    $storage = $row->store_slave;
+	    $storage = $row->store_replica;
 
             $sender = $this->getFromHeader($eximId, $recipient);
 

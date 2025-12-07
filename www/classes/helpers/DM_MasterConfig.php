@@ -12,7 +12,7 @@
 require_once ('helpers/DataManager.php');
 
 /**
- * connect to the main master configuration database
+ * connect to the main source configuration database
  */
 class DM_MasterConfig extends DataManager {
 
@@ -21,7 +21,7 @@ class DM_MasterConfig extends DataManager {
     public function __construct() {
         parent :: __construct();
 
-        $socket = $this->getConfig('VARDIR')."/run/mariadb_master/mariadbd.sock";
+        $socket = $this->getConfig('VARDIR')."/run/mariadb_source/mariadbd.sock";
         $this->setOption('SOCKET', $socket);
         $this->setOption('DATABASE', 'st_config');
     }

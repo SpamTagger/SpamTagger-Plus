@@ -23,7 +23,7 @@ if (!isset($_GET['h']) || !is_numeric($_GET['h'])) {
   $error = "BADARGS";
 } else {
   $spool = $_GET['s'];
-  // connect to slave
+  // connect to replica
   $host = $sysconf_->getSlaveName($_GET['h']);
   $soaper = new Soaper();
   $ret = $soaper->load($host);

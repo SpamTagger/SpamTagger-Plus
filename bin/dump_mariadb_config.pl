@@ -51,8 +51,8 @@ if (-e $FIRSTUPDATE_FLAG_RAN){
 
 my $lasterror = "";
 
-dump_mariadb_file('master') or fatal_error("CANNOTDUMPMYSQLFILE", $lasterror);
-dump_mariadb_file('slave') or fatal_error("CANNOTDUMPMYSQLFILE", $lasterror);
+dump_mariadb_file('source') or fatal_error("CANNOTDUMPMYSQLFILE", $lasterror);
+dump_mariadb_file('replica') or fatal_error("CANNOTDUMPMYSQLFILE", $lasterror);
 
 print "DUMPSUCCESSFUL";
 

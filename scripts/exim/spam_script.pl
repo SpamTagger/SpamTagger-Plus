@@ -135,8 +135,8 @@ if ( $is_bounce > 0 ) {
 $exim_id = clean($exim_id);
 $subject = clean($subject);
 
-## connect to local slave configuration database as we need it a lot of time from now
-our $config_dbh = DB->db_connect('slave', 'st_config');
+## connect to local replica configuration database as we need it a lot of time from now
+our $config_dbh = DB->db_connect('replica', 'st_config');
 $config_dbh->{mariadb_auto_reconnect} = 1;
 
 my $delivery_type = get_delivery_type();
@@ -287,32 +287,32 @@ sub put_in_quarantine {
     return 0;
   }
 
-  ## log in masters db
-  my $in_master = 1;
+  ## log in sources db
+  my $in_source = 1;
   if ( defined $config_dbh ) {
-    my $master_sth =
-      $config_dbh->prepare("SELECT hostname, port, password FROM master")
+    my $source_sth =
+      $config_dbh->prepare("SELECT hostname, port, password FROM source")
       or return 0;
-    $master_sth->execute() or return 0;
-    if ( $master_sth->rows < 1 ) {
-      $in_master = 0;
+    $source_sth->execute() or return 0;
+    if ( $source_sth->rows < 1 ) {
+      $in_source = 0;
     }
-    while ( my $master_ref = $master_sth->fetchrow_hashref() ) {
+    while ( my $source_ref = $source_sth->fetchrow_hashref() ) {
       if (
-        !log_in_master(
-          $master_ref->{'hostname'}, $master_ref->{'port'},
-          $master_ref->{'password'}
+        !log_in_source(
+          $source_ref->{'hostname'}, $source_ref->{'port'},
+          $source_ref->{'password'}
         )
         )
       {
-        $in_master = 0;
+        $in_source = 0;
       }
     }
-    $master_sth->finish();
+    $source_sth->finish();
   }
 
-  ## log in slave (local)
-  if ( !log_in_slave($in_master) ) {
+  ## log in replica (local)
+  if ( !log_in_replica($in_source) ) {
     return 0;
   }
 
@@ -356,9 +356,9 @@ sub no_such_address ($to, $domain) {
 
 ##########################################
 
-sub log_in_master ($host, $port, $password) {
-  my $master_dbh = DB->db_connect('master', 'st_spool');
-  $master_dbh->{mariadb_auto_reconnect} = 1;
+sub log_in_source ($host, $port, $password) {
+  my $source_dbh = DB->db_connect('source', 'st_spool');
+  $source_dbh->{mariadb_auto_reconnect} = 1;
 
   my $table = "misc";
   if ( $to_local =~ /^([a-z,A-Z])/ ) {
@@ -369,22 +369,22 @@ sub log_in_master ($host, $port, $password) {
     $table = 'misc';
   }
   my $query =
-    "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_subject, forced, in_master, store_slave)
+    "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_subject, forced, in_source, store_replica)
     VALUES (NOW(), NOW(), '$to_domain', '$to_local', '$sender', '$exim_id', '$score', '$subject', '0', '1', $store_id)";
-  my $master_sth = $master_dbh->prepare($query) or return 0;
-  $master_sth->execute() or return 0;
-  $master_sth->finish()  or return 0;
-  $master_dbh->db_disconnect();
+  my $source_sth = $source_dbh->prepare($query) or return 0;
+  $source_sth->execute() or return 0;
+  $source_sth->finish()  or return 0;
+  $source_dbh->db_disconnect();
 
   return 1;
 }
 
 ##########################################
 
-sub log_in_slave ($in_master) {
+sub log_in_replica ($in_source) {
 
-  my $slave_dbh = DB->db_connect('slave', 'st_spool') or return 0;
-  $slave_dbh->{mariadb_auto_reconnect} = 1;
+  my $replica_dbh = DB->db_connect('replica', 'st_spool') or return 0;
+  $replica_dbh->{mariadb_auto_reconnect} = 1;
 
   my $table = "misc";
   if ( $to_local =~ /^([a-z,A-Z])/ ) {
@@ -395,13 +395,13 @@ sub log_in_slave ($in_master) {
     $table = 'misc';
   }
   my $query =
-    "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_subject, forced, in_master, store_slave)
-    VALUES (NOW(), NOW(), '$to_domain', '$to_local', '$sender', '$exim_id', '$score', '$subject', '0', '$in_master', $store_id)";
+    "INSERT IGNORE INTO spam_$table (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_subject, forced, in_source, store_replica)
+    VALUES (NOW(), NOW(), '$to_domain', '$to_local', '$sender', '$exim_id', '$score', '$subject', '0', '$in_source', $store_id)";
 
-  my $slave_sth = $slave_dbh->prepare($query) or return 0;
-  $slave_sth->execute() or return 0;
-  $slave_sth->finish()  or return 0;
-  $slave_dbh->db_disconnect();
+  my $replica_sth = $replica_dbh->prepare($query) or return 0;
+  $replica_sth->execute() or return 0;
+  $replica_sth->finish()  or return 0;
+  $replica_dbh->db_disconnect();
 
   return 1;
 }

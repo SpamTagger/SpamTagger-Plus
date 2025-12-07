@@ -75,7 +75,7 @@ sub load_prefs ($this) {
   my @dlist = ($this->{name}, '*', '_joker', '_global');
 
   ## try to load from db
-  my $db = DB->db_connect('slave', 'st_config', 0);
+  my $db = DB->db_connect('replica', 'st_config', 0);
 
   my %res;
   if ($db && $db->ping()) {
@@ -107,15 +107,15 @@ sub load_prefs ($this) {
   return;
 }
 
-sub dump_prefs ($this, $slave_db) {
-  $slave_db = DB->db_connect('slave', 'st_config') unless ($slave_db);
+sub dump_prefs ($this, $replica_db) {
+  $replica_db = DB->db_connect('replica', 'st_config') unless ($replica_db);
   my $query =
     "SELECT d.id, p.viruswall, p.spamwall, p.virus_subject, p.content_subject, p.spam_tag,
     p.language, p.report_template, p.support_email, p.delivery_type,
     p.enable_whitelists, p.enable_warnlists, p.enable_blacklists, p.notice_wwlists_hit, p.warnhit_template
     FROM domain d, domain_pref p WHERE d.prefs=p.id AND d.name='".$this->{name}."'";
 
-  my %res = $slave_db->getHashRow($query);
+  my %res = $replica_db->getHashRow($query);
 
   $this->dumpPrefsFromRow(\%res);
   return;
@@ -198,11 +198,11 @@ sub dump_prefs_from_row ($this, $row) {
   return;
 }
 
-sub dump_local_addresses ($this, $slave_db) {
+sub dump_local_addresses ($this, $replica_db) {
   my $stuid = getpwnam('SpamTagger');
   my $conf = ReadConfig::get_instance();
 
-  $slave_db = DB->db_connect('slave', 'st_config') unless ($slave_db);
+  $replica_db = DB->db_connect('replica', 'st_config') unless ($replica_db);
 
   my $query = "SELECT e.address FROM email e WHERE e.address LIKE '%@".$this->{name}."'";
 
@@ -212,7 +212,7 @@ sub dump_local_addresses ($this, $slave_db) {
     unlink($file) if (-e $file); ## in case we cannot write to file, try to remove it
     return 0;
   }
-  my @res = $slave_db->getListOfHash($query);
+  my @res = $replica_db->getListOfHash($query);
   foreach my $addrow (@res) {
     if (defined($addrow->{'address'}) && $addrow->{'address'} =~ m/(\S+)\@/) {
       print $OUTFILE $1."\n";

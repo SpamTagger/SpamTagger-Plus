@@ -172,25 +172,25 @@ fi
 ## MySQL Slave ##
 #################
 if [ -x /usr/bin/savelog ]; then
-  if [ -s $VARDIR/log/mariadb_slave/mariadb.log ]; then
-    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mariadb_slave/mariadb.log >/dev/null
+  if [ -s $VARDIR/log/mariadb_replica/mariadb.log ]; then
+    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mariadb_replica/mariadb.log >/dev/null
   fi
 fi
 
-/usr/bin/mariadb-admin -S $VARDIR/run/mariadb_slave/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
-$SRCDIR/etc/init.d/mariadb_slave restart
+/usr/bin/mariadb-admin -S $VARDIR/run/mariadb_replica/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
+$SRCDIR/etc/init.d/mariadb_replica restart
 
 ##################
 ## MySQL Master ##
 ##################
 if [ -x /usr/bin/savelog ]; then
-  if [ -s $VARDIR/log/mariadb_master/mariadb.log ]; then
-    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mariadb_master/mariadb.log >/dev/null
+  if [ -s $VARDIR/log/mariadb_source/mariadb.log ]; then
+    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mariadb_source/mariadb.log >/dev/null
   fi
 fi
 
-/usr/bin/mariadb-admin -S $VARDIR/run/mariadb_master/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
-$SRCDIR/etc/init.d/mariadb_master restart
+/usr/bin/mariadb-admin -S $VARDIR/run/mariadb_source/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
+$SRCDIR/etc/init.d/mariadb_source restart
 
 ###################
 ## Resync checks ##

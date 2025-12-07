@@ -208,9 +208,9 @@ class Default_Model_Email
         }
         if ($this->isNew()) {
             if ($this->getDomainObject()->getCalloutConnector() == 'local') {
-                $slave = new Default_Model_Slave();
+                $replica = new Default_Model_Slave();
 				$soapparams = array('what' => 'domains', 'domain' => $this->getDomain());
-				$res = $slave->sendSoapToAll('Service_silentDump', $soapparams);
+				$res = $replica->sendSoapToAll('Service_silentDump', $soapparams);
             }
         }
         return true;
@@ -229,9 +229,9 @@ class Default_Model_Email
         $this->_prefs->delete();
     	$ret = $this->getMapper()->delete($this);
         if ($this->getDomainObject()->getCalloutConnector() == 'local') {
-            $slave = new Default_Model_Slave();
+            $replica = new Default_Model_Slave();
 			$soapparams = array('what' => 'domains', 'domain' => $this->getDomain());
-            $res = $slave->sendSoapToAll('Service_silentDump', $soapparams);
+            $res = $replica->sendSoapToAll('Service_silentDump', $soapparams);
         }
         return $ret;
     }

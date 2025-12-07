@@ -65,8 +65,8 @@ class SmtpController extends Zend_Controller_Action
             	try {
             	  $mta->save();
             	  $message = 'OK data saved';
-            	  $slaves = new Default_Model_Slave();
-            	  $slaves->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1'));
+            	  $replicas = new Default_Model_Slave();
+            	  $replicas->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1'));
             	} catch (Exception $e) {
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
             	}
@@ -101,8 +101,8 @@ class SmtpController extends Zend_Controller_Action
             	try {
             	  $mta->save();
             	  $message = 'OK data saved';
-            	  $slaves = new Default_Model_Slave();
-            	  $slaves->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1'));
+            	  $replicas = new Default_Model_Slave();
+            	  $replicas->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1'));
             	} catch (Exception $e) {
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
             	}
@@ -159,8 +159,8 @@ class SmtpController extends Zend_Controller_Action
     	          	  $view->ssl_display_class = 'hidden';
     	          }
             	  $message = 'OK data saved';
-            	  $slaves = new Default_Model_Slave();
-            	  $slaves->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1','exim_stage4'));
+            	  $replicas = new Default_Model_Slave();
+            	  $replicas->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1','exim_stage4'));
             	} catch (Exception $e) {
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
             	}
@@ -218,8 +218,8 @@ class SmtpController extends Zend_Controller_Action
             	  foreach (array('rate', 'trusted_rate') as $rtype ) {
                 	  if ($mta->getParam($rtype.'limit_enable') > 0) {
         		          $view->rate_display_class[$rtype] = 'none';
-            	          $slaves = new Default_Model_Slave();
-            	          $slaves->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1','exim_stage4'));
+            	          $replicas = new Default_Model_Slave();
+            	          $replicas->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1','exim_stage4'));
     	              } else {
     	             	  $view->rate_display_class[$rtype] = 'hidden';
     	              }
@@ -265,8 +265,8 @@ class SmtpController extends Zend_Controller_Action
             	try {
             	  $greylist->save();
             	  $message = 'OK data saved';
-            	  $slaves = new Default_Model_Slave();
-            	  $slaves->sendSoapToAll('Service_setServiceToRestart', array('greylistd'));
+            	  $replicas = new Default_Model_Slave();
+            	  $replicas->sendSoapToAll('Service_setServiceToRestart', array('greylistd'));
             	} catch (Exception $e) {
             	  $message = 'NOK error saving data ('.$e->getMessage().')';
             	}
@@ -301,8 +301,8 @@ class SmtpController extends Zend_Controller_Action
                   $form->setParams($request, $mta);
                   $mta->save();
                   $message = 'OK data saved';
-            	  $slaves = new Default_Model_Slave();
-            	  $slaves->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1','exim_stage4'));
+            	  $replicas = new Default_Model_Slave();
+            	  $replicas->sendSoapToAll('Service_setServiceToRestart', array('exim_stage1','exim_stage4'));
                 } catch (Exception $e) {
                   $message = 'NOK error saving data ('.$e->getMessage().')';
                 }
@@ -321,8 +321,8 @@ class SmtpController extends Zend_Controller_Action
     	$layout->disableLayout();
         $view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 
-        $slave = new Default_Model_Slave();
-        $slave->sendSoapToAll('Service_clearCalloutCache');
+        $replica = new Default_Model_Slave();
+        $replica->sendSoapToAll('Service_clearCalloutCache');
         $view->message = 'OK';
     }
 

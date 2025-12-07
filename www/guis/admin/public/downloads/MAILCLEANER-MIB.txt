@@ -163,14 +163,14 @@ processStatus OBJECT-TYPE
 -- configuration
 
   --------------
-  -- master status
+  -- source status
 
 configIsMaster OBJECT-TYPE
     SYNTAX      Integer32
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-        "This host is a master or not."
+        "This host is a source or not."
     ::= { configuration 1 }
 
 

@@ -1,4 +1,4 @@
-<td colspan="9" class="tracelogmsg_<?php echo $this->slave.'_'.$this->msgid;?> searched">
+<td colspan="9" class="tracelogmsg_<?php echo $this->replica.'_'.$this->msgid;?> searched">
 <table class="logextracttable">
 <?php foreach (array('log_stage1', 'log_stage2', 'log_engine', 'log_stage4', 'log_spamhandler', 'log_finalstage4') as $l) {?>
 <?php if (is_array($this->logs[$l])) {  ?>

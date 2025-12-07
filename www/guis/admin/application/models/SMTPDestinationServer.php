@@ -37,14 +37,14 @@ class Default_Model_SMTPDestinationServer {
         #   return array('status' => 'NOK', 'message' => "Unable to send HELO message (".$e->getMessage().")");
         #}
 
-	#$from = 'postmaster@'.$domain;
+	#$from = 'postsource@'.$domain;
         $from = '';
         if (PEAR::isError($e = $smtp->mailFrom($from))) {
            $smtp->disconnect();
            return array('status' => 'NOK', 'message' => "Unable to set sender to <$from> (".$e->getMessage().")");
         }
 
-        $to  = 'postmaster@'.$domain;
+        $to  = 'postsource@'.$domain;
 	    if (PEAR::isError($res = $smtp->rcptTo($to))) {
 	    	$smtp->disconnect();
 	    	return array('status' => 'NOK', 'message' => "Unable to set recipient &lt;$to&gt; (".$res->getCode()." - ".$res->getMessage().")");

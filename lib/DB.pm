@@ -37,7 +37,7 @@ use DBI();
 sub db_connect ($class, $type, $db, $critical_p = 0) {
   my $critical = 1;
   $critical = 0 if ($critical_p < 1);
-  if (!$type || $type !~ /slave|master|realmaster|custom/) {
+  if (!$type || $type !~ /replica|source|realsource|custom/) {
   	print "BADCONNECTIONTYPE\n";
     return "";
   }
@@ -46,18 +46,18 @@ sub db_connect ($class, $type, $db, $critical_p = 0) {
 
   # determine socket to use
   my $conf = ReadConfig::get_instance();
-  my $socket = $conf->get_option('VARDIR')."/run/mariadb_master/mariadbd.sock";
-  $socket = $conf->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock" if ($type =~ /slave/);
+  my $socket = $conf->get_option('VARDIR')."/run/mariadb_source/mariadbd.sock";
+  $socket = $conf->get_option('VARDIR')."/run/mariadb_replica/mariadbd.sock" if ($type =~ /replica/);
 
   my $dbh;
-  my $realmaster = 0;
-  my $masterfile = $conf->get_option('VARDIR')."/spool/spamtagger/master.conf";
-  if ( ($type =~ /realmaster/ && -f $masterfile) || $type =~ /custom/) {
+  my $realsource = 0;
+  my $sourcefile = $conf->get_option('VARDIR')."/spool/spamtagger/source.conf";
+  if ( ($type =~ /realsource/ && -f $sourcefile) || $type =~ /custom/) {
   	my $host;
   	my $port;
   	my $password;
     my $MASTERFILE;
-    if (open($MASTERFILE, '<', $masterfile)) {
+    if (open($MASTERFILE, '<', $sourcefile)) {
       while (<$MASTERFILE>) {
         if (/HOST (\S+)/) { $host = $1; }
         if (/PORT (\S+)/) { $port = $1; }
@@ -75,10 +75,10 @@ sub db_connect ($class, $type, $db, $critical_p = 0) {
       $dbh = DBI->connect("DBI:MariaDB:database=$dbase;host=$host:$port;",
 			  "spamtagger", $password, {RaiseError => 0, PrintError => 0, AutoCommit => 1}
       )	or fatal_error("CANNOTCONNECTDB", $critical);
-      $realmaster = 1;
+      $realsource = 1;
     }
   }
-  if ($realmaster < 1) {
+  if ($realsource < 1) {
     $dbh = DBI->connect("DBI:MariaDB:database=$db;host=localhost;mariadb_socket=$socket",
 			"spamtagger", $conf->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
     ) or fatal_error("CANNOTCONNECTDB", $critical);

@@ -49,7 +49,7 @@ sub run($this) {
     my $null = <STDIN>;
     return 0;
   }
-  `$SRCDIR/scripts/configuration/slaves.pl --setmaster`;
+  `$SRCDIR/scripts/configuration/replicas.pl --setsource`;
   return;
 }
 

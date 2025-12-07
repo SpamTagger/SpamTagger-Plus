@@ -58,12 +58,12 @@ ok	ip	127.0.0.1
 #submit	ip	10.4.5.0/24
 
 
-# Do not filter postmaster to avoid rejecting reports of spam.
+# Do not filter postsource to avoid rejecting reports of spam.
 #   As with all header checksums, all valid forms of the address must
 #   be listed.
-#ok	env_to	postmaster
-#ok	env_to	postmaster@example.com
-#ok	env_to	postmaster@host.example.com
+#ok	env_to	postsource
+#ok	env_to	postsource@example.com
+#ok	env_to	postsource@host.example.com
 
 # See http://www.iecc.com/dcc-testmsg-whitelist.txt for list of checksums
 #   of practically blank messages.  Such checksums can be usefully whitelisted.

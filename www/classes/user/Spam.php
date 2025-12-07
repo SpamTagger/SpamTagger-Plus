@@ -28,7 +28,7 @@ class Spam {
                       'M_rbls'          => '',
                       'M_prefilter'     => '',
                       'M_globalscore'   => 0,
-                      'store_slave'     => 0,
+                      'store_replica'     => 0,
                       'is_newsletter'   => '0');
 /**
  * body of the spam
@@ -201,10 +201,10 @@ public function loadDatas($id, $dest) {
 }
 
 /**
- * load headers and body from slave
+ * load headers and body from replica
  * @param $id    string   message id
  * @param $dest  string   destination address
- * @param $slave string   slave host name
+ * @param $replica string   replica host name
  * @return       bool     true on success, false on failure
  */
 public function loadHeadersAndBody() {
@@ -217,13 +217,13 @@ public function loadHeadersAndBody() {
   }
 
   $sysconf = Systemconfig::getInstance();
-  $slave = $sysconf->getSlaveName($this->getData('store_slave'));
-  if ($slave == "") {
+  $replica = $sysconf->getSlaveName($this->getData('store_replica'));
+  if ($replica == "") {
     return false;
   }
   $dest  = $this->getData('to');
   $soaper = new Soaper();
-  if (!$soaper->load($slave)) {
+  if (!$soaper->load($replica)) {
     echo "CANNOTCONNECTSOAPER";
     return false;
   }
@@ -476,7 +476,7 @@ public function setReplacements($template, $replace) {
      'BLACKLISTS' => $this->displayGlobalValue($this->getData('M_rbls')),
      'FITLERSCORE' => $this->displayGlobalValue($this->getData('M_score')),
      'PARTS' => $this->getMIMEPartsType(),
-     'STORESLAVE' => $this->getData('store_slave')
+     'STORESLAVE' => $this->getData('store_replica')
   );
 
   if (!empty($_SESSION['user'])) {
@@ -494,7 +494,7 @@ public function setReplacements($template, $replace) {
           $result = $db->getHash($query);
 
           if (empty($result)) {
-	      $hrefNews = "/fm.php?id=" . $id . "&a=" . urlencode($recipient) . '&s=' . $this->getData('store_slave') . "&n=1";
+	      $hrefNews = "/fm.php?id=" . $id . "&a=" . urlencode($recipient) . '&s=' . $this->getData('store_replica') . "&n=1";
               $generalinfos['NEWSLETTERMODULE'] = sprintf('<a data-id="%s" href="%s" class="allow">%s</a> <a data-id="%s" href="%s" class="newsletter unsub">%s</a>', $this->getData('exim_id'), $hrefNews, $lang_->print_txt('NEWSLETTERACCEPT'), $this->getData('exim_id'), $this->unsub, $lang_->print_txt('NEWSLETTERUNSUB'));
           }
     }

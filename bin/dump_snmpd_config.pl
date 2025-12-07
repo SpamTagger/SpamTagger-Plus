@@ -50,13 +50,13 @@ my $st_mib_file = "$SRCDIR/www/guis/admin/public/downloads/SPAMTAGGER-MIB.txt";
 my $lasterror = "";
 
 my $dbh;
-$dbh = DB->db_connect('slave', 'st_config') or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
+$dbh = DB->db_connect('replica', 'st_config') or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
 my %snmpd_conf;
 %snmpd_conf = get_snmpd_config() or fatal_error("NOSNMPDCONFIGURATIONFOUND", "no snmpd configuration found");
 
-my %master_hosts;
-%master_hosts = get_master_config();
+my %source_hosts;
+%source_hosts = get_source_config();
 
 dump_snmpd_file() or fatal_error("CANNOTDUMPSNMPDFILE", $lasterror);
 
@@ -97,7 +97,7 @@ sub dump_snmpd_file ($stage) {
 
   my @ips = expand_host_string($snmpd_conf{'__ALLOWEDIP__'}.' 127.0.0.1',{'dumper'=>'snmp/allowedip'});
   my $ip;
-  foreach my $ip ( keys %master_hosts) {
+  foreach my $ip ( keys %source_hosts) {
     print $TARGET "com2sec local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
     print $TARGET "com2sec6 local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
   }
@@ -146,19 +146,19 @@ sub get_snmpd_config{
 }
 
 #############################
-sub get_master_config {
-  my %masters;
+sub get_source_config {
+  my %sources;
 
-  my $sth = $dbh->prepare("SELECT hostname FROM master");
+  my $sth = $dbh->prepare("SELECT hostname FROM source");
   $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
 
   return if ($sth->rows < 1);
   while (my $ref = $sth->fetchrow_hashref()) {
-    $masters{$ref->{'hostname'}} = 1;
+    $sources{$ref->{'hostname'}} = 1;
   }
 
   $sth->finish();
-  return %masters;
+  return %sources;
 }
 
 #############################

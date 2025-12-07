@@ -23,8 +23,8 @@ $(document).ready(function(){
 });
 
 function loading() {
-	if (slave) {
-            $("#statuspanel").html("not running on slave");
+	if (replica) {
+            $("#statuspanel").html("not running on replica");
 		return;
 	}
 

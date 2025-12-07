@@ -18,7 +18,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This script will compare the actual slave or master database with
+#   This script will compare the actual replica or source database with
 #   the up-to-date database from SpamTagger Update Services
 #
 #   Usage:

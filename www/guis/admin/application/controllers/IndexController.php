@@ -67,14 +67,14 @@ class IndexController extends Zend_Controller_Action {
     $layout->disableLayout();
     $view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 
-    $slave = new Default_Model_Slave();
-    $slaves = $slave->fetchAll();
+    $replica = new Default_Model_Slave();
+    $replicas = $replica->fetchAll();
 
     $res = array();
 
     foreach (array('hardware', 'spools', 'load') as $service) {
       $res[$service] = array('status' => 'ok', 'message' => '', 'value' => '');
-      foreach ($slaves as $s) {
+      foreach ($replicas as $s) {
         $tmpres = $s->getStatus($service);
         if ($tmpres['status'] != 'ok') {
           $res[$service]['status'] = $tmpres['status'];
@@ -89,7 +89,7 @@ class IndexController extends Zend_Controller_Action {
     }
 
     $users = 0;
-    foreach ($slaves as $s) {
+    foreach ($replicas as $s) {
       $susers = $s->getTodayStats('users');
       if (is_numeric($susers)) {
         $users = max($users, $susers);
@@ -101,7 +101,7 @@ class IndexController extends Zend_Controller_Action {
     $domains = $domain->fetchAllName();
     $view->domains = count($domains);
     $view->distinctdomains = $domain->getDistinctDomainsCount();
-    $view->hosts = (count($slaves));
+    $view->hosts = (count($replicas));
     $view->status = $res;
 
     $config = new SpamTagger_Config();

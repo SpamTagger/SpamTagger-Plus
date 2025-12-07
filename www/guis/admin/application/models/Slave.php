@@ -96,12 +96,12 @@ class Default_Model_Slave
     }
 
     public function sendSoapToAll($service, $params = NULL) {
-        $slaves = $this->fetchAll();
+        $replicas = $this->fetchAll();
         $message = 'OK soapsenttoall';
-        foreach ($slaves as $slave) {
-            $status = $slave->sendSoap($service, $params);
+        foreach ($replicas as $replica) {
+            $status = $replica->sendSoap($service, $params);
             if (!is_array($status) && !preg_match('/^OK/', $status)) {
-                $message = "NOK (slave ".$slave->getId().") got : ".$status;
+                $message = "NOK (replica ".$replica->getId().") got : ".$status;
             }
             if (is_array($status)) {
                 $message = $status;

@@ -220,7 +220,7 @@ class ManagetracingController extends Zend_Controller_Action
 
                 $traceid = 0;
                 $msgid = '';
-                $slaveid = 0;
+                $replicaid = 0;
 
                 $log = '';
 
@@ -232,19 +232,19 @@ class ManagetracingController extends Zend_Controller_Action
                 $msgid = $request->getParam('m');
 
                 if (is_numeric($request->getParam('s'))) {
-                    $slave = new Default_Model_Slave();
-                    $slave->find($request->getparam('s'));
+                    $replica = new Default_Model_Slave();
+                    $replica->find($request->getparam('s'));
                 }
                 $params = array('msgid' => $msgid, 'traceid' => $traceid);
-                if ($slave) {
-                    $res = $slave->sendSoap('Logs_ExtractLog', $params);
+                if ($replica) {
+                    $res = $replica->sendSoap('Logs_ExtractLog', $params);
                 }
                 if (is_array($res) && isset($res['full_log'])) {
                     $log = $res['full_log'];
                 }
                 $view->logs = $res;
                 $view->log = $log;
-                $view->slave = $slave->getId();
+                $view->replica = $replica->getId();
                 $view->msgid = $msgid;
                 $view->t = Zend_Registry::get('translate');
   }
@@ -282,12 +282,12 @@ class ManagetracingController extends Zend_Controller_Action
 
                 foreach ($messages as $msg_lid) {
                   if (preg_match('/^(\d+)_([-a-zA-Z0-9]+)$/', $msg_lid, $matches)) {
-                    array_push($slaves_dest[$matches[1]], $matches[2]);
-                    $slave = new Default_Model_Slave();
-                    $slave->find($matches[1]);
+                    array_push($replicas_dest[$matches[1]], $matches[2]);
+                    $replica = new Default_Model_Slave();
+                    $replica->find($matches[1]);
                     $params = array('msgid' => $matches[2], 'traceid' => $traceid);
-                    if ($slave) {
-                      $res = $slave->sendSoap('Logs_ExtractLog', $params);
+                    if ($replica) {
+                      $res = $replica->sendSoap('Logs_ExtractLog', $params);
                     }
                     if (is_array($res) && isset($res['full_log'])) {
                       array_push($traces, $res);

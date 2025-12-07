@@ -98,7 +98,7 @@ sub get_user_pref ($this, $pref) {
 
 sub load_prefs ($this) {
   require DB;
-  my $db = DB->db_connect('slave', 'st_config', 0);
+  my $db = DB->db_connect('replica', 'st_config', 0);
 
   my $to = $this->{address};
   my $to_domain = $this->{domain};
@@ -162,7 +162,7 @@ sub has_in_white_warn_list ($this, $type, $sender) {
 
 sub loaded_is_ww_listed ($this, $type, $sender) {
   require DB;
-  my $db = DB->db_connect('slave', 'st_config', 0);
+  my $db = DB->db_connect('replica', 'st_config', 0);
 
   my $to = $this->{address};
   $sender =~ s/[^a-zA-Z0-9.\-_=+@]//g;

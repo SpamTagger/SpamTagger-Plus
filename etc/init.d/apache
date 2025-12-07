@@ -150,7 +150,7 @@ EOF
 
 createStubStatus() {
   ## create stub status files
-  hosts=$(echo "select hostname from slave" | $SRCDIR/bin/st_mariadb -s st_config | sed '1d')
+  hosts=$(echo "select hostname from replica" | $SRCDIR/bin/st_mariadb -s st_config | sed '1d')
   for h in $hosts; do
     file=$VARDIR/run/spamtagger.$h.status
     if [ ! -f $file ]; then

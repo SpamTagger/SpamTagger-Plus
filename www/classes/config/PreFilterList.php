@@ -37,9 +37,9 @@ public function __construct() {
  */
 public function load() {
 
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
   $query = "SELECT name FROM prefilter WHERE set_id=1 ORDER BY position";
-  $list = $db_slaveconf->getList($query);
+  $list = $db_replicaconf->getList($query);
 
   $pos = 1;
   $nb = 0;

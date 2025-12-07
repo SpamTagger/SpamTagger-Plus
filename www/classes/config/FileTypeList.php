@@ -36,11 +36,11 @@ class FileTypeList {
 public function load() {
 
   $query = "SELECT id FROM filetype";
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
 
   unset($this->filetypes_);
   $this->filetypes_ = array();
-  $list = $db_slaveconf->getList($query);
+  $list = $db_replicaconf->getList($query);
   foreach ($list as $id) {
     if ($id != 0) {
       $this->filetypes_[$id] = new FileType();

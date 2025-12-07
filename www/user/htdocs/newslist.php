@@ -51,18 +51,18 @@ function get_soap_host($exim_id, $dest) {
     $sysconf_ = SystemConfig::getInstance();
     $spam_mail = new Spam();
     $spam_mail->loadDatas($exim_id, $dest);
-    $soap_host = $sysconf_->getSlaveName($spam_mail->getData('store_slave'));
+    $soap_host = $sysconf_->getSlaveName($spam_mail->getData('store_replica'));
     return $soap_host;
 }
 
 /**
- * Get the IP of the master machine for SOAP requests
+ * Get the IP of the source machine for SOAP requests
  * @return string $soap_host The IP of the machine
  */
-function get_master_soap_host() {
+function get_source_soap_host() {
     $sysconf_ = SystemConfig::getInstance();
-    foreach ($sysconf_->getMastersName() as $master){
-        return $master;
+    foreach ($sysconf_->getMastersName() as $source){
+        return $source;
     }
 }
 
@@ -128,11 +128,11 @@ if (!isset($bad_arg)) {
             $sender = get_sender_address_body($spam_mail);
         }
 
-        $slave = get_soap_host($exim_id, $dest);
-        $master = get_master_soap_host();
+        $replica = get_soap_host($exim_id, $dest);
+        $source = get_source_soap_host();
 
         $is_sender_added_to_news = send_SOAP_request(
-            $master,
+            $source,
             "addToNewslist",
             array($dest, $sender)
         );

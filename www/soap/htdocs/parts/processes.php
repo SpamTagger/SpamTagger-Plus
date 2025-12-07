@@ -17,8 +17,8 @@ $services_ = array(
   'MTA4' => array('restartfile' => "exim_stage4.rn", 'starter' => "S_exim_stage4.sh", 'stopper' => "H_exim_stage4.sh", 'restarter' => "R_exim_stage4.sh"),
   'ENGINE' => array('restartfile' => "mailscanner.rn", 'starter' => "S_mailscanner.sh", 'stopper' => "H_mailscanner.sh", 'restarter' => "R_mailscanner.sh"),
   'HTTPD' => array('restartfile' => "apache.rn", 'starter' => "S_apache.sh", 'stopper' => "H_exim_apache.sh", 'restarter' => "R_apache.sh"),
-  'MASTERDB' => array('restartfile' => "mariadb_master.rn", 'starter' => "S_mariadb_master.sh", 'stopper' => "H_mariadb_master.sh", 'restarter' => "R_mariadb_master.sh"),
-  'SLAVEDB' => array('restartfile' => "mariadb_slave.rn", 'starter' => "S_mariadb_slave.sh", 'stopper' => "H_mariadb_slave.sh", 'restarter' => "R_mariadb_slave.sh"),
+  'MASTERDB' => array('restartfile' => "mariadb_source.rn", 'starter' => "S_mariadb_source.sh", 'stopper' => "H_mariadb_source.sh", 'restarter' => "R_mariadb_source.sh"),
+  'SLAVEDB' => array('restartfile' => "mariadb_replica.rn", 'starter' => "S_mariadb_replica.sh", 'stopper' => "H_mariadb_replica.sh", 'restarter' => "R_mariadb_replica.sh"),
   'SNMPD' => array('restartfile' => "snmpd.rn", 'starter' => "S_snmpd.sh", 'stopper' => "H_snmpd.sh", 'restarter' => "R_snmpd.sh"),
   'GREYLISTD' => array('restartfile' => "greylistd.rn", 'starter' => "S_greylistd.sh", 'stopper' => "H_greylistd.sh", 'restarter' => "R_greylistd.sh"),
   'CRON' => array('restartfile' => "cron.rn", 'starter' => "S_cron.sh", 'stopper' => "H_cron.sh", 'restarter' => "R_cron.sh"),
@@ -49,8 +49,8 @@ function getProcessesStatus($sid) {
    $ret->mtaoutgoing = $processes[3];
    $ret->httpd = $processes[4];
    $ret->engine = $processes[5];
-   $ret->masterdb = $processes[6];
-   $ret->slavedb = $processes[7];
+   $ret->sourcedb = $processes[6];
+   $ret->replicadb = $processes[7];
    $ret->snmpd = $processes[8];
    $ret->greylistd = $processes[9];
    $ret->cron = $processes[10];

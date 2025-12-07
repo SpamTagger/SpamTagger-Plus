@@ -115,10 +115,10 @@ class Default_Model_SystemConf
     	$ret = $this->getMapper()->save($this);
 
     	## do we need to restart anything
-    	$slave = new Default_Model_Slave();
+    	$replica = new Default_Model_Slave();
     	foreach ($this->_to_restart as $s) {
     		$params = array('service' => "$s", 'action' => 'restart');
-    		$res = $slave->sendSoapToAll('Service_silentStopStart', $params);
+    		$res = $replica->sendSoapToAll('Service_silentStopStart', $params);
     	}
         return $ret;
     }

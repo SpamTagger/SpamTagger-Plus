@@ -38,7 +38,7 @@ use DB();
 
 our $config = ReadConfig::get_instance();
 
-my %master_conf;
+my %source_conf;
 
 my $msg_id = shift;
 my $for = shift;
@@ -124,7 +124,7 @@ exit 1;
 
 ##########################################
 sub mark_forced {
-  my $dbh = DB->db_connect('master', 'st_spool') or return;
+  my $dbh = DB->db_connect('source', 'st_spool') or return;
 
   my $table = "misc";
   if ($for_local =~ /^([a-z,A-Z])/) {

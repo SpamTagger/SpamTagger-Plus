@@ -19,9 +19,9 @@ global $sysconf_;
 global $lang_;
 
 /**
- * out if we are not on a master host
+ * out if we are not on a source host
  */
-if ($sysconf_->ismaster_ < 1) {
+if ($sysconf_->issource_ < 1) {
   exit;
 }
 

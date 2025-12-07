@@ -82,17 +82,17 @@ class Default_Model_RRDGraphic
 	}
 	public function setHost($host) {
 
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
 		if (is_numeric($host)) {
-		    foreach ($slaves as $s) {
+		    foreach ($replicas as $s) {
 		    	if ($s->getId() == $host) {
 		    		$this->_host = $s->getHostname();
 		    	}
             }
 		} else {
-			foreach ($slaves as $s) {
+			foreach ($replicas as $s) {
 				if ($s->getHostname() == $host) {
 					$this->_host = $s->getHostname();
 				}

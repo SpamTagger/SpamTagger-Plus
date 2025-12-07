@@ -20,7 +20,7 @@ class Default_Model_QuarantinedSpam
 	  'M_subject' => '',
 	  'M_globalscore' => '',
 	  'forced' => 0,
-	  'store_slave' => 0,
+	  'store_replica' => 0,
           ### newsl
           'is_newsletter' => '0',
     );

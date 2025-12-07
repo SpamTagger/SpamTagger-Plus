@@ -29,5 +29,5 @@ if [ "$ISMASTER" = "Y" ] || [ "$ISMASTER" = "y" ]; then
   sleep 1
   st_mariadb -m st_config <$FILE
 else
-  echo "Please run this script on your master host"
+  echo "Please run this script on your source host"
 fi

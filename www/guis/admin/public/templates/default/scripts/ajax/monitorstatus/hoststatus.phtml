@@ -9,24 +9,24 @@
 <?php
   $loadtext = 'Loading';
   if (!$this->initial_loading) {
-     $status = $this->slave->getStatusValues();
+     $status = $this->replica->getStatusValues();
   $loadtext = 'Refreshing';
   }
 
 ?>
-<table class="hoststatustable hoststatus_<?echo $this->slave->getId();?>">
+<table class="hoststatustable hoststatus_<?echo $this->replica->getId();?>">
 
   <tr class="hoststatushead">
    <td colspan="<?php echo count($this->columns)?>">
    <p></p>
      <table class='host_status_head'>
        <tr>
-         <td class="host_status_head_info"><?php echo $this->t->_('Host')?> : <?php echo $this->slave->getId()?> (<?php echo $this->slave->getHostname();?>) &ndash;</td>
+         <td class="host_status_head_info"><?php echo $this->t->_('Host')?> : <?php echo $this->replica->getId()?> (<?php echo $this->replica->getHostname();?>) &ndash;</td>
          <td  class="host_status_head_value">
-             <span class="okvalue hidden hoststatus_<?php echo $this->slave->getId()?>_up"><?php echo $this->t->_('Up')?></span>
-             <span class="stophoststatus hoststatus_<?php echo $this->slave->getId()?>_loading"><?php echo $this->t->_($loadtext)?>...<a href="javascript:stopHostReload(<?php echo $this->slave->getId();?>);"><img class="stophoststatusimg" src="<?php echo $this->images_path?>/stop_light.png" /></a></span>
-             <span class="error hidden hoststatus_<?php echo $this->slave->getId()?>_down"><?php echo $this->t->_('Unresponsive')?></span>
-             <span class="hidden hoststatus_<?php echo $this->slave->getId()?>_stopped"> (<?php echo $this->t->_('Refresh stopped')?><a href="javascript:restartHostReload(<?php echo $this->slave->getId();?>);" class="stophoststatus"><img class="stophoststatusimg" src="<?php echo $this->images_path?>/restart_light.png" /></a> )</span>
+             <span class="okvalue hidden hoststatus_<?php echo $this->replica->getId()?>_up"><?php echo $this->t->_('Up')?></span>
+             <span class="stophoststatus hoststatus_<?php echo $this->replica->getId()?>_loading"><?php echo $this->t->_($loadtext)?>...<a href="javascript:stopHostReload(<?php echo $this->replica->getId();?>);"><img class="stophoststatusimg" src="<?php echo $this->images_path?>/stop_light.png" /></a></span>
+             <span class="error hidden hoststatus_<?php echo $this->replica->getId()?>_down"><?php echo $this->t->_('Unresponsive')?></span>
+             <span class="hidden hoststatus_<?php echo $this->replica->getId()?>_stopped"> (<?php echo $this->t->_('Refresh stopped')?><a href="javascript:restartHostReload(<?php echo $this->replica->getId();?>);" class="stophoststatus"><img class="stophoststatusimg" src="<?php echo $this->images_path?>/restart_light.png" /></a> )</span>
          </td>
        </tr>
      </table>
@@ -44,7 +44,7 @@
       </td>
    <?php }?>
       <td class="c_status c_title">
-        <?php echo $this->t->_('status');?> <?php if (0) { ?>(<span class="version" ><?php echo $this->t->_('version');?>: <?php echo $this->slave->getHostVersion();?>, <?php echo $this->t->_('level'); ?>: <?php echo $this->slave->getHostPatchLevel();?>)</span><?php } ?>
+        <?php echo $this->t->_('status');?> <?php if (0) { ?>(<span class="version" ><?php echo $this->t->_('version');?>: <?php echo $this->replica->getHostVersion();?>, <?php echo $this->t->_('level'); ?>: <?php echo $this->replica->getHostPatchLevel();?>)</span><?php } ?>
       </td>
    </tr>
 
@@ -135,25 +135,25 @@
     <td class="c_spools" ><br />
        <span class='statusdescr'><?php echo $this->t->_('Incoming')?>: </span>
        <span class='statusvalue<?php if ($status['spools'][1] > 10000) { echo " criticalvalue"; } else if ($status['spools'][1] > 1000) { echo " warningvalue"; }?>'>
-            <a href="javascript:showSpool(<?php echo $this->slave->getId();?>,1);" ><?php echo $status['spools'][1]?></a>
+            <a href="javascript:showSpool(<?php echo $this->replica->getId();?>,1);" ><?php echo $status['spools'][1]?></a>
        </span><br />
        <span class='statusdescr'><?php echo $this->t->_('Filtering')?>: </span>
        <span class='statusvalue<?php if ($status['spools'][2] > 10000) { echo " criticalvalue"; } else if ($status['spools'][2] > 1000) { echo " warningvalue"; }?>'>
-            <a href="javascript:showSpool(<?php echo $this->slave->getId();?>,2);" ><?php echo $status['spools'][2]?></a>
+            <a href="javascript:showSpool(<?php echo $this->replica->getId();?>,2);" ><?php echo $status['spools'][2]?></a>
        </span><br />
        <span class='statusdescr'><?php echo $this->t->_('Outgoing')?>: </span>
        <span class='statusvalue<?php if ($status['spools'][4] > 10000) { echo " criticalvalue"; } else if ($status['spools'][4] > 1000) { echo " warningvalue"; }?>'>
-            <a href="javascript:showSpool(<?php echo $this->slave->getId();?>,4);" ><?php echo $status['spools'][4]?></a>
+            <a href="javascript:showSpool(<?php echo $this->replica->getId();?>,4);" ><?php echo $status['spools'][4]?></a>
        </span>
     </td>
     <td class="c_processes" >
 <span class="procrow">
   <span class='statusdescr'><?php echo $this->t->_('Version');?> : </span>
-  <span class='versionstatus'><?php echo $this->slave->getHostPatchLevel();?></span>
+  <span class='versionstatus'><?php echo $this->replica->getHostPatchLevel();?></span>
 </span>
 <span class="procrow finalprocrow">
   <span class='statusdescr'><?php echo $this->t->_('Patch level');?> : </span>
-  <span class='versionstatus'><?php echo $this->slave->getHostVersion();?></span>
+  <span class='versionstatus'><?php echo $this->replica->getHostVersion();?></span>
 </span>
 
      <?php $processes = array('exim_stage1' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
@@ -161,8 +161,8 @@
                               'exim_stage4' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
                               'apache' => array('advanced' => 0, 'actions' => array('restart')),
                               'mailscanner'=> array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
-                              'mariadb_master' => array('advanced' => 0, 'actions' => array('restart')),
-                              'mariadb_slave' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
+                              'mariadb_source' => array('advanced' => 0, 'actions' => array('restart')),
+                              'mariadb_replica' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
                               'snmpd' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
                               'greylistd' => array('advanced' => 0, 'actions' => array('stop', 'start', 'restart')),
                               'cron' => array('advanced' => 1, 'actions' => array('stop', 'start', 'restart')),
@@ -179,14 +179,14 @@
 
        <span class='statusvalue stopstartvalue'>
          <?php foreach ($option['actions'] as $a) {?>
-           <a href="javascript:stopstart('<?php echo $a?>',<?php echo $this->slave->getId()?>,'<?php echo $p?>');"><img class="<?php echo $a?>button" src="<?php echo $this->images_path?>/<?php echo $a?>.gif" alt="<?php echo $a?>" /></a>
+           <a href="javascript:stopstart('<?php echo $a?>',<?php echo $this->replica->getId()?>,'<?php echo $p?>');"><img class="<?php echo $a?>button" src="<?php echo $this->images_path?>/<?php echo $a?>.gif" alt="<?php echo $a?>" /></a>
          <?php }?>
        </span>
 
         <?php echo $this->partial('ajax/monitorstatus/restartservice.phtml', array(
                          'status' => $status['processes'][$p],
                          'process' => $p,
-                         'slaveid' => $this->slave->getId(),
+                         'replicaid' => $this->replica->getId(),
                          't' => $this->t,
                          'images_path' => $this->images_path
         )); ?>
@@ -201,7 +201,7 @@
    <tr class="showmorerow">
      <?php foreach ($this->more_content as $type => $c) {?>
      <td>
-         <a class="host_<?php echo $this->slave->getId()?>_graph_<?php echo $type?>_link <?php if ( in_array($type, $this->more_to_show) ) { echo ' hidden'; }?>" href="javascript:showGraph('host_<?php echo $this->slave->getId()?>_graph_<?php echo $type?>');"><?php echo $this->t->_('show more...')?></a>
+         <a class="host_<?php echo $this->replica->getId()?>_graph_<?php echo $type?>_link <?php if ( in_array($type, $this->more_to_show) ) { echo ' hidden'; }?>" href="javascript:showGraph('host_<?php echo $this->replica->getId()?>_graph_<?php echo $type?>');"><?php echo $this->t->_('show more...')?></a>
      </td>
      <?php }?>
      <td><a class="notprocadvanced" href="javascript:showAdvancedProcs();"><?php echo $this->t->_('show advanced...')?></a>
@@ -211,7 +211,7 @@
 
 
    <?php foreach ($this->more_content as $type => $c) { ?>
-   <tr class="graphisrow <?php if ( !in_array($type, $this->more_to_show) ) { echo 'hidden '; }?> host_<?php echo $this->slave->getId();?>_graph_<?php echo $type; ?>">
+   <tr class="graphisrow <?php if ( !in_array($type, $this->more_to_show) ) { echo 'hidden '; }?> host_<?php echo $this->replica->getId();?>_graph_<?php echo $type; ?>">
       <td class="graprowresc">
          <p class="graprowrescp"><?php echo $this->t->_($type)?> : </p>
         <?php ## graph type
@@ -219,7 +219,7 @@
          <p>
            <?php $i=1; foreach ($this->more_content[$type]['type'] as $t) {?>
              <?php if ($t != $this->more_content[$type]['selected_type']) {?>
-                 <a href="javascript:setMoreType(<?php echo $this->slave->getId()?>,'<?php echo $type;?>','<?php echo $t?>');"><?php echo $this->t->_($t) ?></a>
+                 <a href="javascript:setMoreType(<?php echo $this->replica->getId()?>,'<?php echo $type;?>','<?php echo $t?>');"><?php echo $this->t->_($t) ?></a>
              <?php } else {?>
                  <?php echo $this->t->_($t) ?>
              <?php }?>
@@ -233,7 +233,7 @@
          <p>
            <?php $i=1; foreach ($this->more_content[$type]['mode'] as $m) {?>
              <?php if ($m != $this->more_content[$type]['selected_mode']) {?>
-                 <a href="javascript:setMoreMode(<?php echo $this->slave->getId()?>,'<?php echo $type;?>','<?php echo $m?>');"><?php echo $this->t->_($m) ?></a>
+                 <a href="javascript:setMoreMode(<?php echo $this->replica->getId()?>,'<?php echo $type;?>','<?php echo $m?>');"><?php echo $this->t->_($m) ?></a>
              <?php } else {?>
                  <?php echo $this->t->_($m) ?>
              <?php }?>
@@ -246,7 +246,7 @@
          <p>
            <?php $i=1; foreach ($this->periods as $p) {?>
              <?php if ($p != $this->more_content[$type]['selected_period']) {?>
-                 <a href="javascript:setMorePeriod(<?php echo $this->slave->getId()?>,'<?php echo $type;?>','<?php echo $p?>');"><?php echo $this->t->_($p) ?></a>
+                 <a href="javascript:setMorePeriod(<?php echo $this->replica->getId()?>,'<?php echo $type;?>','<?php echo $p?>');"><?php echo $this->t->_($p) ?></a>
              <?php } else {?>
                  <?php echo $this->t->_($p) ?>
              <?php }?>
@@ -255,14 +255,14 @@
          </p>
 
          <?php ## show/hide ?>
-         <p>(<a href="javascript:hideGraph('host_<?php echo $this->slave->getId()?>_graph_<?php echo $type?>')";><?php echo $this->t->_('hide');?></a>)</p>
+         <p>(<a href="javascript:hideGraph('host_<?php echo $this->replica->getId()?>_graph_<?php echo $type?>')";><?php echo $this->t->_('hide');?></a>)</p>
 
       </td>
       <td colspan="<?php echo count($this->more_content) ?>" class="graph_place">
         <span class="hidden more_type"><?php echo $type."_".$this->more_content[$type]['selected_type'];?></span>
         <span class="hidden more_mode"><?php echo $type."_".$this->more_content[$type]['selected_mode'];?></span>
         <span class="hidden more_period"><?php echo $type."_".$this->more_content[$type]['selected_period'];?></span>
-        <img class="status_graph_img" src="<?php echo $this->graphBaseLink."h/".$this->slave->getId()."/p/".$this->more_content[$type]['selected_period']."/t/".$this->more_content[$type]['selected_type']."/m/".$this->more_content[$type]['selected_mode'];?>" alt="" />
+        <img class="status_graph_img" src="<?php echo $this->graphBaseLink."h/".$this->replica->getId()."/p/".$this->more_content[$type]['selected_period']."/t/".$this->more_content[$type]['selected_type']."/m/".$this->more_content[$type]['selected_mode'];?>" alt="" />
       </td>
    </tr>
    <?php }?>

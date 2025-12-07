@@ -12,7 +12,7 @@
 require_once ('helpers/DataManager.php');
 
 /**
- * connect to the slave configuration database
+ * connect to the replica configuration database
  */
 class DM_SlaveConfig extends DataManager {
 
@@ -21,7 +21,7 @@ class DM_SlaveConfig extends DataManager {
     public function __construct() {
         parent :: __construct();
 
-        $socket = $this->getConfig('VARDIR')."/run/mariadb_slave/mariadbd.sock";
+        $socket = $this->getConfig('VARDIR')."/run/mariadb_replica/mariadbd.sock";
         $this->setOption('SOCKET', $socket);
         $this->setOption('DATABASE', 'st_config');
     }

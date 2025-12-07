@@ -79,15 +79,15 @@ public function load($object, $startdate, $stopdate) {
    if (!$this->setDate('start', $startdate)) { return false; }
    if (!$this->setDate('stop', $stopdate)) { return false; }
 
-   // load slave
+   // load replica
    $sysconf = SystemConfig::getInstance();
    if (count($sysconf->getSlaves()) < 1) {
      $sysconf->loadSlaves();
    }
 
    // gather stats
-   foreach ($sysconf->getSlaves() as $slave) {
-     $stats = $slave->getStats($this->object_, $this->startdate_, $this->stopdate_);
+   foreach ($sysconf->getSlaves() as $replica) {
+     $stats = $replica->getStats($this->object_, $this->startdate_, $this->stopdate_);
      $this->stats_['msgs'] += $stats->msg;
      $this->stats_['spams'] += $stats->spam;
      $this->stats_['bytes'] += $stats->bytes;

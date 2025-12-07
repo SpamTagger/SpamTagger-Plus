@@ -4,7 +4,7 @@ Oryginalny załącznik do wiadomości e-mail "$filename"
 znajduje się na liście niedopuszczalnych załączników do tej witryny i jest
 zastąpiony tym komunikatem ostrzegawczym.
 
-Jeśli chcesz otrzymać kopię oryginalnego załącznika, proszę wyślij e-mail do administratora na $localpostmaster i dołącz cały plik
+Jeśli chcesz otrzymać kopię oryginalnego załącznika, proszę wyślij e-mail do administratora na $localpostsource i dołącz cały plik
 wiadomości w wysyłanej prośbie. Możesz też do nas zadzwonić, używając treści tej wiadomości do szybkiej weryfikacji poszukiwanej informacji.
 
 W dniu $date skaner antywirusowy zweryfikował:

@@ -132,7 +132,7 @@ public function load() {
 
    // required here for sanity checks
    require_once ('helpers/DM_MasterSpool.php');
-   $db_masterspool = DM_MasterSpool :: getInstance();
+   $db_sourcespool = DM_MasterSpool :: getInstance();
 
    // now we clean up the filter criteria
    if (!is_numeric($this->getFilter('days'))) {
@@ -142,7 +142,7 @@ public function load() {
      $this->setFilter('msg_per_page', DEFAULT_MSGS);
    }
    foreach ($this->filters_ as $key => $value) {
-     $clean_filters[$key] = $db_masterspool->sanitize($value);
+     $clean_filters[$key] = $db_sourcespool->sanitize($value);
    }
    // index is the first letter of the local part of the address
    // this is used to select the spam table in the database
@@ -212,13 +212,13 @@ public function load() {
    // get the number of spam found
    $count_query = "SELECT COUNT(DISTINCT exim_id) as count FROM $table WHERE $where";
 
-   $count_row = $db_masterspool->getHash($count_query);
+   $count_row = $db_sourcespool->getHash($count_query);
    if (isset($count_row['count']) && is_numeric($count_row['count'])) {
       $this->setNbElements($count_row['count']);
    }
 
    // and get the spam themselves
-   $query = "SELECT date_in, time_in, sender, to_domain, to_user, exim_id, exim_id as id, M_subject, M_date, forced, in_master, store_slave, M_score, M_rbls, M_prefilter, M_globalscore, is_newsletter";
+   $query = "SELECT date_in, time_in, sender, to_domain, to_user, exim_id, exim_id as id, M_subject, M_date, forced, in_source, store_replica, M_score, M_rbls, M_prefilter, M_globalscore, is_newsletter";
    $query .= " FROM $table WHERE ".$where;
 
    // ignore duplicate id
@@ -245,7 +245,7 @@ public function load() {
    $query .= $limit;
 
    // populate internal spam list
-   $spam_list = $db_masterspool->getListOfHash($query);
+   $spam_list = $db_sourcespool->getListOfHash($query);
    foreach ($spam_list as $spam) {
      $this->elements_[$spam['exim_id']] = new Spam();
      $this->elements_[$spam['exim_id']]->loadFromArray($spam);
@@ -268,8 +268,8 @@ public function load() {
      $delta = $this->filters_['days']-1;
    }
 
-   foreach ($sysconf->getSlaves() as $slave) {
-     $stats = $slave->getStats($this->getSearchAddress(), '-'.$delta, $today_date);
+   foreach ($sysconf->getSlaves() as $replica) {
+     $stats = $replica->getStats($this->getSearchAddress(), '-'.$delta, $today_date);
      if (is_object($stats)) {
        $this->stats_['msgs'] += $stats->msg;
        $this->stats_['spams'] += $stats->spam;
@@ -327,12 +327,12 @@ public function getHTMLList($to) {
     if ($spam->getData('forced')) $template = preg_replace("/__FORCE__(.*)__FORCE__/", "$1", $template);
     else $template = preg_replace("/__FORCE__(.*)__FORCE__/", "", $template);
 
-    $template = str_replace('__FORCETARGET__', urlencode("/fm.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_slave')."&lang=".$lang_->getLanguage()."&n=".$spam->getCleanData('is_newsletter')), $template);
-    $template = str_replace('__REASONSTARGET__', urlencode("/vi.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_slave')."&lang=".$lang_->getLanguage()), $template);
-    $template = str_replace('__ANALYSETARGET__', urlencode("/send_to_analyse.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_slave')."&lang=".$lang_->getLanguage()), $template);
+    $template = str_replace('__FORCETARGET__', urlencode("/fm.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_replica')."&lang=".$lang_->getLanguage()."&n=".$spam->getCleanData('is_newsletter')), $template);
+    $template = str_replace('__REASONSTARGET__', urlencode("/vi.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_replica')."&lang=".$lang_->getLanguage()), $template);
+    $template = str_replace('__ANALYSETARGET__', urlencode("/send_to_analyse.php?a=".urlencode($spam->getCleanData('to'))."&id=".$spam->getCleanData('exim_id')."&s=".$spam->getCleanData('store_replica')."&lang=".$lang_->getLanguage()), $template);
 
     $template = str_replace('__MSG_ID__', urlencode($spam->getCleanData('exim_id')), $template);
-    $template = str_replace('__STORE_ID__', urlencode($spam->getCleanData('store_slave')), $template);
+    $template = str_replace('__STORE_ID__', urlencode($spam->getCleanData('store_replica')), $template);
     $template = str_replace('__NEWS__', $spam->getCleanData('is_newsletter'), $template);
     $template = str_replace('__ROW_ID__', $i, $template);
     $template = str_replace('__FORCED__', $spam->getCleanData('forced'), $template);
@@ -356,13 +356,13 @@ public function getHTMLList($to) {
 
         $id = $spam->getCleanData('exim_id');
         $sender = $spam->getCleanData('sender');
-        $slave = $spam->getCleanData('store_slave');
+        $replica = $spam->getCleanData('store_replica');
         $recipient = $spam->getCleanData('to_user').'@'.$spam->getCleanData('to_domain');
         $query = "select type from wwlists where sender = '".$sender."' and recipient = '".$recipient."'";
         $result = $db->getHash($query);
 
         if (empty($result)) {
-	    $hrefNews = "/fm.php?id=" . $id . "&a=" . urlencode($recipient) . '&s=' . $slave . "&n=1&pop=up";
+	    $hrefNews = "/fm.php?id=" . $id . "&a=" . urlencode($recipient) . '&s=' . $replica . "&n=1&pop=up";
             $link =  '<span style="float: right;"><a style="border: thin solid grey; padding: 2px; background-color: lightgrey; box-shadow: 2px 1px 0px lightgrey; text-decoration: none;" data-id="%s" data-a="%s" href="#" onClick="MyWindow=window.open(\'%s\',\'MyWindow\',\'width=600,height=500\'); return false;" class="allow">%s</a></span>';
             $rule = 'allow';
             $label = $lang_->print_txt('NEWSLETTERACCEPT');
@@ -434,7 +434,7 @@ public function doSendSummary() {
 
 /**
  * purge the actual quarantine
- * this will only delete spam traces in the master databases. Real spams messages will be purged by periodic task
+ * this will only delete spam traces in the source databases. Real spams messages will be purged by periodic task
  * @return    bool   true on success, false on failure
  */
 
@@ -458,16 +458,16 @@ public function purge() {
 
    // required here for sanity checks
    require_once ('helpers/DM_MasterSpool.php');
-   $db_masterspool = DM_MasterSpool :: getInstance();
+   $db_sourcespool = DM_MasterSpool :: getInstance();
    // now we clean up the filter criteria
    foreach ($this->filters_ as $key => $value) {
-     $clean_filters[$key] = $db_masterspool->sanitize($value);
+     $clean_filters[$key] = $db_sourcespool->sanitize($value);
    }
 
    $query = "DELETE FROM spam_".$index." WHERE to_domain='".$clean_filters['to_domain']."' AND ( to_user='".$clean_filters['to_local']."' OR to_user like '".$clean_filters['to_local']."+%')";
 
    #return true;
-   return $db_masterspool->doExecute($query);
+   return $db_sourcespool->doExecute($query);
 }
 
 public function getOrderTag() {

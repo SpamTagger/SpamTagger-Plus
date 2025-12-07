@@ -62,11 +62,11 @@ exit 0;
 sub dump_ww_files ($to, $filepath) {
   my @types = ('warn', 'white');
 
-  my $slave_db = DB->db_connect('slave', 'st_config');
+  my $replica_db = DB->db_connect('replica', 'st_config');
 
   foreach my $type (@types) {
     ## get list
-    my @list = $slave_db->get_list(
+    my @list = $replica_db->get_list(
       "SELECT sender FROM wwlists WHERE status=1 AND type='".$type."' AND recipient='".$to."'"
     );
 
@@ -93,7 +93,7 @@ sub dump_ww_files ($to, $filepath) {
     close $WWFILE;
     chown 'spamtagger', $file;
   }
-  $slave_db->db_disconnect();
+  $replica_db->db_disconnect();
   return 1;
 }
 

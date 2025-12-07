@@ -88,9 +88,9 @@ public function load() {
     return false;
   }
 
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
   $query = "SELECT name FROM scanner";
-  $list = $db_slaveconf->getList($query);
+  $list = $db_replicaconf->getList($query);
 
   foreach($list as $scanner_name) {
       $s = new Scanner;

@@ -28,7 +28,7 @@ our $has_ipc_run = eval
 
 my $DEBUG = 0;
 if ( !$days_to_keep ) {
-  my $config_dbh = DB->db_connect('slave', 'st_config');
+  my $config_dbh = DB->db_connect('replica', 'st_config');
   if ($config_dbh) {
     my $config_sth =
       $config_dbh->prepare("SELECT days_to_keep_spams FROM system_conf");
@@ -51,7 +51,7 @@ die 'Path for quarantine_dir must be absolute' unless $quarantine_dir =~ /^\//;
 $quarantine_dir =~ s/\/$//;    # Delete trailing slash
 
 ## delete in databases
-my @dbs = ( 'slave', 'master' );
+my @dbs = ( 'replica', 'source' );
 foreach my $db (@dbs) {
   my $dbh = DB->db_connect($db, 'st_spool');
   if ($dbh) {

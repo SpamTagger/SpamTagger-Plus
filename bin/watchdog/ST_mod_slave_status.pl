@@ -28,14 +28,14 @@ sub my_own_exit ($exit_code = 0) {
   exit($exit_code);
 }
 
-my $slave_status = `echo 'show slave status\\G' |/usr/spamtagger/bin/st_mariadb -s`;
+my $replica_status = `echo 'show replica status\\G' |/usr/spamtagger/bin/st_mariadb -s`;
 
-if ($slave_status eq '') {
+if ($replica_status eq '') {
   # Réparer resync_db.sh
-  print $file "Show slave status : Retour vide, faire un sync_db\n";
+  print $file "Show replica status : Retour vide, faire un sync_db\n";
   my_own_exit(1);
-} elsif ( ($slave_status !~ /Slave_SQL_Running: Yes/) || ($slave_status !~ /Slave_IO_Running: Yes/) ) {
-  print $file "Show slave status : au moins un des process retourne No, faire un sync_db\n";
+} elsif ( ($replica_status !~ /Slave_SQL_Running: Yes/) || ($replica_status !~ /Slave_IO_Running: Yes/) ) {
+  print $file "Show replica status : au moins un des process retourne No, faire un sync_db\n";
   my_own_exit(2);
 }
 

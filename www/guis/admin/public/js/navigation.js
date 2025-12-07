@@ -59,10 +59,10 @@ $(document).ready(function(){
 			$("#flashmessage").fadeOut(4000);
 		}
 	}
-        if (typeof slave === 'undefined') {
-           slave = 1;
+        if (typeof replica === 'undefined') {
+           replica = 1;
         }
-        if (!slave) {
+        if (!replica) {
 	    $("#informational").click(
 	        function() {
 			$('#informational').slideToggle();

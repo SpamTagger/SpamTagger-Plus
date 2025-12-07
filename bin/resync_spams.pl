@@ -41,13 +41,13 @@ if ($conf->get_option('ISMASTER') !~ /^[y|Y]$/) {
   exit 0;
 }
 
-my $mconfig = DB->db_connect('master', 'st_config', 0);
-my $slavesrequest = "SELECT id,hostname,port,password FROM slave";
-my @slavesarray = $mconfig->get_list_of_hash($slavesrequest);
+my $mconfig = DB->db_connect('source', 'st_config', 0);
+my $replicasrequest = "SELECT id,hostname,port,password FROM replica";
+my @replicasarray = $mconfig->get_list_of_hash($replicasrequest);
 $mconfig->db_disconnect();
 
 my $synced = 0;
-foreach my $s_h (@slavesarray) {
+foreach my $s_h (@replicasarray) {
 
   my $pid = fork;
   sleep 2;
@@ -55,11 +55,11 @@ foreach my $s_h (@slavesarray) {
     my $sid = $s_h->{'id'};
     output("($sid) Syncing with: ".$s_h->{'hostname'}.":".$s_h->{'port'}."...");
     my %conn = ('host' => $s_h->{'hostname'}, 'port' => $s_h->{'port'}, 'password' => $s_h->{'password'}, 'database' => 'st_spool');
-    my $slavedb = DB->db_connect('custom', \%conn, 0);
+    my $replicadb = DB->db_connect('custom', \%conn, 0);
 
-    ## get slave date
+    ## get replica date
     my $datequery = "SELECT CURDATE() as date, CURTIME() as time";
-    my %dateh = $slavedb->get_hash_row($datequery);
+    my %dateh = $replicadb->get_hash_row($datequery);
     my $date = '';
     my $time = '';
     if (%dateh) {
@@ -68,7 +68,7 @@ foreach my $s_h (@slavesarray) {
     }
 
     foreach my $l ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','misc', 'num') {
-      my $dumpcmd = "/usr/bin/mariadb-dump --insert-ignore -t --skip-opt -h".$s_h->{'hostname'}." -P".$s_h->{'port'}." -uspamtagger -p".$s_h->{'password'}." st_spool spam_$l -w \"in_master='0' and ( date_in < '$date' or ( date_in = '$date' and time_in < '$time') )\"";
+      my $dumpcmd = "/usr/bin/mariadb-dump --insert-ignore -t --skip-opt -h".$s_h->{'hostname'}." -P".$s_h->{'port'}." -uspamtagger -p".$s_h->{'password'}." st_spool spam_$l -w \"in_source='0' and ( date_in < '$date' or ( date_in = '$date' and time_in < '$time') )\"";
       output("($sid) - exporting spam_$l ...");
       my $res = `$dumpcmd > $TMPDIR/spam_$l-$sid.sql`;
       if ( ! $res eq '' ) {
@@ -86,15 +86,15 @@ foreach my $s_h (@slavesarray) {
          next;
       }
 
-      my $updatequery = "UPDATE spam_$l SET in_master='1' WHERE in_master='0' AND ( date_in < '$date' OR ( date_in = '$date' AND time_in < '$time') )";
-      my $nbres = $slavedb->{dbh}->do($updatequery);
+      my $updatequery = "UPDATE spam_$l SET in_source='1' WHERE in_source='0' AND ( date_in < '$date' OR ( date_in = '$date' AND time_in < '$time') )";
+      my $nbres = $replicadb->{dbh}->do($updatequery);
       if (!$nbres || $nbres < 0 || $nbres !~ /^\d+$/ ) {
         $nbres = 0;
       }
       output("($sid) sync status updated for spam_$l ($nbres records).");
     }
 
-    $slavedb->db_disconnect();
+    $replicadb->db_disconnect();
   }
   wait;
   exit if $pid;

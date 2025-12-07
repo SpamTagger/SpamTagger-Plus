@@ -89,7 +89,7 @@ sub load_from_linked_address ($this, $email) {
 
 sub load ($this, $query) {
   if (!$this->{db}) {
-    $this->{db} = DB->db_connect('slave', 'st_config', 0);
+    $this->{db} = DB->db_connect('replica', 'st_config', 0);
   }
   my %userdata = $this->{db}->getHashRow($query);
   if (keys %userdata) {
@@ -104,7 +104,7 @@ sub get_addresses ($this) {
   if ($this->{id}) {
     ## get registered addresses
     if (!$this->{db}) {
-      $this->{db} = DB->db_connect('slave', 'st_config', 0);
+      $this->{db} = DB->db_connect('replica', 'st_config', 0);
     }
 
     my $query = "SELECT e.address, e.is_main FROM email e WHERE e.user=".$this->{'id'};
@@ -190,7 +190,7 @@ sub get_pef ($this, $pref) {
 sub load_prefs ($this) {
   return 0 unless ($this->{id});
   unless ($this->{db}) {
-    $this->{db} = DB->db_connect('slave', 'st_config', 0);
+    $this->{db} = DB->db_connect('replica', 'st_config', 0);
   }
 
   if ($this->{db} && $this->{db}->ping()) {

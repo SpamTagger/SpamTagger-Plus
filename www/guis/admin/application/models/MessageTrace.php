@@ -27,7 +27,7 @@ class Default_Model_MessageTrace
 	    'delivered' => '',
 	    'outreport' => '',
             'outmessage' => '',
-	    'slave_id' => 0,
+	    'replica_id' => 0,
             'senderhostname' => '',
             'senderhostip' => '',
             'outhost' => ''
@@ -168,7 +168,7 @@ class Default_Model_MessageTrace
 	public function loadFromLine($line) {
 		if (preg_match('/^([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)/', $line, $matches)) {
 			$this->setParam('date_in', $matches[1]);
-                        $this->setParam('slave_id', $matches[2]);
+                        $this->setParam('replica_id', $matches[2]);
                         $this->setParam('senderhostname', $matches[3]);
                         $this->setParam('senderhostip', $matches[4]);
 			$this->setParam('accepted', $matches[5]);

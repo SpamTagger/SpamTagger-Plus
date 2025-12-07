@@ -70,7 +70,7 @@ sub new ($class = "SpamHandler", $myspec_this = {}) {
 
     %dbs       => (),
     %prepared  => (),
-    storeslave => $conf->get_option('HOSTID'),
+    storereplica => $conf->get_option('HOSTID'),
     clean_thread_exit    => 1,
   };
 
@@ -154,7 +154,7 @@ sub main_loop_hook ($this) {
 }
 
 sub connect_databases ($this) {
-  my @databases = ( 'slave', 'realmaster' );
+  my @databases = ( 'replica', 'realsource' );
 
   foreach my $db (@databases) {
     if ( !defined( $this->{dbs}{$db} ) || !$this->{dbs}{$db}->ping() ) {
@@ -186,9 +186,9 @@ sub connect_databases ($this) {
       my %db_prepare = ();
       $this->{prepared}{$dbname}{$t} = $db->prepare(
         'INSERT IGNORE INTO spam_' . $t
-          . ' (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_master, store_slave, is_newsletter)
+          . ' (date_in, time_in, to_domain, to_user, sender, exim_id, M_score, M_rbls, M_prefilter, M_subject, M_globalscore, forced, in_source, store_replica, is_newsletter)
         VALUES(NOW(),   NOW(),     ?,         ? ,     ? ,       ?,      ?,      ?,        ?,          ?,             ?,      \'0\',     ?,'
-          . $this->{storeslave} . ', ?)'
+          . $this->{storereplica} . ', ?)'
       );
 
       if ( !$this->{prepared}{$dbname}{$t} ) {

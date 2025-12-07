@@ -43,7 +43,7 @@ our $HOSTID = $config->get_option('HOSTID');
 
 my $lasterror = "";
 
-our $dbh = DB->db_connect('slave', 'st_config') or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
+our $dbh = DB->db_connect('replica', 'st_config') or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
 my %sys_conf = get_system_config() or fatal_error("NOSYSTEMCONFIGURATIONFOUND", "no record found for system configuration");
 
@@ -170,7 +170,7 @@ sub get_system_config {
 
   $sth->finish();
 
-  $sth = $dbh->prepare("SELECT hostname FROM slave WHERE id=".$HOSTID);
+  $sth = $dbh->prepare("SELECT hostname FROM replica WHERE id=".$HOSTID);
   $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
   return if ($sth->rows < 1);
   $ref = $sth->fetchrow_hashref() or return;

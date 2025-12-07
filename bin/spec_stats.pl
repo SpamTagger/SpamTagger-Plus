@@ -53,7 +53,7 @@ if (!$until_now || $until_now !~ /^o|g|d$/) {
   exit 1;
 }
 
-our $dbh = DB->connect('slave', 'st_stats') or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
+our $dbh = DB->connect('replica', 'st_stats') or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
 if ($until_now =~ /^d$/) {
   for (my $i=$last_days; $i>=0; $i--) {

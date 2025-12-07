@@ -130,8 +130,8 @@ class User extends PrefHandler {
       $list[$add] = 0;
     }
   	$query = "SELECT alias FROM pending_alias WHERE user=".$this->getID();
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
-    $res = $db_slaveconf->getList($query);
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
+    $res = $db_replicaconf->getList($query);
     if (is_array($res)) {
       foreach($res as $add) {
         $list[$add] = 1;
@@ -168,8 +168,8 @@ class User extends PrefHandler {
     if ($u == "") {
         return false;
     }
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
-    $u = $db_slaveconf->sanitize($u);
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
+    $u = $db_replicaconf->sanitize($u);
 
     $this->setPref('username', $u);
     unset($this->addresses_);
@@ -239,11 +239,11 @@ private function addRegisteredAddresses() {
   require_once('helpers/DataManager.php');
   global $sysconf_;
 
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
-  $query = "SELECT e.address as id, e.address, e.is_main, e.pref FROM email e, user u WHERE u.username='".$db_slaveconf->sanitize($this->getPref('username'))."' ";
-  $query .= "AND u.domain='".$db_slaveconf->sanitize($this->getPref('domain'))."' AND e.user=u.id";
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
+  $query = "SELECT e.address as id, e.address, e.is_main, e.pref FROM email e, user u WHERE u.username='".$db_replicaconf->sanitize($this->getPref('username'))."' ";
+  $query .= "AND u.domain='".$db_replicaconf->sanitize($this->getPref('domain'))."' AND e.user=u.id";
 
-  $res = $db_slaveconf->getListOfHash($query);
+  $res = $db_replicaconf->getListOfHash($query);
   if (is_array($res)) {
     foreach($res as $add_record) {
       $this->addAddress($add_record['address']);
@@ -309,9 +309,9 @@ private function getLocalUserDatas() {
   require_once('helpers/DataManager.php');
   global $sysconf_;
 
-  $db_slaveconf = DM_SlaveConfig :: getInstance();
-  $query = "SELECT realname, username, email from mysql_auth WHERE username='".$db_slaveconf->sanitize($this->getPref('username'))."' AND domain='".$db_slaveconf->sanitize($this->getPref('domain'))."'";
-  $res = $db_slaveconf->getHash($query);
+  $db_replicaconf = DM_SlaveConfig :: getInstance();
+  $query = "SELECT realname, username, email from mysql_auth WHERE username='".$db_replicaconf->sanitize($this->getPref('username'))."' AND domain='".$db_replicaconf->sanitize($this->getPref('domain'))."'";
+  $res = $db_replicaconf->getHash($query);
   if (!is_array($res) || empty($res)) {
     return false;
   }
@@ -377,20 +377,20 @@ public function getPref($pref) {
 
     $password = $this->getData('password');
 
-    $db_masterconf = DM_MasterConfig :: getInstance();
+    $db_sourceconf = DM_MasterConfig :: getInstance();
     if ($this->local_user_registered_) {
-      $query = "UPDATE mysql_auth SET realname='".$db_masterconf->sanitize($this->getData('realname'))."', domain='".$db_masterconf->sanitize($this->getPref('domain'))."' ";
+      $query = "UPDATE mysql_auth SET realname='".$db_sourceconf->sanitize($this->getData('realname'))."', domain='".$db_sourceconf->sanitize($this->getPref('domain'))."' ";
         if ($password != "notchanged") {
             $salt = '$6$rounds=1000$'.dechex(rand(0,15)).dechex(rand(0,15)).'$';
             $crypted = crypt($password, $salt);
 
             $query .= ", password='".$crypted."' ";
       }
-      $query .= " WHERE username='".$db_masterconf->sanitize($this->getPref('username'))."'";
-      $query .= " AND domain='".$db_masterconf->sanitize($this->getPref('domain'))."'";
+      $query .= " WHERE username='".$db_sourceconf->sanitize($this->getPref('username'))."'";
+      $query .= " AND domain='".$db_sourceconf->sanitize($this->getPref('domain'))."'";
     } else {
-      $query = "INSERT INTO mysql_auth SET username='".$db_masterconf->sanitize($this->getPref('username'))."', realname='".$db_masterconf->sanitize($this->getData('realname'))."', domain='".$db_masterconf->sanitize($this->getPref('domain'))."' ";
-      $query .= ", email='".$db_masterconf->sanitize($this->getMainAddress())."' ";
+      $query = "INSERT INTO mysql_auth SET username='".$db_sourceconf->sanitize($this->getPref('username'))."', realname='".$db_sourceconf->sanitize($this->getData('realname'))."', domain='".$db_sourceconf->sanitize($this->getPref('domain'))."' ";
+      $query .= ", email='".$db_sourceconf->sanitize($this->getMainAddress())."' ";
       if ($password != "notchanged") {
          $salt = '$6$rounds=1000$'.dechex(rand(0,15)).dechex(rand(0,15)).'$';
          $crypted = crypt($password, $salt);
@@ -398,7 +398,7 @@ public function getPref($pref) {
          $query .= ", password='".$crypted."' ";
       }
     }
-    if ($db_masterconf->doExecute($query)) {
+    if ($db_sourceconf->doExecute($query)) {
       return true;
     }
     return false;
@@ -439,10 +439,10 @@ private function deleteLocalUserDatas() {
     require_once('helpers/DataManager.php');
     global $sysconf_;
 
-    $db_masterconf = DM_MasterConfig :: getInstance();
+    $db_sourceconf = DM_MasterConfig :: getInstance();
     if ($this->local_user_registered_) {
-       $query = "DELETE FROM mysql_auth WHERE username='".$db_masterconf->sanitize($this->getPref('username'))."' AND domain='".$db_masterconf->sanitize($this->getPref('domain'))."'";
-       if ($db_masterconf->doExecute($query)) {
+       $query = "DELETE FROM mysql_auth WHERE username='".$db_sourceconf->sanitize($this->getPref('username'))."' AND domain='".$db_sourceconf->sanitize($this->getPref('domain'))."'";
+       if ($db_sourceconf->doExecute($query)) {
         return true;
        }
     }
@@ -665,9 +665,9 @@ public function set_language($lang) {
     if (!is_numeric($id)) {
         return "";
     }
-    $db_slaveconf = DM_SlaveConfig :: getInstance();
+    $db_replicaconf = DM_SlaveConfig :: getInstance();
     $query = "SELECT username FROM user WHERE id=$id";
-    $res = $db_slaveconf->getHash($query);
+    $res = $db_replicaconf->getHash($query);
     return $res['username'];
  }
 

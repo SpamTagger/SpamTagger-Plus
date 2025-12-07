@@ -15,7 +15,7 @@ $spools = array(1 => 'incoming', 2 => 'filtering', 4 => 'outgoing');
   <tr class="hoststatushead spoolhead">
    <td colspan="7">
      <p><?php echo $this->t->_('Spool')?> : <strong><?php echo $this->t->_($spools[$this->spool]);?></strong>
-        <?php echo $this->t->_('on host')?> : <?php echo $this->slave->getId()?> (<?php echo $this->slave->getHostname();?>)</p>
+        <?php echo $this->t->_('on host')?> : <?php echo $this->replica->getId()?> (<?php echo $this->replica->getHostname();?>)</p>
    </td>
  </tr>
   <tr class="hoststatuscolumnhead">

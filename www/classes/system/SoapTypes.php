@@ -52,8 +52,8 @@ class SoapProcesses {
   public $mtaoutgoing;
   public $httpd;
   public $engine;
-  public $masterdb;
-  public $slavedb;
+  public $sourcedb;
+  public $replicadb;
   public $snmpd;
   public $greylistd;
   public $cron;
@@ -70,8 +70,8 @@ class SoapProcesses {
          $status->mtaoutgoing  == 0 ||
          $status->httpd  == 0 ||
          $status->engine  == 0 ||
-         $status->masterdb  == 0 ||
-         $status->slavedb  == 0 ||
+         $status->sourcedb  == 0 ||
+         $status->replicadb  == 0 ||
          $status->snmpd == 0 ||
          $status->greylistd == 0 ||
          $status->cron == 0 ||

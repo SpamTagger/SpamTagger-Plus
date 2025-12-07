@@ -63,16 +63,16 @@ unlink($stop_script);
 
 my $dbh;
 $dbh = DBI->connect(
-  "DBI:mariadb:database=st_config;host=localhost;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock",
+  "DBI:mariadb:database=st_config;host=localhost;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_replica/mariadbd.sock",
   "spamtagger",
   $config->get_option('MYSPAMTAGGERPWD'),
   {RaiseError => 0, PrintError => 0}
 ) or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 
-my %masters_slaves = get_masters_slaves();
+my %sources_replicas = get_sources_replicas();
 
 my %trustedips = ( '127.0.0.1' => 1 );
-foreach (keys(%masters_slaves)) {
+foreach (keys(%sources_replicas)) {
   if ($_ =~ m/\d+\.\d+\.\d+\.\d+/) {
     $trustedips{$_} = 1;
   } elsif ($_ =~ m/\d+::?+\d/) {
@@ -112,10 +112,10 @@ do_stop_script();
 print "DUMPSUCCESSFUL";
 
 ############################
-sub get_masters_slaves {
+sub get_sources_replicas {
   my %hosts;
 
-  my $sth = $dbh->prepare("SELECT hostname from master");
+  my $sth = $dbh->prepare("SELECT hostname from source");
   $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
 
   while (my $ref = $sth->fetchrow_hashref() ) {
@@ -123,7 +123,7 @@ sub get_masters_slaves {
   }
   $sth->finish();
 
-  $sth = $dbh->prepare("SELECT hostname from slave");
+  $sth = $dbh->prepare("SELECT hostname from replica");
   $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
 
   while (my $ref = $sth->fetchrow_hashref() ) {
@@ -135,7 +135,7 @@ sub get_masters_slaves {
 }
 
 sub get_default_rules {
-  foreach my $host (keys %masters_slaves) {
+  foreach my $host (keys %sources_replicas) {
     next if ($host =~ /127\.0\.0\.1/ || $host =~ /^\:\:1$/);
 
     $rules{"$host mariadb TCP"} = [ $services{'mariadb'}[0], $services{'mariadb'}[1], $host];

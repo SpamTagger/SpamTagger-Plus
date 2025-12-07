@@ -33,10 +33,10 @@ class MonitorstatusController extends Zend_Controller_Action
 		$layout = Zend_Layout::getMvcInstance();
 		$view=$layout->getView();
 
-		$slave = new Default_Model_Slave();
-		$slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+		$replicas = $replica->fetchAll();
 
-		$view->slaves = $slaves;
+		$view->replicas = $replicas;
 
 		$view->pieLink = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('todaypie', 'monitorstatus', NULL, array());
 		$view->columns = $this->_columns;
@@ -68,8 +68,8 @@ class MonitorstatusController extends Zend_Controller_Action
                 }
 
 
-		$slave = new Default_Model_Slave();
-		$slave->find($request->getparam('s'));
+		$replica = new Default_Model_Slave();
+		$replica->find($request->getparam('s'));
 
 		$reporting = new Default_Model_ReportingStats();
 		$what = array();
@@ -82,7 +82,7 @@ class MonitorstatusController extends Zend_Controller_Action
                 if ($request->getparam('gr') && is_numeric($request->getparam('gr'))) {
                    $graph_params['radius'] = $request->getparam('gr');
                 }
-		return $reporting->getTodayPie($what, $slave->getId(), $usecache, $stats_type, $graph_params);
+		return $reporting->getTodayPie($what, $replica->getId(), $usecache, $stats_type, $graph_params);
 	}
 
 	public function restartserviceAction() {
@@ -92,27 +92,27 @@ class MonitorstatusController extends Zend_Controller_Action
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 
 		$status = 0;
-		$slaveid = 0;
+		$replicaid = 0;
 		$process = '';
 		$request = $this->getRequest();
 		if (is_numeric($request->getParam('s')) && $request->getParam('p') != '' && $request->getParam('a') != '') {
 
 			$process = $request->getParam('p');
-			$slaveid = $request->getParam('s');
+			$replicaid = $request->getParam('s');
 
-			$slave = new Default_Model_Slave();
-			$slave->find($slaveid);
+			$replica = new Default_Model_Slave();
+			$replica->find($replicaid);
 
-			$res = $slave->sendSoapRequest('Service_silentStopStart', array('service' => $process, 'action' => $request->getParam('a'), 'soap_timeout' => 100));
+			$res = $replica->sendSoapRequest('Service_silentStopStart', array('service' => $process, 'action' => $request->getParam('a'), 'soap_timeout' => 100));
 			#var_dump($res);
 			#sleep(3);
 
-			$processes = $slave->sendSoap('Status_getProcessesStatus');
+			$processes = $replica->sendSoap('Status_getProcessesStatus');
 			if (isset($processes[$process])) {
 				$status = $processes[$process];
 			}
 		}
-		$view->slaveid = $slaveid;
+		$view->replicaid = $replicaid;
 		$view->process = $process;
 		$view->status = $status;
 	}
@@ -124,22 +124,22 @@ class MonitorstatusController extends Zend_Controller_Action
 		$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 
 		$status = 0;
-		$slaveid = 0;
+		$replicaid = 0;
 		$process = '';
 		$request = $this->getRequest();
 		if (is_numeric($request->getParam('s')) && $request->getParam('p') != '') {
 			$process = $request->getParam('p');
-			$slaveid = $request->getParam('s');
+			$replicaid = $request->getParam('s');
 
-			$slave = new Default_Model_Slave();
-			$slave->find($slaveid);
+			$replica = new Default_Model_Slave();
+			$replica->find($replicaid);
 
-			$processes = $slave->sendSoap('Status_getProcessesStatus');
+			$processes = $replica->sendSoap('Status_getProcessesStatus');
 			if (isset($processes[$process])) {
 				$status = $processes[$process];
 			}
 		}
-		$view->slaveid = $slaveid;
+		$view->replicaid = $replicaid;
 		$view->process = $process;
 		$view->status = $status;
 	}
@@ -157,7 +157,7 @@ class MonitorstatusController extends Zend_Controller_Action
 			$view->addScriptPath(Zend_Registry::get('ajax_script_path'));
 		}
 
-		$slave = new Default_Model_Slave();
+		$replica = new Default_Model_Slave();
 		$spool=1;
 		$msgs = array();
 		$nbmsgs = 0;
@@ -172,15 +172,15 @@ class MonitorstatusController extends Zend_Controller_Action
 		if (is_numeric($request->getParam('limit'))) {
 			$limit = $request->getParam('limit');
 		}
-		if (is_numeric($request->getParam('slave')) && is_numeric($request->getParam('spool')) ) {
-			$slaveid = $request->getParam('slave');
+		if (is_numeric($request->getParam('replica')) && is_numeric($request->getParam('spool')) ) {
+			$replicaid = $request->getParam('replica');
 			$spool = $request->getParam('spool');
 
-			$slave->find($slaveid);
+			$replica->find($replicaid);
 
 			$params = array('limit' => $limit, 'offset' => $offset, 'spool' => $spool);
 			if ($request->isXmlHttpRequest()) {
-				$call_res = $slave->getSpool($spool, $params);
+				$call_res = $replica->getSpool($spool, $params);
 				if (isset($call_res['msgs'])) {
 					$msgs = $call_res['msgs'];
 					$nbmsgs = $call_res['nbmsgs'];
@@ -190,7 +190,7 @@ class MonitorstatusController extends Zend_Controller_Action
 			}
 		}
 
-		$view->slave = $slave;
+		$view->replica = $replica;
 		$view->spool = $spool;
 		$view->msgs = $msgs;
 		$view->nbmsgs = $nbmsgs;
@@ -207,7 +207,7 @@ class MonitorstatusController extends Zend_Controller_Action
 
 		$spools = array(1 => 'incoming', 2 => 'filtering', 4 => 'outgoing');
 		$t = Zend_Registry::get('translate');
-        $view->headTitle($t->_('Spool view')." - ".$slave->getId()." (".$slave->getHostname().") - ".$t->_($spools[$spool]));
+        $view->headTitle($t->_('Spool view')." - ".$replica->getId()." (".$replica->getHostname().") - ".$t->_($spools[$spool]));
 	}
 
 	public function spooldeleteAction() {
@@ -215,18 +215,18 @@ class MonitorstatusController extends Zend_Controller_Action
         $view=$layout->getView();
         $layout->disableLayout();
 
-        $slave = new Default_Model_Slave();
+        $replica = new Default_Model_Slave();
         $spool=1;
         require_once('Validate/MessageID.php');
         $msgvalidator = new Validate_MessageID();
 
         $request = $this->getRequest();
-        if (is_numeric($request->getParam('slave')) && is_numeric($request->getParam('spool')) && $msgvalidator->isValid($request->getParam('msg'))) {
-        	$slaveid = $request->getParam('slave');
+        if (is_numeric($request->getParam('replica')) && is_numeric($request->getParam('spool')) && $msgvalidator->isValid($request->getParam('msg'))) {
+        	$replicaid = $request->getParam('replica');
             $spool = $request->getParam('spool');
 
-            $slave->find($slaveid);
-            $res = $slave->deleteSpoolMessage($spool, $request->getParam('msg'));
+            $replica->find($replicaid);
+            $res = $replica->deleteSpoolMessage($spool, $request->getParam('msg'));
         }
 	}
 
@@ -235,18 +235,18 @@ class MonitorstatusController extends Zend_Controller_Action
         $view=$layout->getView();
         $layout->disableLayout();
 
-        $slave = new Default_Model_Slave();
+        $replica = new Default_Model_Slave();
         $spool=1;
         require_once('Validate/MessageID.php');
         $msgvalidator = new Validate_MessageID();
 
         $request = $this->getRequest();
-        if (is_numeric($request->getParam('slave')) && is_numeric($request->getParam('spool')) && $msgvalidator->isValid($request->getParam('msg')) ) {
-        	$slaveid = $request->getParam('slave');
+        if (is_numeric($request->getParam('replica')) && is_numeric($request->getParam('spool')) && $msgvalidator->isValid($request->getParam('msg')) ) {
+        	$replicaid = $request->getParam('replica');
             $spool = $request->getParam('spool');
 
-            $slave->find($slaveid);
-            $res = $slave->trySpoolMessage($spool, $request->getParam('msg'));
+            $replica->find($replicaid);
+            $res = $replica->trySpoolMessage($spool, $request->getParam('msg'));
         }
 	}
 
@@ -258,15 +258,15 @@ class MonitorstatusController extends Zend_Controller_Action
 
     	$request = $this->getRequest();
 
-    	$slaveid = 1;
-    	if (is_numeric($request->getParam('slave'))) {
-    		$slaveid = $request->getParam('slave');
+    	$replicaid = 1;
+    	if (is_numeric($request->getParam('replica'))) {
+    		$replicaid = $request->getParam('replica');
     	}
-    	$slave = new Default_Model_Slave();
-    	$slave->find($slaveid);
+    	$replica = new Default_Model_Slave();
+    	$replica->find($replicaid);
     	$view->pieLink = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('todaypie', 'monitorstatus', NULL, array());
 		$view->graphBaseLink = Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('graph', 'monitorreporting', NULL, array());
-    	$view->slave = $slave;
+    	$view->replica = $replica;
 		$view->columns = $this->_columns;
 		$config = new SpamTagger_Config();
 		$view->quarantinedir = $config->getOption('VARDIR')."/spam";
@@ -331,9 +331,9 @@ class MonitorstatusController extends Zend_Controller_Action
 		$stats_period = $morecontent['messages']['selected_period'];
         $what = array();
 	    $what['stats'] = $reporting->getTodayStatElements($stats_type);
-        $data = $reporting->getTodayValues($what, $slaveid, $stats_type);
+        $data = $reporting->getTodayValues($what, $replicaid, $stats_type);
 
-        $view->pielink = $view->baseurl.'/monitorstatus/todaypie/c/1/s/'.$slave->getId();
+        $view->pielink = $view->baseurl.'/monitorstatus/todaypie/c/1/s/'.$replica->getId();
         $view->pielink .= '/t/'.$stats_type;
         $view->pielink .= '/r/'.uniqid();
 

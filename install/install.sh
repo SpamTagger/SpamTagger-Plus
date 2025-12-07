@@ -86,9 +86,9 @@ echo -n " - Creating databases...                               "
 #export MYSPAMTAGGERPWD
 $RELPATH/ST_prepare_dbs.sh 2>&1 >>$LOGFILE
 
-## recreate my_slave.cnf
+## recreate my_replica.cnf
 #$SRCDIR/bin/dump_mariadb_config.pl 2>&1 >> $LOGFILE
-#$SRCDIR/etc/init.d/mariadb_slave restart 2>&1 >>$LOGFILE
+#$SRCDIR/etc/init.d/mariadb_replica restart 2>&1 >>$LOGFILE
 echo "[done]"
 sleep 5
 

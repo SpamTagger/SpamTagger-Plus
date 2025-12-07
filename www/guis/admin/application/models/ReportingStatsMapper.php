@@ -17,10 +17,10 @@ class Default_Model_ReportingStatsMapper
 
 	public function startFetchAll($params) {
 		$trace_id = 0;
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
         	$res = $s->sendSoapRequest('Logs_StartGetStat', $params);
         	if (isset($res['search_id'])) {
         		$search_id = $res['search_id'];
@@ -34,13 +34,13 @@ class Default_Model_ReportingStatsMapper
 
 	public function getStatusFetchAll($params) {
 		$res = array('finished' => 0, 'count' => 0, 'data' => array());
-	    $slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+	    $replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
         $params['noresults'] = 1;
-        $stillrunning = count($slaves);
+        $stillrunning = count($replicas);
         $globalrows = 0;
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
         	$sres = $s->sendSoapRequest('Logs_GetStatsResult', $params);
         	if (isset($sres['error']) && $sres['error'] != "") {
         		return $sres;
@@ -60,10 +60,10 @@ class Default_Model_ReportingStatsMapper
 	}
 
     public function abortFetchAll($params) {
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
         	$res = $s->sendSoapRequest('Logs_AbortStats', $params);
         }
         return $res;
@@ -71,17 +71,17 @@ class Default_Model_ReportingStatsMapper
 
 	public function fetchAll($params)
 	{
-		$slave = new Default_Model_Slave();
-        $slaves = $slave->fetchAll();
+		$replica = new Default_Model_Slave();
+        $replicas = $replica->fetchAll();
 
         $entriesflat = array();
         $sortarray = array();
 
         $params['noresults'] = 0;
-        $stillrunning = count($slaves);
+        $stillrunning = count($replicas);
         $globalrows = 0;
         $whats = array();
-        foreach ($slaves as $s) {
+        foreach ($replicas as $s) {
             $sres = $s->sendSoapRequest('Logs_GetStatsResult', $params);
         	if (isset($sres['error']) && $sres['error'] != "") {
         		return $sres;

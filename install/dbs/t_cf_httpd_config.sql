@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS httpd_config;
 
 CREATE TABLE httpd_config (
   set_id                int(11) NOT NULL DEFAULT 1,
-  serveradmin           varchar(150) NOT NULL DEFAULT 'postmaster@localhost',
+  serveradmin           varchar(150) NOT NULL DEFAULT 'postsource@localhost',
   servername            varchar(150) NOT NULL DEFAULT 'localhost',
   use_ssl               enum('true','false') NOT NULL DEFAULT 'true',
   timeout               int(5) NOT NULL DEFAULT 300,

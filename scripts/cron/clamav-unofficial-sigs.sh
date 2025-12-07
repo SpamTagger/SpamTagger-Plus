@@ -707,7 +707,7 @@ EOF
   xshok_pretty_echo_and_log "Completed: cron installed, as file: ${cron_dir}/${cron_filename}"
 }
 
-# Auto upgrade the master.conf and the
+# Auto upgrade the source.conf and the
 function xshok_upgrade() {
 
   if [ "$allow_upgrades" == "no" ]; then
@@ -726,50 +726,50 @@ function xshok_upgrade() {
     # shellcheck disable=SC2086
     latest_version="$($curl_bin --compressed $curl_proxy $curl_insecure $curl_output_level --connect-timeout "${downloader_connect_timeout}" --remote-time --location --retry "${downloader_tries}" --max-time "${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/clamav-unofficial-sigs.sh" 2>&11 | $grep_bin "^script_version=" | head -n1 | cut -d '"' -f 2)"
     # shellcheck disable=SC2086
-    latest_config_version="$($curl_bin --compressed $curl_proxy $curl_insecure $curl_output_level --connect-timeout "${downloader_connect_timeout}" --remote-time --location --retry "${downloader_tries}" --max-time "${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/master.conf" 2>&11 | $grep_bin "^config_version=" | head -n1 | cut -d '"' -f 2)"
+    latest_config_version="$($curl_bin --compressed $curl_proxy $curl_insecure $curl_output_level --connect-timeout "${downloader_connect_timeout}" --remote-time --location --retry "${downloader_tries}" --max-time "${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/source.conf" 2>&11 | $grep_bin "^config_version=" | head -n1 | cut -d '"' -f 2)"
   else
     # shellcheck disable=SC2086
     latest_version="$($wget_bin $wget_compression $wget_proxy $wget_insecure $wget_output_level --connect-timeout="${downloader_connect_timeout}" --random-wait --tries="${downloader_tries}" --timeout="${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/clamav-unofficial-sigs.sh" -O - 2>&12 | $grep_bin "^script_version=" | head -n1 | cut -d '"' -f 2)"
     # shellcheck disable=SC2086
-    latest_config_version="$($wget_bin $wget_compression $wget_proxy $wget_insecure $wget_output_level --connect-timeout="${downloader_connect_timeout}" --random-wait --tries="${downloader_tries}" --timeout="${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/master.conf" -O - 2>&12 | $grep_bin "^config_version=" | head -n1 | cut -d '"' -f 2)"
+    latest_config_version="$($wget_bin $wget_compression $wget_proxy $wget_insecure $wget_output_level --connect-timeout="${downloader_connect_timeout}" --random-wait --tries="${downloader_tries}" --timeout="${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/source.conf" -O - 2>&12 | $grep_bin "^config_version=" | head -n1 | cut -d '"' -f 2)"
   fi
 
-  # config_dir/master.conf
+  # config_dir/source.conf
   if [ "$latest_config_version" ]; then
     # shellcheck disable=SC2183,SC2086
     if [ "$(printf "%02d%02d%02d%02d" ${latest_config_version//./ })" -gt "$(printf "%02d%02d%02d%02d" ${config_version//./ })" ]; then
       found_upgrade="yes"
       xshok_pretty_echo_and_log "ALERT: Upgrading config from v${config_version} to v${latest_config_version}"
-      if [ -w "${config_dir}/master.conf" ] && [ -f "${config_dir}/master.conf" ]; then
-        echo "Downloading https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/master.conf"
-        xshok_file_download "${work_dir}/master.conf.tmp" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/master.conf" "notimestamp"
+      if [ -w "${config_dir}/source.conf" ] && [ -f "${config_dir}/source.conf" ]; then
+        echo "Downloading https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/source.conf"
+        xshok_file_download "${work_dir}/source.conf.tmp" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/source.conf" "notimestamp"
         ret="$?"
         if [ "$ret" -ne 0 ]; then
-          xshok_pretty_echo_and_log "ERROR: Could not download https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/master.conf"
+          xshok_pretty_echo_and_log "ERROR: Could not download https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/source.conf"
           exit 1
         fi
-        if ! $grep_bin -m 1 "config_version" "${work_dir}/master.conf.tmp" >/dev/null 2>&1; then
-          echo "ERROR: Downloaded master.conf is incomplete, please re-run"
+        if ! $grep_bin -m 1 "config_version" "${work_dir}/source.conf.tmp" >/dev/null 2>&1; then
+          echo "ERROR: Downloaded source.conf is incomplete, please re-run"
           exit 1
         fi
         # Copy over permissions from old version
-        OCTAL_MODE="$(stat -c "%a" "${config_dir}/master.conf" 2>/dev/null)"
+        OCTAL_MODE="$(stat -c "%a" "${config_dir}/source.conf" 2>/dev/null)"
         if [ -z "$OCTAL_MODE" ]; then
-          OCTAL_MODE="$(stat -f '%p' "${config_dir}/master.conf")"
+          OCTAL_MODE="$(stat -f '%p' "${config_dir}/source.conf")"
         fi
 
         xshok_pretty_echo_and_log "Running update process"
-        if ! mv -f "${work_dir}/master.conf.tmp" "${config_dir}/master.conf"; then
-          xshok_pretty_echo_and_log "ERROR: failed moving ${work_dir}/master.conf.tmp to ${config_dir}/master.conf"
+        if ! mv -f "${work_dir}/source.conf.tmp" "${config_dir}/source.conf"; then
+          xshok_pretty_echo_and_log "ERROR: failed moving ${work_dir}/source.conf.tmp to ${config_dir}/source.conf"
           exit 1
         fi
-        if ! chmod "$OCTAL_MODE" "${config_dir}/master.conf"; then
-          xshok_pretty_echo_and_log "ERROR: unable to set permissions on ${config_dir}/master.conf"
+        if ! chmod "$OCTAL_MODE" "${config_dir}/source.conf"; then
+          xshok_pretty_echo_and_log "ERROR: unable to set permissions on ${config_dir}/source.conf"
           exit 1
         fi
         xshok_pretty_echo_and_log "Completed"
       else
-        xshok_pretty_echo_and_log "ERROR: ${config_dir}/master.conf is not a file or is not writable"
+        xshok_pretty_echo_and_log "ERROR: ${config_dir}/source.conf is not a file or is not writable"
         exit 1
       fi
     fi
@@ -780,7 +780,7 @@ function xshok_upgrade() {
     if [ "$(printf "%02d%02d%02d%02d" ${latest_version//./ })" -gt "$(printf "%02d%02d%02d%02d" ${script_version//./ })" ]; then
       found_upgrade="yes"
       xshok_pretty_echo_and_log "ALERT:  Upgrading script from v${script_version} to v${latest_version}"
-      if [ -w "${config_dir}/master.conf" ] && [ -f "${config_dir}/master.conf" ]; then
+      if [ -w "${config_dir}/source.conf" ] && [ -f "${config_dir}/source.conf" ]; then
         echo "Downloading https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/clamav-unofficial-sigs.sh"
         xshok_file_download "${work_dir}/clamav-unofficial-sigs.sh.tmp" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/clamav-unofficial-sigs.sh" "notimestamp"
         ret=$?
@@ -831,7 +831,7 @@ EOF
         exec "$bash_bin" "${work_dir}/xshok_update_script.sh"
         echo "Running once as root"
       else
-        xshok_pretty_echo_and_log "ERROR: ${config_dir}/master.conf is not a file or is not writable"
+        xshok_pretty_echo_and_log "ERROR: ${config_dir}/source.conf is not a file or is not writable"
         exit 1
       fi
     fi
@@ -1435,12 +1435,12 @@ function check_new_version() {
     # shellcheck disable=SC2086
     latest_version="$($curl_bin --compressed $curl_proxy $curl_insecure $curl_output_level --connect-timeout "${downloader_connect_timeout}" --remote-time --location --retry "${downloader_tries}" --max-time "${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/clamav-unofficial-sigs.sh" 2>&11 | $grep_bin "^script_version=" | head -n1 | cut -d '"' -f 2)"
     # shellcheck disable=SC2086
-    latest_config_version="$($curl_bin --compressed $curl_proxy $curl_insecure $curl_output_level --connect-timeout "${downloader_connect_timeout}" --remote-time --location --retry "${downloader_tries}" --max-time "${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/master.conf" 2>&11 | $grep_bin "^config_version=" | head -n1 | cut -d '"' -f 2)"
+    latest_config_version="$($curl_bin --compressed $curl_proxy $curl_insecure $curl_output_level --connect-timeout "${downloader_connect_timeout}" --remote-time --location --retry "${downloader_tries}" --max-time "${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/source.conf" 2>&11 | $grep_bin "^config_version=" | head -n1 | cut -d '"' -f 2)"
   else
     # shellcheck disable=SC2086
     latest_version="$($wget_bin $wget_compression $wget_proxy $wget_insecure $wget_output_level --connect-timeout="${downloader_connect_timeout}" --random-wait --tries="${downloader_tries}" --timeout="${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/clamav-unofficial-sigs.sh" -O - 2>&12 | $grep_bin "^script_version=" | head -n1 | cut -d '"' -f 2)"
     # shellcheck disable=SC2086
-    latest_config_version="$($wget_bin $wget_compression $wget_proxy $wget_insecure $wget_output_level --connect-timeout="${downloader_connect_timeout}" --random-wait --tries="${downloader_tries}" --timeout="${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/master.conf" -O - 2>&12 | $grep_bin "^config_version=" | head -n1 | cut -d '"' -f 2)"
+    latest_config_version="$($wget_bin $wget_compression $wget_proxy $wget_insecure $wget_output_level --connect-timeout="${downloader_connect_timeout}" --random-wait --tries="${downloader_tries}" --timeout="${downloader_max_time}" "https://raw.githubusercontent.com/extremeshok/clamav-unofficial-sigs/${git_branch}/config/source.conf" -O - 2>&12 | $grep_bin "^config_version=" | head -n1 | cut -d '"' -f 2)"
   fi
   if [ "$latest_version" ]; then
     # shellcheck disable=SC2183,SC2086
@@ -1494,7 +1494,7 @@ function help_and_usage() {
     cat <<EOF
 ${ofs} Usage: $(basename "$0") ${ofe} [OPTION] [PATH|FILE]
 ${ofb}
-${ofs} -c, --config ${ofe} Use a specific configuration file or directory ${oft} eg: '-c /your/dir' or ' -c /your/file.name'  ${oft} Note: If a directory is specified the directory must contain atleast:  ${oft} master.conf, os.conf or user.conf ${oft} Default Directory: ${config_dir}
+${ofs} -c, --config ${ofe} Use a specific configuration file or directory ${oft} eg: '-c /your/dir' or ' -c /your/file.name'  ${oft} Note: If a directory is specified the directory must contain atleast:  ${oft} source.conf, os.conf or user.conf ${oft} Default Directory: ${config_dir}
 ${ofb}
 ${ofs} -F, --force ${ofe} Force all databases to be downloaded, could cause ip to be blocked
 ${ofb}
@@ -1526,7 +1526,7 @@ ${ofs} -w, --whitelist <signature-name> ${ofe} Adds a signature whitelist entry 
 ${ofb}
 ${ofs} --check-clamav ${ofe} If ClamD status check is enabled and the socket path is correctly ${oft} specifiedthen test to see if clamd is running or not
 ${ofb}
-${ofs} --upgrade ${ofe} Upgrades this script and master.conf to the latest available version
+${ofs} --upgrade ${ofe} Upgrades this script and source.conf to the latest available version
 ${ofb}
 ${ofs} --install-all ${ofe} Install and generate the cron, logroate and man files, autodetects the values ${oft} based on your config files
 ${ofb}
@@ -1598,23 +1598,23 @@ custom_config="no"
 we_have_a_config="0"
 
 # Attempt to scan for a valid config dir
-if [ -f "/usr/spamtagger/etc/clamav/clamav-unofficial-sigs/master.conf" ]; then
+if [ -f "/usr/spamtagger/etc/clamav/clamav-unofficial-sigs/source.conf" ]; then
   config_dir="/usr/spamtagger/etc/clamav/clamav-unofficial-sigs"
-elif [ -f "/etc/clamav-unofficial-sigs/master.conf" ]; then
+elif [ -f "/etc/clamav-unofficial-sigs/source.conf" ]; then
   config_dir="/etc/clamav-unofficial-sigs"
-elif [ -f "/usr/local/etc/clamav-unofficial-sigs/master.conf" ]; then
+elif [ -f "/usr/local/etc/clamav-unofficial-sigs/source.conf" ]; then
   config_dir="/usr/local/etc/clamav-unofficial-sigs/"
-elif [ -f "/opt/zimbra/conf/clamav-unofficial-sigs/master.conf" ]; then
+elif [ -f "/opt/zimbra/conf/clamav-unofficial-sigs/source.conf" ]; then
   config_dir="/opt/zimbra/conf/clamav-unofficial-sigs/"
 else
-  xshok_pretty_echo_and_log "ERROR: config_dir (/etc/clamav-unofficial-sigs/master.conf) could not be found"
+  xshok_pretty_echo_and_log "ERROR: config_dir (/etc/clamav-unofficial-sigs/source.conf) could not be found"
   exit 1
 fi
 # Default config files
-if [ -r "${config_dir}/master.conf" ]; then
-  config_files+=("${config_dir}/master.conf")
+if [ -r "${config_dir}/source.conf" ]; then
+  config_files+=("${config_dir}/source.conf")
 else
-  xshok_pretty_echo_and_log "ERROR: ${config_dir}/master.conf is not readable"
+  xshok_pretty_echo_and_log "ERROR: ${config_dir}/source.conf is not readable"
   exit 1
 fi
 if [ -r "${config_dir}/os.conf" ]; then
@@ -1780,10 +1780,10 @@ if [ "$custom_config" != "no" ]; then
     shopt -s extglob
     config_dir="${custom_config%%+(/)}"
     config_files=()
-    if [ -r "${config_dir}/master.conf" ]; then
-      config_files+=("${config_dir}/master.conf")
+    if [ -r "${config_dir}/source.conf" ]; then
+      config_files+=("${config_dir}/source.conf")
     else
-      xshok_pretty_echo_and_log "WARNING: ${config_dir}/master.conf not found"
+      xshok_pretty_echo_and_log "WARNING: ${config_dir}/source.conf not found"
     fi
     #find the a suitable os.conf or os.*.conf file
     config_file="$(find "$config_dir" -type f -iname "os.conf" -o -iname "os.*.conf" | tail -n1)"
@@ -2912,7 +2912,7 @@ if [ ! -s "${work_dir_work_configs}/scan-test.txt" ]; then
 fi
 
 if [ -z "$git_branch" ]; then
-  git_branch="master"
+  git_branch="source"
 fi
 
 # If rsync proxy is defined in the config file, then export it for use.

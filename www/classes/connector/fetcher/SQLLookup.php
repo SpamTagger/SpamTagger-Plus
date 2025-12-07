@@ -45,9 +45,9 @@
     public function searchUsers($u, $d) {
       require_once('helpers/DataManager.php');
 
-      $db_slaveconf = DM_SlaveConfig :: getInstance();
-      $query = "SELECT username FROM mysql_auth WHERE username LIKE '".$db_slaveconf->sanitize($u)."%' AND domain='".$db_slaveconf->sanitize($d->getPref('name'))."'";
-      $res = $db_slaveconf->getListOfHash($query);
+      $db_replicaconf = DM_SlaveConfig :: getInstance();
+      $query = "SELECT username FROM mysql_auth WHERE username LIKE '".$db_replicaconf->sanitize($u)."%' AND domain='".$db_replicaconf->sanitize($d->getPref('name'))."'";
+      $res = $db_replicaconf->getListOfHash($query);
       if (!is_array($res)) {
         return array();
       }
@@ -61,13 +61,13 @@
    public function searchEmails($l, $d) {
       require_once('helpers/DataManager.php');
 
-      $db_slaveconf = DM_SlaveConfig :: getInstance();
+      $db_replicaconf = DM_SlaveConfig :: getInstance();
       if ($d->getPref('name') != '*') {
-        $query = "SELECT email FROM mysql_auth WHERE email LIKE '%".$db_slaveconf->sanitize($l)."%@".$db_slaveconf->sanitize($d->getPref('name'))."'";
+        $query = "SELECT email FROM mysql_auth WHERE email LIKE '%".$db_replicaconf->sanitize($l)."%@".$db_replicaconf->sanitize($d->getPref('name'))."'";
       } else {
-        $query = "SELECT email FROM mysql_auth WHERE email LIKE '%".$db_slaveconf->sanitize($l)."%'";
+        $query = "SELECT email FROM mysql_auth WHERE email LIKE '%".$db_replicaconf->sanitize($l)."%'";
       }
-      $res = $db_slaveconf->getListOfHash($query);
+      $res = $db_replicaconf->getListOfHash($query);
       if (!is_array($res)) {
         return array();
       }

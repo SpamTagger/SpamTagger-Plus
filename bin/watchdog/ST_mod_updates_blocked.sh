@@ -36,11 +36,11 @@ if [[ $LOG_MOD -gt $((timestamp - 86400)) ]]; then
   if [[ $ABANDONED != '' ]]; then
     echo "$ABANDONED" >$OUT_FILE
     echo "$ABANDONED"
-    if grep -Fq "master" <<<"$ABANDONED"; then
+    if grep -Fq "source" <<<"$ABANDONED"; then
       if grep -Fq "spamtagger" <<<"$ABANDONED"; then
-        my_own_exit "1" # Abandoning update because Git tree at '$SRCDIR' is not on 'master' branch
+        my_own_exit "1" # Abandoning update because Git tree at '$SRCDIR' is not on 'source' branch
       else
-        my_own_exit "2" # Abandoning update because Git tree at '$rpath' is not on 'master' branch
+        my_own_exit "2" # Abandoning update because Git tree at '$rpath' is not on 'source' branch
       fi
     else
       if grep -Fq "spamtagger" <<<"$ABANDONED"; then

@@ -39,7 +39,7 @@ class Default_Form_NetworkDns extends Zend_Form
 
 		$primary = new  Zend_Form_Element_Text('primarydns', array(
 		    'label'    => $t->_('Primary DNS server'). " :",
-                    'title'    => $t->_("We recommend to use the local DNS (or the master's one if you use the cluster version) as primary DNS"),
+                    'title'    => $t->_("We recommend to use the local DNS (or the source's one if you use the cluster version) as primary DNS"),
 		    'required' => false,
 		    'filters'    => array('StringTrim')));
 	    ## TODO: add specific validator

@@ -68,7 +68,7 @@ sub get_from_db ($table, $column) {
 		$stage = $1;
 		$table = "mta_config WHERE stage = '$1'";
 	}
-	my $db = DB->db_connect('slave', 'st_config');
+	my $db = DB->db_connect('replica', 'st_config');
 
 	my %row = $db->get_hash_row("SELECT $column FROM $table");
 	return ( expand_host_string($row{$column}, {'dumper'=>"exemption_test_script/$column"}) );

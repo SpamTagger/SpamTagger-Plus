@@ -13,9 +13,9 @@ DOIT=$(echo "SELECT dmarc_enable_reports FROM mta_config WHERE stage=1;" | $SRCD
 if [ "$DOIT" != "1" ]; then
   exit 0
 fi
-echo "select hostname, password from master;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
-MHOST=$(cat /var/tmp/master.conf | cut -d':' -f1)
-MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
+echo "select hostname, password from source;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/source.conf
+MHOST=$(cat /var/tmp/source.conf | cut -d':' -f1)
+MPASS=$(cat /var/tmp/source.conf | cut -d':' -f2)
 ISMASTER=$(grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 SYSADMIN=$(echo "SELECT summary_from FROM system_conf;" | $SRCDIR/bin/st_mariadb -s st_config | grep '\@')

@@ -40,7 +40,7 @@
     var baseurl ='<?php echo $this->baseurl?>';
     var images_path = '<?php echo $this->images_path?>';
     var reloading_text = '<?php echo $this->t->_('Reloading...');?>';
-    var slave = <?php if ($this->is_slave) { echo '1'; } else { echo '0'; }?>;
+    var replica = <?php if ($this->is_replica) { echo '1'; } else { echo '0'; }?>;
    //]]>
   </script>
   <?php echo $this->jQuery(); ?>
@@ -62,7 +62,7 @@
 
  <div id="mainheader">
   <a href="<?php echo $this->indexurl?>"><img id="stlogo" src="<?php echo $this->images_path; ?>/logo_name.png" alt="SpamTagger Plus, Open Source Spam Filtering" /></a>
-  <?php if (!$this->is_slave) { ?>
+  <?php if (!$this->is_replica) { ?>
   <div id="statuspanel">
   </div>
   <a href="#"><img id="statusreloadimg" src="<?php echo $this->images_path;?>/reload.gif" alt="reload" /></a>

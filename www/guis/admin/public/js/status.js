@@ -75,7 +75,7 @@ function loadHost(blocid) {
         blocid = 'hostbloc_'+id;
       }
    }
-   hosturl = thisurl+'/hoststatus/slave/'+id;
+   hosturl = thisurl+'/hoststatus/replica/'+id;
 
    if (moreTypes[id]) {
 	   hosturl += '/t/';
@@ -172,11 +172,11 @@ function hideGraph(id) {
 	moreStatus[id] = 0;
 }
 
-function stopstart(action, slave, process) {
-	statustextid = slave+'_'+process+'_pstatus';
+function stopstart(action, replica, process) {
+	statustextid = replica+'_'+process+'_pstatus';
 	$("."+statustextid).html(loadingimg);
 
-	url = baseurl+'/monitorstatus/restartservice/s/'+slave+'/p/'+process+'/a/'+action;
+	url = baseurl+'/monitorstatus/restartservice/s/'+replica+'/p/'+process+'/a/'+action;
 	//alert(url);
 	statusrequest = $.ajax({
 		  type: "GET",
@@ -192,14 +192,14 @@ function stopstart(action, slave, process) {
         }
 	});
 
-	showStatus(slave, process);
+	showStatus(replica, process);
 }
 
-function showStatus(slave, process) {
-	statustextid = slave+'_'+process+'_pstatus';
+function showStatus(replica, process) {
+	statustextid = replica+'_'+process+'_pstatus';
 	//$("#"+statustextid).html(loadingimg);
 
-	url = baseurl+'/monitorstatus/showprocess/s/'+slave+'/p/'+process;
+	url = baseurl+'/monitorstatus/showprocess/s/'+replica+'/p/'+process;
 	statusrequest = $.ajax({
 		  type: "GET",
 		  url: url,
@@ -209,7 +209,7 @@ function showStatus(slave, process) {
 		  success: function(msg){
         $("."+statustextid).replaceWith(msg);
     	if ($("."+statustextid).hasClass('working')) {
-    		processTimers[slave+'_'+process] = setTimeout(function() { showStatus(slave,process);slave=null;process=null;}, processreloadtime);
+    		processTimers[replica+'_'+process] = setTimeout(function() { showStatus(replica,process);replica=null;process=null;}, processreloadtime);
     	} else {
     		updateInformationalMessages();
     	}
@@ -217,7 +217,7 @@ function showStatus(slave, process) {
       error: function() {
     	  $("."+statustextid).html('timed out');
     	  if ($("."+statustextid).hasClass('working')) {
-    	        processTimers[slave+'_'+process] = setTimeout(function() { showStatus(slave,process);slave=null;process=null;}, processreloadtime);
+    	        processTimers[replica+'_'+process] = setTimeout(function() { showStatus(replica,process);replica=null;process=null;}, processreloadtime);
     	  }
       }
     });
@@ -235,10 +235,10 @@ function hideAdvancedProcs() {
 	moreStatus['procadvanced'] = 0;
 }
 
-function showSpool(slave, spool) {
+function showSpool(replica, spool) {
 	var viewWidth=1000;
 	var viewHeight=626;
-    var WindowObjectReference = window.open(thisurl+'/viewspool/slave/'+slave+'/spool/'+spool, '', 'width=' + viewWidth
+    var WindowObjectReference = window.open(thisurl+'/viewspool/replica/'+replica+'/spool/'+spool, '', 'width=' + viewWidth
 				+ ',height=' + viewHeight
 				+ ',toolbar=0,resizable=1,status=0,scrollbars=yes');
 

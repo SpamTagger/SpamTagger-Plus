@@ -55,12 +55,12 @@ print "DUMPSUCCESSFUL";
 
 #############################
 sub get_greylist_config {
-  my $slave_db = DB->db_connect('slave', 'st_config');
+  my $replica_db = DB->db_connect('replica', 'st_config');
 
-  my %configs = $slave_db->get_hash_row(
+  my %configs = $replica_db->get_hash_row(
     "SELECT retry_min, retry_max, expire, avoid_domains FROM greylistd_config"
   );
-  $slave_db->db_disconnect();
+  $replica_db->db_disconnect();
 
   my %ret;
 

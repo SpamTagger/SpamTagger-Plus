@@ -40,7 +40,7 @@ my $DEBUG = 1;
 
 my $lasterror;
 
-our $dbh = DBI->connect("DBI:mariadb:database=st_config;host=localhost;mariadb_socket=$VARDIR/run/mariadb_slave/mariadbd.sock",
+our $dbh = DBI->connect("DBI:mariadb:database=st_config;host=localhost;mariadb_socket=$VARDIR/run/mariadb_replica/mariadbd.sock",
   "spamtagger", $conf->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
 ) or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
 

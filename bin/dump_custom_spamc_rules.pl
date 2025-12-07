@@ -8,7 +8,7 @@ use lib '/usr/spamtagger/lib/';
 use File::Copy;
 use File::Path;
 use DB();
-my $db = DB->db_connect('slave', 'st_config');
+my $db = DB->db_connect('replica', 'st_config');
 
 my %domains;
 my %senders;

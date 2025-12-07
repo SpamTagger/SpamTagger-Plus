@@ -778,17 +778,17 @@ Notice Signature = -- \nMailScanner\nEmail Virus Scanner\nwww.mailscanner.info
 
 # The visible part of the email address used in the "From:" line of the
 # notices. The <user@domain> part of the email address is set to the
-# "Local Postmaster" setting.
+# "Local Postsource" setting.
 Notices From = MailScanner
 
 # Where to send the notices.
 # This can also be the filename of a ruleset.
-Notices To = postmaster
+Notices To = postsource
 
-# Address of the local Postmaster, which is used as the "From" address in
+# Address of the local Postsource, which is used as the "From" address in
 # virus warnings sent to users.
 # This can also be the filename of a ruleset.
-Local Postmaster = postmaster
+Local Postsource = postsource
 
 #
 # Spam Detection and Virus Scanner Definitions

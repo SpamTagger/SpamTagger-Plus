@@ -20,7 +20,7 @@ function autoloadSpool(newparams) {
 }
 function loadSpool(newparams) {
 	params = new Array();
-	params['slave'] = slave;
+	params['replica'] = replica;
 	params['spool'] = spool;
 	params['limit'] = limit;
 	params['offset'] = offset;
@@ -84,7 +84,7 @@ function registerEvents() {
 
 function launchCommand(command, el) {
    msgid = el.attr('id').substr(2);
-   url = thisurl+'/monitorstatus/spool'+command+'/slave/'+slave+'/spool/'+spool+'/msg/'+msgid;
+   url = thisurl+'/monitorstatus/spool'+command+'/replica/'+replica+'/spool/'+spool+'/msg/'+msgid;
    el.parent().html(loadingimg);
    if (request) {
 		request.abort();

@@ -23,7 +23,7 @@
 #   Usage:
 #           sync_spams.pl [-D]
 #             -D: output debug information
-#   synchronize slave spam quarantine database with master
+#   synchronize replica spam quarantine database with source
 
 use v5.40;
 use warnings;
@@ -45,11 +45,11 @@ if ($opt && $opt =~ /\-D/) {
 ##########################################
 
 
-# connect to slave database
-my $slave_dbh = DB->db_connect('slave', 'st_spool');
+# connect to replica database
+my $replica_dbh = DB->db_connect('replica', 'st_spool');
 
-# connect to master database
-my $master_dbh = DB->db_connect('master', 'st_spool');
+# connect to source database
+my $source_dbh = DB->db_connect('source', 'st_spool');
 
 my $total = 0;
 
@@ -57,7 +57,7 @@ foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
   if ($debug) {
     print "doing letter: $letter... fetching spams: ";
   }
-  my $sth = $slave_dbh->prepare("SELECT * FROM spam_$letter WHERE in_master='0'");
+  my $sth = $replica_dbh->prepare("SELECT * FROM spam_$letter WHERE in_source='0'");
   $sth->execute() or next;
   if ($debug) {
     print $sth->rows." found\n";
@@ -73,21 +73,21 @@ foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
     }
     $query =~ s/,\s*$//;
 
-    # save in master
-    my $res = $master_dbh->{dbh}->do($query);
+    # save in source
+    my $res = $source_dbh->{dbh}->do($query);
     if (!$res) {
       if ($debug) {
-        print "failed for: ".$row->{exim_id}."\n   with message: ".$master_dbh->errstr."\n   query was: $query\n";
+        print "failed for: ".$row->{exim_id}."\n   with message: ".$source_dbh->errstr."\n   query was: $query\n";
       }
       next;
     }
     $total = $total + 1;
 
-    # update slave record
-    $query = "UPDATE spam_$letter SET in_master='1' WHERE exim_id='".$row->{exim_id}."'";
-    $slave_dbh->{dbh}->do($query);
+    # update replica record
+    $query = "UPDATE spam_$letter SET in_source='1' WHERE exim_id='".$row->{exim_id}."'";
+    $replica_dbh->{dbh}->do($query);
   }
-  $slave_dbh->db_disconnect();
-  $master_dbh->db_disconnect();
+  $replica_dbh->db_disconnect();
+  $source_dbh->db_disconnect();
 }
 print "SUCCESSFULL|$total\n";

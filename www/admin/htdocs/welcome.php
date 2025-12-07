@@ -42,14 +42,14 @@ $replace = array(
 $template_->output($replace);
 
 /**
- * return master/slave status of the host
+ * return source/replica status of the host
  * @return  string  status
  */
 function isMaster() {
   global $lang_;
   global $sysconf_;
 
-  if ($sysconf_->ismaster_ < 1) {
+  if ($sysconf_->issource_ < 1) {
     return $lang_->print_txt('ISNOTAMASTER');
   }
   return $lang_->print_txt("ISAMASTER");

@@ -13,9 +13,9 @@ my $config = ReadConfig::get_instance();
 our $SRCDIR = $config->get_option('SRCDIR');
 our $HOSTID = $config->get_option('HOSTID');
 
-my $master_dbh = DB->db_connect('master', 'st_config');
-if (!$master_dbh) {
-  printf ("ERROR: no master database found on this system. This script will only run on a SpamTagger master host.\n");
+my $source_dbh = DB->db_connect('source', 'st_config');
+if (!$source_dbh) {
+  printf ("ERROR: no source database found on this system. This script will only run on a SpamTagger source host.\n");
   exit 1;
 }
 
@@ -24,15 +24,15 @@ while (! $quit) {
   system("clear");
   my $required = check_host();
   printf "\n################################\n";
-  printf "## SpamTagger slaves manager ##\n";
+  printf "## SpamTagger replicas manager ##\n";
   printf "################################\n\n";
   printf "1) change host settings";
   if ($required > 0) { printf " (required!)"; }
   printf "\n";
-  printf "2) view slaves\n";
-  printf "3) delete slave\n";
-  printf "4) add slave\n";
-  printf "5) set this host as slave\n";
+  printf "2) view replicas\n";
+  printf "3) delete replica\n";
+  printf "4) add replica\n";
+  printf "5) set this host as replica\n";
   printf "q) quit\n";
   printf "\nEnter your choice: ";
 
@@ -46,17 +46,17 @@ while (! $quit) {
   } elsif ($key =~ /1/) {
     change_host();
   } elsif ($key =~ /2/) {
-    view_slaves();
+    view_replicas();
   } elsif ($key =~ /3/) {
-    delete_slave();
+    delete_replica();
   } elsif ($key =~ /4/) {
-    add_slave();
+    add_replica();
   } elsif ($key =~ /5/) {
-    set_as_slave();
+    set_as_replica();
   }
 }
 
-$master_dbh->db_disconnect();
+$source_dbh->db_disconnect();
 
 printf "\n\n";
 printf "dumping configuration...\n";
@@ -84,18 +84,18 @@ sub change_host {
   my $hostname = <STDIN>;
   # TODO: Better validation of hostname
   ($hostname) = $hostname =~ m/\s*(\S+)\s*$/;
-  my $sth =  $master_dbh->prepare("UPDATE slave SET hostname='$hostname' WHERE id=$HOSTID");
+  my $sth =  $source_dbh->prepare("UPDATE replica SET hostname='$hostname' WHERE id=$HOSTID");
   $sth->execute() or die ("error in UPDATE");
   $sth->finish();
-  $sth =  $master_dbh->prepare("UPDATE master SET hostname='$hostname'");
+  $sth =  $source_dbh->prepare("UPDATE source SET hostname='$hostname'");
   $sth->execute() or die ("error in UPDATE");
   $sth->finish();
   return;
 }
 
-sub view_slaves {
+sub view_replicas {
   system("clear");
-  my $sth =  $master_dbh->prepare("SELECT id, hostname, port, ssh_pub_key  FROM slave") or die ("error in SELECT");
+  my $sth =  $source_dbh->prepare("SELECT id, hostname, port, ssh_pub_key  FROM replica") or die ("error in SELECT");
   $sth->execute() or die ("error in SELECT");
   my $el=$sth->rows;
   printf "Slaves list: ($el element(s))\n";
@@ -111,17 +111,17 @@ sub view_slaves {
   return;
 }
 
-sub delete_slave {
+sub delete_replica {
   system("clear");
-  printf "Please enter slave id to delete: ";
+  printf "Please enter replica id to delete: ";
   my $d_id = <STDIN>;
   ($d_id) = $d_id =~ m/\s*([1-9]\d*)\s*$/;
 
-  my $sth =  $master_dbh->prepare("DELETE FROM slave WHERE id='$d_id'");
+  my $sth =  $source_dbh->prepare("DELETE FROM replica WHERE id='$d_id'");
   if (! $sth->execute()) {
-    printf "no slave deleted..\n";
+    printf "no replica deleted..\n";
   } else {
-    printf "slave $d_id deleted.\n";
+    printf "replica $d_id deleted.\n";
     $sth->finish();
   }
   printf "\n******\ntype any key to return to main menu";
@@ -132,15 +132,15 @@ sub delete_slave {
   return;
 }
 
-sub add_slave {
+sub add_replica {
   system("clear");
-  printf "Enter slave ID (unique!): ";
+  printf "Enter replica ID (unique!): ";
   my $id = <STDIN>;
   ($id) = $id =~ m/\s*([1-9]\d*)\s*$/;
-  printf "Enter slave hostname: ";
+  printf "Enter replica hostname: ";
   my $hostname = <STDIN>;
   ($hostname) = $hostname =~ m/\s*(\S+)\s*$/;
-  printf "Enter slave password: ";
+  printf "Enter replica password: ";
   my $password = <STDIN>;
   ($password) = $password =~ m/\s*(\S.*\S?)\s*$/;
   my $port = 3307;
@@ -149,7 +149,7 @@ sub add_slave {
 
   # TODO: Better verification of hostname back when it is asked instead of here
   if ( $hostname =~ /^[A-Z,a-z,0-9,\.,\_,\-]{1,200}$/) {
-    my $sth =  $master_dbh->prepare("INSERT INTO slave (id, hostname, port, password, ssh_pub_key) VALUES('$id', '$hostname', '$port', '$password', '$key')");
+    my $sth =  $source_dbh->prepare("INSERT INTO replica (id, hostname, port, password, ssh_pub_key) VALUES('$id', '$hostname', '$port', '$password', '$key')");
     if (!$sth->execute()) {
       printf "Slave NOT added !\n";
     } else {
@@ -157,7 +157,7 @@ sub add_slave {
       $sth->finish();
     }
   } else {
-    printf "please enter a slave hostname !\n";
+    printf "please enter a replica hostname !\n";
   }
   printf "\n******\ntype any key to return to main menu";
   ReadMode 'cbreak';
@@ -167,7 +167,7 @@ sub add_slave {
 }
 
 sub check_host {
-  my $sth =  $master_dbh->prepare("SELECT hostname FROM slave WHERE id=$HOSTID") or die ("error in SELECT");
+  my $sth =  $source_dbh->prepare("SELECT hostname FROM replica WHERE id=$HOSTID") or die ("error in SELECT");
   $sth->execute() or die ("error in SELECT");
   if ($sth->rows != 1) {
     return 1;
@@ -179,32 +179,32 @@ sub check_host {
   return 0;
 }
 
-sub set_as_slave {
+sub set_as_replica {
   system("clear");
-  printf "Enter master hostname: ";
-  my $master = <STDIN>;
-  ($master) = $master =~ m/\s*(\S+)\s*$/;
-  printf "Enter master password: ";
+  printf "Enter source hostname: ";
+  my $source = <STDIN>;
+  ($source) = $source =~ m/\s*(\S+)\s*$/;
+  printf "Enter source password: ";
   chomp($password);
 
-  print "Syncing to master host (this may take a few minutes)... ";
+  print "Syncing to source host (this may take a few minutes)... ";
   my $logfile = '/tmp/syncerror.log';
   unlink($logfile);
-  my $resync = `$SRCDIR/bin/resync_db.sh -F $master $password 1>/dev/null 2>/tmp/syncerror.log`;
+  my $resync = `$SRCDIR/bin/resync_db.sh -F $source $password 1>/dev/null 2>/tmp/syncerror.log`;
   if ( -s $logfile) {
     print "\n  ** ERROR ** ";
     my $ERRORLOG;
     if (open($ERRORLOG, '<', $logfile)) {
       while(<$ERRORLOG>) {
         if (m/Access denied/) {
-          print "Access on master is denied. Please double check the master password and try again.\n";
+          print "Access on source is denied. Please double check the source password and try again.\n";
           print "Press any key to continue...\n";
           ReadKey(0);
           return;
         }
         if (m/Can't connect to MariaDB server/) {
-          print "Master server is not responsive. Make sure you ran this script on the master host first to advise it of this new slave.\n";
-          print "  ** ERROR ** Also make sure there is not firewall blocking port TCP 3306 between this host and the master.\n";
+          print "Master server is not responsive. Make sure you ran this script on the source host first to advise it of this new replica.\n";
+          print "  ** ERROR ** Also make sure there is not firewall blocking port TCP 3306 between this host and the source.\n";
           print "Press any key to continue...\n";
           ReadKey(0);
           return;
@@ -213,7 +213,7 @@ sub set_as_slave {
       close($ERRORLOG);
     }
     print "Unknown error !\n";
-    print "Check the master hostname or IP address, DNS resolution and that this script has been run on the master first.\n";
+    print "Check the source hostname or IP address, DNS resolution and that this script has been run on the source first.\n";
     ReadKey(0);
     return;
   }
@@ -223,7 +223,7 @@ sub set_as_slave {
   `perl -pi -e 's/ISMASTER = Y/ISMASTER = N/' /etc/spamtagger.conf`;
   `perl -pi -e 's/(.*collect_rrd.*)/#\$1/' /var/spool/cron/crontabs/root`;
   `crontab /var/spool/cron/crontabs/root 2>&1`;
-  print "Host is now a slave of $master\n";
+  print "Host is now a replica of $source\n";
   sleep 5;
   return;
 }
