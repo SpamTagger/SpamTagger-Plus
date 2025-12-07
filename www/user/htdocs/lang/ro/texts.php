@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Buletine informative";
 $txt['NEWSLETTERSSHORTHELP'] = "Aici vă puteți administra buletinele informative.";
 $txt['NEWSLETTERSALLOW'] = "livrează";
 $txt['NEWSLETTERACCEPT'] = "Acceptă acest buletin informativ";
-$txt['SPAM_WHITELIST_DISABLED'] = "Lista nu e activată pentru acest domeniu (contactați-vă administratorul).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Lista nu e activată pentru acest domeniu (contactați-vă administratorul).";
 /*
  * generic buttons
  */
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "Ascunde mesajele eliberate de utilizator";
 $txt['FORCESPAM'] = "eliberează mesajul";
 //old
 $txt['ASKREASON'] = "afișează regulile de filtrare";
-$txt['CONFSENDANALYSE'] = "O cerere de ajustare a filtrului a fost trimisă către Centrul de Analiză SpamTagger; aceasta include o copie a mesajului care a fost blocat în mod eronat.</br>Notă: O ajustare a filtrului nu este similară whitelisting-ului sau blacklisting-ului.";
+$txt['CONFSENDANALYSE'] = "O cerere de ajustare a filtrului a fost trimisă către Centrul de Analiză SpamTagger; aceasta include o copie a mesajului care a fost blocat în mod eronat.</br>Notă: O ajustare a filtrului nu este similară wantlisting-ului sau blocklisting-ului.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Sunteți sigur că doriți ca acest mesaj să fie analizat și să îi fie aplicate ajustări de filtru?</span>";
 $txt['ASKANALYSE'] = "Cerere de ajustare a filtrării";
 $txt['PAGE'] = "Pagina";
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "Toate adresele";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Conținutul mesajului";
 $txt['PREFILTERHITS'] = "Pre-filtrare";
-$txt['BLACKLISTS'] = "Liste negre";
+$txt['BLOCKLISTS'] = "Liste negre";
 $txt['FITLERSCORE'] = "Scor";
 $txt['NONE'] = "niciunul";
 $txt['HEADERS'] = "Antete";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "folosiți varianta prestabilită";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "text necodificat";
 //old
-$txt['EDITWHITELIST'] = "editează lista albă";
+$txt['EDITWANTLIST'] = "editează lista albă";
 //old
 $txt['EDITWARNLIST'] = "editează listă de prevenire";
 //old
@@ -263,7 +263,7 @@ $txt['WWENTRY'] = "Intrare";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Sunteți sigur că vreți să eliminați permanent această intrare?";
 //old
-$txt['WHITELISTFOR'] = "Setează lista albă pentru__PARAM__";
+$txt['WANTLISTFOR'] = "Setează lista albă pentru__PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Setează lista de prevenire pentru __PARAM__";
 //old
@@ -392,16 +392,16 @@ $txt['ADDRESSLISTTOPIC'] = "Grupul adresei";
 $txt['ADDRESSPARAMTOPIC'] = "Setările adresei";
 $txt['QUARPARAMTOPIC'] = "Afișarea conținutului carantinei";
 $txt['WARNLISTTOPIC'] = "Listă de avertizare";
-$txt['WHITELISTTOPIC'] = "Listă albă";
-$txt['BLACKLISTTOPIC'] = "Listă neagră";
+$txt['WANTLISTTOPIC'] = "Listă albă";
+$txt['BLOCKLISTTOPIC'] = "Listă neagră";
 $txt['NEWSLISTTOPIC'] = "Listă informativă";
 $txt['INTERFACETOPICTITLE'] = "setările interfeței";
 $txt['ADDRESSLISTTOPICTITLE'] = "grupul adresei";
 $txt['ADDRESSPARAMTOPICTITLE'] = "setările adresei";
 $txt['QUARPARAMTOPICTITLE'] = "afișarea conținutului carantinei";
 $txt['WARNLISTTOPICTITLE'] = "listă de avertizare";
-$txt['WHITELISTTOPICTITLE'] = "listă albă";
-$txt['BLACKLISTTOPICTITLE'] = "listă neagră";
+$txt['WANTLISTTOPICTITLE'] = "listă albă";
+$txt['BLOCKLISTTOPICTITLE'] = "listă neagră";
 $txt['NEWSLISTTOPICTITLE'] = "listă informativă";
 /*
  * interface (new)
@@ -465,24 +465,24 @@ $txt['REMOVEANENTRY'] = "Dezactivează, activează sau șterge o adresă din lis
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Selectați adresa sau adresele pe care doriți să le modificați din listă și apoi click pe butonul atașat acțiunii dorite.";
 $txt['REMTHEENTRY'] = "Elimină selecția";
 $txt['DISABLETHEENTRY'] = "Dezactivează/activează selecția";
-$txt['WHITELISTSHORTHELP'] = "Lista albă conține adrese de emițător de încredere pentru care nicio retenție in carantină nu va avea loc.
+$txt['WANTLISTSHORTHELP'] = "Lista albă conține adrese de emițător de încredere pentru care nicio retenție in carantină nu va avea loc.
 \t\t\t\t\t\t\t\t   Atenție: Această funcționalitate ar trebui folosită ca o soluție temporară întrucât scade protecția generală.
 \t\t\t\t\t\t\t\t   Verificați manualul (disponibil la secțiunea <a href=\"help.php\">\"Help\"</a>) pentru mai multe informații despre utilizarea listei albe.
 ";
-$txt['BLACKLISTSHORTHELP'] = "Lista neagră conține adrese de emițător blocate.
+$txt['BLOCKLISTSHORTHELP'] = "Lista neagră conține adrese de emițător blocate.
                                   Consultați manualul  (disponibil în secțiunea <a href=\"help.php\">\"Help\"</a>) pentru mai multe informații referitoare la utilizarea listelor negre.
 ";
 $txt['NEWSLISTSHORTHELP'] = "Lista de buletine informative conține adrese ale buletinelor informative dorite.<br />
                                   Verificați manualul (disponibil la secțiunea <a href=\"help.php\">\"Help\"</a>) pentru mai multe informații despre utilizarea listei de buletine informative.
 ";
-$txt['WHITELISTFORADDRESS'] = "Listare albă pentru adresă";
-$txt['ADDAWHITEENTRY'] = "Adaugă o adresă listei";
-$txt['WHITELISTENTRYTOADD'] = "Introduceți adresa pe care doriți să o adăugați la whitelist. Puteți să adăugați și un comentariu opțional.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Selectați adresa sau adresele pe care doriți să le modificați din listă și apoi click pe butonul destinat acțiunii dorite.";
-$txt['BLACKLISTFORADDRESS'] = "Listare neagră pentru adresă";
-$txt['ADDABLACKENTRY'] = "Adaugă o adresă listei";
-$txt['BLACKLISTENTRYTOADD'] = "Introduceți adresa pe care doriți să o adăugați la lista neagră. Puteți să adăugați și un comentariu opțional.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Selectați adresa sau adresele pe care doriți să le modificați din listă și apoi click pe butonul destinat acțiunii dorite.";
+$txt['WANTLISTFORADDRESS'] = "Listare albă pentru adresă";
+$txt['ADDAWANTENTRY'] = "Adaugă o adresă listei";
+$txt['WANTLISTENTRYTOADD'] = "Introduceți adresa pe care doriți să o adăugați la wantlist. Puteți să adăugați și un comentariu opțional.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Selectați adresa sau adresele pe care doriți să le modificați din listă și apoi click pe butonul destinat acțiunii dorite.";
+$txt['BLOCKLISTFORADDRESS'] = "Listare neagră pentru adresă";
+$txt['ADDABLOCKENTRY'] = "Adaugă o adresă listei";
+$txt['BLOCKLISTENTRYTOADD'] = "Introduceți adresa pe care doriți să o adăugați la lista neagră. Puteți să adăugați și un comentariu opțional.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Selectați adresa sau adresele pe care doriți să le modificați din listă și apoi click pe butonul destinat acțiunii dorite.";
 $txt['NEWSLISTFORADDRESS'] = "Listă de buletine informative pentru adresă";
 $txt['ADDANEWSENTRY'] = "Adaugă o adresă listei";
 $txt['NEWSLISTENTRYTOADD'] = "Introduceți adresa pe care doriți să o adăugați la lista de newsletter. Puteți să adăugați și un comentariu opțional.";
@@ -506,35 +506,35 @@ $txt['SPAMONLY'] = "Afișați doar spam-urile";
 $txt['ADDRULE'] = "Adăugarea regulii WWList";
 //
 $txt['ADDITIONALACTION'] = "Acțiuni suplimentare:";
-$txt['NOTBLACKLISTBODY'] = "A apărut o problemă la adăugarea listei negre.";
-$txt['NOTBLACKLISTHEAD'] = "Regula listei negre nu a fost adăugată.";
-$txt['BLACKLISTBODY'] = "A fost adăugată o regulă pentru lista neagră. Mesajele viitoare ale acestui expeditor vor fi întotdeauna semnalate ca spam.";
-$txt['BLACKLISTHEAD'] = "A fost adăugată regula listei negre.";
+$txt['NOTBLOCKLISTBODY'] = "A apărut o problemă la adăugarea listei negre.";
+$txt['NOTBLOCKLISTHEAD'] = "Regula listei negre nu a fost adăugată.";
+$txt['BLOCKLISTBODY'] = "A fost adăugată o regulă pentru lista neagră. Mesajele viitoare ale acestui expeditor vor fi întotdeauna semnalate ca spam.";
+$txt['BLOCKLISTHEAD'] = "A fost adăugată regula listei negre.";
 /*
- * Blacklist rule (not currently implemented)
+ * Blocklist rule (not currently implemented)
  */
-$txt['ADDBLACKLIST'] = "Lista neagră a tuturor mesajelor viitoare de la același expeditor?";
-$txt['NOTNEWSWHITEBODY'] = "A apărut o problemă la adăugarea acestor reguli.";
-$txt['NOTNEWSWHITEHEAD'] = "Nici lista de știri și nici regulile de pe lista albă nu au fost adăugate.";
-$txt['WHITENOTNEWSBODY'] = "A fost adăugată o regulă de listă albă, cu toate acestea, a apărut o problemă la adăugarea regulii de listă albă a buletinului informativ.";
-$txt['WHITENOTNEWSHEAD'] = "A fost adăugată lista albă, dar lista de știri nu.";
-$txt['NEWSNOTWHITEBODY'] = "A fost adăugată o regulă de buletin informativ, cu toate acestea, a apărut o problemă la adăugarea regulii de pe lista albă.";
-$txt['NEWSNOTWHITEHEAD'] = "Lista de știri a fost adăugată, dar lista albă nu.";
-$txt['NEWSWHITELISTBODY'] = "Au fost adăugate o listă de știri și o regulă de listă albă. Mesajele viitoare de la acest expeditor nu vor fi semnalate dacă sunt detectate ca buletin informativ sau ca spam.";
-$txt['NEWSWHITELISTHEAD'] = "Au fost adăugate reguli privind lista de știri și lista albă.";
-$txt['ADDWHITENEWSLIST'] = "Afișați pe lista albă toate spamurile viitoare de la același expeditor? Acceptați, de asemenea, buletine informative de la acest expeditor?";
+$txt['ADDBLOCKLIST'] = "Lista neagră a tuturor mesajelor viitoare de la același expeditor?";
+$txt['NOTNEWSWANTBODY'] = "A apărut o problemă la adăugarea acestor reguli.";
+$txt['NOTNEWSWANTHEAD'] = "Nici lista de știri și nici regulile de pe lista albă nu au fost adăugate.";
+$txt['WANTNOTNEWSBODY'] = "A fost adăugată o regulă de listă albă, cu toate acestea, a apărut o problemă la adăugarea regulii de listă albă a buletinului informativ.";
+$txt['WANTNOTNEWSHEAD'] = "A fost adăugată lista albă, dar lista de știri nu.";
+$txt['NEWSNOTWANTBODY'] = "A fost adăugată o regulă de buletin informativ, cu toate acestea, a apărut o problemă la adăugarea regulii de pe lista albă.";
+$txt['NEWSNOTWANTHEAD'] = "Lista de știri a fost adăugată, dar lista albă nu.";
+$txt['NEWSWANTLISTBODY'] = "Au fost adăugate o listă de știri și o regulă de listă albă. Mesajele viitoare de la acest expeditor nu vor fi semnalate dacă sunt detectate ca buletin informativ sau ca spam.";
+$txt['NEWSWANTLISTHEAD'] = "Au fost adăugate reguli privind lista de știri și lista albă.";
+$txt['ADDWANTNEWSLIST'] = "Afișați pe lista albă toate spamurile viitoare de la același expeditor? Acceptați, de asemenea, buletine informative de la acest expeditor?";
 /*
- * Newslist and Whitelist rule
+ * Newslist and Wantlist rule
  */
-$txt['ADDNEWSWHITELIST'] = "Acceptați toate buletinele informative viitoare de la același expeditor? De asemenea, lista albă a tuturor mesajelor spam de la acest expeditor?";
-$txt['NOTWHITELISTBODY'] = "A apărut o problemă la adăugarea listei albe.";
-$txt['NOTWHITELISTHEAD'] = "Regula listei albe nu a fost adăugată.";
-$txt['WHITELISTBODY'] = "A fost adăugată o regulă pe lista albă. Mesajele viitoare de la acest expeditor nu vor fi semnalate dacă sunt detectate ca spam.";
-$txt['WHITELISTHEAD'] = "A fost adăugată regula listei albe.";
+$txt['ADDNEWSWANTLIST'] = "Acceptați toate buletinele informative viitoare de la același expeditor? De asemenea, lista albă a tuturor mesajelor spam de la acest expeditor?";
+$txt['NOTWANTLISTBODY'] = "A apărut o problemă la adăugarea listei albe.";
+$txt['NOTWANTLISTHEAD'] = "Regula listei albe nu a fost adăugată.";
+$txt['WANTLISTBODY'] = "A fost adăugată o regulă pe lista albă. Mesajele viitoare de la acest expeditor nu vor fi semnalate dacă sunt detectate ca spam.";
+$txt['WANTLISTHEAD'] = "A fost adăugată regula listei albe.";
 /*
- * Whitelist rule
+ * Wantlist rule
  */
-$txt['ADDWHITELIST'] = "Afișați pe lista albă toate spamurile viitoare de la același expeditor?";
+$txt['ADDWANTLIST'] = "Afișați pe lista albă toate spamurile viitoare de la același expeditor?";
 $txt['NOTNEWSLISTBODY'] = "A apărut o problemă la adăugarea listei albe a buletinului informativ.";
 $txt['NOTNEWSLISTHEAD'] = "Regula listei de știri nu a fost adăugată.";
 $txt['NEWSLISTBODY'] = "A fost adăugată o regulă de listă albă a buletinului informativ. Mesajele viitoare de la acest expeditor nu vor fi semnalate dacă sunt detectate ca buletin informativ.";

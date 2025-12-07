@@ -11,7 +11,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Nieuwsbrieven";
 $txt['NEWSLETTERSSHORTHELP'] = "Hier kun je uw nieuwsbrieven beheren.";
 $txt['NEWSLETTERSALLOW'] = "afleveren";
 $txt['NEWSLETTERACCEPT'] = "Accepteer deze nieuwsbrief";
-$txt['SPAM_WHITELIST_DISABLED'] = "Deze lijst is niet geactiveerd voor dit domein (Neem contact op met de beheerder).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Deze lijst is niet geactiveerd voor dit domein (Neem contact op met de beheerder).";
 ### missing translations
 $txt['FORGOTPASSWORD'] = "Wachtwoord vergeten ?";
 $txt['PASSWORDRESET'] = "Uw wachtwoord is gereset . Het is verzonden naar uw e-mailadres.";
@@ -146,7 +146,7 @@ $txt['HIDEFORCED'] = "Verberg gebruiker-vrijgegeven berichten";
 $txt['FORCESPAM'] = "geef dit bericht vrij";
 //old
 $txt['ASKREASON'] = "geef de filter regels weer";
-$txt['CONFSENDANALYSE'] = "Een filter aanpassing aanvraag zal verzonden worden naar het SpamTagger Analysis Center; het bevat een kopie van het bericht dat onterecht geblokkeerd werd.</ br> Opmerking: een filteraanpassing is niet hetzelfde als whitelisting of blacklisting.";
+$txt['CONFSENDANALYSE'] = "Een filter aanpassing aanvraag zal verzonden worden naar het SpamTagger Analysis Center; het bevat een kopie van het bericht dat onterecht geblokkeerd werd.</ br> Opmerking: een filteraanpassing is niet hetzelfde als wantlisting of blocklisting.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Ben je zeker dat je dit bericht wilt laten analyseren en dat de filter aanpassingen teogepast mogen worden?</span>";
 $txt['ASKANALYSE'] = "Filter aanpassing aanvraag";
 $txt['PAGE'] = "Pagina";
@@ -180,7 +180,7 @@ $txt['GROUPQUARANTINES'] = "Alle adressen";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Inhoud van het bericht";
 $txt['PREFILTERHITS'] = "Pre-filters";
-$txt['BLACKLISTS'] = "Zwarte lijsten";
+$txt['BLOCKLISTS'] = "Zwarte lijsten";
 $txt['FITLERSCORE'] = "Score";
 $txt['NONE'] = "geen";
 $txt['HEADERS'] = "Koppen";
@@ -243,7 +243,7 @@ $txt['USEDEFAULT'] = "gebruik standaard";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "onbewerkte tekst";
 //old
-$txt['EDITWHITELIST'] = "bewerk de witte lijst";
+$txt['EDITWANTLIST'] = "bewerk de witte lijst";
 //old
 $txt['EDITWARNLIST'] = "bewerking de waarschuwings lijst";
 /*
@@ -263,7 +263,7 @@ $txt['WWENTRY'] = "Entry";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Are you sure you want to permanently delete this entry?";
 //old
-$txt['WHITELISTFOR'] = "Witte lijst voor __PARAM__";
+$txt['WANTLISTFOR'] = "Witte lijst voor __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Waarschuwingslijst voor __PARAM__";
 //old
@@ -390,15 +390,15 @@ $txt['ADDRESSLISTTOPIC'] = "Adres groep";
 $txt['ADDRESSPARAMTOPIC'] = "Adres instellingen";
 $txt['QUARPARAMTOPIC'] = "Quarantaine tonen";
 $txt['WARNLISTTOPIC'] = "Waarschuw lijst";
-$txt['WHITELISTTOPIC'] = "Witte lijst";
-$txt['BLACKLISTTOPIC'] = "Black lijst";
+$txt['WANTLISTTOPIC'] = "Witte lijst";
+$txt['BLOCKLISTTOPIC'] = "Block lijst";
 $txt['INTERFACETOPICTITLE'] = "interface instellingen";
 $txt['ADDRESSLISTTOPICTITLE'] = "adres groep";
 $txt['ADDRESSPARAMTOPICTITLE'] = "adres instellingen";
 $txt['QUARPARAMTOPICTITLE'] = "quarantine tonen";
 $txt['WARNLISTTOPICTITLE'] = "waarschuw lijst";
-$txt['WHITELISTTOPICTITLE'] = "witte lijst";
-$txt['BLACKLISTTOPICTITLE'] = "zwarte lijst";
+$txt['WANTLISTTOPICTITLE'] = "witte lijst";
+$txt['BLOCKLISTTOPICTITLE'] = "zwarte lijst";
 /*
  * interface (new)
  */
@@ -460,18 +460,18 @@ $txt['REMOVEANENTRY'] = "Uitschakelen/inschakelen of het verwijderen adres van d
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Selecteer het adres of adressen dat je wilt aanpassen van de lijst en klik op de gewenste actie knop.";
 $txt['REMTHEENTRY'] = "Verwijder selectie";
 $txt['DISABLETHEENTRY'] = "Uitschakeling/inschakeling selectie";
-$txt['WHITELISTSHORTHELP'] = "De witte lijst bevat betrouwbare zender adressen waarbij berichten nooit in quarantaine zullen gehouden worden.<br />
+$txt['WANTLISTSHORTHELP'] = "De witte lijst bevat betrouwbare zender adressen waarbij berichten nooit in quarantaine zullen gehouden worden.<br />
                                    Waarschuwing: deze functionaliteit wordt best enkel als tijdelijke oplossing gebruikt omdat het de algemene bescherming verlaagt.
                                   Controleer de handleiding (beschikbaar in sectie <a href=\"help.php\">\"Help\"</a>) voor meer informatie over witte lijst gebruik.
 ";
-$txt['WHITELISTFORADDRESS'] = "Witte lijst voor het adres";
-$txt['ADDAWHITEENTRY'] = "Voeg een adres toe aan de lijst";
-$txt['WHITELISTENTRYTOADD'] = "Vul het adres, dat je wilt toevoegen aan de witte lijst, in. Je kan optioneel ook commentaar toevoegen.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Selecteer het adres of adressen die je wilt aanpassen van de lijst en klik op de gewenste actie knop.";
-$txt['BLACKLISTFORADDRESS'] = "Zwarte lijst voor het adres";
-$txt['ADDABLACKENTRY'] = "Voeg een adres toe aan de lijst";
-$txt['BLACKLISTENTRYTOADD'] = "Voer het adres dat u wilt toevoegen aan de zwarte lijst . U kunt ook een optionele commentaar .";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Selecteer het adres of de adressen die u wilt wijzigen in de lijst en klik op de gewenste actieknop .";
+$txt['WANTLISTFORADDRESS'] = "Witte lijst voor het adres";
+$txt['ADDAWANTENTRY'] = "Voeg een adres toe aan de lijst";
+$txt['WANTLISTENTRYTOADD'] = "Vul het adres, dat je wilt toevoegen aan de witte lijst, in. Je kan optioneel ook commentaar toevoegen.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Selecteer het adres of adressen die je wilt aanpassen van de lijst en klik op de gewenste actie knop.";
+$txt['BLOCKLISTFORADDRESS'] = "Zwarte lijst voor het adres";
+$txt['ADDABLOCKENTRY'] = "Voeg een adres toe aan de lijst";
+$txt['BLOCKLISTENTRYTOADD'] = "Voer het adres dat u wilt toevoegen aan de zwarte lijst . U kunt ook een optionele commentaar .";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Selecteer het adres of de adressen die u wilt wijzigen in de lijst en klik op de gewenste actieknop .";
 $txt['RECORDALREADYEXISTS'] = "Dit adres is reeeds aanwezig in de lijst.";
 /*
  * logout (new)
@@ -489,7 +489,7 @@ $txt['NEWSLETTERMODULE'] = "Nieuwsbrief";
 //old
 $txt['ADVANCEDSEARCH'] = "geavanceerd zoeken";
 $txt['FOREACHNEWSLETTERDO'] = "Voor ieder bericht gedetecteerd als nieuwsbrief:";
-$txt['BLACKLISTSHORTHELP'] = "De zwarte lijst bevat een geblokkeerde afzender adres..
+$txt['BLOCKLISTSHORTHELP'] = "De zwarte lijst bevat een geblokkeerde afzender adres..
                                   Zie de handleiding (beschikbaar in sectie <a href=\"help.php\">\"Help\"</a>) voor meer informatie over het gebruik van de zwarte lijst.
 ";
 /*

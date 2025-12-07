@@ -51,12 +51,12 @@ class AntispamController extends Zend_Controller_Action
     	$antispam = new Default_Model_AntispamConfig();
     	$antispam->find(1);
 
-	// blacklistmr
-	$blacklistelement = new Default_Model_WWElement();
-        $blacklist = $blacklistelement->fetchAll('','black');
+	// blocklistmr
+	$blocklistelement = new Default_Model_WWElement();
+        $blocklist = $blocklistelement->fetchAll('','block');
 
-    	$whitelistelement = new Default_Model_WWElement();
-    	$whitelist = $whitelistelement->fetchAll('','white');
+    	$wantlistelement = new Default_Model_WWElement();
+    	$wantlist = $wantlistelement->fetchAll('','want');
 
     	$warnlistelement = new Default_Model_WWElement();
     	$warnlist = $warnlistelement->fetchAll('','warn');
@@ -64,7 +64,7 @@ class AntispamController extends Zend_Controller_Action
     	$newslistelement = new Default_Model_WWElement();
     	$newslist = $newslistelement->fetchAll('','wnews');
 
-    	$form    = new Default_Form_AntispamGlobalSettings($antispam, $whitelist, $warnlist, $blacklist, $newslist);
+    	$form    = new Default_Form_AntispamGlobalSettings($antispam, $wantlist, $warnlist, $blocklist, $newslist);
         $form->setAction(Zend_Controller_Action_HelperBroker::getStaticHelper('url')->simple('globalsettings', 'antispam'));
         $message = '';
 
@@ -73,8 +73,8 @@ class AntispamController extends Zend_Controller_Action
 
             	try {
                   $form->setParams($this->getRequest(), $antispam);
-		  $form->_blacklist = $blacklistelement->fetchAll('', 'black');
-            	  $form->_whitelist = $whitelistelement->fetchAll('','white');
+		  $form->_blocklist = $blocklistelement->fetchAll('', 'block');
+            	  $form->_wantlist = $wantlistelement->fetchAll('','want');
             	  $form->_warnlist = $warnlistelement->fetchAll('','warn');
             	  $form->_newslist = $newslistelement->fetchAll('','wnews');
             	  $antispam->save();

@@ -163,51 +163,51 @@ sub process ($this) {
     $this->start_timer('Message fetch ww');
 
     # Policies
-    my $whitelisted;
-  # if the flag file to activate whitelist also on msg_from is there
+    my $wantlisted;
+  # if the flag file to activate wantlist also on msg_from is there
   if ( -e '/var/spamtagger/spool/spamtagger/st-wl-on-both-from') {
-  $whitelisted = (
-     $email->has_in_white_warn_list( 'whitelist', $this->{env_sender} ) ||
-    $email->has_in_white_warn_list( 'whitelist', $this->{msg_from} )
+  $wantlisted = (
+     $email->has_in_want_warn_list( 'wantlist', $this->{env_sender} ) ||
+    $email->has_in_want_warn_list( 'wantlist', $this->{msg_from} )
   );
-  # else whitelists are only applied to SMTP From
+  # else wantlists are only applied to SMTP From
   } else {
-  $whitelisted = $email->has_in_white_warn_list( 'whitelist', $this->{env_sender} );
+  $wantlisted = $email->has_in_want_warn_list( 'wantlist', $this->{env_sender} );
   }
     my $warnlisted;
   if ( -e '/var/spamtagger/spool/spamtagger/st-wl-on-both-from') {
   $warnlisted = (
-    $email->has_in_white_warn_list( 'warnlist', $this->{env_sender} ) ||
-    $email->has_in_white_warn_list( 'warnlist', $this->{msg_from} )
+    $email->has_in_want_warn_list( 'warnlist', $this->{env_sender} ) ||
+    $email->has_in_want_warn_list( 'warnlist', $this->{msg_from} )
   );
   } else {
-  $warnlisted = $email->has_in_white_warn_list( 'warnlist', $this->{env_sender} );
+  $warnlisted = $email->has_in_want_warn_list( 'warnlist', $this->{env_sender} );
   }
-    my $blacklisted =
-      $email->has_in_white_warn_list( 'blacklist', $this->{env_sender} ) || $email->has_in_white_warn_list( 'blacklist', $this->{msg_from});
+    my $blocklisted =
+      $email->has_in_want_warn_list( 'blocklist', $this->{env_sender} ) || $email->has_in_want_warn_list( 'blocklist', $this->{msg_from});
     my @level = ('NOTIN','System','Domain','User');
-    $this->{nwhitelisted} =
+    $this->{nwantlisted} =
       $email->loaded_is_ww_listed( 'wnews', $this->{msg_from} ) || $email->loaded_is_ww_listed( 'wnews', $this->{env_sender} );
     $this->{news_allowed} = $email->get_pref('allow_newsletters') || 0;
     $this->end_timer('Message fetch ww');
 
     # Action
 
-    ## Whitelist
-    if ($whitelisted) {
+    ## Wantlist
+    if ($wantlisted) {
 
       ## Newsletter
       if ( $this->{sc_newsl} >= 5 ) {
         if ($this->{news_allowed}) {
-          $status = "is desired (Newsletter) and whitelisted by " . $level[$whitelisted];
+          $status = "is desired (Newsletter) and wantlisted by " . $level[$wantlisted];
           $this->{decisive_module}{module} = undef;
-          $this->manage_whitelist($whitelisted,3);
-        } elsif ($this->{nwhitelisted}) {
-          $status = "is newslisted by " . $level[$this->{nwhitelisted}] . " and whitelisted by " . $level[$whitelisted];
+          $this->manage_wantlist($wantlisted,3);
+        } elsif ($this->{nwantlisted}) {
+          $status = "is newslisted by " . $level[$this->{nwantlisted}] . " and wantlisted by " . $level[$wantlisted];
           $this->{decisive_module}{module} = undef;
-          $this->manage_whitelist($whitelisted,$this->{nwhitelisted});
+          $this->manage_wantlist($wantlisted,$this->{nwantlisted});
         } else {
-          $status = "is whitelisted by " . $level[$whitelisted] . " but newsletter";
+          $status = "is wantlisted by " . $level[$wantlisted] . " but newsletter";
           $this->{decisive_module}{module} = 'Newsl';
           if ( $delivery_type == 1 ) {
             $status .= ": want tag";
@@ -252,15 +252,15 @@ sub process ($this) {
 
       ## Not Newsletter
       } else {
-        $status = "is whitelisted ($whitelisted)";
+        $status = "is wantlisted ($wantlisted)";
         $this->{decisive_module}{module} = undef;
-        $this->manage_whitelist($whitelisted);
+        $this->manage_wantlist($wantlisted);
       }
-    ## Blacklist
-  } elsif ($blacklisted) {
-      $status = "is blacklisted ($blacklisted)";
-      $this->manage_blacklist($blacklisted);
-      $this->{decisive_module}{module} = 'blacklisted';
+    ## Blocklist
+  } elsif ($blocklisted) {
+      $status = "is blocklisted ($blocklisted)";
+      $this->manage_blocklist($blocklisted);
+      $this->{decisive_module}{module} = 'blocklisted';
       if ($delivery_type == 1) {
         $status .= ": want tag";
         my $tag = $email->get_pref( 'spam_tag', '{Spam?}' );
@@ -348,11 +348,11 @@ sub process ($this) {
       if ($email->get_pref('allow_newsletters')) {
         $status = "is desired (Newsletter)";
         $this->{decisive_module}{module} = undef;
-        $this->manage_whitelist(undef,3);
-      } elsif ($this->{nwhitelisted}) {
-        $status = "is newslisted by " . $level[$this->{nwhitelisted}];
+        $this->manage_wantlist(undef,3);
+      } elsif ($this->{nwantlisted}) {
+        $status = "is newslisted by " . $level[$this->{nwantlisted}];
         $this->{decisive_module}{module} = undef;
-        $this->manage_whitelist(undef,$this->{nwhitelisted});
+        $this->manage_wantlist(undef,$this->{nwantlisted});
       } else {
         $status = "is newsletter";
         $this->{decisive_module}{module} = 'Newsl';
@@ -554,8 +554,8 @@ sub load_scores ($this) {
   }
 
   if ( defined( $this->{headers}{'x-spamtagger-status'} ) ) {
-    if ( $this->{headers}{'x-spamtagger-status'} =~ /Blacklisted/ ) {
-      $this->{prefilters} .= ", Blacklist";
+    if ( $this->{headers}{'x-spamtagger-status'} =~ /Blocklisted/ ) {
+      $this->{prefilters} .= ", Blocklist";
     }
   }
 
@@ -688,11 +688,11 @@ sub manage_uncheckeable ($this, $status) {
   return 1;
 }
 
-sub manage_whitelist ($this, $whitelevel, $newslevel = undef) {
+sub manage_wantlist ($this, $wantlevel, $newslevel = undef) {
   my %level = ( 1 => 'system', 2 => 'domain', 3 => 'user' );
   my $str;
-  if (defined($whitelevel)) {
-    $str = "whitelisted by " . $level{$whitelevel};
+  if (defined($wantlevel)) {
+    $str = "wantlisted by " . $level{$wantlevel};
     if (defined($newslevel)) {
       $str .= " and newslisted by " . $level{$newslevel};
     }
@@ -711,9 +711,9 @@ sub manage_whitelist ($this, $whitelevel, $newslevel = undef) {
   return 1;
 }
 
-sub manage_blacklist ($this, $blacklevel) {
+sub manage_blocklist ($this, $blocklevel) {
   my %level = ( 1 => 'system', 2 => 'domain', 3 => 'user' );
-  my $str   = "blacklisted by " . $level{$blacklevel};
+  my $str   = "blocklisted by " . $level{$blocklevel};
 
   $this->{fullheaders} =~
     s/(.*Subject:\s+)(\{(ST_SPAM|ST_HIGHSPAM)\})?(.*)/$1\{ST_SPAM\}$4/i;
@@ -979,7 +979,7 @@ sub do_log ($this, $dbname, $insourceh) {
     return 0;
   }
 
-  my $is_newsletter = ( $this->{sc_newsl} >= 5 && !$this->{nwhitelisted} && !$this->{news_allowed}) || 0;
+  my $is_newsletter = ( $this->{sc_newsl} >= 5 && !$this->{nwantlisted} && !$this->{news_allowed}) || 0;
 
   my $res = $p->execute(
     $this->{env_domain}, $this->{env_tolocal},

@@ -7,10 +7,10 @@ SRCDIR = __SRCDIR__
 BYPASSDIR = VARDIR/spool/tmp/exim/stage1/bypass
 ARCHIVERDIR = VARDIR/spool/tmp/exim/stage1/archiver
 COPYTODIR = VARDIR/spool/tmp/exim/stage1/copyto
-SENDERBLACKLIST = VARDIR/spool/tmp/exim/blacklists/senders
-RECIPIENTBLACKLIST = VARDIR/spool/tmp/exim/blacklists/recipients
-USERBLACKLIST = VARDIR/spool/tmp/exim/blacklists/users
-HOSTBLACKLIST = VARDIR/spool/tmp/exim/blacklists/hosts
+SENDERBLOCKLIST = VARDIR/spool/tmp/exim/blocklists/senders
+RECIPIENTBLOCKLIST = VARDIR/spool/tmp/exim/blocklists/recipients
+USERBLOCKLIST = VARDIR/spool/tmp/exim/blocklists/users
+HOSTBLOCKLIST = VARDIR/spool/tmp/exim/blocklists/hosts
 NORBLHOSTS = VARDIR/spool/tmp/exim/rbl_ignore_hosts
 NOSPFDMARCHOSTS = VARDIR/spool/tmp/exim/spf_and_dmarc_ignore_hosts
 ADDRESSESDIR = VARDIR/spool/spamtagger/addresses
@@ -158,12 +158,12 @@ hostlist   relay_from_hosts = <; 127.0.0.1 ; __RELAY_FROM_HOSTS__
 hostlist   trusted_hosts = <; +relay_from_hosts ; __TRUSTED_HOSTS__
 hostlist   html_ctrl_hosts = <; __HTML_CTRL_WL_HOSTS__
 hostlist   no_ratelimit_hosts = <; __NO_RATELIMIT_HOSTS__
-hostlist   full_whitelisted_hosts = <; __FULL_WHITELIST_HOSTS__
-domainlist relayrefuseddomains = VARDIR/spool/tmp/exim/blacklists/relaytodomains
+hostlist   full_wantlisted_hosts = <; __FULL_WANTLIST_HOSTS__
+domainlist relayrefuseddomains = VARDIR/spool/tmp/exim/blocklists/relaytodomains
 RELAYDEST = VARDIR/spool/tmp/spamtagger/relay_accepteddest.list
 
-#FULLWHITELIST
-addresslist full_whitelisted_senders = /etc/spamtagger/full_whitelisted_senders.list
+#FULLWANTLIST
+addresslist full_wantlisted_senders = /etc/spamtagger/full_wantlisted_senders.list
 
 smtp_accept_reserve = __SMTP_RESERVE__
 smtp_reserve_hosts = ${if eq{$interface_port}{587}{*}{+relay_from_hosts}}
@@ -221,7 +221,7 @@ __IF__ __LISTS_PER_DOMAIN__
 __FI__
           dnslists      = __RBLS__
           condition     = ${if eq {$received_port}{587} {0}{1}}
-          message = Blacklisted in ${perl{hideToken}{$dnslist_domain}}: $dnslist_text
+          message = Blocklisted in ${perl{hideToken}{$dnslist_domain}}: $dnslist_text
           log_message = "listed in ${perl{hideToken}{$dnslist_domain}}: $dnslist_text"
           delay = __RBLTIMEOUT__s
           set acl_c8    = smtp:refused:rbl
@@ -237,18 +237,18 @@ __FI__
  __FI__
 __FI__
 
-  deny    hosts         = HOSTBLACKLIST
+  deny    hosts         = HOSTBLOCKLIST
           !hosts        = <; 127.0.0.1
 __IF__ __LISTS_PER_DOMAIN__
           !condition    = ${if eq{$acl_m0}{true}{yes}{no}}
 __FI__
-          message       = blacklisted host: $sender_host_address
-          set acl_c8    = smtp:refused:host_blacklist
+          message       = blocklisted host: $sender_host_address
+          set acl_c8    = smtp:refused:host_blocklist
           set acl_c9    = STATSADD
           set acl_c8    = smtp:refused
           set acl_c9    = STATSADD
  __IF__ DEBUG
-          logwrite      = DEBUG - refused connection, blacklisted host: $sender_host_address - smtp:refused,smtp:refused:host_blacklist
+          logwrite      = DEBUG - refused connection, blocklisted host: $sender_host_address - smtp:refused,smtp:refused:host_blocklist
  __FI__
 
   accept  hosts = <; __SMTP_CONN_ACCESS__ ; 127.0.0.1
@@ -282,14 +282,14 @@ acl_check_mail:
 
 acl_check_rcpt:
 
-# FULLWHITELIST
+# FULLWANTLIST
   accept
-          hosts         = ${if exists {/etc/spamtagger/full_whitelisted_hosts.list}\
-                               {+full_whitelisted_hosts}\
+          hosts         = ${if exists {/etc/spamtagger/full_wantlisted_hosts.list}\
+                               {+full_wantlisted_hosts}\
                                {+trusted_hosts}\
                           }
-          log_message   = sender/host in full whitelist
-          senders       = +full_whitelisted_senders
+          log_message   = sender/host in full wantlist
+          senders       = +full_wantlisted_senders
 
   accept  hosts = <; ;
   deny    !domains      = +relay_to_domains
@@ -364,7 +364,7 @@ __FI__
   warn    !spf          = pass
           hosts         = NOSPFDMARCHOSTS
           remove_header = X-SpamTagger-SPF
-          add_header    = :after_received:X-SpamTagger-SPF: whitelisted (was $spf_result)
+          add_header    = :after_received:X-SpamTagger-SPF: wantlisted (was $spf_result)
   deny    message       = This domain does not accept unsigned bounces.
           senders       = :
           domains       = +domains_to_check_batv
@@ -405,35 +405,35 @@ __FI__
  __IF__ DEBUG
           logwrite      = DEBUG - accepted, address list submission
  __FI__
-  deny    senders       = SENDERBLACKLIST
-          message       = blacklisted sender: $sender_address
-          set acl_c8    = smtp:refused:sender_blacklist
+  deny    senders       = SENDERBLOCKLIST
+          message       = blocklisted sender: $sender_address
+          set acl_c8    = smtp:refused:sender_blocklist
           set acl_c9    = STATSADD
           set acl_c8    = smtp:refused
           set acl_c9    = STATSADD
  __IF__ DEBUG
-          logwrite      = DEBUG - refused, blacklisted sender: $sender_address - smtp:refused,smtp:refused:sender_blacklist
+          logwrite      = DEBUG - refused, blocklisted sender: $sender_address - smtp:refused,smtp:refused:sender_blocklist
  __FI__
-  deny    condition     = ${if exists{RECIPIENTBLACKLIST} {yes}{no} }
-          message       = blacklisted recipient: $local_part@$domain
-          recipients    = RECIPIENTBLACKLIST
-          set acl_c8    = smtp:refused:recipient_blacklist
+  deny    condition     = ${if exists{RECIPIENTBLOCKLIST} {yes}{no} }
+          message       = blocklisted recipient: $local_part@$domain
+          recipients    = RECIPIENTBLOCKLIST
+          set acl_c8    = smtp:refused:recipient_blocklist
           set acl_c9    = STATSADD
           set acl_c8    = smtp:refused
           set acl_c9    = STATSADD
  __IF__ DEBUG
-          logwrite      = DEBUG - refused, blacklisted recipient: $local_part@$domain - smtp:refused,smtp:refused:recipient_blacklist
+          logwrite      = DEBUG - refused, blocklisted recipient: $local_part@$domain - smtp:refused,smtp:refused:recipient_blocklist
  __FI__
   deny    authenticated  =  *
-          condition      =  ${lookup{$authenticated_id}wildlsearch{USERBLACKLIST}{true}{false}}
+          condition      =  ${lookup{$authenticated_id}wildlsearch{USERBLOCKLIST}{true}{false}}
           message        = refused user due to massive abuse
           log_message    = refused user due to massive abuse
-          set acl_c8    = smtp:refused:user_blacklist
+          set acl_c8    = smtp:refused:user_blocklist
           set acl_c9    = STATSADD
           set acl_c8    = smtp:refused
           set acl_c9    = STATSADD
  __IF__ DEBUG
-          logwrite      = DEBUG - refused, blacklisted user: $authenticated_id - smtp:refused,smtp:refused:user_blacklist
+          logwrite      = DEBUG - refused, blocklisted user: $authenticated_id - smtp:refused,smtp:refused:user_blocklist
  __FI__
 
 
@@ -561,7 +561,7 @@ __IF__ __LISTS_PER_DOMAIN__
 __FI__
           dnslists = __RBLS__
           condition     = ${if eq {$received_port}{587} {0}{1}}
-          message = Blacklisted in ${perl{hideToken}{$dnslist_domain}}: $dnslist_text
+          message = Blocklisted in ${perl{hideToken}{$dnslist_domain}}: $dnslist_text
           log_message   = "listed in ${perl{hideToken}{$dnslist_domain}} : $dnslist_text"
           delay = __RBLTIMEOUT__s
           set acl_c8    = smtp:refused:rbl
@@ -590,7 +590,7 @@ __FI__
           !spf          = pass
           dnslists      = __BSRBLS__
           condition     = ${if eq {$received_port}{587} {0}{1}}
-          message       =  backscatterer blacklisted: $dnslist_text
+          message       =  backscatterer blocklisted: $dnslist_text
           log_message   = "backscatterer listed: $dnslist_text"
           delay         = __RBLTIMEOUT__s
           set acl_c8    = smtp:refused:backscatter
@@ -632,7 +632,7 @@ __FI__
  __FI__
 __FI__
 
-.include_if_exists  VARDIR/spool/tmp/exim/stage1/blacklists/ip-domain
+.include_if_exists  VARDIR/spool/tmp/exim/stage1/blocklists/ip-domain
 
  defer
           !spf          = pass
@@ -645,10 +645,10 @@ __FI__
           condition     = ${if !def:acl_c1}
           condition     = ${if eq {$received_port}{587} {0}{1}}
           !hosts        = <; +trusted_hosts ; \
-                            ${if exists {__SRCDIR__/etc/greylistd/whitelist-hosts}\
-                               {__SRCDIR__/etc/greylistd/whitelist-hosts}{}} ; \
-                            ${if exists {__VARDIR__/spool/greylistd/whitelist-hosts}\
-                               {__VARDIR__/spool/greylistd/whitelist-hosts}{}}
+                            ${if exists {__SRCDIR__/etc/greylistd/wantlist-hosts}\
+                               {__SRCDIR__/etc/greylistd/wantlist-hosts}{}} ; \
+                            ${if exists {__VARDIR__/spool/greylistd/wantlist-hosts}\
+                               {__VARDIR__/spool/greylistd/wantlist-hosts}{}}
           !sender_domains = +domains_to_avoid_greylist
           condition     = ${readsocket{__VARDIR__/run/greylistd/socket}\
                                  {--grey \
@@ -830,12 +830,12 @@ __FI__
 
 acl_check_mime:
 
-# FULLWHITELIST
-  accept  hosts         = ${if exists {/etc/spamtagger/full_whitelisted_hosts.list}\
-                               {+full_whitelisted_hosts}\
+# FULLWANTLIST
+  accept  hosts         = ${if exists {/etc/spamtagger/full_wantlisted_hosts.list}\
+                               {+full_wantlisted_hosts}\
                                {+trusted_hosts}\
                           }
-          senders       = +full_whitelisted_senders
+          senders       = +full_wantlisted_senders
 
 __IF__ LOG_ATTACHMENTS
   warn  condition       = ${if def:mime_filename {true}{false}}
@@ -999,14 +999,14 @@ __ELSE__ ALLOW_LONG
           message = Maximum line length is $acl_m_linelength_limit, got $max_received_linelength.
 __FI__
 
-# FULLWHITELIST
-  accept  remove_header = X-SpamTagger-FullWhitelist
+# FULLWANTLIST
+  accept  remove_header = X-SpamTagger-FullWantlist
           remove_header = X-Newsl
-          hosts         = ${if exists {/etc/spamtagger/full_whitelisted_hosts.list}\
-                               {+full_whitelisted_hosts}\
+          hosts         = ${if exists {/etc/spamtagger/full_wantlisted_hosts.list}\
+                               {+full_wantlisted_hosts}\
                                {+trusted_hosts}\
                           }
-          senders       = +full_whitelisted_senders
+          senders       = +full_wantlisted_senders
 
 __IF__ OUTGOINGVIRUSSCAN
   deny    message =  This message contains malware ($malware_name)
@@ -1081,14 +1081,14 @@ __FI__
 ######################################################################
 begin routers
 
-# FULLWHITELIST
-full_whitelist:
+# FULLWANTLIST
+full_wantlist:
   driver     = accept
-  transport  = bypass_full_whitelist
+  transport  = bypass_full_wantlist
   condition  = ${\
-                   if exists {/etc/spamtagger/full_whitelisted_hosts.list} {\
+                   if exists {/etc/spamtagger/full_wantlisted_hosts.list} {\
                        ${\
-                           if match_ip{$sender_host_address}{+full_whitelisted_hosts}\
+                           if match_ip{$sender_host_address}{+full_wantlisted_hosts}\
                                {yes}\
                                {no}\
                        }\
@@ -1100,8 +1100,8 @@ full_whitelist:
                        }\
                    }\
                }
-  senders    = +full_whitelisted_senders
-  headers_add = X-SpamTagger-FullWhitelist: fully whitelisted
+  senders    = +full_wantlisted_senders
+  headers_add = X-SpamTagger-FullWantlist: fully wantlisted
 
 batv_redirect:
   driver = redirect
@@ -1240,8 +1240,8 @@ __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage1/routers
 ######################################################################
 begin transports
 
-# FULLWHITELIST
-bypass_full_whitelist:
+# FULLWANTLIST
+bypass_full_wantlist:
   driver = smtp
   helo_data = __HELO_NAME__
   allow_localhost = true

@@ -11,9 +11,7 @@
 	<table class="ftable">
 		<tr>
 			<td colspan=2 text-align="center" align="center">
-
-				<a href="https://support.spamtagger.org/boards/3/topics/85-white-black-lists-per-domain-restrictions">Only the server Administrator is allowed to add entries</a><br />
-				<a href="https://support.spamtagger.org/boards/3/topics/85-white-black-lists-per-domain-restrictions">Click HERE for more informations about associated limitations</a>
+				Only the server Administrator is allowed to add entries<br />
 			</td>
 		</tr>
 		<tr><td colspan="2"><hr /></td></tr>
@@ -21,8 +19,8 @@
 			<td colspan=2 text-align="center" align="center">
 				SMTP Stage
 			</td>
-			<?php echo $this->InputRow($this->form->getElement('black_ip_dom'),array('label_addclass'=>'flabeltextarea'));?>
-			<?php echo $this->InputRow($this->form->getElement('white_ip_dom'),array('label_addclass'=>'flabeltextarea'));?>
+			<?php echo $this->InputRow($this->form->getElement('block_ip_dom'),array('label_addclass'=>'flabeltextarea'));?>
+			<?php echo $this->InputRow($this->form->getElement('want_ip_dom'),array('label_addclass'=>'flabeltextarea'));?>
 		</tr>
 		<tr><td colspan="2"><hr /></td></tr>
 		<tr>

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# adds or removes domain names from the whitelist for password protected archives
+# adds or removes domain names from the wantlist for password protected archives
 # manage_wh_passwd_archives.sh add domain.tld to add it
 # manage_wh_passwd_archives.sh del domain.tld to remove it
 

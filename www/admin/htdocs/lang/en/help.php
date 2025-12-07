@@ -269,11 +269,11 @@ username to connect the LDAP directory.
 ";
 
 
-$help['WHITEWARNLIST'] =
-"<h1>Whitelists and warnlists</h1>
-<b>Whitelists</b> let users set up a list of sender that will never be flagged as spam or put in quarantine.
+$help['WANTWARNLIST'] =
+"<h1>Wantlists and warnlists</h1>
+<b>Wantlists</b> let users set up a list of sender that will never be flagged as spam or put in quarantine.
 Although this option may be convenient, it is also very dangerous as spammers tend to forge the sender address to fake someone you know.
-<br>With many entries in whitelists, your filter may become less efficient and being open to smart spam campains.
+<br>With many entries in wantlists, your filter may become less efficient and being open to smart spam campains.
 <br><br>
 <b>Warnlists</b> are a less dangerous method because it forces the user to be more attentive to the list he sets.<br> Instead of simply let the message go through when the sender is listed,
  the system will send a warning message to the final recipient noticing that is has been put in quarantine. This way, the user is aware that something went wrong with the filter
@@ -281,7 +281,7 @@ Although this option may be convenient, it is also very dangerous as spammers te
 <br><br>
 Althoug it is always better to avoid any kind of list, it is advised for the administrator who really needs it, to only enable warnlists first.
 <br>Enabling both is possible, but may not be very usefull.
-<br>Now if you really want to enable whitelists for the whole domain, you have been warned !
+<br>Now if you really want to enable wantlists for the whole domain, you have been warned !
  ";
 
 ### Verified
@@ -628,9 +628,9 @@ spoken by your users. Messages in other languages will be slightly penalized
 (i.e., more likely to be considered spam)
 <h2>Trusted IPs/Networks:</h2>Put here the network or IP addresses (separated by spaces) of any host in your infrastructure that could eventually handle mail before SpamTagger.
 Don't hesitate to also put here the public address of the SpamTagger. This setting will let SpamTagger know how to find the first external host that addresses the messages. This is important for some antispam checks.
-<h2>Enable whitelists:</h2>This is the main switch to enable/disable whitelists. Whitelisting can be dangerous and may be exploited by spammers. Use this option with caution.
-<h2>Enable blacklists:</h2>This is the main switch to enable/disable blacklists.
-<h2>Enable warnlists:</h2>This is the main switch to enable/disable warnlists. Warnlists are less dangerous than whitelists. Using it before enabling whitelists is generally a good idea.
+<h2>Enable wantlists:</h2>This is the main switch to enable/disable wantlists. Wantlisting can be dangerous and may be exploited by spammers. Use this option with caution.
+<h2>Enable blocklists:</h2>This is the main switch to enable/disable blocklists.
+<h2>Enable warnlists:</h2>This is the main switch to enable/disable warnlists. Warnlists are less dangerous than wantlists. Using it before enabling wantlists is generally a good idea.
 <h2>Use Syslog logging:</h2>If activated and if a syslog server has been set up in 'Defaults' panel, engine logs will be copied and sent to it.
 ";
 
@@ -676,8 +676,8 @@ $help['SANETWORK'] =
 These SpamTagger modules require Internet access. They primarily use
 Internet-based databases.<br/><br/>
 <h2>Use Real-time Blocking lists: </h2>This server uses the DNS protocol to
-query Blacklist databases on the Internet. These databases maintain lists of
-known open relays, dynamically allocated IP addresses, and URI blacklists.<br/>
+query Blocklist databases on the Internet. These databases maintain lists of
+known open relays, dynamically allocated IP addresses, and URI blocklists.<br/>
 If network access time is prohibitively slow for a brief period, it may be
 useful to temporarily disable this feature.
 <h2>Use Razor: </h2>Razor is a constantly updated spam catalog used by

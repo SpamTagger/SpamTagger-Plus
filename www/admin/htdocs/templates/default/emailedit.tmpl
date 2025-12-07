@@ -21,36 +21,36 @@ __FORM_BEGIN_EMAILEDIT__
  </tr>
 
 <script language="javascript">
-__IF__ SEEWHITELISTEDIT
+__IF__ SEEWANTLISTEDIT
     function openWhite() {
-        window.document.open('__LINK_EDITWHITELIST__', '', 'width=750,height=400,toolbar=no,resizable=yes');
+        window.document.open('__LINK_EDITWANTLIST__', '', 'width=750,height=400,toolbar=no,resizable=yes');
     }
-__FI__ SEEWHITELISTEDIT
+__FI__ SEEWANTLISTEDIT
 __IF__ SEEWARNLISTEDIT
     function openWarn() {
         window.document.open('__LINK_EDITWARNLIST__', '', 'width=750,height=400,toolbar=no,resizable=yes');
     }
 __FI__ SEEWARNLISTEDIT
-__IF__ SEEBLACKLISTEDIT
+__IF__ SEEBLOCKLISTEDIT
     function openBlack() {
-        window.document.open('__LINK_EDITBLACKLIST__', '', 'width=750,height=400,toolbar=no,resizable=yes');
+        window.document.open('__LINK_EDITBLOCKLIST__', '', 'width=750,height=400,toolbar=no,resizable=yes');
     }
-__FI__ SEEBLACKLISTEDIT
+__FI__ SEEBLOCKLISTEDIT
 </script>
 
 __IF__ SEELISTS
 <tr class="infoBoxContent"><td colspan="2">&nbsp;</td></tr>
 <tr class="infoBoxContent">
   <td width="50%" align="right">
-__IF__ SEEWHITELISTENABLER
-  __LANG_ENABLEWHITELIST__:</td>
-  <td width="50%" align="left">__FORM_INPUTENABLEWHITE__
-__ELSE__ SEEWHITELISTENABLER
+__IF__ SEEWANTLISTENABLER
+  __LANG_ENABLEWANTLIST__:</td>
+  <td width="50%" align="left">__FORM_INPUTENABLEWANT__
+__ELSE__ SEEWANTLISTENABLER
    <td width="50%" align="left">
-__FI__ SEEWHITELISTENABLER
-__IF__ SEEWHITELISTEDIT
-&nbsp;<a href="javascript:openWhite();">__LANG_EDITWHITELIST__&nbsp;<img src="templates/default/images/pencil.gif" border="0" align="abstop"></a>
-__FI__ SEEWHITELISTEDIT
+__FI__ SEEWANTLISTENABLER
+__IF__ SEEWANTLISTEDIT
+&nbsp;<a href="javascript:openWhite();">__LANG_EDITWANTLIST__&nbsp;<img src="templates/default/images/pencil.gif" border="0" align="abstop"></a>
+__FI__ SEEWANTLISTEDIT
   </td>
 </tr>
 
@@ -58,15 +58,15 @@ __IF__ SEELISTS
 <tr class="infoBoxContent"><td colspan="2">&nbsp;</td></tr>
 <tr class="infoBoxContent">
   <td width="50%" align="right">
-__IF__ SEEBLACKLISTENABLER
-  __LANG_ENABLEBLACKLIST__:</td>
-  <td width="50%" align="left">__FORM_INPUTENABLEBLACK__
-__ELSE__ SEEBLACKLISTENABLER
+__IF__ SEEBLOCKLISTENABLER
+  __LANG_ENABLEBLOCKLIST__:</td>
+  <td width="50%" align="left">__FORM_INPUTENABLEBLOCK__
+__ELSE__ SEEBLOCKLISTENABLER
    <td width="50%" align="left">
-__FI__ SEEBLACKLISTENABLER
-__IF__ SEEBLACKLISTEDIT
-&nbsp;<a href="javascript:openBlack();">__LANG_EDITBLACKLIST__&nbsp;<img src="templates/default/images/pencil.gif" border="0" align="abstop"></a>
-__FI__ SEEBLACKLISTEDIT
+__FI__ SEEBLOCKLISTENABLER
+__IF__ SEEBLOCKLISTEDIT
+&nbsp;<a href="javascript:openBlack();">__LANG_EDITBLOCKLIST__&nbsp;<img src="templates/default/images/pencil.gif" border="0" align="abstop"></a>
+__FI__ SEEBLOCKLISTEDIT
   </td>
 </tr>
 

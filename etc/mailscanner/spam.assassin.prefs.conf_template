@@ -48,7 +48,7 @@ internal_networks __SYSTEMIP__
 
 trusted_networks __SYSTEMIP__ __TRUSTEDIPS__
 
-use_auto_whitelist 0
+use_auto_wantlist 0
 
 ifplugin Mail::SpamAssassin::Plugin::DNSEval
 skip_rbl_checks  __SKIP_RBLS__

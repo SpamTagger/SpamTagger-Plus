@@ -5,7 +5,7 @@
  * @author John Mertz
  * @copyright 2025, SpamTagger
  *
- * This is the controler for the newsletter whitelist page
+ * This is the controler for the newsletter wantlist page
  */
 
 if ($_SERVER["REQUEST_METHOD"] == "HEAD") {

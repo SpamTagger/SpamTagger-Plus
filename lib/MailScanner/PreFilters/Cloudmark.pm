@@ -142,7 +142,7 @@ sub Checks ($this, $message) { ## no critic
     if ($err) {
       MailScanner::Log::InfoLog("$MODULE Can't extract category/subcat names for ".$message->{id}."!");
     } else {
-      # replace all punctuation and whitespace with underscores
+      # replace all punctuation and wantspace with underscores
       $out_subcat =~ s/[[:punct:]\s]/_/g;
       $result_str = ", xcat=$out_cat/$out_subcat";
     }

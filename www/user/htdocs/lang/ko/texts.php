@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "뉴스레터";
 $txt['NEWSLETTERSSHORTHELP'] = "이곳에서 당신의 뉴스레터를 관리 할 수 있습니다.";
 $txt['NEWSLETTERSALLOW'] = "배달";
 $txt['NEWSLETTERACCEPT'] = "이 뉴스레터 허용";
-$txt['SPAM_WHITELIST_DISABLED'] = "해당 리스트는 이 도메인에서 활성화 되지 않았습니다 (관리자에게 문의하세요).";
+$txt['SPAM_WANTLIST_DISABLED'] = "해당 리스트는 이 도메인에서 활성화 되지 않았습니다 (관리자에게 문의하세요).";
 /*
  * generic buttons
  */
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "모든 주소";
  */
 $txt['INFORMATIONSABOUTMSG'] = "메일 내용";
 $txt['PREFILTERHITS'] = "Pre-filters";
-$txt['BLACKLISTS'] = "블랙리스트";
+$txt['BLOCKLISTS'] = "블랙리스트";
 $txt['FITLERSCORE'] = "Score";
 $txt['NONE'] = "none";
 $txt['HEADERS'] = "헤더";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "기본 설정 사용";
 $txt['SUMMHTML'] = "HTML형식";
 $txt['SUMMTEXT'] = "문자로만";
 //old
-$txt['EDITWHITELIST'] = "화이트리스트 편집";
+$txt['EDITWANTLIST'] = "화이트리스트 편집";
 //old
 $txt['EDITWARNLIST'] = "경고리스트 편집";
 /*
@@ -261,7 +261,7 @@ $txt['WWENTRY'] = "엔트리";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "이 항목을 완전히 삭제 하시겠습니까?";
 //old
-$txt['WHITELISTFOR'] = "__PARAM__ 의 화이트리스트";
+$txt['WANTLISTFOR'] = "__PARAM__ 의 화이트리스트";
 //old
 $txt['WARNLISTFOR'] = "__PARAM__ 의 경고리스트";
 //old
@@ -388,15 +388,15 @@ $txt['ADDRESSLISTTOPIC'] = "주소 그룹";
 $txt['ADDRESSPARAMTOPIC'] = "주소 설정";
 $txt['QUARPARAMTOPIC'] = "검역소 표시";
 $txt['WARNLISTTOPIC'] = "경고리스트";
-$txt['WHITELISTTOPIC'] = "화이트리스트";
-$txt['BLACKLISTTOPIC'] = "블랙리스트";
+$txt['WANTLISTTOPIC'] = "화이트리스트";
+$txt['BLOCKLISTTOPIC'] = "블랙리스트";
 $txt['INTERFACETOPICTITLE'] = "언어 설정";
 $txt['ADDRESSLISTTOPICTITLE'] = "주소 그룹";
 $txt['ADDRESSPARAMTOPICTITLE'] = "주소 설정";
 $txt['QUARPARAMTOPICTITLE'] = "검역소 표시";
 $txt['WARNLISTTOPICTITLE'] = "주의리스트";
-$txt['WHITELISTTOPICTITLE'] = "화이트리스트";
-$txt['BLACKLISTTOPICTITLE'] = "블랙리스트";
+$txt['WANTLISTTOPICTITLE'] = "화이트리스트";
+$txt['BLOCKLISTTOPICTITLE'] = "블랙리스트";
 /*
  * interface (new)
  */
@@ -459,21 +459,21 @@ $txt['REMOVEANENTRY'] = "리스트에서 비활성화, 활성화 또는 삭제";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "변경하고 싶은 주소를 선택하고, 원하는 버튼을 클릭하십시오.";
 $txt['REMTHEENTRY'] = "선택 항목 제거";
 $txt['DISABLETHEENTRY'] = "선택 항목 비활성화/활성화";
-$txt['WHITELISTSHORTHELP'] = "화이트리스트에는  검역서에 보관하지 않을 메일주소가 포함되어야 합니다. <br />
+$txt['WANTLISTSHORTHELP'] = "화이트리스트에는  검역서에 보관하지 않을 메일주소가 포함되어야 합니다. <br />
 경고: 이 기능은 전체적인 보호를 감소시키기 때문에 임시 해결책으로 사용되어야 합니다.
 화이트리스트 사용에 대한 자세한 내용은 매뉴얼( <a href=\"help.php\">\"Help\"</a> 섹션에서 사용 가능)을 참조하십시오.
 ";
-$txt['BLACKLISTSHORTHELP'] = "블랙리스트는 수신을 거부할 발신자의 메일주소입니다.
+$txt['BLOCKLISTSHORTHELP'] = "블랙리스트는 수신을 거부할 발신자의 메일주소입니다.
 블랙 리스트 사용에 대한 자세한 내용은 설명서( <a href=\"help.php\">\"도움말\"</a>에서 사용가능)를 참조하십시오.
 ";
-$txt['WHITELISTFORADDRESS'] = "이 주소의 화이트 리스트";
-$txt['ADDAWHITEENTRY'] = "목록에 주소 추가";
-$txt['WHITELISTENTRYTOADD'] = "화이트 리스트에 추가하고 싶은 주소를 입력하십시오. 설명을 추가할 수도 있습니다.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "수정하고 싶은 하나이상의 주소를 선택하고, 원하는 버튼을 누르세요.";
-$txt['BLACKLISTFORADDRESS'] = "이 주소의 블랙리스트";
-$txt['ADDABLACKENTRY'] = "목록에 주소 추가";
-$txt['BLACKLISTENTRYTOADD'] = "블랙리스트에 추가하고싶은 주소를 입력하십시오. 설명을 추가할 수도 있습니다.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "수정하고 싶은 주소를 하나이상 선택하고, 원하는 버튼을 누르세요.";
+$txt['WANTLISTFORADDRESS'] = "이 주소의 화이트 리스트";
+$txt['ADDAWANTENTRY'] = "목록에 주소 추가";
+$txt['WANTLISTENTRYTOADD'] = "화이트 리스트에 추가하고 싶은 주소를 입력하십시오. 설명을 추가할 수도 있습니다.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "수정하고 싶은 하나이상의 주소를 선택하고, 원하는 버튼을 누르세요.";
+$txt['BLOCKLISTFORADDRESS'] = "이 주소의 블랙리스트";
+$txt['ADDABLOCKENTRY'] = "목록에 주소 추가";
+$txt['BLOCKLISTENTRYTOADD'] = "블랙리스트에 추가하고싶은 주소를 입력하십시오. 설명을 추가할 수도 있습니다.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "수정하고 싶은 주소를 하나이상 선택하고, 원하는 버튼을 누르세요.";
 $txt['RECORDALREADYEXISTS'] = "이 메일주소가 이미 리스트에 존재합니다.";
 /*
  * logout (new)
@@ -502,18 +502,18 @@ $txt['NEWSLISTENTRYTOADD'] = "뉴스레터 목록에 추가하고 싶은 주소�
 $txt['REMOVEANEWSENTRYSHORTHELP'] = "수정하고 싶은 주소를 하나이상 선택하고 원하는 버튼을 누르세요.";
 $txt['ADDTOGROUP'] = "그룹의 모든 주소에 추가";
 /*
- * Whitelist rule
+ * Wantlist rule
  */
-$txt['ADDWHITELIST'] = "동일한 발송메일의 스팸메일을 화이트리스트에 추가하시겠습니까?";
+$txt['ADDWANTLIST'] = "동일한 발송메일의 스팸메일을 화이트리스트에 추가하시겠습니까?";
 /*
  * Newsletter rule
  */
 $txt['ADDNEWSLIST'] = "같은 발신메일에서 도착하는 모든 뉴스레터를 수신하시겠습니까?";
 $txt['SENDERVARIATIONS'] = "보낸 주소의 모든 변형";
-$txt['NOTWHITELISTBODY'] = "화이트리스트 추가 중 문제가 발생했습니다.";
-$txt['NOTWHITELISTHEAD'] = "화이트리스트 규칙이 추가되지 않았습니다.";
-$txt['WHITELISTBODY'] = "화이트리스트 규칙이 추가되었습니다. 이 메일로부터 발송된 메일은 더 이상 스팸으로 표시되지 않습니다.";
-$txt['WHITELISTHEAD'] = "화이트리스트 규칙이 추가되었습니다.";
+$txt['NOTWANTLISTBODY'] = "화이트리스트 추가 중 문제가 발생했습니다.";
+$txt['NOTWANTLISTHEAD'] = "화이트리스트 규칙이 추가되지 않았습니다.";
+$txt['WANTLISTBODY'] = "화이트리스트 규칙이 추가되었습니다. 이 메일로부터 발송된 메일은 더 이상 스팸으로 표시되지 않습니다.";
+$txt['WANTLISTHEAD'] = "화이트리스트 규칙이 추가되었습니다.";
 $txt['NEWSLISTHEAD'] = "뉴스 규칙이 추가 되었습니다.";
 $txt['NOTNEWSLISTBODY'] = "뉴스 화이트리스트 추가 중 문제가 발생했습니다.";
 $txt['NOTNEWSLISTHEAD'] = "뉴스 목록 조건이 추가 되지 않았습니다.";
@@ -539,15 +539,15 @@ $txt['NEWSLONLY'] = "뉴스만 표시";
 $txt['SPAMONLY'] = "스팸 메일만 표시";
 $txt['NEWSLETTERUNSUB'] = "구독해제";
 /*
- * Newslist and Whitelist rule
+ * Newslist and Wantlist rule
  */
-$txt['ADDNEWSWHITELIST'] = "같은 발신메일에서 도착하는 모든 뉴스레터를 수신하고, 화이트리스트로 등록하시겠습니까?";
-$txt['NEWSWHITELISTHEAD'] = "뉴스리스트와 화이트리스트 규칙을 추가하였습니다.";
-$txt['WHITENOTNEWSBODY'] = "화이트리스트 룰이 추가되었으나, 뉴스레터 추가에 문제가 발생하였습니다.";
-$txt['NEWSNOTWHITEBODY'] = "뉴스레터 규칙이 추가되었으나, 화이트리스트 규칙 추가에 문제가 발생하였습니다,.";
-$txt['ADDWHITENEWSLIST'] = "이후에 수신되는 같은 발송인의 스팸메일을 화이트리스트에 추가하시겠습니까? 또한 같은 발송인의 뉴스레터도 허용하겠습니까?";
-$txt['NEWSWHITELISTBODY'] = "뉴스리스트와 화이트리스트 규칙을 추가였습니다. 이후에 수신되는 메일은 뉴스레터나 스팸으로 확인되어도 표시하지 않습니다.";
-$txt['NEWSNOTWHITEHEAD'] = "뉴스리스트가 추가되었습니다. 화이트리스트는 추가되지 않습니다.";
-$txt['WHITENOTNEWSHEAD'] = "화이트리스트가 추가되었습니다. 뉴스레터는 추가되지 않았습니다.";
-$txt['NOTNEWSWHITEHEAD'] = "뉴스레터와 화이트리스트 규칙이 모두 추가되지 않았습니다.";
-$txt['NOTNEWSWHITEBODY'] = "규칙 추가 중 문제가 발생하였습니다.";
+$txt['ADDNEWSWANTLIST'] = "같은 발신메일에서 도착하는 모든 뉴스레터를 수신하고, 화이트리스트로 등록하시겠습니까?";
+$txt['NEWSWANTLISTHEAD'] = "뉴스리스트와 화이트리스트 규칙을 추가하였습니다.";
+$txt['WANTNOTNEWSBODY'] = "화이트리스트 룰이 추가되었으나, 뉴스레터 추가에 문제가 발생하였습니다.";
+$txt['NEWSNOTWANTBODY'] = "뉴스레터 규칙이 추가되었으나, 화이트리스트 규칙 추가에 문제가 발생하였습니다,.";
+$txt['ADDWANTNEWSLIST'] = "이후에 수신되는 같은 발송인의 스팸메일을 화이트리스트에 추가하시겠습니까? 또한 같은 발송인의 뉴스레터도 허용하겠습니까?";
+$txt['NEWSWANTLISTBODY'] = "뉴스리스트와 화이트리스트 규칙을 추가였습니다. 이후에 수신되는 메일은 뉴스레터나 스팸으로 확인되어도 표시하지 않습니다.";
+$txt['NEWSNOTWANTHEAD'] = "뉴스리스트가 추가되었습니다. 화이트리스트는 추가되지 않습니다.";
+$txt['WANTNOTNEWSHEAD'] = "화이트리스트가 추가되었습니다. 뉴스레터는 추가되지 않았습니다.";
+$txt['NOTNEWSWANTHEAD'] = "뉴스레터와 화이트리스트 규칙이 모두 추가되지 않았습니다.";
+$txt['NOTNEWSWANTBODY'] = "규칙 추가 중 문제가 발생하였습니다.";

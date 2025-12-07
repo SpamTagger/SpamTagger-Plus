@@ -24,7 +24,7 @@ class Default_Model_Email
 	protected $_domainobject;
 
 	protected $_configpanels = array(0 => 'addresssettings', 1 => 'warnlist',
-                                     2 => 'whitelist', 3 => 'archiving', 4 => 'actions', 5 => 'blacklist', 6 => 'newslist');
+                                     2 => 'wantlist', 3 => 'archiving', 4 => 'actions', 5 => 'blocklist', 6 => 'newslist');
 
 	public function setParam($param, $value) {
 		if (array_key_exists($param, $this->_values)) {
@@ -131,14 +131,14 @@ class Default_Model_Email
         $antispam = new Default_Model_AntispamConfig();
 		$antispam->find(1);
 
-    	if (!$antispam->getParam('enable_whitelists') || !$this->getDomainObject()->getPref('enable_whitelists')) {
-    		unset($panels['whitelist']);
+    	if (!$antispam->getParam('enable_wantlists') || !$this->getDomainObject()->getPref('enable_wantlists')) {
+    		unset($panels['wantlist']);
     	}
     	if (!$antispam->getParam('enable_warnlists') || !$this->getDomainObject()->getPref('enable_warnlists')) {
     		unset($panels['warnlist']);
     	}
-	if (!$antispam->getParam('enable_blacklists') || !$this->getDomainObject()->getPref('enable_blacklists')) {
-                unset($panels['blacklist']);
+	if (!$antispam->getParam('enable_blocklists') || !$this->getDomainObject()->getPref('enable_blocklists')) {
+                unset($panels['blocklist']);
         }
     	return $panels;
     }
@@ -219,7 +219,7 @@ class Default_Model_Email
     public function delete()
     {
         $wwlists = new Default_Model_WWElement();
-        $types = ["white", "black", "warn", "wnews"];
+        $types = ["want", "block", "warn", "wnews"];
         foreach ($types as $type) {
             $elements = $wwlists->fetchAll($this->getParam('address'), $type);
             foreach ($elements as $element) {

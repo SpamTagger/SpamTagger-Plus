@@ -47,7 +47,7 @@ my $rbl_sql_file  = '/var/tmp/st_checks_rbls.bak';
 my @rbls_to_disable  = qw/STIPRWL STIPRBL SIPURIRBL STURIBL STERBL SIPINVALUEMENT SIPDEUXQUATREINVALUEMENT STTRUSTEDSPF/;
 
 my %rbl_field = (
-  'trustedSources' => 'whiterbls',
+  'trustedSources' => 'wantrbls',
   'PreRBLs' => 'lists',
   'UriRBLs' => 'rbls',
   'mta_config' => 'rbls',

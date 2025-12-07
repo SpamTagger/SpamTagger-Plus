@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Bültenler";
 $txt['NEWSLETTERSSHORTHELP'] = "Bültenlerinizi buradan yönetebilirsiniz.";
 $txt['NEWSLETTERSALLOW'] = "teslim et";
 $txt['NEWSLETTERACCEPT'] = "Bu bülteni kabul et";
-$txt['SPAM_WHITELIST_DISABLED'] = "Bu etki alanı için liste etkinleştirilmedi (yöneticinizle iletişim kurun).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Bu etki alanı için liste etkinleştirilmedi (yöneticinizle iletişim kurun).";
 /*
  * generic buttons
  */
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "Tüm adresler";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Mesajın içeriği";
 $txt['PREFILTERHITS'] = "ön filtre";
-$txt['BLACKLISTS'] = "Kara liste";
+$txt['BLOCKLISTS'] = "Kara liste";
 $txt['FITLERSCORE'] = "Skor";
 $txt['NONE'] = "hiçbiri";
 $txt['HEADERS'] = "Başlıklar";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "varsayılanı kullan";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "düz metin";
 //old
-$txt['EDITWHITELIST'] = "beyaz listeyi düzenle";
+$txt['EDITWANTLIST'] = "beyaz listeyi düzenle";
 //old
 $txt['EDITWARNLIST'] = "uyarı listesini düzenle";
 /*
@@ -261,7 +261,7 @@ $txt['WWENTRY'] = "Girdi";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Bu girdiyi kalıcı olarak silmek istediğinizden emin misiniz?";
 //old
-$txt['WHITELISTFOR'] = "__PARAM__ için beyaz liste";
+$txt['WANTLISTFOR'] = "__PARAM__ için beyaz liste";
 //old
 $txt['WARNLISTFOR'] = "__PARAM__ için uyarı listesi";
 //old
@@ -388,15 +388,15 @@ $txt['ADDRESSLISTTOPIC'] = "Adres grubu";
 $txt['ADDRESSPARAMTOPIC'] = "Adres ayarları";
 $txt['QUARPARAMTOPIC'] = "Karantina görüntüsü";
 $txt['WARNLISTTOPIC'] = "Uyarı listesi";
-$txt['WHITELISTTOPIC'] = "Beyaz liste";
-$txt['BLACKLISTTOPIC'] = "Kara liste";
+$txt['WANTLISTTOPIC'] = "Beyaz liste";
+$txt['BLOCKLISTTOPIC'] = "Kara liste";
 $txt['INTERFACETOPICTITLE'] = "arayüz ayarları";
 $txt['ADDRESSLISTTOPICTITLE'] = "adres grubu";
 $txt['ADDRESSPARAMTOPICTITLE'] = "adres ayarları";
 $txt['QUARPARAMTOPICTITLE'] = "karantina görüntüle";
 $txt['WARNLISTTOPICTITLE'] = "uyarı listesi";
-$txt['WHITELISTTOPICTITLE'] = "beyaz liste";
-$txt['BLACKLISTTOPICTITLE'] = "kara liste";
+$txt['WANTLISTTOPICTITLE'] = "beyaz liste";
+$txt['BLOCKLISTTOPICTITLE'] = "kara liste";
 /*
  * interface (new)
  */
@@ -459,21 +459,21 @@ $txt['REMOVEANENTRY'] = "Devre dışı bırak, etkinleştir veya listeden bir ad
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Listeden değiştirmek istediğiniz adresi veya adresleri seçin ve istediğiniz işlem düğmesine tıklayın.";
 $txt['REMTHEENTRY'] = "Seçimi Kaldır";
 $txt['DISABLETHEENTRY'] = "Devre dışı bırakın/etkinleştirin";
-$txt['WHITELISTSHORTHELP'] = "Beyaz liste, hiçbir karantina korumasının gerçekleşmeyeceği güvenilir gönderen adreslerini içerir.<br />
+$txt['WANTLISTSHORTHELP'] = "Beyaz liste, hiçbir karantina korumasının gerçekleşmeyeceği güvenilir gönderen adreslerini içerir.<br />
                                   Uyarı: Bu işlev, genel korumayı azalttığı için geçici çözüm olarak kullanılmalıdır.
                                   Beyaz liste kullanımı hakkında daha fazla bilgi için kullanıcı kılavuzuna bakın (<a href=\"help.php\"> \"Yardım\"</a> bölümünde kullanılabilir) .
 ";
-$txt['BLACKLISTSHORTHELP'] = "Kara kara listeye gönderen adresleri içerir.
+$txt['BLOCKLISTSHORTHELP'] = "Kara kara listeye gönderen adresleri içerir.
                                   Kara liste kullanımı hakkında daha fazla bilgi için (<a href=\"help.php\"> \"Yardım\"</a> bölümünde kullanılabilir) kılavuzuna bakın.
 ";
-$txt['WHITELISTFORADDRESS'] = "Adres için beyazliste";
-$txt['ADDAWHITEENTRY'] = "Lİsteye bir adres ekle";
-$txt['WHITELISTENTRYTOADD'] = "Beyaz listeye eklemek için istediğiniz adresi girin. İsteğe bağlı bir açıklama da ekleyebilirsiniz.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Listeden değiştirmek istediğiniz adresi veya adresleri seçin ve istediğiniz işlem düğmesine tıklayın.";
-$txt['BLACKLISTFORADDRESS'] = "Adres için karaliste";
-$txt['ADDABLACKENTRY'] = "Listeye bir adres ekle";
-$txt['BLACKLISTENTRYTOADD'] = "Kara listeye eklemek için bir adres girin. İsteğe bağlı bir yorum da girebilirsiniz.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Listeden değiştirmek istediğiniz adresi veya adresleri seçin ve istediğiniz işlem düğmesine tıklayın.";
+$txt['WANTLISTFORADDRESS'] = "Adres için beyazliste";
+$txt['ADDAWANTENTRY'] = "Lİsteye bir adres ekle";
+$txt['WANTLISTENTRYTOADD'] = "Beyaz listeye eklemek için istediğiniz adresi girin. İsteğe bağlı bir açıklama da ekleyebilirsiniz.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Listeden değiştirmek istediğiniz adresi veya adresleri seçin ve istediğiniz işlem düğmesine tıklayın.";
+$txt['BLOCKLISTFORADDRESS'] = "Adres için karaliste";
+$txt['ADDABLOCKENTRY'] = "Listeye bir adres ekle";
+$txt['BLOCKLISTENTRYTOADD'] = "Kara listeye eklemek için bir adres girin. İsteğe bağlı bir yorum da girebilirsiniz.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Listeden değiştirmek istediğiniz adresi veya adresleri seçin ve istediğiniz işlem düğmesine tıklayın.";
 $txt['RECORDALREADYEXISTS'] = "Bu adres listede zaten var.";
 /*
  * logout (new)
@@ -506,35 +506,35 @@ $txt['SPAMONLY'] = "Yalnızca spam göster";
 $txt['ADDRULE'] = "WWList kuralı ekleme";
 //
 $txt['ADDITIONALACTION'] = "Ek eylemler:";
-$txt['NOTBLACKLISTBODY'] = "Kara liste eklenirken bir sorun oluştu.";
-$txt['NOTBLACKLISTHEAD'] = "Kara liste kuralı eklenmedi.";
-$txt['BLACKLISTBODY'] = "Bir kara liste kuralı eklendi. Bu gönderenden gelecek mesajlar her zaman spam olarak işaretlenecektir.";
-$txt['BLACKLISTHEAD'] = "Kara liste kuralı eklendi.";
+$txt['NOTBLOCKLISTBODY'] = "Kara liste eklenirken bir sorun oluştu.";
+$txt['NOTBLOCKLISTHEAD'] = "Kara liste kuralı eklenmedi.";
+$txt['BLOCKLISTBODY'] = "Bir kara liste kuralı eklendi. Bu gönderenden gelecek mesajlar her zaman spam olarak işaretlenecektir.";
+$txt['BLOCKLISTHEAD'] = "Kara liste kuralı eklendi.";
 /*
- * Blacklist rule (not currently implemented)
+ * Blocklist rule (not currently implemented)
  */
-$txt['ADDBLACKLIST'] = "Aynı gönderenden gelecek tüm e-postalar kara listeye alınsın mı?";
-$txt['NOTNEWSWHITEBODY'] = "Bu kurallar eklenirken bir sorun oluştu.";
-$txt['NOTNEWSWHITEHEAD'] = "Ne bülten ne de beyaz liste kuralı eklenmedi.";
-$txt['WHITENOTNEWSBODY'] = "Bir beyaz liste kuralı eklendi, ancak bülten beyaz liste kuralı eklenirken bir sorun oluştu.";
-$txt['WHITENOTNEWSHEAD'] = "Beyaz liste eklendi ancak bülten eklenmedi.";
-$txt['NEWSNOTWHITEBODY'] = "Bir bülten kuralı eklendi, ancak beyaz liste kuralı eklenirken bir sorun oluştu.";
-$txt['NEWSNOTWHITEHEAD'] = "Bülten eklendi ancak beyaz liste eklenmedi.";
-$txt['NEWSWHITELISTBODY'] = "Bir bülten ve beyaz liste kuralı eklendi. Bu gönderenden gelecek mesajlar, bülten veya spam olarak algılanırsa işaretlenmeyecektir.";
-$txt['NEWSWHITELISTHEAD'] = "Bülten ve beyaz liste kuralları eklendi.";
-$txt['ADDWHITENEWSLIST'] = "Aynı gönderenden gelecek tüm spamlar beyaz listeye eklensin mi? Ayrıca bu gönderenden gelen her bülten kabul edilsin mi?";
+$txt['ADDBLOCKLIST'] = "Aynı gönderenden gelecek tüm e-postalar kara listeye alınsın mı?";
+$txt['NOTNEWSWANTBODY'] = "Bu kurallar eklenirken bir sorun oluştu.";
+$txt['NOTNEWSWANTHEAD'] = "Ne bülten ne de beyaz liste kuralı eklenmedi.";
+$txt['WANTNOTNEWSBODY'] = "Bir beyaz liste kuralı eklendi, ancak bülten beyaz liste kuralı eklenirken bir sorun oluştu.";
+$txt['WANTNOTNEWSHEAD'] = "Beyaz liste eklendi ancak bülten eklenmedi.";
+$txt['NEWSNOTWANTBODY'] = "Bir bülten kuralı eklendi, ancak beyaz liste kuralı eklenirken bir sorun oluştu.";
+$txt['NEWSNOTWANTHEAD'] = "Bülten eklendi ancak beyaz liste eklenmedi.";
+$txt['NEWSWANTLISTBODY'] = "Bir bülten ve beyaz liste kuralı eklendi. Bu gönderenden gelecek mesajlar, bülten veya spam olarak algılanırsa işaretlenmeyecektir.";
+$txt['NEWSWANTLISTHEAD'] = "Bülten ve beyaz liste kuralları eklendi.";
+$txt['ADDWANTNEWSLIST'] = "Aynı gönderenden gelecek tüm spamlar beyaz listeye eklensin mi? Ayrıca bu gönderenden gelen her bülten kabul edilsin mi?";
 /*
- * Newslist and Whitelist rule
+ * Newslist and Wantlist rule
  */
-$txt['ADDNEWSWHITELIST'] = "Aynı gönderenden gelecek tüm bültenler kabul edilsin mi? Ayrıca bu gönderenden gelen tüm spam mesajlar beyaz listeye eklensin mi?";
-$txt['NOTWHITELISTBODY'] = "Beyaz liste eklenirken bir sorun oluştu.";
-$txt['NOTWHITELISTHEAD'] = "Beyaz liste kuralı eklenmedi.";
-$txt['WHITELISTBODY'] = "Beyaz liste kuralı eklendi. Bu gönderenden gelecek mesajlar, spam olarak algılanırsa işaretlenmeyecektir.";
-$txt['WHITELISTHEAD'] = "Beyaz liste kuralı eklendi.";
+$txt['ADDNEWSWANTLIST'] = "Aynı gönderenden gelecek tüm bültenler kabul edilsin mi? Ayrıca bu gönderenden gelen tüm spam mesajlar beyaz listeye eklensin mi?";
+$txt['NOTWANTLISTBODY'] = "Beyaz liste eklenirken bir sorun oluştu.";
+$txt['NOTWANTLISTHEAD'] = "Beyaz liste kuralı eklenmedi.";
+$txt['WANTLISTBODY'] = "Beyaz liste kuralı eklendi. Bu gönderenden gelecek mesajlar, spam olarak algılanırsa işaretlenmeyecektir.";
+$txt['WANTLISTHEAD'] = "Beyaz liste kuralı eklendi.";
 /*
- * Whitelist rule
+ * Wantlist rule
  */
-$txt['ADDWHITELIST'] = "Aynı gönderenden gelecek tüm spamlar beyaz listeye eklensin mi?";
+$txt['ADDWANTLIST'] = "Aynı gönderenden gelecek tüm spamlar beyaz listeye eklensin mi?";
 $txt['NOTNEWSLISTBODY'] = "Bülten beyaz listesi eklenirken bir sorun oluştu.";
 $txt['NOTNEWSLISTHEAD'] = "Bülten kuralı eklenmedi.";
 $txt['NEWSLISTBODY'] = "Bir bülten beyaz listesi kuralı eklendi. Bu gönderenden gelecek mesajlar, bülten olarak algılanırsa işaretlenmeyecektir.";

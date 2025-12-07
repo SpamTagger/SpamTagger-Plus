@@ -7,23 +7,23 @@
 
 $(document).ready(function(){
 
-	 $("#enable_whitelists").click(function(event){
-		 if ($("#enable_whitelists").is(':checked')) {
-             $("#whitelist_list").show();
-             $(".whitelist_options").show();
+	 $("#enable_wantlists").click(function(event){
+		 if ($("#enable_wantlists").is(':checked')) {
+             $("#wantlist_list").show();
+             $(".wantlist_options").show();
 		 } else {
-        	 $("#whitelist_list").hide();
-             $(".whitelist_options").hide();
+        	 $("#wantlist_list").hide();
+             $(".wantlist_options").hide();
 		 }
 	 });
 
-	$("#enable_blacklists").click(function(event){
-                 if ($("#enable_blacklists").is(':checked')) {
-             $("#blacklist_list").show();
-             $(".blacklist_options").show();
+	$("#enable_blocklists").click(function(event){
+                 if ($("#enable_blocklists").is(':checked')) {
+             $("#blocklist_list").show();
+             $(".blocklist_options").show();
                  } else {
-                 $("#blacklist_list").hide();
-             $(".blacklist_options").hide();
+                 $("#blocklist_list").hide();
+             $(".blocklist_options").hide();
                  }
          });
 

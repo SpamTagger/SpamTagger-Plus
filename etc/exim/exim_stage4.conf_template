@@ -72,7 +72,7 @@ domainlist forward_by_mx = wildlsearch;VARDIR/spool/tmp/spamtagger/domains_to_mx
 domainlist domains_require_tls_to = VARDIR/spool/tmp/spamtagger/domains_require_tls_to.list
 hostlist   relay_from_hosts = 127.0.0.1
 hostlist   trusted_hosts = <; __TRUSTED_HOSTS__
-addresslist full_whitelisted_senders = lsearch;VARDIR/spool/spamtagger/full_whitelisted_senders.list
+addresslist full_wantlisted_senders = lsearch;VARDIR/spool/spamtagger/full_wantlisted_senders.list
 
 perl_at_start = true
 perl_startup = do '__SRCDIR__/etc/exim/out_scripts.pl'
@@ -112,11 +112,11 @@ forced:
   condition   = ${if match{$header_X-SpamTagger-Forced:}{message forced}}
   route_data  = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtagger/domains.list}}
 
-full_whitelist:
+full_wantlist:
    driver     = manualroute
    transport  = remote_smtp
-   condition  = ${if def:header_X-SpamTagger-FullWhitelist:{$h_X-SpamTagger-FullWhitelist:}{yes} }
-   senders    = +full_whitelisted_senders
+   condition  = ${if def:header_X-SpamTagger-FullWantlist:{$h_X-SpamTagger-FullWantlist:}{yes} }
+   senders    = +full_wantlisted_senders
    route_data = ${lookup{$domain}wildlsearch{VARDIR/spool/tmp/spamtaggerspamtaggerst}}
 
 filter_newsletter:
@@ -128,16 +128,16 @@ filter_newsletter:
   headers_add = X-Auto-Response-Suppress: DR, NDR, RN, NRN, OOF, AutoReply
   __INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
-filter_blacklist:
+filter_blocklist:
   driver = accept
-  condition = ${if >{${perl{isBlacklisted}{$local_part}{$domain}}}{0} }
-  #condition = ${if ! match {$header_X-SpamTagger-Status:}{\{${perl{getBlacklistedFlag}{$local_part}{$domain}}\}} {yes}{no} }
+  condition = ${if >{${perl{isBlocklisted}{$local_part}{$domain}}}{0} }
+  #condition = ${if ! match {$header_X-SpamTagger-Status:}{\{${perl{getBlocklistedFlag}{$local_part}{$domain}}\}} {yes}{no} }
   transport = spam_store
-  headers_add = X-SpamTagger-Status: Blacklisted (${perl{getBlacklistedFlag}{$local_part}{$domain}})
+  headers_add = X-SpamTagger-Status: Blocklisted (${perl{getBlocklistedFlag}{$local_part}{$domain}})
   headers_remove = X-SpamTagger-Status
   ___INCLUDE__ /var/spamtagger/spool/tmp/exim/stage4/remove_headers
 
-__IF__ TAGMODEBYPASSWHITELISTS
+__IF__ TAGMODEBYPASSWANTLISTS
 filter_checktag_mx:
   driver = dnslookup
   transport = remote_smtp

@@ -9,7 +9,7 @@
 # Default-Stop:      0 1 6
 # Short-Description: SNFServer providing email filtering.
 # Description:       Start SNFServer to filter email for spam,
-#	blacklist IP addresses, etc.
+#	blocklist IP addresses, etc.
 ### END INIT INFO
 #
 # snf-server	Starts and stops the SNFServer daemon (Ubuntu).

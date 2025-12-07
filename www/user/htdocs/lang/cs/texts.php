@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "zpravodaje";
 $txt['NEWSLETTERSSHORTHELP'] = "Zde můžete spravovat své informační bulletiny.";
 $txt['NEWSLETTERSALLOW'] = "doručit";
 $txt['NEWSLETTERACCEPT'] = "akceptovat tento informační bulletin";
-$txt['SPAM_WHITELIST_DISABLED'] = "Seznam není aktivní pro tuto doménu (Kontaktujte vašeho administrátora).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Seznam není aktivní pro tuto doménu (Kontaktujte vašeho administrátora).";
 /*
  * generic buttons
  */
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "všechny adresy";
  */
 $txt['INFORMATIONSABOUTMSG'] = "obsah zprávy";
 $txt['PREFILTERHITS'] = "Předfiltry";
-$txt['BLACKLISTS'] = "seznam blokovaných";
+$txt['BLOCKLISTS'] = "seznam blokovaných";
 $txt['FITLERSCORE'] = "skóre";
 $txt['NONE'] = "žádné";
 $txt['HEADERS'] = "hlavičky";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "použít výchozí";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "prostý text";
 //old
-$txt['EDITWHITELIST'] = "upravit seznam povolených";
+$txt['EDITWANTLIST'] = "upravit seznam povolených";
 //old
 $txt['EDITWARNLIST'] = "upravit seznam varování";
 /*
@@ -261,7 +261,7 @@ $txt['WWENTRY'] = "položka";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Opravdu chcete tuto položku trvale smazat?";
 //old
-$txt['WHITELISTFOR'] = "seznam povolených pro __PARAM__";
+$txt['WANTLISTFOR'] = "seznam povolených pro __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "seznam varování pro __PARAM__";
 //old
@@ -388,15 +388,15 @@ $txt['ADDRESSLISTTOPIC'] = "skupina adres";
 $txt['ADDRESSPARAMTOPIC'] = "nastavení adresy";
 $txt['QUARPARAMTOPIC'] = "zobrazení karantény";
 $txt['WARNLISTTOPIC'] = "seznam varování";
-$txt['WHITELISTTOPIC'] = "seznam povolených";
-$txt['BLACKLISTTOPIC'] = "seznam zakázaných";
+$txt['WANTLISTTOPIC'] = "seznam povolených";
+$txt['BLOCKLISTTOPIC'] = "seznam zakázaných";
 $txt['INTERFACETOPICTITLE'] = "nastavení rozhraní";
 $txt['ADDRESSLISTTOPICTITLE'] = "skupina adres";
 $txt['ADDRESSPARAMTOPICTITLE'] = "nastavení adresy";
 $txt['QUARPARAMTOPICTITLE'] = "zobrazení karantény";
 $txt['WARNLISTTOPICTITLE'] = "seznam varování";
-$txt['WHITELISTTOPICTITLE'] = "seznam povolených";
-$txt['BLACKLISTTOPICTITLE'] = "seznam zakázaných";
+$txt['WANTLISTTOPICTITLE'] = "seznam povolených";
+$txt['BLOCKLISTTOPICTITLE'] = "seznam zakázaných";
 /*
  * interface (new)
  */
@@ -459,21 +459,21 @@ $txt['REMOVEANENTRY'] = "zakázat, povolit nebo odstranit adresu ze seznamu";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Vyberte adresu nebo adresy, které chcete upravit, a klikněte na požadované tlačítko akce.";
 $txt['REMTHEENTRY'] = "odstranit označené";
 $txt['DISABLETHEENTRY'] = "zakázat/povolit označené";
-$txt['WHITELISTSHORTHELP'] = "seznam povolených obsahuje adresy důvěryhodných odesílatelů, pro které se vůbec nevyskytuje žádná karanténní ochrana. <br />
+$txt['WANTLISTSHORTHELP'] = "seznam povolených obsahuje adresy důvěryhodných odesílatelů, pro které se vůbec nevyskytuje žádná karanténní ochrana. <br />
                                   Upozornění: tato funkce by měla být použita jako dočasné řešení, protože snižuje celkovou ochranu.
                                   Podrobnější informace o použití seznamu povolených naleznete v příručce (k dispozici v části <a href=\"help.php\"> \"Nápověda\" </a>).
 ";
-$txt['BLACKLISTSHORTHELP'] = "Seznam zakázaných obsahuje adresu odesílatele na černé listině.
+$txt['BLOCKLISTSHORTHELP'] = "Seznam zakázaných obsahuje adresu odesílatele na černé listině.
                                   Podrobnější informace o použití seznamu zakázaných naleznete v manuálu (k dispozici v části <a href=\"help.php\"> \"Nápověda\" </a>).
 ";
-$txt['WHITELISTFORADDRESS'] = "seznam povolených adres";
-$txt['ADDAWHITEENTRY'] = "přidat adresu do seznamu";
-$txt['WHITELISTENTRYTOADD'] = "Zadejte adresu, kterou chcete přidat do seznamu povolených. Můžete také přidat volitelný komentář.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Vyberte adresu nebo adresy, které chcete upravit, a klikněte na požadované tlačítko akce.";
-$txt['BLACKLISTFORADDRESS'] = "seznam zakázaných adres";
-$txt['ADDABLACKENTRY'] = "přidat adresu do seznamu";
-$txt['BLACKLISTENTRYTOADD'] = "Zadejte adresu, kterou chcete přidat do seznamu zakázaných. Můžete také přidat volitelný komentář.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Vyberte adresu nebo adresy, které chcete upravit, a klikněte na požadované tlačítko akce.";
+$txt['WANTLISTFORADDRESS'] = "seznam povolených adres";
+$txt['ADDAWANTENTRY'] = "přidat adresu do seznamu";
+$txt['WANTLISTENTRYTOADD'] = "Zadejte adresu, kterou chcete přidat do seznamu povolených. Můžete také přidat volitelný komentář.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Vyberte adresu nebo adresy, které chcete upravit, a klikněte na požadované tlačítko akce.";
+$txt['BLOCKLISTFORADDRESS'] = "seznam zakázaných adres";
+$txt['ADDABLOCKENTRY'] = "přidat adresu do seznamu";
+$txt['BLOCKLISTENTRYTOADD'] = "Zadejte adresu, kterou chcete přidat do seznamu zakázaných. Můžete také přidat volitelný komentář.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Vyberte adresu nebo adresy, které chcete upravit, a klikněte na požadované tlačítko akce.";
 $txt['RECORDALREADYEXISTS'] = "Tato adresa je již v seznamu.";
 /*
  * logout (new)

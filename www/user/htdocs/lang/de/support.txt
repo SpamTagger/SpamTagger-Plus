@@ -46,6 +46,6 @@ $txt['FAQ'] = "
                       </ul>
                   </li>
                   <li> <h2>Was Sie tun können, um SpamTagger zu korrigieren</h2>
-                      Bei Fehlern in SpamTagger ist es am besten, wenn Sie den Filter anpassen, indem Sie Ihrem Administrator ein Feedback geben. Denken Sie nicht, dass die beste Lösung nur für Whitelist- oder Blacklist-Versender ist, da dies nur ein schneller, aber schmutziger Weg ist (schauen Sie sich das an, um mehr Informationen zu erhalten). Obwohl es manchmal die einzige Möglichkeit ist, ist es immer besser, die wirkliche Ursache des Fehlers herauszufinden und zu korrigieren. Dies kann nur von Technikern durchgeführt werden, also zögern Sie nicht, Ihrem Administrator Feedback zu Fehlern zu geben.
+                      Bei Fehlern in SpamTagger ist es am besten, wenn Sie den Filter anpassen, indem Sie Ihrem Administrator ein Feedback geben. Denken Sie nicht, dass die beste Lösung nur für Wantlist- oder Blocklist-Versender ist, da dies nur ein schneller, aber schmutziger Weg ist (schauen Sie sich das an, um mehr Informationen zu erhalten). Obwohl es manchmal die einzige Möglichkeit ist, ist es immer besser, die wirkliche Ursache des Fehlers herauszufinden und zu korrigieren. Dies kann nur von Technikern durchgeführt werden, also zögern Sie nicht, Ihrem Administrator Feedback zu Fehlern zu geben.
                   </li>
                 </ul>";

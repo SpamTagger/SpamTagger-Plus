@@ -286,7 +286,7 @@ Microsoft Oulook simplifie la notification des faux-n&eacute;gatifs.</p>
 <p>Rapport p&eacute;riodique envoy&eacute; automatiquement qui liste les messages retenus en quarantaine et dispose
 d\'outils de consultation et de lib&eacute;ration.</p>
 <h3>RBL</h3>
-<p>Realtime Blackhole List. Les RBLs ont pour mission de maintenir en temps r&eacute;el une liste des serveurs
+<p>Realtime Block List. Les RBLs ont pour mission de maintenir en temps r&eacute;el une liste des serveurs
 r&eacute;put&eacute;s pour envoyer du spam. Le principe d\'utilisation est tr&egrave;s simple : si le message re&ccedil;u provient
 d\'un tel serveur, il sera consid&eacute;r&eacute;, a priori, comme un spam. La difficult&eacute; avec l\'utilisation des RBL est
 de v&eacute;rifier en permanence leur fiabilit&eacute;.</p>

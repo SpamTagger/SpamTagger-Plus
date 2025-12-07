@@ -21,7 +21,7 @@ $txt['SFALSEPOSSUB2TITLE'] = "An e-mail was considered to be spam and you don't 
 $txt['SFALSEPOSSUB2'] = "From the quarantine list, you can view the criteria that SpamTagger used to consider the message as spam via the <img src=\"/templates/".$template."/images/support/reasons.gif\" align=\"middle\" alt=\"\"> button. If you feel that these criteria are not justifiable, you can request an analysis by our analysis centre by clicking on the <img src=\"/templates/".$template."/images/support/analyse.gif\" align=\"middle\" alt=\"\"> button. You can also release the message by clicking on the <img src=\"/templates/".$template."/images/support/force.gif\" align=\"middle\" alt=\"\"> button.";
 
 $txt['SFALSEPOSSUB3TITLE'] = "Mailing lists";
-$txt['SFALSEPOSSUB3'] = "On occasion, certain mailing lists are blocked by SpamTagger. This is due to their formatting, which is often very similar to spam. You can request an analysis of these messages as explained above, and our analysis centre will take care of putting such mailing lists on white lists to prevent them from being blocked in the future.";
+$txt['SFALSEPOSSUB3'] = "On occasion, certain mailing lists are blocked by SpamTagger. This is due to their formatting, which is often very similar to spam. You can request an analysis of these messages as explained above, and our analysis centre will take care of putting such mailing lists on wantlists to prevent them from being blocked in the future.";
 
 $txt['SOTHERTITLE'] = "OTHER PROBLEMS";
 $txt['SOTHER'] = "Do you experience any other problems with your e-mail reception, and you have followed the above procedures without positive results? If so, please contact the SpamTagger Analysis Centre by filling out this form.";
@@ -53,7 +53,7 @@ $txt['FAQ'] = "
                       </ul>
                   </li>
                   <li> <h2>What you can do to correct SpamTagger</h2>
-                      Upon SpamTagger mistakes, the best thing to do is help correct the filter by sending feedback to your administrator. Do not think the best solution is to just white- or blacklist senders as this is just a fast but dirty way (check this for more information). Although it sometimes is the only possibility, it is always better to find out the real cause of the error, and correct it. This can only be done by technical people, so don't hesitate to send feedback following errors to your administrator.
+                      Upon SpamTagger mistakes, the best thing to do is help correct the filter by sending feedback to your administrator. Do not think the best solution is to just white- or blocklist senders as this is just a fast but dirty way (check this for more information). Although it sometimes is the only possibility, it is always better to find out the real cause of the error, and correct it. This can only be done by technical people, so don't hesitate to send feedback following errors to your administrator.
                   </li>
                 </ul>";
 

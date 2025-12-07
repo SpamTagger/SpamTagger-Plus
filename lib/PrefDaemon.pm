@@ -301,16 +301,16 @@ sub manage_client ($this, $cli, $cli_add, $datas) {
     ## now fetch the value and return it as fast as possible
     $this->logMessage("Command: pref $2 requested for $1");
     $this->{server}->send($this->fetchPref($1, $2)."\n");
-  } elsif ($query =~ /^(WHITE|WARN|BLACK)LIST (\S+)\ (\S+)/) {
-    if ($1 eq "WHITE") {
-      $this->logMessage("Command: whitelist query: from $3 to $2");
-      $this->{server}->send($this->fetchWW('white', $2, $3)."\n");
+  } elsif ($query =~ /^(WANT|WARN|BLOCK)LIST (\S+)\ (\S+)/) {
+    if ($1 eq "WANT") {
+      $this->logMessage("Command: wantlist query: from $3 to $2");
+      $this->{server}->send($this->fetchWW('want', $2, $3)."\n");
     } elsif ($1 eq "WARN") {
       $this->logMessage("Command: warnlist query: from $3 to $2");
       $this->{server}->send($this->fetchWW('warn', $2, $3)."\n");
-    } elsif ($1 eq "BLACK") {
-      $this->logMessage("Command: blacklist query: from $3 to $2");
-      $this->{server}->send($this->fetchWW('black', $2, $3)."\n");
+    } elsif ($1 eq "BLOCK") {
+      $this->logMessage("Command: blocklist query: from $3 to $2");
+      $this->{server}->send($this->fetchWW('block', $2, $3)."\n");
     }
   } else {
     $this->logMessage("BAD command found: $query");
@@ -402,9 +402,9 @@ sub fetch_domain_pref ($this, $who, $what) {
     return 'NOTFOUND' unless ($this->connect_db());
   }
 
-  $what = 'enable_whitelists' if ($what eq 'has_whitelist');
+  $what = 'enable_wantlists' if ($what eq 'has_wantlist');
   $what = 'enable_warnlists' if ($what eq 'has_warnlist');
-  $what = 'enable_blacklists' if ($what eq 'has_blacklist');
+  $what = 'enable_blocklists' if ($what eq 'has_blocklist');
   ## check this domain
   my $query = "SELECT $what FROM domain_pref p, domain d WHERE p.id=d.prefs AND d.name='$who'";
   my %res = $this->{replica_db}->getHashRow($query);

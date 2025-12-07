@@ -24,11 +24,11 @@ class ConfigUserWWList {
     public function __construct() {
         global $user_;
 
-        if ($_GET['t'] && $_GET['t'] == 'white') {
-            $this->type_ = 'white';
+        if ($_GET['t'] && $_GET['t'] == 'want') {
+            $this->type_ = 'want';
         }
-        if ($_GET['t'] && $_GET['t'] == 'black') {
-            $this->type_ = 'black';
+        if ($_GET['t'] && $_GET['t'] == 'block') {
+            $this->type_ = 'block';
         }
         if ($_GET['t'] && $_GET['t'] == 'wnews') {
             $this->type_ = 'wnews';
@@ -188,12 +188,12 @@ class ConfigUserWWList {
         $antispam_ = new AntiSpam();
         $antispam_->load();
 
-        if ($this->type_ == "white" && $antispam_->getPref('enable_whitelists') && $user_->getDomain()->getPref('enable_whitelists'))  {
+        if ($this->type_ == "want" && $antispam_->getPref('enable_wantlists') && $user_->getDomain()->getPref('enable_wantlists'))  {
             $replace['__INPUT_ADDADDRESS__'] = $this->addform_->input('entry', 38, '');
             $replace['__INPUT_ADDCOMMENT__'] = $this->addform_->input('comment', 35, '');
             $replace['__INPUT_ADDSUBMIT__']  = $this->addform_->submit('addentry', $lang_->print_txt('ADDTHEENTRY'), '');
             $replace['__INPUT_ADDTOGROUP__'] = $this->addform_->submit('togroup', $lang_->print_txt('ADDTOGROUP'), '');
-        } else if ($this->type_ == "black" && $antispam_->getPref('enable_blacklists') && $user_->getDomain()->getPref('enable_blacklists'))  {
+        } else if ($this->type_ == "block" && $antispam_->getPref('enable_blocklists') && $user_->getDomain()->getPref('enable_blocklists'))  {
             $replace['__INPUT_ADDADDRESS__'] = $this->addform_->input('entry', 38, '');
             $replace['__INPUT_ADDCOMMENT__'] = $this->addform_->input('comment', 35, '');
             $replace['__INPUT_ADDSUBMIT__']  = $this->addform_->submit('addentry', $lang_->print_txt('ADDTHEENTRY'), '');
@@ -211,7 +211,7 @@ class ConfigUserWWList {
         } else {
             $replace['__INPUT_ADDADDRESS__'] = $this->addform_->inputDisabled('entry', 38, '');
             $replace['__INPUT_ADDCOMMENT__'] = $this->addform_->inputDisabled('comment', 35, '');
-            $replace['__INPUT_ADDSUBMIT__']  = $this->addform_->submitDisabled('none', $lang_->print_txt('ADDTHEENTRY'), '') . '<p style="color:red;">'.$lang_->print_txt('SPAM_WHITELIST_DISABLED').'</p>';
+            $replace['__INPUT_ADDSUBMIT__']  = $this->addform_->submitDisabled('none', $lang_->print_txt('ADDTHEENTRY'), '') . '<p style="color:red;">'.$lang_->print_txt('SPAM_WANTLIST_DISABLED').'</p>';
             $replace['__INPUT_ADDTOGROUP__'] = $this->addform_->submit('togroup', $lang_->print_txt('ADDTOGROUP'), '');
         }
 

@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Informačné bulletiny";
 $txt['NEWSLETTERSSHORTHELP'] = "Tu môžete spravovať svoje informačné bulletiny.";
 $txt['NEWSLETTERSALLOW'] = "doručiť";
 $txt['NEWSLETTERACCEPT'] = "Akceptovať tento informačný bulletin";
-$txt['SPAM_WHITELIST_DISABLED'] = "Zoznam nieje aktivovaný pre túto doménu (Kontaktujte Vášho administrátora).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Zoznam nieje aktivovaný pre túto doménu (Kontaktujte Vášho administrátora).";
 /*
  * generic buttons
  */
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "All addresses";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Contents of the message";
 $txt['PREFILTERHITS'] = "Pre-filters";
-$txt['BLACKLISTS'] = "Blacklists";
+$txt['BLOCKLISTS'] = "Blocklists";
 $txt['FITLERSCORE'] = "Score";
 $txt['NONE'] = "none";
 $txt['HEADERS'] = "Headers";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "použiť predvolené";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "čistý text";
 //old
-$txt['EDITWHITELIST'] = "upraviť zoznam povolených";
+$txt['EDITWANTLIST'] = "upraviť zoznam povolených";
 //old
 $txt['EDITWARNLIST'] = "upraviť zoznam upozornení";
 /*
@@ -261,7 +261,7 @@ $txt['WWENTRY'] = "Entry";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Are you sure you want to permanently delete this entry?";
 //old
-$txt['WHITELISTFOR'] = "Zoznam povolených pre __PARAM__";
+$txt['WANTLISTFOR'] = "Zoznam povolených pre __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Zoznam upozornení pre __PARAM__";
 //old
@@ -388,15 +388,15 @@ $txt['ADDRESSLISTTOPIC'] = "Address group";
 $txt['ADDRESSPARAMTOPIC'] = "Address settings";
 $txt['QUARPARAMTOPIC'] = "Quarantine display";
 $txt['WARNLISTTOPIC'] = "Zoznam upozornení";
-$txt['WHITELISTTOPIC'] = "Zoznam povolených";
-$txt['BLACKLISTTOPIC'] = "Zoznam povolených";
+$txt['WANTLISTTOPIC'] = "Zoznam povolených";
+$txt['BLOCKLISTTOPIC'] = "Zoznam povolených";
 $txt['INTERFACETOPICTITLE'] = "interface settings";
 $txt['ADDRESSLISTTOPICTITLE'] = "address group";
 $txt['ADDRESSPARAMTOPICTITLE'] = "address settings";
 $txt['QUARPARAMTOPICTITLE'] = "quarantine display";
 $txt['WARNLISTTOPICTITLE'] = "zoznam upozornení";
-$txt['WHITELISTTOPICTITLE'] = "zoznam povolených";
-$txt['BLACKLISTTOPICTITLE'] = "zoznam zakázaných";
+$txt['WANTLISTTOPICTITLE'] = "zoznam povolených";
+$txt['BLOCKLISTTOPICTITLE'] = "zoznam zakázaných";
 /*
  * interface (new)
  */
@@ -457,16 +457,16 @@ $txt['REMOVEANENTRY'] = "Disable, enable or remove an address from the list";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
 $txt['REMTHEENTRY'] = "Remove selection";
 $txt['DISABLETHEENTRY'] = "Disable/enable selection";
-$txt['WHITELISTSHORTHELP'] = "";
-$txt['BLACKLISTSHORTHELP'] = "";
-$txt['WHITELISTFORADDRESS'] = "Zoznam povolených pre adresu";
-$txt['ADDAWHITEENTRY'] = "Add an address to the list";
-$txt['WHITELISTENTRYTOADD'] = "";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
-$txt['BLACKLISTFORADDRESS'] = "";
-$txt['ADDABLACKENTRY'] = "Add an address to the list";
-$txt['BLACKLISTENTRYTOADD'] = "";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
+$txt['WANTLISTSHORTHELP'] = "";
+$txt['BLOCKLISTSHORTHELP'] = "";
+$txt['WANTLISTFORADDRESS'] = "Zoznam povolených pre adresu";
+$txt['ADDAWANTENTRY'] = "Add an address to the list";
+$txt['WANTLISTENTRYTOADD'] = "";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
+$txt['BLOCKLISTFORADDRESS'] = "";
+$txt['ADDABLOCKENTRY'] = "Add an address to the list";
+$txt['BLOCKLISTENTRYTOADD'] = "";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
 $txt['RECORDALREADYEXISTS'] = "This address is already present in the list.";
 /*
  * logout (new)

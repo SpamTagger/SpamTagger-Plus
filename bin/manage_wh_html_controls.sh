@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# adds or removes domain names or email_addresses from the whitelist for HTML Controls
+# adds or removes domain names or email_addresses from the wantlist for HTML Controls
 # manage_wh_html_controls.sh add domain.tld to add it
 # manage_wh_html_controls.sh del domain.tld to remove it
 # manage_wh_html_controls.sh show

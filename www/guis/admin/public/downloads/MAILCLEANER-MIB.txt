@@ -270,7 +270,7 @@ globalRefusedRBLCount OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "Today's count of refused blacklisted (DNS) SMTP sessions"
+            "Today's count of refused blocklisted (DNS) SMTP sessions"
     ::= { globalRefusedStatistics 2 }
 
 globalRefusedHostCount OBJECT-TYPE
@@ -278,7 +278,7 @@ globalRefusedHostCount OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "Today's count of refused blacklisted (host) SMTP sessions"
+            "Today's count of refused blocklisted (host) SMTP sessions"
     ::= { globalRefusedStatistics 3 }
 
 globalRefusedRelayCount OBJECT-TYPE
@@ -305,12 +305,12 @@ globalRefusedBATVCount OBJECT-TYPE
             "Today's count of bad BATV signing sessions"
     ::= { globalRefusedStatistics 6 }
 
-globalRefusedBlacklistedSenderCount OBJECT-TYPE
+globalRefusedBlocklistedSenderCount OBJECT-TYPE
     SYNTAX      Counter32
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "Today's count of refused blacklisted (sender) SMTP sessions"
+            "Today's count of refused blocklisted (sender) SMTP sessions"
     ::= { globalRefusedStatistics 7 }
 
 globalRefusedSpoofingCount OBJECT-TYPE
@@ -633,7 +633,7 @@ domainRefusedRBL OBJECT-TYPE
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-            "Today's count of blacklisted connections for domain"
+            "Today's count of blocklisted connections for domain"
     ::= { domainStatisticsEntry 16 }
 
 domainRefusedBRBL OBJECT-TYPE

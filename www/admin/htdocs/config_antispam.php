@@ -107,15 +107,15 @@ $replace = array(
         "__FORM_CLOSE_GLOBAL__" => $gform->close(),
         "__FORM_INPUTFRIENDLYLANGUAGES__" => $gform->input('ok_locales', 15, $antispam_->getPref('ok_locales')),
         "__RELOAD_NAV_JS__" => "window.parent.frames['navig_frame'].location.reload(true)",
-        "__FORM_INPUTENABLEWHITELIST__" => $gform->checkbox('enable_whitelists', 1, $antispam_->getPref('enable_whitelists'), whitelistWarning(), 1),
+        "__FORM_INPUTENABLEWANTLIST__" => $gform->checkbox('enable_wantlists', 1, $antispam_->getPref('enable_wantlists'), wantlistWarning(), 1),
         "__FORM_INPUTENABLEWARNLIST__" => $gform->checkbox('enable_warnlists', 1, $antispam_->getPref('enable_warnlists'), '', 1),
-	"__FORM_INPUTENABLEBLACKLIST__" => $gform->checkbox('enable_blacklists', 1, $antispam_->getPref('enable_blacklists'), '', 1),
+	"__FORM_INPUTENABLEBLOCKLIST__" => $gform->checkbox('enable_blocklists', 1, $antispam_->getPref('enable_blocklists'), '', 1),
         "__FORM_INPUTUSESYSLOG__" => $gform->checkbox('use_syslog', 1, $antispam_->getPref('use_syslog'), '', 1),
         "__FORM_INPUTGLOBALMAXSIZE__" => $gform->input('global_max_size', 500, $antispam_->getPref('global_max_size')),
         "__FORM_INPUTTRUSTEDIPS__" => $gform->textarea('trusted_ips', 30, 5, $antispam_->getPref('trusted_ips')),
-        "__LINK_EDITWHITELIST__" => "wwlist.php?t=1&a=0",
+        "__LINK_EDITWANTLIST__" => "wwlist.php?t=1&a=0",
         "__LINK_EDITWARNLIST__" => "wwlist.php?t=2&a=0",
-        "__LINK_EDITBLACKLIST__" => "wwlist.php?t=3&a=0",
+        "__LINK_EDITBLOCKLIST__" => "wwlist.php?t=3&a=0",
         "__LINK_EDITNEWSLIST__" => "wwlist.php?t=4&a=0",
         "__LINK_EDITPREFILTER__" => "edit_prefilter.php?pf=",
 
@@ -128,11 +128,11 @@ $replace = array(
 // output page
 $template_->output($replace);
 
-function whitelistWarning() {
+function wantlistWarning() {
     global $gform;
     global $lang_;
-	$js = " if (window.document.forms['".$gform->getName()."'].antispam_enable_whitelists.value=='1') {" .
-            " alert ('".$lang_->print_txt('WHITELISTWARNING')."'); }";
+	$js = " if (window.document.forms['".$gform->getName()."'].antispam_enable_wantlists.value=='1') {" .
+            " alert ('".$lang_->print_txt('WANTLISTWARNING')."'); }";
     return $js;
 }
 

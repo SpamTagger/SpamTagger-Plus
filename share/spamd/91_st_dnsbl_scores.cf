@@ -1,7 +1,7 @@
 ### RBLS scores
 
 
-## BLACKLISTS
+## BLOCKLISTS
 
 # UCEPROTECT
 score  RCVD_IN_UCEPROTECT1  2.0
@@ -46,7 +46,7 @@ score  RCVD_IN_SIP24INV    2.4
 # STIPRBL
 score  RCVD_IN_STIPRBL    3.0
 
-## WHITELISTS
+## WANTLISTS
 
 # DNSWL : Free until 100000 request - rsync available (paid subscription)- FB
 score RCVD_IN_DNSWL_NONE    -0.0001
@@ -55,8 +55,8 @@ score RCVD_IN_DNSWL_MED      -0.0001
 score RCVD_IN_DNSWL_HI      -1.0
 score RCVD_IN_DNSWL_BLOCKED 0.001
 
-# EDU WHITELIST
-score  RCVD_IN_EDUWHITELIST  -1.0
+# EDU WANTLIST
+score  RCVD_IN_EDUWANTLIST  -1.0
 
 # STIPRWL
 score  RCVD_IN_STIPRWL    -1.5

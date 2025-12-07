@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Newsletters";
 $txt['NEWSLETTERSSHORTHELP'] = "Here you can manage your newsletters.";
 $txt['NEWSLETTERSALLOW'] = "deliver";
 $txt['NEWSLETTERACCEPT'] = "Accept this newsletter";
-$txt['SPAM_WHITELIST_DISABLED'] = "The list is not activated for this domain (contact your administrator).";
+$txt['SPAM_WANTLIST_DISABLED'] = "The list is not activated for this domain (contact your administrator).";
 /*
  * generic buttons
  */
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "Hide user-released messages";
 $txt['FORCESPAM'] = "release the message";
 //old
 $txt['ASKREASON'] = "display filtering rules";
-$txt['CONFSENDANALYSE'] = "A filter adjustment request will be sent to the SpamTagger Analysis Center; it includes a copy of the message that was erroneously blocked.</br>Note: A filter adjustment is not the same as whitelisting or blacklisting.";
+$txt['CONFSENDANALYSE'] = "A filter adjustment request will be sent to the SpamTagger Analysis Center; it includes a copy of the message that was erroneously blocked.</br>Note: A filter adjustment is not the same as wantlisting or blocklisting.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Are you sure you want this message to be analyzed and that filter adjustments may be applied?</span>";
 $txt['ASKANALYSE'] = "Filter adjustment request";
 $txt['PAGE'] = "Page";
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "All addresses";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Contents of the message";
 $txt['PREFILTERHITS'] = "Pre-filters";
-$txt['BLACKLISTS'] = "Blacklists";
+$txt['BLOCKLISTS'] = "Blocklists";
 $txt['FITLERSCORE'] = "Score";
 $txt['NONE'] = "none";
 $txt['HEADERS'] = "Headers";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "use default";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "plaintext";
 //old
-$txt['EDITWHITELIST'] = "edit whitelist";
+$txt['EDITWANTLIST'] = "edit wantlist";
 //old
 $txt['EDITWARNLIST'] = "edit warnlist";
 //old
@@ -263,7 +263,7 @@ $txt['WWENTRY'] = "Entry";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Are you sure you want to permanently delete this entry?";
 //old
-$txt['WHITELISTFOR'] = "Whitelist for __PARAM__";
+$txt['WANTLISTFOR'] = "Wantlist for __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Warnlist for __PARAM__";
 //old
@@ -392,16 +392,16 @@ $txt['ADDRESSLISTTOPIC'] = "Address group";
 $txt['ADDRESSPARAMTOPIC'] = "Address settings";
 $txt['QUARPARAMTOPIC'] = "Quarantine display";
 $txt['WARNLISTTOPIC'] = "Warnlist";
-$txt['WHITELISTTOPIC'] = "Whitelist";
-$txt['BLACKLISTTOPIC'] = "Blacklist";
+$txt['WANTLISTTOPIC'] = "Wantlist";
+$txt['BLOCKLISTTOPIC'] = "Blocklist";
 $txt['NEWSLISTTOPIC'] = "Newslist";
 $txt['INTERFACETOPICTITLE'] = "interface settings";
 $txt['ADDRESSLISTTOPICTITLE'] = "address group";
 $txt['ADDRESSPARAMTOPICTITLE'] = "address settings";
 $txt['QUARPARAMTOPICTITLE'] = "quarantine display";
 $txt['WARNLISTTOPICTITLE'] = "warnlist";
-$txt['WHITELISTTOPICTITLE'] = "whitelist";
-$txt['BLACKLISTTOPICTITLE'] = "blacklist";
+$txt['WANTLISTTOPICTITLE'] = "wantlist";
+$txt['BLOCKLISTTOPICTITLE'] = "blocklist";
 $txt['NEWSLISTTOPICTITLE'] = "newslist";
 /*
  * interface (new)
@@ -456,7 +456,7 @@ $txt['TODAY'] = "Today";
  */
 $txt['WARNLISTSHORTHELP'] = "The warnlist contains trusted sender addresses for which you want to be notified by e-mail whenever a message happens to be detected as spam. You can then immediatly release the message in case of a filtering error.<br />
 \t\t\t\t\t\t\t\t   Warning: This functionality should be used as a temporary solution as it decreases the overall protection.
-\t\t\t\t\t\t\t\t   Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on warn list usage. ";
+\t\t\t\t\t\t\t\t   Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on warnlist usage. ";
 $txt['WARNLISTFORADDRESS'] = "Warnlist for the address";
 $txt['ADDAWARNENTRY'] = "Add an address to the list";
 $txt['WARNLISTENTRYTOADD'] = "Enter the address you want to add to the warnlist. You can also add an optional comment.";
@@ -465,24 +465,24 @@ $txt['REMOVEANENTRY'] = "Disable, enable or remove an address from the list";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
 $txt['REMTHEENTRY'] = "Remove selection";
 $txt['DISABLETHEENTRY'] = "Disable/enable selection";
-$txt['WHITELISTSHORTHELP'] = "The whitelist contains trusted sender addresses for which no quarantine retention will ever occur.<br />
+$txt['WANTLISTSHORTHELP'] = "The wantlist contains trusted sender addresses for which no quarantine retention will ever occur.<br />
                                    Warning: This functionality should be used as a temporary solution, as it decreases the overall protection.
-                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on whitelist usage.
+                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on wantlist usage.
 ";
-$txt['BLACKLISTSHORTHELP'] = "The blacklist contains blacklisted sender addresses.
-                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on black list usage.
+$txt['BLOCKLISTSHORTHELP'] = "The blocklist contains blocklisted sender addresses.
+                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on blocklist usage.
 ";
 $txt['NEWSLISTSHORTHELP'] = "The newsletter list contains addresses of desired newsletters.<br />
                                   Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on newsletter list usage.
 ";
-$txt['WHITELISTFORADDRESS'] = "Whitelist for the address";
-$txt['ADDAWHITEENTRY'] = "Add an address to the list";
-$txt['WHITELISTENTRYTOADD'] = "Enter the address you want to add to the whitelist. You can also add an optional comment.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
-$txt['BLACKLISTFORADDRESS'] = "Blacklist for the address";
-$txt['ADDABLACKENTRY'] = "Add an address to the list";
-$txt['BLACKLISTENTRYTOADD'] = "Enter the address you want to add to the blacklist. You can also add an optional comment.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
+$txt['WANTLISTFORADDRESS'] = "Wantlist for the address";
+$txt['ADDAWANTENTRY'] = "Add an address to the list";
+$txt['WANTLISTENTRYTOADD'] = "Enter the address you want to add to the wantlist. You can also add an optional comment.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
+$txt['BLOCKLISTFORADDRESS'] = "Blocklist for the address";
+$txt['ADDABLOCKENTRY'] = "Add an address to the list";
+$txt['BLOCKLISTENTRYTOADD'] = "Enter the address you want to add to the blocklist. You can also add an optional comment.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
 $txt['NEWSLISTFORADDRESS'] = "Newsletter list for the address";
 $txt['ADDANEWSENTRY'] = "Add an address to the list";
 $txt['NEWSLISTENTRYTOADD'] = "Enter the address you want to add to the newsletter list. You can also add an optional comment.";

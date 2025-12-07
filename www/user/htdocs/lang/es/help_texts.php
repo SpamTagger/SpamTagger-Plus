@@ -225,7 +225,7 @@ $htxt['GLOSSARY'] = '
 <h3>Periodo de retenci&oacute;n</h3>
 <p>Es el periodo de retenci&oacute;n de los mensajes en la cuarentena. Al final de este periodo, suprimimos los mensajes de manera autom&aacute;tica.</p>
 <h3>RBL </h3>
-<p>Realtime Blackhole List. Los RBLs tienen que mantener una lista de los servidores que tienen la reputaci&oacute;n de enviar spams. El principio de uso es muy simple: si el mensaje recibido viene de uno de estos servidores, es considerado como un spam. La dificultad del uso de los RBLs es que siempre hace falta verificar su fiabilidad.</p>
+<p>Realtime Block List. Los RBLs tienen que mantener una lista de los servidores que tienen la reputaci&oacute;n de enviar spams. El principio de uso es muy simple: si el mensaje recibido viene de uno de estos servidores, es considerado como un spam. La dificultad del uso de los RBLs es que siempre hace falta verificar su fiabilidad.</p>
 <h3>Regla de filtraci&oacute;n</h3>
 <p>Examen matem&aacute;tico y estad&iacute;stico que permite saber si un mensaje es un spam o no.</p>
 <h3>Resultado</h3>

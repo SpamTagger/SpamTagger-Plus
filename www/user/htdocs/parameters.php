@@ -60,14 +60,14 @@ $domain->load($sel_add->getDomain());
 $antispam_ = new AntiSpam();
 $antispam_->load();
 
-if ($antispam_->getPref('enable_whitelists') && ($sel_add->getPref('has_whitelist') || $domain->getPref('enable_whitelists'))) {
-  $template_->setCondition('SEEWHITELISTEDIT', true);
+if ($antispam_->getPref('enable_wantlists') && ($sel_add->getPref('has_wantlist') || $domain->getPref('enable_wantlists'))) {
+  $template_->setCondition('SEEWANTLISTEDIT', true);
 }
 if ($antispam_->getPref('enable_warnlists') && ($sel_add->getPref('has_warnlist') || $domain->getPref('enable_warnlists'))) {
   $template_->setCondition('SEEWARNLISTEDIT', true);
 }
-if ($antispam_->getPref('enable_blacklists') && ($sel_add->getPref('has_blacklist') || $domain->getPref('enable_blacklists'))) {
-  $template_->setCondition('SEEBLACKLISTEDIT', true);
+if ($antispam_->getPref('enable_blocklists') && ($sel_add->getPref('has_blocklist') || $domain->getPref('enable_blocklists'))) {
+  $template_->setCondition('SEEBLOCKLISTEDIT', true);
 }
 // prepare replacements
 $replace = array(
@@ -105,9 +105,9 @@ $replace = array(
             '__SUMFREQ_RADIOS__' => $sel_add->html_SumFreqRadio(),
             '__SUMMARYTYPE__' => $sel_add->html_SumTypeSelect(),
             '__QUARBOUNCES_CHECKBOX__' => $sel_add->html_QuarBouncesCheckbox(),
-            "__LINK_EDITWHITELIST__" => "uwwlist.php?t=1&a=".$sel_add->getPref('address'),
+            "__LINK_EDITWANTLIST__" => "uwwlist.php?t=1&a=".$sel_add->getPref('address'),
             "__LINK_EDITWARNLIST__" => "uwwlist.php?t=2&a=".$sel_add->getPref('address'),
-	    "__LINK_EDITBLACKLIST__" => "uwwlist.php?t=3&a=".$sel_add->getPref('address')
+	    "__LINK_EDITBLOCKLIST__" => "uwwlist.php?t=3&a=".$sel_add->getPref('address')
             );
 
 //display page

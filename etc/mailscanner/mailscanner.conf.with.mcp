@@ -796,7 +796,7 @@ Local Postsource = postsource
 #
 
 # This is the name of the file that translates the names of the "Spam List"
-# values to the real DNS names of the spam blacklists.
+# values to the real DNS names of the spam blocklists.
 Spam List Definitions = %etc-dir%/spam.lists.conf
 
 # This is the name of the file that translates the names of the virus
@@ -816,13 +816,13 @@ Virus Scanner Definitions = %etc-dir%/virus.scanners.conf
 # This can also be the filename of a ruleset.
 Spam Checks = yes
 
-# This is the list of spam blacklists (RBLs) which you are using.
+# This is the list of spam blocklists (RBLs) which you are using.
 # See the "Spam List Definitions" file for more information about what
 # you can put here.
 # This can also be the filename of a ruleset.
 Spam List = ORDB-RBL Infinite-Monkeys # MAPS-RBL+ costs money (except .ac.uk)
 
-# This is the list of spam domain blacklists which you are using
+# This is the list of spam domain blocklists which you are using
 # (such as the "rfc-ignorant" domains). See the "Spam List Definitions"
 # file for more information about what you can put here.
 # This can also be the filename of a ruleset.
@@ -847,20 +847,20 @@ Spam List Timeout = 10
 # This can also be the filename of a ruleset.
 Max Spam List Timeouts = 7
 
-# Spam Whitelist:
+# Spam Wantlist:
 # Make this point to a ruleset, and anything in that ruleset whose value
 # is "yes" will *never* be marked as spam.
 # This can also be the filename of a ruleset.
 #Is Definitely Not Spam = no
-Is Definitely Not Spam = %rules-dir%/spam.whitelist.rules
+Is Definitely Not Spam = %rules-dir%/spam.wantlist.rules
 
-# Spam Blacklist:
+# Spam Blocklist:
 # Make this point to a ruleset, and anything in that ruleset whose value
 # is "yes" will *always* be marked as spam.
 # This can also be the filename of a ruleset.
 Is Definitely Spam = no
 
-# Setting this to yes means that spam found in the blacklist is treated
+# Setting this to yes means that spam found in the blocklist is treated
 # as "High Scoring Spam" in the "Spam Actions" section below. Setting it
 # to no means that it will be treated as "normal" spam.
 # This can also be the filename of a ruleset.
@@ -894,11 +894,11 @@ Required SpamAssassin Score = 5
 # This can also be the filename of a ruleset.
 High SpamAssassin Score = 20
 
-# Set this option to "yes" to enable the automatic whitelisting functions
+# Set this option to "yes" to enable the automatic wantlisting functions
 # available within SpamAssassin. This will cause addresses from which you
 # get real mail, to be marked so that it will never incorrectly spam-tag
 # messages from those addresses.
-SpamAssassin Auto Whitelist = no
+SpamAssassin Auto Wantlist = no
 
 # Set the location of the SpamAssassin user_prefs file. If you want to
 # stop SpamAssassin doing all the RBL checks again, then you can add
@@ -1096,7 +1096,7 @@ Log Permitted Filetypes = no
 # somewhere other than the default location.
 #
 
-# The per-user files (bayes, auto-whitelist, user_prefs) are looked
+# The per-user files (bayes, auto-wantlist, user_prefs) are looked
 # for here and in ~/.spamassassin/. Note the files are mutable.
 # If this is unset then no extra places are searched for.
 # If using Postfix, you probably want to set this as shown in the example

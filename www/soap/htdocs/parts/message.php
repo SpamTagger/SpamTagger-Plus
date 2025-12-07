@@ -68,7 +68,7 @@ function forceSpam($id, $dest) {
 }
 
 /**
- * Add a spam to the white list as newsletter
+ * Add a spam to the wantlist as newsletter
  * @param $dest string original destination email address
  * @param $sender string original sender
  * @return  string 'OK' or 'NOTOK'
@@ -91,12 +91,12 @@ function addToNewslist($dest, $sender) {
 }
 
 /**
- * Add a spam to the white list
+ * Add a spam to the wantlist
  * @param $dest string original destination email address
  * @param $sender string original sender
  * @return  string 'OK' or 'NOTOK'
  */
-function addToWhitelist($dest, $sender) {
+function addToWantlist($dest, $sender) {
   if (!preg_match('/^\S+\@\S+$/', $dest)) {
       return "BADPARAMS";
   }
@@ -106,7 +106,7 @@ function addToWhitelist($dest, $sender) {
   $sysconf_ = SystemConfig::getInstance();
   $dest = escapeshellarg($dest);
   $sender = escapeshellarg($sender);
-  $cmd = $sysconf_->SRCDIR_."/bin/add_to_whitelist.pl $dest $sender";
+  $cmd = $sysconf_->SRCDIR_."/bin/add_to_wantlist.pl $dest $sender";
   $res_a = array();
   exec($cmd, $res_a);
 
@@ -114,12 +114,12 @@ function addToWhitelist($dest, $sender) {
 }
 
 /**
- * Add a spam to the black list
+ * Add a spam to the blocklist
  * @param $dest string original destination email address
  * @param $sender string original sender
  * @return  string 'OK' or 'NOTOK'
  */
-function addToBlacklist($dest, $sender) {
+function addToBlocklist($dest, $sender) {
   if (!preg_match('/^\S+\@\S+$/', $dest)) {
       return "BADPARAMS";
   }
@@ -129,7 +129,7 @@ function addToBlacklist($dest, $sender) {
   $sysconf_ = SystemConfig::getInstance();
   $dest = escapeshellarg($dest);
   $sender = escapeshellarg($sender);
-  $cmd = $sysconf_->SRCDIR_."/bin/add_to_blacklist.pl $dest $sender";
+  $cmd = $sysconf_->SRCDIR_."/bin/add_to_blocklist.pl $dest $sender";
   $res_a = array();
   exec($cmd, $res_a);
 

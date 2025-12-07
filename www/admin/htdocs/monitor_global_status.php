@@ -108,7 +108,7 @@ function drawHostList($t) {
 
       $ret .= $tmp;
     } else {
-      $ret .= "<tr bgcolor=\"white\"><td>".$replica->getPref('id')."</td><td align=\"center\" colspan=\"7\"><font color=\"red\">host not responding ($retsoap)</font></td></tr>";
+      $ret .= "<tr bgcolor=\"want\"><td>".$replica->getPref('id')."</td><td align=\"center\" colspan=\"7\"><font color=\"red\">host not responding ($retsoap)</font></td></tr>";
     }
   }
   return $ret;

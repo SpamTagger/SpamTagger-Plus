@@ -143,16 +143,16 @@ class DomainController extends Zend_Controller_Action
     	$view->previouspanel = $view->domain->getPreviousPanel($panel);
     	$view->nextpanel = $view->domain->getNextPanel($panel);
 
-        $whitelistelement = new Default_Model_WWElement();
-        $whitelistform = $whitelistelement->fetchAll('@'.$view->domain->getParam('name'),'white');
+        $wantlistelement = new Default_Model_WWElement();
+        $wantlistform = $wantlistelement->fetchAll('@'.$view->domain->getParam('name'),'want');
         $warnlistelement = new Default_Model_WWElement();
         $warnlistform = $warnlistelement->fetchAll('@'.$view->domain->getParam('name'),'warn');
-	$blacklistelement = new Default_Model_WWElement();
-        $blacklistform = $blacklistelement->fetchAll('@'.$view->domain->getParam('name'),'black');
+	$blocklistelement = new Default_Model_WWElement();
+        $blocklistform = $blocklistelement->fetchAll('@'.$view->domain->getParam('name'),'block');
         $newslistelement = new Default_Model_WWElement();
         $newslistform = $newslistelement->fetchAll('@'.$view->domain->getParam('name'),'wnews');
 
-    	$panelform = new $panelformclass($view->domain, $whitelistform, $warnlistform, $blacklistform, $newslistform, $this->getRequest());
+    	$panelform = new $panelformclass($view->domain, $wantlistform, $warnlistform, $blocklistform, $newslistform, $this->getRequest());
     	$panelform->setAction($view->searchurl."/name/".$view->name);
     	$view->panel = $panel;
     	$view->form = $panelform;
@@ -173,9 +173,9 @@ class DomainController extends Zend_Controller_Action
                   $panelform->setParams($request, $view->domain);
 
                   if ($panel == 'filtering') {
-                      $panelform->_whitelist = $whitelistelement->fetchAll('@'.$view->domain->getParam('name'),'white');
+                      $panelform->_wantlist = $wantlistelement->fetchAll('@'.$view->domain->getParam('name'),'want');
                       $panelform->_warnlist = $warnlistelement->fetchAll('@'.$view->domain->getParam('name'),'warn');
-                      $panelform->_blacklist = $blacklistelement->fetchAll('@'.$view->domain->getParam('name'),'black');
+                      $panelform->_blocklist = $blocklistelement->fetchAll('@'.$view->domain->getParam('name'),'block');
                       $panelform->_newslist = $newslistelement->fetchAll('@'.$view->domain->getParam('name'),'wnews');
                   }
                   if ($panel == 'general' && $user->getUserType() != 'administrator') {
@@ -197,9 +197,9 @@ class DomainController extends Zend_Controller_Action
             }
          }
          $view->message = $message;
-         $view->whitelistform = $whitelistform;
+         $view->wantlistform = $wantlistform;
          $view->warnlistform = $warnlistform;
-         $view->blacklistform = $blacklistform;
+         $view->blocklistform = $blocklistform;
          $view->newslistform = $newslistform;
 
     }

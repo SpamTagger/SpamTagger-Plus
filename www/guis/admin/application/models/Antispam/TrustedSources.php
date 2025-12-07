@@ -17,7 +17,7 @@ class Default_Model_Antispam_TrustedSources
         'domainsToSPF' => '',
         'authservers' => '',
         'authstring' => '',
-        'whiterbls' => ''
+        'wantrbls' => ''
       );
 
 	protected $_mapper;
@@ -86,6 +86,6 @@ class Default_Model_Antispam_TrustedSources
     }
 
     public function useRWL($rwl) {
-        return preg_match('/\b'.$rwl.'\b/', $this->getParam('whiterbls'));
+        return preg_match('/\b'.$rwl.'\b/', $this->getParam('wantrbls'));
     }
 }

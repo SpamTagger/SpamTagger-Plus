@@ -171,9 +171,9 @@ return array(
 
 ## email configuration menu
    'addresssettings' => 'Address settings',
-   'warnlist' => 'Warn list',
-   'whitelist' => 'White list',
-   'blacklist' => 'Black list',
+   'warnlist' => 'Warnlist',
+   'wantlist' => 'Wantlist',
+   'blocklist' => 'Blocklist',
    'newslist' => 'Newsletter list',
    'actions' => 'Actions',
 
@@ -220,9 +220,9 @@ return array(
 
 ## domain filtering
    'Enable antispoof' => 'Reject unauthorized messages from this domain',
-   'Add an address to the whitelist' => 'Add an address to the white list',
-   'Add an address to the warnlist' => 'Add an address to the warn list',
-   'Add an address to the blacklist' => 'Add an address to the black list',
+   'Add an address to the wantlist' => 'Add an address to the wantlist',
+   'Add an address to the warnlist' => 'Add an address to the warnlist',
+   'Add an address to the blocklist' => 'Add an address to the blocklist',
 
 ## domain outgoing
    'Enable BATV' => 'Enable BATV (Bounce Address Tag Validation)',
@@ -273,8 +273,8 @@ return array(
    'relayed_header' => 'Messages relayed',
 
    'refused_total' => 'Total refused sessions',
-   'rbl_header' => 'DNS blacklists',
-   'blacklists_header' => 'Host/sender blacklists',
+   'rbl_header' => 'DNS blocklists',
+   'blocklists_header' => 'Host/sender blocklists',
    'relay_header' => 'Forbidden relay attempt',
    'policies_header' => 'Unsigned or unencrypted',
    'BATV_header' => 'Unsigned bounces',
@@ -306,7 +306,7 @@ return array(
 
    'refused_hosttotal' => 'Total',
    'rbl_hostheader' => 'DNSBLs',
-   'blacklists_hostheader' => 'Blacklists',
+   'blocklists_hostheader' => 'Blocklists',
    'relay_hostheader' => 'Forbidden relay',
    'policies_hostheader' => 'Policies',
    'BATV_hostheader' => 'Bad bounces',
@@ -347,7 +347,7 @@ return array(
    'API Title' => 'API access',
 
 ## TrustedSources
-   'IPRWL' => 'IP addresses whitelist',
+   'IPRWL' => 'IP addresses wantlist',
    'SPFLIST' => 'Domains with good SPF',
 
 ## Management, Email

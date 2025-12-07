@@ -13,21 +13,21 @@ class Default_Form_DomainFiltering extends Zend_Form
 	protected $_domain;
 	protected $_panelname = 'filtering';
 
-        public $_whitelist;
+        public $_wantlist;
         public $_warnlist;
-	public $_blacklist;
+	public $_blocklist;
         public $_newslist;
 
-        public $_whitelistenabled = 0;
+        public $_wantlistenabled = 0;
         public $_warnlistenabled = 0;
-	public $_blacklistenabled = 0;
+	public $_blocklistenabled = 0;
 
-	public function __construct($domain, $whitelist, $warnlist, $blacklist, $newslist)
+	public function __construct($domain, $wantlist, $warnlist, $blocklist, $newslist)
 	{
 	    $this->_domain = $domain;
-            $this->_whitelist = $whitelist;
+            $this->_wantlist = $wantlist;
             $this->_warnlist = $warnlist;
-	    $this->_blacklist = $blacklist;
+	    $this->_blocklist = $blocklist;
             $this->_newslist = $newslist;
 	    parent::__construct();
 	}
@@ -125,29 +125,29 @@ class Default_Form_DomainFiltering extends Zend_Form
 	    }
 	    $this->addElement($require_incoming_tls);
 
-	    $enablewhitelist = new Zend_Form_Element_Checkbox('enable_whitelists', array(
-	        'label'   => $t->_('Enable whitelists'). " :",
-                'title' => $t->_("Enable the use of whitelist /!\ (http://spamtagger.org/antispam/documentations/whitelist.html) must be enabled in Configuration > Anti-Spam first"),
+	    $enablewantlist = new Zend_Form_Element_Checkbox('enable_wantlists', array(
+	        'label'   => $t->_('Enable wantlists'). " :",
+                'title' => $t->_("Enable the use of wantlist /!\ (http://spamtagger.org/antispam/documentations/wantlist.html) must be enabled in Configuration > Anti-Spam first"),
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));
-	    if ($this->_domain->getPref('enable_whitelists')) {
-                $enablewhitelist->setChecked(true);
-                $this->_whitelistenabled = 1;
+	    if ($this->_domain->getPref('enable_wantlists')) {
+                $enablewantlist->setChecked(true);
+                $this->_wantlistenabled = 1;
 	    }
-	    $this->addElement($enablewhitelist);
+	    $this->addElement($enablewantlist);
 
-	    $enableblacklist = new Zend_Form_Element_Checkbox('enable_blacklists', array(
-                'label'   => $t->_('Enable blacklists'). " :",
-                'title' => $t->_("Enable the blacklist feature"),
+	    $enableblocklist = new Zend_Form_Element_Checkbox('enable_blocklists', array(
+                'label'   => $t->_('Enable blocklists'). " :",
+                'title' => $t->_("Enable the blocklist feature"),
             'uncheckedValue' => "0",
                 'checkedValue' => "1"
                       ));
-            if ($this->_domain->getPref('enable_blacklists')) {
-                $enableblacklist->setChecked(true);
-                $this->_blacklistenabled = 1;
+            if ($this->_domain->getPref('enable_blocklists')) {
+                $enableblocklist->setChecked(true);
+                $this->_blocklistenabled = 1;
             }
-            $this->addElement($enableblacklist);
+            $this->addElement($enableblocklist);
 
 	    $enablewarnlist = new Zend_Form_Element_Checkbox('enable_warnlists', array(
 	        'label'   => $t->_('Enable warnlists'). " :",
@@ -162,8 +162,8 @@ class Default_Form_DomainFiltering extends Zend_Form
 	    $this->addElement($enablewarnlist);
 
 	    $warnwwhit = new Zend_Form_Element_Checkbox('notice_wwlists_hit', array(
-	        'label'   => $t->_('Warn admin on white/warn list hit'). " :",
-                'title' => $t->_("Alert the administrator for every hit in white / warnlist"),
+	        'label'   => $t->_('Warn admin on want/warnlist hit'). " :",
+                'title' => $t->_("Alert the administrator for every hit in want / warnlist"),
             'uncheckedValue' => "0",
 	        'checkedValue' => "1"
 	              ));
@@ -185,15 +185,15 @@ class Default_Form_DomainFiltering extends Zend_Form
 
             $this->addElement($allowNewsletters);
 
-            $this->_whitelistform = new Default_Form_ElementList($this->_whitelist, 'Default_Model_WWElement', 'whitelist_');
-                $this->_whitelistform->init();
-                $this->_whitelistform->setAddedValues(array('recipient' => '@'.$this->_domain->getParam('name'), 'type' => 'white'));
-                $this->_whitelistform->addFields($this);
+            $this->_wantlistform = new Default_Form_ElementList($this->_wantlist, 'Default_Model_WWElement', 'wantlist_');
+                $this->_wantlistform->init();
+                $this->_wantlistform->setAddedValues(array('recipient' => '@'.$this->_domain->getParam('name'), 'type' => 'want'));
+                $this->_wantlistform->addFields($this);
 
-	    $this->_blacklistform = new Default_Form_ElementList($this->_blacklist, 'Default_Model_WWElement', 'blacklist_');
-                $this->_blacklistform->init();
-                $this->_blacklistform->setAddedValues(array('recipient' => '@'.$this->_domain->getParam('name'), 'type' => 'black'));
-                $this->_blacklistform->addFields($this);
+	    $this->_blocklistform = new Default_Form_ElementList($this->_blocklist, 'Default_Model_WWElement', 'blocklist_');
+                $this->_blocklistform->init();
+                $this->_blocklistform->setAddedValues(array('recipient' => '@'.$this->_domain->getParam('name'), 'type' => 'block'));
+                $this->_blocklistform->addFields($this);
 
             $this->_warnlistform = new Default_Form_ElementList($this->_warnlist, 'Default_Model_WWElement', 'warnlist_');
                 $this->_warnlistform->init();
@@ -212,16 +212,16 @@ class Default_Form_DomainFiltering extends Zend_Form
 
    public function setParams($request, $domain) {
         ### newsl
-    	foreach (array('spamwall', 'contentwall', 'enable_whitelists', 'enable_warnlists', 'enable_blacklists', 'notice_wwlists_hit' , 'allow_newsletters') as $p) {
+    	foreach (array('spamwall', 'contentwall', 'enable_wantlists', 'enable_warnlists', 'enable_blocklists', 'notice_wwlists_hit' , 'allow_newsletters') as $p) {
     	    $domain->setPref($p, $request->getParam($p));
     	}
 
-        $this->_whitelistform->manageRequest($request);
-        $this->_whitelistform->addFields($this);
+        $this->_wantlistform->manageRequest($request);
+        $this->_wantlistform->addFields($this);
         $this->_warnlistform->manageRequest($request);
         $this->_warnlistform->addFields($this);
-        $this->_blacklistform->manageRequest($request);
-        $this->_blacklistform->addFields($this);
+        $this->_blocklistform->manageRequest($request);
+        $this->_blocklistform->addFields($this);
         $this->_newslistform->manageRequest($request);
         $this->_newslistform->addFields($this);
 
@@ -234,9 +234,9 @@ class Default_Form_DomainFiltering extends Zend_Form
         ### newsl
         $domain->setPref('allow_newsletters', $request->getParam('allow_newsletters'));
 
-        $this->_whitelistenabled = $domain->getPref('enable_whitelists');
+        $this->_wantlistenabled = $domain->getPref('enable_wantlists');
         $this->_warnlistenabled = $domain->getPref('enable_warnlists');
-        $this->_blacklistenabled = $domain->getPref('enable_blacklists');
+        $this->_blocklistenabled = $domain->getPref('enable_blocklists');
 
         return true;
      }
@@ -246,14 +246,14 @@ class Default_Form_DomainFiltering extends Zend_Form
 		$antispam->find(1);
 		$ret = array();
 
-		if ( $antispam->getParam('enable_whitelists') ) {
-			$ret[] = 'whitelist';
+		if ( $antispam->getParam('enable_wantlists') ) {
+			$ret[] = 'wantlist';
 		}
 		if ($antispam->getParam('enable_warnlists') ) {
 			$ret[] = 'warnlist';
 		}
-		if ($antispam->getParam('enable_blacklists') ) {
-			$ret[] = 'blacklist';
+		if ($antispam->getParam('enable_blocklists') ) {
+			$ret[] = 'blocklist';
 		}
 		return $ret;
 	}

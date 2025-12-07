@@ -232,7 +232,7 @@ $htxt['GLOSSARY'] = '
 <h3>Quarantine report</h3>
 <p>An automatically generated periodic report which lists all blocked messages and which provides tools to inspect their content and to release quarantined messages if necessary.</p>
 <h3>RBL</h3>
-<p>Realtime Blackhole List. RBLs maintain lists of servers in real time known to send spam. Using RBLs is very simple in principle: If an incoming message is sent by an RBL-listed server it is considered a priori as spam. The difficulty in using RBLs is the need to continuously verify that they are reliable.</p>
+<p>Realtime Block List. RBLs maintain lists of servers in real time known to send spam. Using RBLs is very simple in principle: If an incoming message is sent by an RBL-listed server it is considered a priori as spam. The difficulty in using RBLs is the need to continuously verify that they are reliable.</p>
 <h3>Releasing a message</h3>
 <p>User action that releases a quarantined message so that it can reach the recipient\'s mailbox.</p>
 <h3>Retention period</h3>
@@ -250,9 +250,9 @@ $htxt['GLOSSARY'] = '
 <h3>Virus</h3>
 <p>An intrusive software entity, sometimes included as an attachment to a message, which may alter the integrity of your computer.</p>
 <h3>Warn list</h3>
-<p>A list of e-mail addresses that are trustworthy and should not generate spam. You will receive a warning if a message sent from a warn list address is blocked by SpamTagger.</p>
+<p>A list of e-mail addresses that are trustworthy and should not generate spam. You will receive a warning if a message sent from a warnlist address is blocked by SpamTagger.</p>
 <h3>White list</h3>
-<p>A list of e-mail addresses that are fully trustworthy. Messages sent from white list addresses will never be blocked by SpamTagger.</p>
+<p>A list of e-mail addresses that are fully trustworthy. Messages sent from wantlist addresses will never be blocked by SpamTagger.</p>
 <h3>Wow.</h3>
 <p>What we hope you will say as a SpamTagger user.</p>
 ';

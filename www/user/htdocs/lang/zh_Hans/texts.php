@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "新闻资讯";
 $txt['NEWSLETTERSSHORTHELP'] = "在这里, 您可以管理您的新闻稿。";
 $txt['NEWSLETTERSALLOW'] = "传递";
 $txt['NEWSLETTERACCEPT'] = "收到这封新闻稿";
-$txt['SPAM_WHITELIST_DISABLED'] = "此域未激活该列表 (请与管理员联系)。";
+$txt['SPAM_WANTLIST_DISABLED'] = "此域未激活该列表 (请与管理员联系)。";
 /*
  * generic buttons
  */
@@ -175,7 +175,7 @@ $txt['GROUPQUARANTINES'] = "所有地址";
  */
 $txt['INFORMATIONSABOUTMSG'] = "邮件内容";
 $txt['PREFILTERHITS'] = "预过滤器";
-$txt['BLACKLISTS'] = "黑名单";
+$txt['BLOCKLISTS'] = "黑名单";
 $txt['FITLERSCORE'] = "分数";
 $txt['NONE'] = "没有";
 $txt['HEADERS'] = "页眉";
@@ -238,7 +238,7 @@ $txt['USEDEFAULT'] = "使用默认值";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "纯文本";
 //old
-$txt['EDITWHITELIST'] = "编辑白名单";
+$txt['EDITWANTLIST'] = "编辑白名单";
 //old
 $txt['EDITWARNLIST'] = "编辑警告列表";
 /*
@@ -258,7 +258,7 @@ $txt['WWENTRY'] = "进入";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "你确定想要永久删除此项吗？";
 //old
-$txt['WHITELISTFOR'] = "__PARAM__ 白名单";
+$txt['WANTLISTFOR'] = "__PARAM__ 白名单";
 //old
 $txt['WARNLISTFOR'] = "__PARAM__ 警告列表";
 //old
@@ -385,15 +385,15 @@ $txt['ADDRESSLISTTOPIC'] = "地址组";
 $txt['ADDRESSPARAMTOPIC'] = "地址设置";
 $txt['QUARPARAMTOPIC'] = "隔离显示";
 $txt['WARNLISTTOPIC'] = "警告列表";
-$txt['WHITELISTTOPIC'] = "白名单";
-$txt['BLACKLISTTOPIC'] = "黑名单";
+$txt['WANTLISTTOPIC'] = "白名单";
+$txt['BLOCKLISTTOPIC'] = "黑名单";
 $txt['INTERFACETOPICTITLE'] = "接口设置";
 $txt['ADDRESSLISTTOPICTITLE'] = "地址组";
 $txt['ADDRESSPARAMTOPICTITLE'] = "地址设置";
 $txt['QUARPARAMTOPICTITLE'] = "隔离显示";
 $txt['WARNLISTTOPICTITLE'] = "警告列表";
-$txt['WHITELISTTOPICTITLE'] = "白名单";
-$txt['BLACKLISTTOPICTITLE'] = "黑名单";
+$txt['WANTLISTTOPICTITLE'] = "白名单";
+$txt['BLOCKLISTTOPICTITLE'] = "黑名单";
 /*
  * interface (new)
  */
@@ -456,21 +456,21 @@ $txt['REMOVEANENTRY'] = "禁用、启用或删除列表中的地址";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "从列表中选择要修改的地址或地址, 然后单击所需的操作按钮。";
 $txt['REMTHEENTRY'] = "删除选定内容";
 $txt['DISABLETHEENTRY'] = "禁用/启用选择";
-$txt['WHITELISTSHORTHELP'] = "此白名单包含隔离保留永不适用的受信任发件人地址。<br />
+$txt['WANTLISTSHORTHELP'] = "此白名单包含隔离保留永不适用的受信任发件人地址。<br />
                                    警告:此功能应作为临时解决方案使用，因为它降低了整体保护。
                                   检查手册 (位于 <a href=\"help.php\">\"帮助\"</a>部分) 了解更多白名单的用法。
 ";
-$txt['BLACKLISTSHORTHELP'] = "黑色列表中包含未列入黑名单的发件人地址。
+$txt['BLOCKLISTSHORTHELP'] = "黑色列表中包含未列入黑名单的发件人地址。
 有关黑列表用法的详细信息, 请检查手册 (在 <a href=\"help.php\"> \"帮助\" </a> 部分中提供)。
 ";
-$txt['WHITELISTFORADDRESS'] = "地址白名单";
-$txt['ADDAWHITEENTRY'] = "向列表中添加地址";
-$txt['WHITELISTENTRYTOADD'] = "输入要添加到白名单中的地址。您还可以添加可选注释。";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "从列表中选择要修改的地址或地址, 然后单击所需的操作按钮。";
-$txt['BLACKLISTFORADDRESS'] = "地址黑名单";
-$txt['ADDABLACKENTRY'] = "向列表中添加地址";
-$txt['BLACKLISTENTRYTOADD'] = "输入要添加到黑名单中的地址。您还可以添加可选注释。";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "从列表中选择要修改的地址或地址, 然后单击所需的操作按钮。";
+$txt['WANTLISTFORADDRESS'] = "地址白名单";
+$txt['ADDAWANTENTRY'] = "向列表中添加地址";
+$txt['WANTLISTENTRYTOADD'] = "输入要添加到白名单中的地址。您还可以添加可选注释。";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "从列表中选择要修改的地址或地址, 然后单击所需的操作按钮。";
+$txt['BLOCKLISTFORADDRESS'] = "地址黑名单";
+$txt['ADDABLOCKENTRY'] = "向列表中添加地址";
+$txt['BLOCKLISTENTRYTOADD'] = "输入要添加到黑名单中的地址。您还可以添加可选注释。";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "从列表中选择要修改的地址或地址, 然后单击所需的操作按钮。";
 $txt['RECORDALREADYEXISTS'] = "此地址已存在于列表中。";
 /*
  * logout (new)

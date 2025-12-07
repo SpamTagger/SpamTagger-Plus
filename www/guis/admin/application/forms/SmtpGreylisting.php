@@ -60,7 +60,7 @@ class Default_Form_SmtpGreylisting extends ZendX_JQuery_Form
 	    require_once('Validate/DomainList.php');
 	    $avoiddomains = new Zend_Form_Element_Textarea('avoid_domains', array(
 		      'label'    =>  $t->_('Avoid greylisting for these domains')." :",
-                      'title' => $t->_("Whitelist for the greylist (!)"),
+                      'title' => $t->_("Wantlist for the greylist (!)"),
 		      'required'   => false,
 		      'rows' => 5,
 		      'cols' => 30,

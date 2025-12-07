@@ -1,4 +1,4 @@
-Subject: SpamTagger warn/white list hit
+Subject: SpamTagger warn/wantlist hit
 
 Hello,
 

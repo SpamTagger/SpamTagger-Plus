@@ -52,7 +52,7 @@ sub initialise ($class = $MODULE) {
     maxrbltimeouts => 3,
     listedtobespam => 1,
     rblsDefsPath => "/usr/spamtagger/etc/rbs/",
-    whitelistDomainsFile => "/var/spamtagger/spool/spamtagger/rbls/whitelisted_domains.txt",
+    wantlistDomainsFile => "/var/spamtagger/spool/spamtagger/rbls/wantlisted_domains.txt",
     TLDsFiles => "/var/spamtagger/spool/spamtagger/rbls/two-level-tlds.txt /var/spamtagger/spool/spamtagger/rbls/tlds.txt",
     localDomainsFile => "/var/spamtagger/spool/tmp/spamtagger/domains.list",
     domains_hostname_map_file => 'domains_hostnames_map.txt',
@@ -84,7 +84,7 @@ sub initialise ($class = $MODULE) {
   my $dnslists = STDnsLists->new(\&MailScanner::Log::WarnLog, $conf{debug});
   $dnslists->load_rbls(
     $conf{rblsDefsPath}, $conf{rbls}, 'IPRBL DNSRBL BSRBL',
-    $conf{whitelistDomainsFile}, $conf{TLDsFiles},
+    $conf{wantlistDomainsFile}, $conf{TLDsFiles},
     $conf{localDomainsFile}, $class
   );
   $conf{dnslists} = $dnslists;
@@ -151,7 +151,7 @@ sub Checks ($this, $message) { ## no critic
         $hostnameregex ne '' &&
         $senderhostname =~ m/$hostnameregex/
       ) {
-        MailScanner::Log::InfoLog("$MODULE not checking IPRBL on ".$message->{clientip}." because domain ".$senderdomain." is whitelisted and sender host ".$senderhostname." is from authorized domain for message ".$message->{id});
+        MailScanner::Log::InfoLog("$MODULE not checking IPRBL on ".$message->{clientip}." because domain ".$senderdomain." is wantlisted and sender host ".$senderhostname." is from authorized domain for message ".$message->{id});
         $checkip = 0;
       }
     }
@@ -164,7 +164,7 @@ sub Checks ($this, $message) { ## no critic
         my $acidr = Net::CIDR::Lite->new();
         my $ret = eval { $acidr->add_any($avoidhost); };
         if ($acidr->find($message->{clientip})) {
-          MailScanner::Log::InfoLog("$MODULE not checking IPRBL on ".$message->{clientip}." because IP is whitelisted for message ".$message->{id});
+          MailScanner::Log::InfoLog("$MODULE not checking IPRBL on ".$message->{clientip}." because IP is wantlisted for message ".$message->{id});
           $checkip = 0;
         }
       }
@@ -177,7 +177,7 @@ sub Checks ($this, $message) { ## no critic
           MailScanner::Log::InfoLog("$MODULE should avoid control on hostname ".$avoidhost." for message ".$message->{id});
         }
         if ($senderhostname =~ m/$avoidhost$/) {
-          MailScanner::Log::InfoLog("$MODULE not checking IPRBL on ".$message->{clientip}." because hostname $senderhostname is whitelisted for message ".$message->{id});
+          MailScanner::Log::InfoLog("$MODULE not checking IPRBL on ".$message->{clientip}." because hostname $senderhostname is wantlisted for message ".$message->{id});
           $checkip = 0;
         }
       }
@@ -205,7 +205,7 @@ sub Checks ($this, $message) { ## no critic
       $message->{isrblspam} = 1;
     }
   } elsif ($continue && $this->{debug}) {
-    MailScanner::Log::InfoLog("$MODULE not checking DNSBL against: $senderdomain (whitelisted) for ".$message->{id});
+    MailScanner::Log::InfoLog("$MODULE not checking DNSBL against: $senderdomain (wantlisted) for ".$message->{id});
   }
 
   ## third check backscaterrer

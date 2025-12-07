@@ -279,7 +279,7 @@ Use Spam Cache = yes
 Spam Cache Database File = __VARDIR__/spool/tmp/mailscanner/spam.cache.db
 Spam Cache Timings = 300,600
 
-Spam List Definitions = %etc-dir%/dnsblacklists.conf
+Spam List Definitions = %etc-dir%/dnsblocklists.conf
 Virus Scanner Definitions = %etc-dir%/virus.scanners.conf
 
 Spam Checks = &SpamWall
@@ -291,10 +291,10 @@ Spam List Timeout = 10
 Max Spam List Timeouts = 7
 Spam List Timeouts History = 10
 Spam Lists To Be Spam = __SPAMHITS__
-Is Definitely Not Spam = %rules-dir%/spam.whitelist.rules
+Is Definitely Not Spam = %rules-dir%/spam.wantlist.rules
 Is Definitely Spam = no
 Definite Spam Is High Scoring = no
-Ignore Spam Whitelist If Recipients Exceed = 20
+Ignore Spam Wantlist If Recipients Exceed = 20
 Max Spam Check Size = __GLOBALMAXSIZE__
 
 Use Watermarking = no
@@ -319,7 +319,7 @@ Max Custom Spam Scanner Size = 20k
 Max SpamAssassin Size = 500k
 Required SpamAssassin Score = 5
 High SpamAssassin Score = 20
-SpamAssassin Auto Whitelist = no
+SpamAssassin Auto Wantlist = no
 SpamAssassin Timeout = 100
 Max SpamAssassin Timeouts = 20
 SpamAssassin Timeouts History = 30

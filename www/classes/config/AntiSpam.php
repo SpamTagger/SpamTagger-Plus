@@ -36,9 +36,9 @@ class AntiSpam extends PrefHandler
 	                   'use_pyzor' => 1,
 	                   'pyzor_timeout' => 10,
                        'global_max_size' => '',
-                       'enable_whitelists' => 0,
+                       'enable_wantlists' => 0,
                        'enable_warnlists' => 0,
-		       'enable_blacklists' => 0,
+		       'enable_blocklists' => 0,
                        'trusted_ips' => '',
                        'use_syslog' => 0,
                      );

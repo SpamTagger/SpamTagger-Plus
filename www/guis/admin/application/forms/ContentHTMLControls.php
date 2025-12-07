@@ -70,7 +70,7 @@ class Default_Form_ContentHTMLControls extends ZendX_JQuery_Form
 		require_once('Validate/IpList.php');
 		$trustednet = new Zend_Form_Element_Textarea('html_wl_ips', array(
 		      'label'    =>  $t->_('Trusted IPs/Networks')." :",
-                      'title' => $t->_("These IP/ranges are whitelist for the HTML controls"),
+                      'title' => $t->_("These IP/ranges are wantlist for the HTML controls"),
 		      'required'   => false,
 		      'rows' => 5,
 		      'cols' => 30,

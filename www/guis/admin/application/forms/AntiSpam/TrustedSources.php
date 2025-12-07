@@ -111,7 +111,7 @@ class Default_Form_AntiSpam_TrustedSources extends Default_Form_AntiSpam_Default
             }
         }
         $rwlstr = preg_replace('/^\s*/', '', $rwlstr);
-        $trustedsources->setparam('whiterbls', $rwlstr);
+        $trustedsources->setparam('wantrbls', $rwlstr);
 
 		$trustedsources->save();
 	}

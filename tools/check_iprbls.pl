@@ -30,7 +30,7 @@ use IO::Interactive();
 my $config = {
   'rbls' => '',
   'rblsDefsPath' => '',
-  'whitelistDomainsFile' => '',
+  'wantlistDomainsFile' => '',
   'TLDsFiles' => '',
   'localDomainsFile' => ''
 };
@@ -86,7 +86,7 @@ $config->{rbls} = join(' ', keys(%rbl_levels));
 
 # Initialize lookup library
 my $dnslists = STDnsLists->new(sub{ print STDERR "STDERR: " . shift . "\n"; });
-$dnslists->load_rbls( $config->{rblsDefsPath}, $config->{rbls}, 'IPRBL DNSRBL BSRBL', $config->{whitelistDomainsFile}, $config->{TLDsFiles}, $config->{localDomainsFile}, $0);
+$dnslists->load_rbls( $config->{rblsDefsPath}, $config->{rbls}, 'IPRBL DNSRBL BSRBL', $config->{wantlistDomainsFile}, $config->{TLDsFiles}, $config->{localDomainsFile}, $0);
 
 # Build input hash
 my $current;

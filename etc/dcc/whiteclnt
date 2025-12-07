@@ -1,10 +1,10 @@
-# sample whitelist for DCC clients
+# sample wantlist for DCC clients
 
 # Changes in this file and the files it includes are noticed automatically
 #   within a few minutes.
 
 
-# See the dcc man page for the format of DCC whitelists.
+# See the dcc man page for the format of DCC wantlists.
 #   Each line must be in one of the forms:
 #count [hex] type value
 #      [hex] type value
@@ -65,11 +65,11 @@ ok	ip	127.0.0.1
 #ok	env_to	postsource@example.com
 #ok	env_to	postsource@host.example.com
 
-# See http://www.iecc.com/dcc-testmsg-whitelist.txt for list of checksums
-#   of practically blank messages.  Such checksums can be usefully whitelisted.
-#   See /var/dcc/libexec/fetch-testmsg-whitelist for a cron script to
+# See http://www.iecc.com/dcc-testmsg-wantlist.txt for list of checksums
+#   of practically blank messages.  Such checksums can be usefully wantlisted.
+#   See /var/dcc/libexec/fetch-testmsg-wantlist for a cron script to
 #   fetch them.
-#include testmsg-whitelist
+#include testmsg-wantlist
 
 # If dccm or dccifd is run with "-S mail_host" by adding that to DCCM_ARGS
 #   or DCCIFD_ARGS in /var/dcc/dcc_conf, then uncommenting the following
@@ -85,12 +85,12 @@ ok	ip	127.0.0.1
 # A lot of bulk mail lacks message-ID header lines.
 #   If you receive much mail from lame mailing lists (often involving
 #	qmail) or solicited bulk mail you probably do not want to use
-#	this blacklist entry.
+#	this blocklist entry.
 # many	message-id <>
 
 # This rejects messages with substantial text but few words.
 #   If you receive binary or non-text email, you probably
-#   do not want to use this blacklist entry
+#   do not want to use this blocklist entry
 #many	hex	FUZ2: 00000000 00000000 00000000 00000000
 
 # Mail with SMTP HELO values commonly used seen in spam can be rejected
@@ -119,5 +119,5 @@ ok	ip	127.0.0.1
 #many	substitute helo 10.0.0.1
 #many	substitute helo IP-addresses-of-your-DNS-HTTP-and-SMTP-servers
 
-# whitelist values common to the server and client
+# wantlist values common to the server and client
 include whitecommon

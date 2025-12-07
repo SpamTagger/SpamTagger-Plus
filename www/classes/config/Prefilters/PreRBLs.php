@@ -31,7 +31,7 @@ class PreRBLs extends PreFilter {
 
 public function subload() {
   $db_replicaconf = DM_SlaveConfig :: getInstance();
-  $query = "SELECT name FROM dnslist WHERE type='blacklist' AND active=1";
+  $query = "SELECT name FROM dnslist WHERE type='blocklist' AND active=1";
   $list = $db_replicaconf->getList($query);
   foreach ($list as $el) {
   	$dnslist = new DNSList();

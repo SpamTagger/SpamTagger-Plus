@@ -202,7 +202,7 @@ $htxt['GLOSSARY'] = '
 <h3>Quarant&auml;nebericht</h3>
 <p>Automatisch versandter periodischer Bericht, worin alle in der Quarant&auml;ne zur&uuml;ckbehaltenen Meldungen aufgef&uuml;hrt werden und &uuml;ber Werkzeuge verf&uuml;gt, um die E-Mails anzusehen und freizugeben.</p>
 <h3>RBL</h3>
-<p>Realtime Blackhole List. Die RBL haben zum Ziel, in Echtzeit eine Liste der Server zu f&uuml;hren, die einen schlechten Ruf haben, weil sie Spam verschicken. Der Grundsatz der Verwendung ist sehr einfach: wenn das eingetroffene E-Mail von einem solchen Server stammt, wird es grunds&auml;tzlich als Spam behandelt.  Die Schwierigkeit bei der Verwendung von RBL besteht darin, st&auml;ndig ihre Vertrauensw&uuml;rdigkeit zu &uuml;berp&uuml;fen.</p>
+<p>Realtime Block List. Die RBL haben zum Ziel, in Echtzeit eine Liste der Server zu f&uuml;hren, die einen schlechten Ruf haben, weil sie Spam verschicken. Der Grundsatz der Verwendung ist sehr einfach: wenn das eingetroffene E-Mail von einem solchen Server stammt, wird es grunds&auml;tzlich als Spam behandelt.  Die Schwierigkeit bei der Verwendung von RBL besteht darin, st&auml;ndig ihre Vertrauensw&uuml;rdigkeit zu &uuml;berp&uuml;fen.</p>
 <h3>Schweiz</h3>
 <p>Ursprungsland von SpamTagger. Die Spams werden mit der Qualit&auml;t und Pr&auml;zision eines Uhrmachers ausgemerzt.</p>
 <h3>Score</h3>

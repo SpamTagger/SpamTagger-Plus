@@ -5,20 +5,20 @@
  * @author Mentor Reka
  * @copyright 2025, SpamTagger
  *
- * Email blacklist form
+ * Email blocklist form
  */
 
-class Default_Form_Manage_EmailBlacklist extends Default_Form_ElementList
+class Default_Form_Manage_EmailBlocklist extends Default_Form_ElementList
 {
         protected $_email;
-        protected $_panelname = 'blacklist';
+        protected $_panelname = 'blocklist';
         public $_wwlist = array();
 
         public function __construct($email)
         {
             $this->_email = $email;
             $wwelement = new Default_Model_WWElement();
-            $this->_wwlist = $wwelement->fetchAll($this->_email->getParam('address'), 'black');
+            $this->_wwlist = $wwelement->fetchAll($this->_email->getParam('address'), 'block');
 
             parent::__construct($this->_wwlist, 'Default_Model_WWElement');
         }
@@ -54,7 +54,7 @@ class Default_Form_Manage_EmailBlacklist extends Default_Form_ElementList
         }
 
         public function setParams($request, $email) {
-                $this->setAddedValues(array('recipient' => $email->getParam('address'), 'type' => 'black'));
+                $this->setAddedValues(array('recipient' => $email->getParam('address'), 'type' => 'block'));
                 $this->manageRequest($request);
                 $this->addFields($this);
                 return true;

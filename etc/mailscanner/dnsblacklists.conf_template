@@ -1,4 +1,1 @@
-__TMPL_DNSLIST_START__
-__NAME__    __URL__
-__TMPL_DNSLIST_STOP__
-__DNSLIST_LIST__
+./etc/mailscanner/dnsblocklists.conf_template

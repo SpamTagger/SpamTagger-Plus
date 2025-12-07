@@ -56,7 +56,7 @@ dump_virus_file() or fatal_error("CANNOTDUMPVIRUSFILE", $lasterror);
 dump_filename_config() or fatal_error("NOFILENAMECONFIGURATIONFOUND", "no record found for filenames");
 dump_filetype_config() or fatal_error("NOFILETYPECONFIGURATIONFOUND", "no record found for filetypes");
 dump_saplugins_conf();
-dump_dnsblacklists_conf();
+dump_dnsblocklists_conf();
 $db->db_disconnect();
 
 unlink($conf->get_option('SRCDIR')."/share/spamassassin/mailscanner.cf");
@@ -148,13 +148,13 @@ sub get_ms_config {
   if ($row{'allow_passwd_archives'} eq 'yes')   {
     $config{'__ALLOWPWDARCHIVES__'} = 'yes';
     my $FH;
-    open($FH, '>', '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives');
+    open($FH, '>', '/var/spamtagger/spool/tmp/mailscanner/wantlist_password_archives');
     print $FH "FromOrTo:\tdefault\tyes";
     close $FH
   } else {
-    $config{'__ALLOWPWDARCHIVES__'} = '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives';
+    $config{'__ALLOWPWDARCHIVES__'} = '/var/spamtagger/spool/tmp/mailscanner/wantlist_password_archives';
     my $FH;
-    open $FH, '>', '/var/spamtagger/spool/tmp/mailscanner/whitelist_password_archives';
+    open $FH, '>', '/var/spamtagger/spool/tmp/mailscanner/wantlist_password_archives';
     if (defined($row{wh_passwd_archives})) {
       my @wh_dom = split('\n', $row{wh_passwd_archives});
       foreach my $wh_dom (@wh_dom) {
@@ -547,10 +547,10 @@ sub dump_filetype_config {
 }
 
 #############################
-sub dump_dnsblacklists_conf {
+sub dump_dnsblocklists_conf {
   my $template = ConfigTemplate::create(
-    'etc/mailscanner/dnsblacklists.conf_template',
-    'etc/mailscanner/dnsblacklists.conf'
+    'etc/mailscanner/dnsblocklists.conf_template',
+    'etc/mailscanner/dnsblocklists.conf'
   );
   my $subtmpl = $template->get_sub_template('DNSLIST');
   my $res = "";

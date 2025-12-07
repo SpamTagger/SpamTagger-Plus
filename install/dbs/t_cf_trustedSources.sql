@@ -10,7 +10,7 @@ CREATE TABLE trustedSources (
   authstring       varchar(250),
   authservers      blob,
   domainsToSPF     blob,
-  whiterbls        varchar(255) DEFAULT 'DNSWL STTRUSTEDSPF',
+  wantrbls        varchar(255) DEFAULT 'DNSWL STTRUSTEDSPF',
   PRIMARY KEY (set_id)
 );
 

@@ -9,11 +9,11 @@
 __INCLUDE_JS__
 
 <script language="javascript">
-__IF__ SEEWHITELISTEDIT
+__IF__ SEEWANTLISTEDIT
     function openWhite() {
-        window.document.open('__LINK_EDITWHITELIST__', '', 'width=750,height=400,toolbar=no,resizable=yes');
+        window.document.open('__LINK_EDITWANTLIST__', '', 'width=750,height=400,toolbar=no,resizable=yes');
     }
-__FI__ SEEWHITELISTEDIT
+__FI__ SEEWANTLISTEDIT
 __IF__ SEEWARNLISTEDIT
     function openWarn() {
         window.document.open('__LINK_EDITWARNLIST__', '', 'width=750,height=400,toolbar=no,resizable=yes');
@@ -101,11 +101,11 @@ __IF__ SEEWARNLISTEDIT
 &nbsp;<a href="javascript:openWarn();">__LANG_EDITWARNLIST__&nbsp;<img src="templates/default/images/pencil.gif" border="0" align="abstop"></a>
   </td></tr>
 __FI__ SEEWARNLISTEDIT
-__IF__ SEEWHITELISTEDIT
+__IF__ SEEWANTLISTEDIT
   <tr><td align="center" colspan="2">
-&nbsp;<a href="javascript:openWhite();">__LANG_EDITWHITELIST__&nbsp;<img src="templates/default/images/pencil.gif" border="0" align="abstop"></a>
+&nbsp;<a href="javascript:openWhite();">__LANG_EDITWANTLIST__&nbsp;<img src="templates/default/images/pencil.gif" border="0" align="abstop"></a>
   </td></tr>
-__FI__ SEEWHITELISTEDIT
+__FI__ SEEWANTLISTEDIT
 
 <tr><td class="blocktext" colspan="2">&nbsp;</td></tr>
      <tr>

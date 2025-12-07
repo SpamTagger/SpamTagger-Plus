@@ -74,14 +74,14 @@ if ($mode == "badmode") {
 
 // check list type parameter
 $type = '';
-if ($type_get == '1' || $type_get == 'white') {
-	$type = 'white';
+if ($type_get == '1' || $type_get == 'want') {
+	$type = 'want';
 }
 if ($type_get == '2' || $type_get == 'warn') {
         $type = 'warn';
 }
-if ($type_get == '3' || $type_get == 'black') {
-        $type = 'black';
+if ($type_get == '3' || $type_get == 'block') {
+        $type = 'block';
 }
 
 // check if should delete
@@ -186,11 +186,11 @@ function getWWListHeader() {
   global $address;
   global $lang_;
 
-  if ($type_get == 1 || $type_get == 'white') {
+  if ($type_get == 1 || $type_get == 'want') {
 	  if ($address == '0') {
-    		return  $lang_->print_txt('WHITELISTFORGLOBAL');
+    		return  $lang_->print_txt('WANTLISTFORGLOBAL');
   	}
-  	return $lang_->print_txt_param('WHITELISTFOR', $address);
+  	return $lang_->print_txt_param('WANTLISTFOR', $address);
   }
   if ($type_get == 2 || $type_get == 'warn') {
     if ($address == '0') {
@@ -198,11 +198,11 @@ function getWWListHeader() {
     }
         return $lang_->print_txt_param('WARNLISTFOR', $address);
   }
-  if ($type_get == 3 || $type_get == 'black') {
+  if ($type_get == 3 || $type_get == 'block') {
     if ($address == '0') {
-      return  $lang_->print_txt('BLACKLISTFORGLOBAL');
+      return  $lang_->print_txt('BLOCKLISTFORGLOBAL');
     }
-        return $lang_->print_txt_param('BLACKLISTFOR', $address);
+        return $lang_->print_txt_param('BLOCKLISTFOR', $address);
   }
 
 

@@ -121,28 +121,28 @@ $antispam_->load();
 $domain = new Domain();
 $domain->load($selected_address->getDomain());
 
-if ($antispam_->getPref('enable_whitelists') && !$domain->getPref('enable_whitelists')) {
-  $template->setCondition('SEEWHITELISTENABLER', true);
+if ($antispam_->getPref('enable_wantlists') && !$domain->getPref('enable_wantlists')) {
+  $template->setCondition('SEEWANTLISTENABLER', true);
   $template->setCondition('SEELISTS', true);
 }
 if ($antispam_->getPref('enable_warnlists') && !$domain->getPref('enable_warnlists')) {
   $template->setCondition('SEEWARNLISTENABLER', true);
   $template->setCondition('SEELISTS', true);
 }
-if ($antispam_->getPref('enable_blacklists') && !$domain->getPref('enable_blacklists')) {
-  $template->setCondition('SEEBLACKLISTENABLER', true);
+if ($antispam_->getPref('enable_blocklists') && !$domain->getPref('enable_blocklists')) {
+  $template->setCondition('SEEBLOCKLISTENABLER', true);
   $template->setCondition('SEELISTS', true);
 }
-if ($antispam_->getPref('enable_whitelists') && ( $domain->getPref('enable_whitelists') || $selected_address->getPref('has_whitelist'))) {
-  $template->setCondition('SEEWHITELISTEDIT', true);
+if ($antispam_->getPref('enable_wantlists') && ( $domain->getPref('enable_wantlists') || $selected_address->getPref('has_wantlist'))) {
+  $template->setCondition('SEEWANTLISTEDIT', true);
   $template->setCondition('SEELISTS', true);
 }
 if ($antispam_->getPref('enable_warnlists') && ( $domain->getPref('enable_warnlists') || $selected_address->getPref('has_warnlist'))) {
   $template->setCondition('SEEWARNLISTEDIT', true);
   $template->setCondition('SEELISTS', true);
 }
-if ($antispam_->getPref('enable_blacklists') && ( $domain->getPref('enable_blacklists') || $selected_address->getPref('has_blacklist'))) {
-  $template->setCondition('SEEBLACKLISTEDIT', true);
+if ($antispam_->getPref('enable_blocklists') && ( $domain->getPref('enable_blocklists') || $selected_address->getPref('has_blocklist'))) {
+  $template->setCondition('SEEBLOCKLISTEDIT', true);
   $template->setCondition('SEELISTS', true);
 }
 
@@ -171,9 +171,9 @@ $replace = array(
         "__FORM_INPUTQUARBOUNCES__" => $eform->checkbox('quarantine_bounces', 1, $selected_address->getPref('quarantine_bounces'), '', 1),
         "__FORM_INPUTSUMFREQUENCY__" => $eform->checkbox('daily_summary', 1, $selected_address->getPref('daily_summary'), '', 1).$lang_->print_txt('DAILY')."&nbsp;&nbsp;".$eform->checkbox('weekly_summary', 1, $selected_address->getPref('weekly_summary'), '', 1).$lang_->print_txt('WEEKLY')."&nbsp;&nbsp;".$eform->checkbox('monthly_summary', 1, $selected_address->getPref('monthly_summary'), '', 1).$lang_->print_txt('MONTHLY'),
         "__FORM_INPUTLANGUAGE__" => $eform->select('language', $lang_->getLanguages('FULLNAMEASKEY'), $selected_address->getPref('language'), ';'),
-        "__FORM_INPUTENABLEWHITE__" => $eform->checkbox('has_whitelist', 1, $selected_address->getPref('has_whitelist'), whitelistWarning(), 1),
+        "__FORM_INPUTENABLEWANT__" => $eform->checkbox('has_wantlist', 1, $selected_address->getPref('has_wantlist'), wantlistWarning(), 1),
         "__FORM_INPUTENABLEWARN__" => $eform->checkbox('has_warnlist', 1, $selected_address->getPref('has_warnlist'), '', 1),
-	"__FORM_INPUTENABLEBLACK__" => $eform->checkbox('has_blacklist', 1, $selected_address->getPref('has_blacklist'), '', 1),
+	"__FORM_INPUTENABLEBLOCK__" => $eform->checkbox('has_blocklist', 1, $selected_address->getPref('has_blocklist'), '', 1),
         "__BELONGTOUSERLINK__" => userBoundTo($selected_address),
         "__ACCESTOSPAMQUARANTINE_LINK__" => "global_spam_quarantine.php?a=".$selected_address->getPref('address'),
         "__ACCESTOCONTENTQUARANTINE_LINK__" => "global_content_quarantine.php?a=".$selected_address->getPref('address'),
@@ -186,9 +186,9 @@ $replace = array(
         "__PREVIOUS_PAGE__" => $email_list->getPreviousPageLink(),
         "__NEXT_PAGE__" => $email_list->getNextPageLink(),
         "__PAGE_JS__" => $email_list->getJavaScript(),
-        "__LINK_EDITWHITELIST__" => "wwlist.php?t=1&a=".$selected_address->getPref('address'),
+        "__LINK_EDITWANTLIST__" => "wwlist.php?t=1&a=".$selected_address->getPref('address'),
         "__LINK_EDITWARNLIST__" => "wwlist.php?t=2&a=".$selected_address->getPref('address'),
-        "__LINK_EDITBLACKLIST__" => "wwlist.php?t=3&a=".$selected_address->getPref('address')
+        "__LINK_EDITBLOCKLIST__" => "wwlist.php?t=3&a=".$selected_address->getPref('address')
 );
 
 // output page
@@ -222,11 +222,11 @@ function emailStatus($email) {
   }
 }
 
-function whitelistWarning() {
+function wantlistWarning() {
     global $eform;
     global $lang_;
-    $js = " if (window.document.forms['".$eform->getName()."'].email_has_whitelist.value=='1') {" .
-            " alert ('".$lang_->print_txt('WHITELISTWARNING')."'); }";
+    $js = " if (window.document.forms['".$eform->getName()."'].email_has_wantlist.value=='1') {" .
+            " alert ('".$lang_->print_txt('WANTLISTWARNING')."'); }";
     return $js;
 }
 ?>

@@ -119,19 +119,19 @@ sub load_prefs ($this) {
   return;
 }
 
-sub has_in_white_warn_list ($this, $type, $sender) {
+sub has_in_want_warn_list ($this, $type, $sender) {
   $sender =~ s/\'//g;
   my $sysprefs = SystemPref::get_instance();
-  my $filename = 'white.list';
+  my $filename = 'want.list';
   if ($type eq 'warnlist') {
     return 0 unless ($sysprefs->get_pref('enable_warnlists'));
     return 0 unless ($this->{d}->get_pref('enable_warnlists') || $this->get_pref('has_warnlist'));
     $filename = 'warn.list';
-  } elsif ($type eq 'whitelist') {
-    return 0 unless ($sysprefs->get_pref('enable_whitelists'));
-    return 0 unless ($this->{d}->get_pref('enable_whitelists') || $this->get_pref('has_whitelist'));
-  } elsif ($type eq 'blacklist') {
-    $filename = 'black.list';
+  } elsif ($type eq 'wantlist') {
+    return 0 unless ($sysprefs->get_pref('enable_wantlists'));
+    return 0 unless ($this->{d}->get_pref('enable_wantlists') || $this->get_pref('has_wantlist'));
+  } elsif ($type eq 'blocklist') {
+    $filename = 'block.list';
   }
 
   my $conf = ReadConfig::get_instance();
@@ -141,20 +141,20 @@ sub has_in_white_warn_list ($this, $type, $sender) {
   my $prefclient = PrefClient->new();
   $prefclient->set_timeout(2);
   my $retvalues = {'GLOBAL' => 1, 'DOMAIN' => 2, 'USER' => 3 };
-  if ($type eq 'whitelist') {
-    my $result = $prefclient->is_whitelisted($this->{address}, $sender);
+  if ($type eq 'wantlist') {
+    my $result = $prefclient->is_wantlisted($this->{address}, $sender);
     return $retvalues->{$1} if ($result =~ m/^LISTED (USER|DOMAIN|GLOBAL)/ );
-    return $this->loaded_is_ww_listed('white', $sender) if ($result =~ /^_/);
+    return $this->loaded_is_ww_listed('want', $sender) if ($result =~ /^_/);
     return 0;
   } elsif ($type eq 'warnlist') {
     my $result = $prefclient->is_warnlisted($this->{address}, $sender);
     return $retvalues->{$1} if ($result =~ m/^LISTED (USER|DOMAIN|GLOBAL)/ );
     return $this->loaded_is_ww_listed('warn', $sender) if ($result =~ /^_/);
     return 0;
-  } elsif ($type eq 'blacklist') {
-    my $result = $prefclient->is_blacklisted($this->{address}, $sender);
+  } elsif ($type eq 'blocklist') {
+    my $result = $prefclient->is_blocklisted($this->{address}, $sender);
     return $retvalues->{$1} if ($result =~ m/^LISTED (USER|DOMAIN|GLOBAL)/ );
-    return $this->loaded_is_ww_listed('black', $sender) if ($result =~ /^_/);
+    return $this->loaded_is_ww_listed('block', $sender) if ($result =~ /^_/);
   }
   return 0;
 
@@ -213,8 +213,8 @@ sub in_ww ($this, $type, $sender, $destination) {
   my $prefclient = PrefClient->new();
   $prefclient->set_timeout(2);
 
-  if ($type eq 'whitelist') {
-     return 1 if ($prefclient->is_whitelisted($destination, $sender));
+  if ($type eq 'wantlist') {
+     return 1 if ($prefclient->is_wantlisted($destination, $sender));
      return 0;
   }
   return 1 if ($prefclient->is_warnlisted($destination, $sender));
@@ -243,13 +243,13 @@ sub send_warnlist_hit ($this, $sender, $reason, $msgid) {
   return $template->send_message();
 }
 
-sub send_ww_hit_notice ($this, $whitelisted, $warnlisted, $sender, $msgh) {
+sub send_ww_hit_notice ($this, $wantlisted, $warnlisted, $sender, $msgh) {
   require MailTemplate;
   my $template = MailTemplate->new('warnhit', 'noticehit', $this->{d}->get_pref('summary_template'), \$this, 'en', 'text');
 
-  my $reason = 'whitelist';
-  my $level = $whitelisted;
-  if (!$whitelisted) {
+  my $reason = 'wantlist';
+  my $level = $wantlisted;
+  if (!$wantlisted) {
     $reason = 'warnlist';
     $level = $warnlisted;
   }

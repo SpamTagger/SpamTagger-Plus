@@ -53,7 +53,7 @@ sub initialise ($class = $MODULE) {
     listeduristobespam   => 1,
     listedemailtobespam  => 1,
     rblsDefsPath         => "/usr/spamtagger/etc/rbs/",
-    whitelistDomainsFile => "/var/spamtagger/spool/spamtagger/rbls/whitelisted_domains.txt",
+    wantlistDomainsFile => "/var/spamtagger/spool/spamtagger/rbls/wantlisted_domains.txt",
     TLDsFiles            => "/var/spamtagger/spool/spamtagger/rbls/two-level-tlds.txt /var/spamtagger/spool/spamtagger/rbls/tlds.txt",
     localDomainsFile     => "/var/spamtagger/spool/tmp/spamtagger/domains.list",
     resolveShorteners    => 1,
@@ -83,7 +83,7 @@ sub initialise ($class = $MODULE) {
 
   $UriRBLs::dnslists->load_rbls(
     $conf{rblsDefsPath}, $conf{rbls},
-    'URIRBL',                     $conf{whitelistDomainsFile},
+    'URIRBL',                     $conf{wantlistDomainsFile},
     $conf{TLDsFiles},    $conf{localDomainsFile},
     $class
   );
@@ -144,7 +144,7 @@ sub Checks ($this, $message) { ## no critic
       my $acidr = Net::CIDR::Lite->new();
       my $ret = eval { $acidr->add_any($avoidhost); };
       if ($acidr->find($message->{clientip})) {
-        MailScanner::Log::InfoLog(blessed($this)." not checking UriRBL on ".$message->{clientip}." because IP is whitelisted for message ".$message->{id});
+        MailScanner::Log::InfoLog(blessed($this)." not checking UriRBL on ".$message->{clientip}." because IP is wantlisted for message ".$message->{id});
         return 0;
       }
     }
@@ -157,7 +157,7 @@ sub Checks ($this, $message) { ## no critic
         MailScanner::Log::InfoLog(blessed($this)." should avoid control on hostname ".$avoidhost." for message ".$message->{id});
       }
       if ($senderhostname =~ m/$avoidhost$/) {
-        MailScanner::Log::InfoLog(blessed($this)." not checking UriRBL on ".$message->{clientip}." because hostname $senderhostname is whitelisted for message ".$message->{id});
+        MailScanner::Log::InfoLog(blessed($this)." not checking UriRBL on ".$message->{clientip}." because hostname $senderhostname is wantlisted for message ".$message->{id});
         return 0;
       }
     }

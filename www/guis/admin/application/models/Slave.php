@@ -344,7 +344,7 @@ class Default_Model_Slave
     public function getTodayRefusedPie() {
         $what = array();
         $what['stats'] = array('rbl' => 'globalRefusedRBLCount+globalRefusedBackscatterCount',
-                               'blacklists'=>  'globalRefusedHostCount+globalRefusedBadSenderCount',
+                               'blocklists'=>  'globalRefusedHostCount+globalRefusedBadSenderCount',
                                'relay' => 'globalRefusedRelayCount',
                                'bad signature' => 'globalRefusedBATVCount+globalRefusedBadSPFCount+globalRefusedBadRDNSCount',
                                'callout' => 'globalRefusedCalloutCount',

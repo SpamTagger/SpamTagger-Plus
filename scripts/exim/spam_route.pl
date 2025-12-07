@@ -74,14 +74,14 @@ my $ptime = tv_interval ($stime);
 my $email = Email->new($to);
 ## check what to do with message
 my $delivery_type = $email->get_pref( 'delivery_type', 1);
-my $whitelisted = $email->has_in_white_warn_list('whitelist', $sender);
-#print "\nin whitelist returned: $whitelisted\n";
-my $warnlisted = $email->has_in_white_warn_list('warnlist', $sender);
+my $wantlisted = $email->has_in_want_warn_list('wantlist', $sender);
+#print "\nin wantlist returned: $wantlisted\n";
+my $warnlisted = $email->has_in_want_warn_list('warnlist', $sender);
 #print "\nin warnlist returned: $warnlisted\n";
-## if WHITELISTED, then go through, no tag
-if ($whitelisted) {
-  print " is whitelisted ($whitelisted) ";
-  send_anyway($whitelisted);
+## if WANTLISTED, then go through, no tag
+if ($wantlisted) {
+  print " is wantlisted ($wantlisted) ";
+  send_anyway($wantlisted);
 } else {
   ## DROP
   if ( $delivery_type == 3 ) {
@@ -252,17 +252,17 @@ sub clean_variables {
 #####
 ## send_anyway
 #####
-sub send_anyway ($whitelisted) {
+sub send_anyway ($wantlisted) {
   my $smtp;
 
   my %level = (1 => 'system', 2 => 'domain', 3 => 'user');
 
-  if (! $whitelisted) {
+  if (! $wantlisted) {
     my $tag = $email->get_pref( 'spam_tag', '{Spam?}');
     $tag = "{Spam?}" if ( $tag =~ /\-1/ );
     $msg =~ s/Subject:\ /Subject: $tag /i if ( $tag !~ /^$/);
   } else {
-    $msg =~ s/X-SpamTagger-SpamCheck: spam,/X-SpamTagger-SpamCheck: spam, whitelisted by $level{$whitelisted},/i;
+    $msg =~ s/X-SpamTagger-SpamCheck: spam,/X-SpamTagger-SpamCheck: spam, wantlisted by $level{$wantlisted},/i;
   }
 
   unless ( $smtp = Net::SMTP->new('localhost:2525') ) {
@@ -297,7 +297,7 @@ sub send_anyway ($whitelisted) {
   $err = $smtp->code();
   if ( $err < 200 || $err >= 500 ) { panic_log_msg(); return; }
 
-  send_notice() if ($whitelisted);
+  send_notice() if ($wantlisted);
   return;
 }
 
@@ -339,7 +339,7 @@ sub put_in_quarantine {
 ##########################################
 sub send_notice {
   if (defined($email) && defined($email->{d}) && $email->{d}->get_pref('notice_wwlists_hit') == 1) {
-    $email->send_ww_hit_notice($whitelisted, $warnlisted, $sender, \$msg);
+    $email->send_ww_hit_notice($wantlisted, $warnlisted, $sender, \$msg);
   }
   return;
 }

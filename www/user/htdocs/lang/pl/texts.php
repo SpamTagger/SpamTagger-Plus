@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Newslettery";
 $txt['NEWSLETTERSSHORTHELP'] = "Tutaj możesz zarządzać swoimi newsletterami.";
 $txt['NEWSLETTERSALLOW'] = "dostarcz";
 $txt['NEWSLETTERACCEPT'] = "Akceptuj ten newsletter";
-$txt['SPAM_WHITELIST_DISABLED'] = "Lista nie jest aktywna dla tej domeny (skontaktuj się z administratorem).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Lista nie jest aktywna dla tej domeny (skontaktuj się z administratorem).";
 /*
  * generic buttons
  */
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "Ukryj wiadomości zwolnione przez użytkownika";
 $txt['FORCESPAM'] = "zwolnij wiadomość";
 //old
 $txt['ASKREASON'] = "wyświetl reguły filtrowania";
-$txt['CONFSENDANALYSE'] = "Prośba o dostosowanie filtra zostanie wysłana do Centrum Analiz SpamTagger; będzie ona zawierała kopię wiadomości, która została błędnie zablokowana.</br> Uwaga: Dostosowanie filtrowania jest czym innym niż dodanie do białej (whitelist) lub czarnej (blacklist) listy.";
+$txt['CONFSENDANALYSE'] = "Prośba o dostosowanie filtra zostanie wysłana do Centrum Analiz SpamTagger; będzie ona zawierała kopię wiadomości, która została błędnie zablokowana.</br> Uwaga: Dostosowanie filtrowania jest czym innym niż dodanie do białej (wantlist) lub czarnej (blocklist) listy.";
 $txt['AREYOUSURE'] = "<span class=\"question\">Na pewno chcesz analizować tę wiadomość, zmiany filtrowania mogą zostać zastosowane?</span>";
 $txt['ASKANALYSE'] = "Żądanie zmiany filtrowania";
 $txt['PAGE'] = "Strona";
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "Wszystkie adresy";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Treść wiadomości";
 $txt['PREFILTERHITS'] = "Pre-filters";
-$txt['BLACKLISTS'] = "Czarne listy";
+$txt['BLOCKLISTS'] = "Czarne listy";
 $txt['FITLERSCORE'] = "Punktacja";
 $txt['NONE'] = "none";
 $txt['HEADERS'] = "Nagłówki";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "użyj domyślnych";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "czysty tekst";
 //old
-$txt['EDITWHITELIST'] = "edytuj whitelistę";
+$txt['EDITWANTLIST'] = "edytuj wantlistę";
 //old
 $txt['EDITWARNLIST'] = "edytuj listę ostrzeżeń";
 /*
@@ -261,7 +261,7 @@ $txt['WWENTRY'] = "Wpis";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Na pewno chcesz ostatecznie usunąć ten wpis?";
 //old
-$txt['WHITELISTFOR'] = "Biała lista dla __PARAM__";
+$txt['WANTLISTFOR'] = "Biała lista dla __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Lista ostrzeżeń dla __PARAM__";
 //old
@@ -388,15 +388,15 @@ $txt['ADDRESSLISTTOPIC'] = "Grupa adresowa";
 $txt['ADDRESSPARAMTOPIC'] = "Ustawienia adresu";
 $txt['QUARPARAMTOPIC'] = "Wyświetlanie kwarantanny";
 $txt['WARNLISTTOPIC'] = "Lista ostrzeżeń";
-$txt['WHITELISTTOPIC'] = "Biała lista";
-$txt['BLACKLISTTOPIC'] = "Czarna lista";
+$txt['WANTLISTTOPIC'] = "Biała lista";
+$txt['BLOCKLISTTOPIC'] = "Czarna lista";
 $txt['INTERFACETOPICTITLE'] = "ustawienia interfejsu";
 $txt['ADDRESSLISTTOPICTITLE'] = "grupa adresowa";
 $txt['ADDRESSPARAMTOPICTITLE'] = "ustawienia adresu";
 $txt['QUARPARAMTOPICTITLE'] = "wyświetlanie kwarantanny";
 $txt['WARNLISTTOPICTITLE'] = "lista ostrzeżeń";
-$txt['WHITELISTTOPICTITLE'] = "biała lista";
-$txt['BLACKLISTTOPICTITLE'] = "czarna lista";
+$txt['WANTLISTTOPICTITLE'] = "biała lista";
+$txt['BLOCKLISTTOPICTITLE'] = "czarna lista";
 /*
  * interface (new)
  */
@@ -459,21 +459,21 @@ $txt['REMOVEANENTRY'] = "Wyłącz, włącz lub usuń adres z listy";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Wybierz adres lub adresy, które chcesz zmodyfikować z listy i kliknij żądany przycisk akcji.";
 $txt['REMTHEENTRY'] = "Usuń wybrane";
 $txt['DISABLETHEENTRY'] = "Wyłącz/włącz wybrane";
-$txt['WHITELISTSHORTHELP'] = "Biała lista zawiera adresy zaufanych nadawców, dla których nigdy nie nastąpi przechowywanie w kwarantannie. <br />
+$txt['WANTLISTSHORTHELP'] = "Biała lista zawiera adresy zaufanych nadawców, dla których nigdy nie nastąpi przechowywanie w kwarantannie. <br />
  Ostrzeżenie: ta funkcja powinna być używana jako rozwiązanie tymczasowe, ponieważ zmniejsza ogólną ochronę.
 Sprawdź instrukcję (dostępną w sekcji <a href=\"help.php\"> „Pomoc” </a>), aby uzyskać więcej informacji na temat korzystania z białej listy.
 ";
-$txt['BLACKLISTSHORTHELP'] = "Czarna lista zawiera adresy nadawców.
+$txt['BLOCKLISTSHORTHELP'] = "Czarna lista zawiera adresy nadawców.
                                   Sprawdź w instrukcji  (dostępna w sekcji <a href=\"help.php\">\"Pomoc\"</a>) więcej informacji na temat użycia czarnej listy.
 ";
-$txt['WHITELISTFORADDRESS'] = "Biała lista dla adresu";
-$txt['ADDAWHITEENTRY'] = "Dodaj adres do listy";
-$txt['WHITELISTENTRYTOADD'] = "Wpisz adres, który chcesz dodać do białej listy. Możesz dodać opcjonalny komentarz.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Wybierz adres lub adresy, które chcesz zmodyfikować z listy i kliknij żądany przycisk akcji.";
-$txt['BLACKLISTFORADDRESS'] = "Czarna lista dla adresu";
-$txt['ADDABLACKENTRY'] = "Dodaj adres do listy";
-$txt['BLACKLISTENTRYTOADD'] = "Podaj adres, który chcesz dodać do czarnej listy. Możesz dodać opcjonalny komentarz.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Wybierz adres lub adresy, które chcesz zmodyfikować z listy i kliknij żądany przycisk akcji.";
+$txt['WANTLISTFORADDRESS'] = "Biała lista dla adresu";
+$txt['ADDAWANTENTRY'] = "Dodaj adres do listy";
+$txt['WANTLISTENTRYTOADD'] = "Wpisz adres, który chcesz dodać do białej listy. Możesz dodać opcjonalny komentarz.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Wybierz adres lub adresy, które chcesz zmodyfikować z listy i kliknij żądany przycisk akcji.";
+$txt['BLOCKLISTFORADDRESS'] = "Czarna lista dla adresu";
+$txt['ADDABLOCKENTRY'] = "Dodaj adres do listy";
+$txt['BLOCKLISTENTRYTOADD'] = "Podaj adres, który chcesz dodać do czarnej listy. Możesz dodać opcjonalny komentarz.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Wybierz adres lub adresy, które chcesz zmodyfikować z listy i kliknij żądany przycisk akcji.";
 $txt['RECORDALREADYEXISTS'] = "Ten adres już występuje na liście.";
 /*
  * logout (new)

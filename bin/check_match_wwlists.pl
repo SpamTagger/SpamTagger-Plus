@@ -9,7 +9,7 @@ use DB();
 use Email();
 
 my @column_names = qw/id sender recipient type comments/;
-my @type_order = qw/black white wnews warn/;
+my @type_order = qw/block want wnews warn/;
 my @list_level_order = qw/user domain global/;
 
 my $sender = shift;

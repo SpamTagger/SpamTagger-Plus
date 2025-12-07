@@ -85,7 +85,7 @@ $txt['FAQ'] = "
                       </ul>
                   </li>
                   <li> <h2>Cosa puoi fare per correggere SpamTagger</h2>
-                      In caso di errori di SpamTagger, la cosa migliore da fare è aiutare a correggere il filtro inviando un feedback all'amministratore. Non pensare che la soluzione migliore sia quella di inserire solo mittenti nella whitelist o nella blacklist poiché questo è solo un modo veloce ma sporco (controlla questo per ulteriori informazioni). Sebbene a volte sia l'unica possibilità, è sempre meglio scoprire la vera causa dell'errore e correggerla. Questa operazione può essere eseguita solo da personale tecnico, quindi non esitare a inviare feedback in seguito a errori al tuo amministratore.
+                      In caso di errori di SpamTagger, la cosa migliore da fare è aiutare a correggere il filtro inviando un feedback all'amministratore. Non pensare che la soluzione migliore sia quella di inserire solo mittenti nella wantlist o nella blocklist poiché questo è solo un modo veloce ma sporco (controlla questo per ulteriori informazioni). Sebbene a volte sia l'unica possibilità, è sempre meglio scoprire la vera causa dell'errore e correggerla. Questa operazione può essere eseguita solo da personale tecnico, quindi non esitare a inviare feedback in seguito a errori al tuo amministratore.
                   </li>
                 </ul>";
 $txt['WEBDOCTITLE'] = "Documentazione in linea";
@@ -93,7 +93,7 @@ $txt['DOCTITLE'] = "Guida dell'interfaccia utente";
 $txt['FAQTITLE'] = "Capire SpamTagger";
 $txt['SOTHER'] = "Hai altri problemi con la ricezione della tua e-mail e hai seguito le procedure di cui sopra senza risultati positivi? In tal caso, contatta il Centro analisi SpamTagger compilando questo modulo.";
 $txt['SOTHERTITLE'] = "ALTRI PROBLEMI";
-$txt['SFALSEPOSSUB3'] = "A volte, alcune mailing list vengono bloccate da SpamTagger. Ciò è dovuto alla loro formattazione, che spesso è molto simile allo spam. Puoi richiedere un'analisi di questi messaggi come spiegato sopra e il nostro centro analisi si occuperà di inserire tali mailing list nelle white list per evitare che vengano bloccate in futuro.";
+$txt['SFALSEPOSSUB3'] = "A volte, alcune mailing list vengono bloccate da SpamTagger. Ciò è dovuto alla loro formattazione, che spesso è molto simile allo spam. Puoi richiedere un'analisi di questi messaggi come spiegato sopra e il nostro centro analisi si occuperà di inserire tali mailing list nelle wantlist per evitare che vengano bloccate in futuro.";
 $txt['SFALSEPOSSUB3TITLE'] = "Mailing list";
 $txt['SFALSEPOSSUB2'] = "Dall'elenco di quarantena, puoi visualizzare i criteri utilizzati da SpamTagger per considerare il messaggio come spam tramite <img src=\"/templates/$template/images/support/reasons.gif\" align=\"middle\" alt=\"\"> pulsante. Se ritieni che questi criteri non siano giustificabili, puoi richiedere un'analisi al nostro centro di analisi facendo clic su <img src=\"/templates/$template/images/support/analyse.gif\" align=\"middle\" alt=\" pulsante \">. Puoi anche rilasciare il messaggio facendo clic sul pulsante <img src=\"/templates/$template/images/support/force.gif\" align=\"middle\" alt=\"\">.";
 $txt['SFALSEPOSSUB2TITLE'] = "Un'e-mail è stata considerata spam e non capisci perché?";

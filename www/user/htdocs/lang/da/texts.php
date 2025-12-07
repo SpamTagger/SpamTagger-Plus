@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Nyhedsbreve";
 $txt['NEWSLETTERSSHORTHELP'] = "Her kan du håndtere nyhedsbreve.";
 $txt['NEWSLETTERSALLOW'] = "levere";
 $txt['NEWSLETTERACCEPT'] = "Accepter dette nyhedsbrev";
-$txt['SPAM_WHITELIST_DISABLED'] = "Liste er ikke aktiveret for det domæne (kontakt din administrator).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Liste er ikke aktiveret for det domæne (kontakt din administrator).";
 /*
  * generic buttons
  */
@@ -144,7 +144,7 @@ $txt['HIDEFORCED'] = "Skjul bruger udgivne meddelelser";
 $txt['FORCESPAM'] = "frigiv beskeden";
 //old
 $txt['ASKREASON'] = "Vis filterregler";
-$txt['CONFSENDANALYSE'] = "Anmodningen om filter justering vil blive sendt til SpamTagger analyse Center; Det omfatter en kopi af den meddelelse, der var fejlagtigt blokeret.</br> Bemærk: En justering af filteret er ikke det samme som whitelisting eller sortlistn";
+$txt['CONFSENDANALYSE'] = "Anmodningen om filter justering vil blive sendt til SpamTagger analyse Center; Det omfatter en kopi af den meddelelse, der var fejlagtigt blokeret.</br> Bemærk: En justering af filteret er ikke det samme som wantlisting eller sortlistn";
 $txt['AREYOUSURE'] = "<span class=\"spørgsmål\" >Er du sikker på, at du vil have denne meddelelse analyseret, og at der kan anvendes filter justeringer?</span>";
 $txt['ASKANALYSE'] = "Anmodning om filterjustering";
 $txt['PAGE'] = "Side";
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "Alle adresser";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Meddelelsens indhold";
 $txt['PREFILTERHITS'] = "Præfiltre";
-$txt['BLACKLISTS'] = "Blacklist";
+$txt['BLOCKLISTS'] = "Blocklist";
 $txt['FITLERSCORE'] = "Score";
 $txt['NONE'] = "none";
 $txt['HEADERS'] = "\"Headers\"";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "brug standard";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "alm.  tekst";
 //old
-$txt['EDITWHITELIST'] = "rediger whitelist";
+$txt['EDITWANTLIST'] = "rediger wantlist";
 //old
 $txt['EDITWARNLIST'] = "rediger advarselsliste";
 //old
@@ -263,7 +263,7 @@ $txt['WWENTRY'] = "Indgang";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Er du sikker på, at du vil slette denne post permanent?";
 //old
-$txt['WHITELISTFOR'] = "\"Whitelist\" for __PARAM__";
+$txt['WANTLISTFOR'] = "\"Wantlist\" for __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "\"Warnlist\" for __PARAM__";
 //old
@@ -392,16 +392,16 @@ $txt['ADDRESSLISTTOPIC'] = "Adressegruppe";
 $txt['ADDRESSPARAMTOPIC'] = "Adresseindstillinger";
 $txt['QUARPARAMTOPIC'] = "Visning af karantæne";
 $txt['WARNLISTTOPIC'] = "\"Warnlist\"";
-$txt['WHITELISTTOPIC'] = "\"Whitelist\"";
-$txt['BLACKLISTTOPIC'] = "\"Blacklist\"";
+$txt['WANTLISTTOPIC'] = "\"Wantlist\"";
+$txt['BLOCKLISTTOPIC'] = "\"Blocklist\"";
 $txt['NEWSLISTTOPIC'] = "\"Newslist\"";
 $txt['INTERFACETOPICTITLE'] = "indstillinger for grænseflade";
 $txt['ADDRESSLISTTOPICTITLE'] = "adressegruppe";
 $txt['ADDRESSPARAMTOPICTITLE'] = "adresseindstillinger";
 $txt['QUARPARAMTOPICTITLE'] = "Visning af karantæne";
 $txt['WARNLISTTOPICTITLE'] = "\"warnlist\"";
-$txt['WHITELISTTOPICTITLE'] = "\"whitelist\"";
-$txt['BLACKLISTTOPICTITLE'] = "\"blacklist\"";
+$txt['WANTLISTTOPICTITLE'] = "\"wantlist\"";
+$txt['BLOCKLISTTOPICTITLE'] = "\"blocklist\"";
 $txt['NEWSLISTTOPICTITLE'] = "\"newslist\"";
 /*
  * interface (new)
@@ -465,24 +465,24 @@ $txt['REMOVEANENTRY'] = "Deaktiver, Aktivér eller fjern en adresse fra listen";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Vælg den adresse eller de adresser, du vil ændre, på listen, og klik på den ønskede handlingsknap.";
 $txt['REMTHEENTRY'] = "Fjern markering";
 $txt['DISABLETHEENTRY'] = "Deaktiver/Aktivér markering";
-$txt['WHITELISTSHORTHELP'] = "\"Whitelisten\" indeholder betroede afsenderadresser, hvor der aldrig vil forekomme karantæne tilbageholdelse. <br />
+$txt['WANTLISTSHORTHELP'] = "\"Wantlisten\" indeholder betroede afsenderadresser, hvor der aldrig vil forekomme karantæne tilbageholdelse. <br />
                                    Advarsel: denne funktion skal bruges som en midlertidig løsning, da den reducerer den overordnede beskyttelse.
-                                  Se manualen (findes i afsnit <a href=\"help. php\">\"Hjælp\"</a>) for at få flere oplysninger om brug af \" whitelisten \".
+                                  Se manualen (findes i afsnit <a href=\"help. php\">\"Hjælp\"</a>) for at få flere oplysninger om brug af \" wantlisten \".
 ";
-$txt['BLACKLISTSHORTHELP'] = "Blacklisten indeholder sortlistet afsender adresser.
+$txt['BLOCKLISTSHORTHELP'] = "Blocklisten indeholder sortlistet afsender adresser.
 ...................................Læs manualen (til rådighed i afsnit <a href=\"help.php\">\"Hjælp\"</a>) for at få flere oplysninger.
 ";
 $txt['NEWSLISTSHORTHELP'] = "Nyhedsbrev listen indeholder adresser på de ønskede nyhedsbreve. <br />
                                   Se manualen (findes i afsnit<a href=\"help.php\">\"Hjælp\"</a>) for at få flere oplysninger om brug af nyhedsbrev listen.
 ";
-$txt['WHITELISTFORADDRESS'] = "Whitelist addressen";
-$txt['ADDAWHITEENTRY'] = "Føj en adresse til listen";
-$txt['WHITELISTENTRYTOADD'] = "Indtast den adresse, du vil føje til whitelisten. Du kan også tilføje en valgfri kommentar.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Vælg den adresse eller de adresser, du vil ændre, på listen, og klik på den ønskede handlingsknap.";
-$txt['BLACKLISTFORADDRESS'] = "Blacklist  adressen";
-$txt['ADDABLACKENTRY'] = "Føj en adresse til listen";
-$txt['BLACKLISTENTRYTOADD'] = "Indtast den adresse, du vil føje til blacklisten. Du kan også tilføje en valgfri kommentar.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Vælg den adresse eller de adresser, du vil ændre, på listen, og klik på den ønskede handlingsknap.";
+$txt['WANTLISTFORADDRESS'] = "Wantlist addressen";
+$txt['ADDAWANTENTRY'] = "Føj en adresse til listen";
+$txt['WANTLISTENTRYTOADD'] = "Indtast den adresse, du vil føje til wantlisten. Du kan også tilføje en valgfri kommentar.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Vælg den adresse eller de adresser, du vil ændre, på listen, og klik på den ønskede handlingsknap.";
+$txt['BLOCKLISTFORADDRESS'] = "Blocklist  adressen";
+$txt['ADDABLOCKENTRY'] = "Føj en adresse til listen";
+$txt['BLOCKLISTENTRYTOADD'] = "Indtast den adresse, du vil føje til blocklisten. Du kan også tilføje en valgfri kommentar.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Vælg den adresse eller de adresser, du vil ændre, på listen, og klik på den ønskede handlingsknap.";
 $txt['NEWSLISTFORADDRESS'] = "Nyhedsbrev liste for adressen";
 $txt['ADDANEWSENTRY'] = "Føj en adresse til listen";
 $txt['NEWSLISTENTRYTOADD'] = "Indtast den adresse, du vil føje til newsletter listen. Du kan også tilføje en valgfri kommentar.";

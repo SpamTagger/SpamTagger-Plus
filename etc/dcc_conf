@@ -27,15 +27,15 @@ DCCM_ENABLE=on
 #   DCCM_ARGS="-SHELO -SX-Habeas-SWE-3 -Smail_host -SSender -SList-ID"
 DCCM_ARGS=
 DCCM_LOGDIR=
-DCCM_WHITECLNT=whiteclnt
+DCCM_WANTCLNT=whiteclnt
 DCCM_USERDIRS=userdirs
 # set DCCM_LOG_AT to a number that determines "bulk mail" for your situation.
 #   50 is a typical value.
 # Leave DCCM_REJECT_AT blank until you are confident that most sourced of
 #   solicited bulk mail have been white-listed.  Then set it to the number
 #   that defines "bulk mail" for your site.  Note that this rejection
-#   or "bulk" threshold does not affect the blacklisting effects of the
-#   DCCM_WHITECLNT white list file.
+#   or "bulk" threshold does not affect the blocklisting effects of the
+#   DCCM_WANTCLNT white list file.
 # Add '-aIGNORE' to DCCM_ARGS to ignore the bulkiness of mail except to
 #   add X-DCC headers.
 DCCM_LOG_AT=
@@ -57,7 +57,7 @@ DCCIFD_ENABLE=on
 #   DCCIFD_ARGS="-SHELO -SX-Habeas-SWE-3 -Smail_host -SSender -SList-ID"
 DCCIFD_ARGS=
 DCCIFD_LOGDIR="$DCCM_LOGDIR"
-DCCIFD_WHITECLNT="$DCCM_WHITECLNT"
+DCCIFD_WANTCLNT="$DCCM_WANTCLNT"
 DCCIFD_USERDIRS="$DCCM_USERDIRS"
 DCCIFD_LOG_AT="$DCCM_LOG_AT"
 DCCIFD_REJECT_AT="$DCCM_REJECT_AT"

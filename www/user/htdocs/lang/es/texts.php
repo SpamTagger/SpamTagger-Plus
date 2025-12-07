@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Boletines";
 $txt['NEWSLETTERSSHORTHELP'] = "Aquí puede administrar sus boletines.";
 $txt['NEWSLETTERSALLOW'] = "entrega";
 $txt['NEWSLETTERACCEPT'] = "Aceptar este boletín";
-$txt['SPAM_WHITELIST_DISABLED'] = "La lista no está activada para este dominio (póngase en contacto con su administrador).";
+$txt['SPAM_WANTLIST_DISABLED'] = "La lista no está activada para este dominio (póngase en contacto con su administrador).";
 ### missing translations
 $txt['FORGOTPASSWORD'] = "¿Olvidó su contraseña?";
 $txt['PASSWORDRESET'] = "La contraseña ha sido restablecida y enviada a su dirección de correo electrónico.";
@@ -179,7 +179,7 @@ $txt['GROUPQUARANTINES'] = "Todas las direcciones";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Contenido del mensaje";
 $txt['PREFILTERHITS'] = "Pre-filtros";
-$txt['BLACKLISTS'] = "Lista Negra";
+$txt['BLOCKLISTS'] = "Lista Negra";
 $txt['FITLERSCORE'] = "Puntuación";
 $txt['NONE'] = "ninguno";
 $txt['HEADERS'] = "Cabeceras";
@@ -242,7 +242,7 @@ $txt['USEDEFAULT'] = "usar por defecto";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "texto sin formato";
 //old
-$txt['EDITWHITELIST'] = "editar lista blanca";
+$txt['EDITWANTLIST'] = "editar lista blanca";
 //old
 $txt['EDITWARNLIST'] = "editar lista de advertencia";
 /*
@@ -262,7 +262,7 @@ $txt['WWENTRY'] = "Entrada";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "¿Estás seguro de que quieres eliminar permanentemente esta entrada?";
 //old
-$txt['WHITELISTFOR'] = "Lista blanca para __PARAM__";
+$txt['WANTLISTFOR'] = "Lista blanca para __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Lista de advertencia para __PARAM__";
 //old
@@ -389,15 +389,15 @@ $txt['ADDRESSLISTTOPIC'] = "Grupo de direcciones";
 $txt['ADDRESSPARAMTOPIC'] = "Ajustes de dirección";
 $txt['QUARPARAMTOPIC'] = "Mostrar cuarentena";
 $txt['WARNLISTTOPIC'] = "Lista de advertencia";
-$txt['WHITELISTTOPIC'] = "Lista blanca";
-$txt['BLACKLISTTOPIC'] = "Lista negra";
+$txt['WANTLISTTOPIC'] = "Lista blanca";
+$txt['BLOCKLISTTOPIC'] = "Lista negra";
 $txt['INTERFACETOPICTITLE'] = "Ajustes de interfaz";
 $txt['ADDRESSLISTTOPICTITLE'] = "grupo de direcciones";
 $txt['ADDRESSPARAMTOPICTITLE'] = "ajustes de dirección";
 $txt['QUARPARAMTOPICTITLE'] = "mostrar cuarentena";
 $txt['WARNLISTTOPICTITLE'] = "lista de advertencia";
-$txt['WHITELISTTOPICTITLE'] = "lista blanca";
-$txt['BLACKLISTTOPICTITLE'] = "lista negra";
+$txt['WANTLISTTOPICTITLE'] = "lista blanca";
+$txt['BLOCKLISTTOPICTITLE'] = "lista negra";
 /*
  * interface (new)
  */
@@ -460,21 +460,21 @@ $txt['REMOVEANENTRY'] = "Desactivar, activar o eliminar una dirección de la lis
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Seleccione la dirección o direcciones que desea modificar de la lista y haga clic en la acción deseada.";
 $txt['REMTHEENTRY'] = "Eliminar selección";
 $txt['DISABLETHEENTRY'] = "Desactivar/activar selección";
-$txt['WHITELISTSHORTHELP'] = "La lista blanca contiene las direcciones de los remitentes de confianza, las cuales no serán puestas en cuarentena.<br />
+$txt['WANTLISTSHORTHELP'] = "La lista blanca contiene las direcciones de los remitentes de confianza, las cuales no serán puestas en cuarentena.<br />
 Advertencia: esta función debe ser utilizada como solución temporal, porque impide una protección total.
 Leer el manual (disponible en la parte <a href=\"help.php\">\"Ayuda\"</a>) para obtener más información sobre el uso de la lista blanca.
 ";
-$txt['BLACKLISTSHORTHELP'] = "La lista negra contiene la dirección del remitente incluida en la lista negra.
+$txt['BLOCKLISTSHORTHELP'] = "La lista negra contiene la dirección del remitente incluida en la lista negra.
  Revise el manual (disponible en la sección <a href=\"help.php\">\"Ayuda\"</a>) para obtener más información sobre el uso de la lista negra.
 ";
-$txt['WHITELISTFORADDRESS'] = "Lista blanca para la dirección";
-$txt['ADDAWHITEENTRY'] = "Añadir una dirección a la lista";
-$txt['WHITELISTENTRYTOADD'] = "Ingrese la dirección que quiere añadir a la lista blanca. También puede añadir un comentario.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Seleccione la dirección o direcciones que desea modificar de la lista y haga clic en la acción deseada.";
-$txt['BLACKLISTFORADDRESS'] = "Lista negra para la dirección";
-$txt['ADDABLACKENTRY'] = "Agregar una dirección a la lista";
-$txt['BLACKLISTENTRYTOADD'] = "Ingrese la dirección que desea agregar a la lista negra. También puede agregar un comentario.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Seleccione la dirección o direcciones que desea modificar de la lista y haga clic en la acción deseada.";
+$txt['WANTLISTFORADDRESS'] = "Lista blanca para la dirección";
+$txt['ADDAWANTENTRY'] = "Añadir una dirección a la lista";
+$txt['WANTLISTENTRYTOADD'] = "Ingrese la dirección que quiere añadir a la lista blanca. También puede añadir un comentario.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Seleccione la dirección o direcciones que desea modificar de la lista y haga clic en la acción deseada.";
+$txt['BLOCKLISTFORADDRESS'] = "Lista negra para la dirección";
+$txt['ADDABLOCKENTRY'] = "Agregar una dirección a la lista";
+$txt['BLOCKLISTENTRYTOADD'] = "Ingrese la dirección que desea agregar a la lista negra. También puede agregar un comentario.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Seleccione la dirección o direcciones que desea modificar de la lista y haga clic en la acción deseada.";
 $txt['RECORDALREADYEXISTS'] = "Esta dirección ya está presente en la lista.";
 /*
  * logout (new)
@@ -527,41 +527,41 @@ $txt['CANNOTCONNECTDB'] = "No se pudo conectar a la base de datos.";
  * SOAP errors
  */
 $txt['CANNOTLOADMESSAGE'] = "Error al cargar el mensaje (es posible que ya no exista).";
-$txt['WHITENOTNEWSHEAD'] = "Se ha agregado la lista blanca, pero no la lista de noticias.";
-$txt['NEWSNOTWHITEBODY'] = "Se agregó una regla de boletín, sin embargo, hubo un problema al agregar la regla de lista blanca.";
-$txt['NEWSNOTWHITEHEAD'] = "Se ha agregado la lista de noticias, pero no la lista blanca.";
-$txt['NEWSWHITELISTBODY'] = "Se han agregado una lista de noticias y una regla de lista blanca. Los mensajes futuros de este remitente no se marcarán si se detectan como un boletín informativo o un correo no deseado.";
-$txt['NEWSWHITELISTHEAD'] = "Se han agregado reglas de listas de noticias y listas blancas.";
-$txt['ADDWHITENEWSLIST'] = "Incluir en la lista blanca todos los spam futuros del mismo remitente?También acepta boletines de este remitente?";
+$txt['WANTNOTNEWSHEAD'] = "Se ha agregado la lista blanca, pero no la lista de noticias.";
+$txt['NEWSNOTWANTBODY'] = "Se agregó una regla de boletín, sin embargo, hubo un problema al agregar la regla de lista blanca.";
+$txt['NEWSNOTWANTHEAD'] = "Se ha agregado la lista de noticias, pero no la lista blanca.";
+$txt['NEWSWANTLISTBODY'] = "Se han agregado una lista de noticias y una regla de lista blanca. Los mensajes futuros de este remitente no se marcarán si se detectan como un boletín informativo o un correo no deseado.";
+$txt['NEWSWANTLISTHEAD'] = "Se han agregado reglas de listas de noticias y listas blancas.";
+$txt['ADDWANTNEWSLIST'] = "Incluir en la lista blanca todos los spam futuros del mismo remitente?También acepta boletines de este remitente?";
 /*
- * Newslist and Whitelist rule
+ * Newslist and Wantlist rule
  */
-$txt['ADDNEWSWHITELIST'] = "Aceptar todos los boletines futuros del mismo remitente? Incluir también en la lista blanca todos los mensajes de spam de este remitente?";
-$txt['NOTWHITELISTBODY'] = "Hubo un problema al agregar la lista blanca.";
-$txt['NOTWHITELISTHEAD'] = "No se ha agregado la regla de lista blanca.";
-$txt['WHITELISTBODY'] = "Se ha agregado una regla de lista blanca. Los mensajes futuros de este remitente no se marcarán si se detectan como spam.";
-$txt['WHITELISTHEAD'] = "Se ha agregado la regla de lista blanca.";
+$txt['ADDNEWSWANTLIST'] = "Aceptar todos los boletines futuros del mismo remitente? Incluir también en la lista blanca todos los mensajes de spam de este remitente?";
+$txt['NOTWANTLISTBODY'] = "Hubo un problema al agregar la lista blanca.";
+$txt['NOTWANTLISTHEAD'] = "No se ha agregado la regla de lista blanca.";
+$txt['WANTLISTBODY'] = "Se ha agregado una regla de lista blanca. Los mensajes futuros de este remitente no se marcarán si se detectan como spam.";
+$txt['WANTLISTHEAD'] = "Se ha agregado la regla de lista blanca.";
 /*
- * Whitelist rule
+ * Wantlist rule
  */
-$txt['ADDWHITELIST'] = "Incluir en la lista blanca todos los spam futuros del mismo remitente?";
+$txt['ADDWANTLIST'] = "Incluir en la lista blanca todos los spam futuros del mismo remitente?";
 $txt['NOTNEWSLISTBODY'] = "Hubo un problema al agregar la lista blanca del boletín.";
 $txt['NOTNEWSLISTHEAD'] = "No se ha agregado la regla de la lista de noticias.";
 $txt['NEWSLISTBODY'] = "Se ha agregado una regla de lista blanca de boletines. Los mensajes futuros de este remitente no se marcarán si se detectan como un boletín informativo.";
 $txt['ADDRULE'] = "Adición de la regla WWList";
 //
 $txt['ADDITIONALACTION'] = "Acciones adicionales:";
-$txt['NOTBLACKLISTBODY'] = "Hubo un problema al agregar la lista negra.";
-$txt['NOTBLACKLISTHEAD'] = "No se ha agregado la regla de lista negra.";
-$txt['BLACKLISTBODY'] = "Se ha agregado una regla de lista negra. Los mensajes futuros de este remitente siempre se marcarán como spam.";
-$txt['BLACKLISTHEAD'] = "Se ha agregado la regla de lista negra.";
+$txt['NOTBLOCKLISTBODY'] = "Hubo un problema al agregar la lista negra.";
+$txt['NOTBLOCKLISTHEAD'] = "No se ha agregado la regla de lista negra.";
+$txt['BLOCKLISTBODY'] = "Se ha agregado una regla de lista negra. Los mensajes futuros de este remitente siempre se marcarán como spam.";
+$txt['BLOCKLISTHEAD'] = "Se ha agregado la regla de lista negra.";
 /*
- * Blacklist rule (not currently implemented)
+ * Blocklist rule (not currently implemented)
  */
-$txt['ADDBLACKLIST'] = "¿Incluir en la lista negra todos los correos futuros del mismo remitente?";
-$txt['NOTNEWSWHITEBODY'] = "Hubo un problema al agregar estas reglas.";
-$txt['NOTNEWSWHITEHEAD'] = "No se han agregado ni la lista de noticias ni la regla de lista blanca.";
-$txt['WHITENOTNEWSBODY'] = "Se agregó una regla de lista blanca, sin embargo, hubo un problema al agregar la regla de lista blanca de boletines.";
+$txt['ADDBLOCKLIST'] = "¿Incluir en la lista negra todos los correos futuros del mismo remitente?";
+$txt['NOTNEWSWANTBODY'] = "Hubo un problema al agregar estas reglas.";
+$txt['NOTNEWSWANTHEAD'] = "No se han agregado ni la lista de noticias ni la regla de lista blanca.";
+$txt['WANTNOTNEWSBODY'] = "Se agregó una regla de lista blanca, sin embargo, hubo un problema al agregar la regla de lista blanca de boletines.";
 $txt['NEWSLETTERUNSUB'] = "Cancelar la suscripción";
 /*
  * generic texts

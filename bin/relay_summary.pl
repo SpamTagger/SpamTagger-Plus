@@ -18,7 +18,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #   This script will generate outbound relaying summaries to assist in the
-#   diagnosing of outbound blacklisting or other unexpected relaying behaviour
+#   diagnosing of outbound blocklisting or other unexpected relaying behaviour
 #
 #   See Usage mene below or by running with the --help option
 

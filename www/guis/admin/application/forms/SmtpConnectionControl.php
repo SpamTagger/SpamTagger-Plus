@@ -86,7 +86,7 @@ class Default_Form_SmtpConnectionControl extends ZendX_JQuery_Form
 
         $rejecthosts = new Zend_Form_Element_Textarea('host_reject', array(
             'label' => $t->_('Reject connection from these hosts') . " :",
-            'title' => $t->_("Blacklist of IP sender addresses"),
+            'title' => $t->_("Blocklist of IP sender addresses"),
             'required' => false,
             'rows' => 5,
             'cols' => 30,
@@ -98,7 +98,7 @@ class Default_Form_SmtpConnectionControl extends ZendX_JQuery_Form
         require_once 'Validate/EmailList.php';
         $rejectsenders = new Zend_Form_Element_Textarea('sender_reject', array(
             'label' => $t->_('Reject these senders addresses') . " :",
-            'title' => $t->_("Blacklist of sender mail adresses"),
+            'title' => $t->_("Blocklist of sender mail adresses"),
             'required' => false,
             'rows' => 5,
             'cols' => 50,
@@ -119,7 +119,7 @@ class Default_Form_SmtpConnectionControl extends ZendX_JQuery_Form
         require_once 'Validate/EmailList.php';
         $rejectrecipient = new Zend_Form_Element_Textarea('recipient_reject', array(
             'label' => $t->_('Reject these recipient addresses') . " :",
-            'title' => $t->_("Blacklist of recipient email addresses"),
+            'title' => $t->_("Blocklist of recipient email addresses"),
             'required' => false,
             'rows' => 5,
             'cols' => 50,

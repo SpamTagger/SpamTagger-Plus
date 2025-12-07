@@ -231,7 +231,7 @@ $htxt['GLOSSARY'] = '
 <h3>Quarantine rapport</h3>
 <p>Een automatisch gegenereerd periodiek rapport dat een sopsomming geeft van alle geblokkeerde berichten en die hulpmiddelen aanbiedt om de inhoud ervan te bekijken en indien nodig berichten uit de quarantaine te verwijderen en ze toch naar de inbox te laten sturen.</p>
 <h3>RBL</h3>
-<p>Realtime Blackhole List. RBLs houden lijsten van servers in real time bij, die bekend zijn voor het sturen van spam. Het gebruik van RBLs is qua principe zeer eenvoudig: Als een binnenkomende mail verzonden in door een, door RBL op de lijst gezette, server, wordt deze a priori beschouwd als spam. De moeilijkheid bij het gebruik van RBLs is de nood om het continu na te gaan of deze nog accuraat zijn.</p>
+<p>Realtime Block List. RBLs houden lijsten van servers in real time bij, die bekend zijn voor het sturen van spam. Het gebruik van RBLs is qua principe zeer eenvoudig: Als een binnenkomende mail verzonden in door een, door RBL op de lijst gezette, server, wordt deze a priori beschouwd als spam. De moeilijkheid bij het gebruik van RBLs is de nood om het continu na te gaan of deze nog accuraat zijn.</p>
 <h3>Een bericht loslaten</h3>
 <p>Een actie van de gebruiker die een bericht in quarantaine loslaat zodat deze toch in de mailbox van de ontvanger terecht komt.</p>
 <h3>Bewaringstermijn</h3>

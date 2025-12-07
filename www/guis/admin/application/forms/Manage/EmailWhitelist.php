@@ -5,20 +5,20 @@
  * @author Olivier Diserens
  * @copyright 2025, SpamTagger
  *
- * Email whitelist form
+ * Email wantlist form
  */
 
-class Default_Form_Manage_EmailWhitelist extends Default_Form_ElementList
+class Default_Form_Manage_EmailWantlist extends Default_Form_ElementList
 {
 	protected $_email;
-	protected $_panelname = 'whitelist';
+	protected $_panelname = 'wantlist';
 	public $_wwlist = array();
 
 	public function __construct($email)
 	{
 	    $this->_email = $email;
 	    $wwelement = new Default_Model_WWElement();
-	    $this->_wwlist = $wwelement->fetchAll($this->_email->getParam('address'), 'white');
+	    $this->_wwlist = $wwelement->fetchAll($this->_email->getParam('address'), 'want');
 
 	    parent::__construct($this->_wwlist, 'Default_Model_WWElement');
 	}
@@ -54,7 +54,7 @@ class Default_Form_Manage_EmailWhitelist extends Default_Form_ElementList
 	}
 
 	public function setParams($request, $email) {
-		$this->setAddedValues(array('recipient' => $email->getParam('address'), 'type' => 'white'));
+		$this->setAddedValues(array('recipient' => $email->getParam('address'), 'type' => 'want'));
 		$this->manageRequest($request);
 		$this->addFields($this);
 		return true;

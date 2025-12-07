@@ -36,7 +36,7 @@ sub get_specific_config {
   my $db = DB->db_connect('replica', 'st_config');
 
   my %config = ();
-  my %row = $db->get_hash_row("SELECT use_alltrusted, use_authservers, useSPFOnLocal, useSPFOnGlobal, authservers, authstring, domainsToSPF, whiterbls FROM trustedSources");
+  my %row = $db->get_hash_row("SELECT use_alltrusted, use_authservers, useSPFOnLocal, useSPFOnGlobal, authservers, authstring, domainsToSPF, wantrbls FROM trustedSources");
   $config{'__USE_ALLTRUSTED__'} = $row{'use_alltrusted'};
   $config{'__USE_AUTHSERVERS__'} = $row{'use_authservers'};
   $config{'__USE_SPFONLOCAL__'} = $row{'useSPFOnLocal'};
@@ -46,7 +46,7 @@ sub get_specific_config {
   $config{'__DOMAINSTOSPF__'} = $row{'domainsToSPF'} || '';
   $config{'__DOMAINSTOSPF__'} =~ s/\n//g;
   $config{'__DOMAINSTOSPF__'} =~ s/\s+/ /g;
-  $config{'__WHITERBLS__'} = $row{'whiterbls'} || '';
+  $config{'__WANTRBLS__'} = $row{'wantrbls'} || '';
 
   return %config;
 }

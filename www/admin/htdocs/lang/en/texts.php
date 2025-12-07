@@ -339,25 +339,25 @@ $txt['USEDCC']                      = "Use DCC";
 $txt['USESPF']                      = "Use SPF";
 $txt['USEDOMAINKEYS']               = "Use Domainkeys";
 $txt['USEDKIM']                      = "Use DKIM";
-$txt['WHITEWARNLIST']               = "White/Warn/Black lists";
-$txt['ENABLEWHITELIST']             = "Enable whitelists";
+$txt['WANTWARNLIST']               = "White/Warn/Black lists";
+$txt['ENABLEWANTLIST']             = "Enable wantlists";
 $txt['ENABLEWARNLIST']              = "Enable warnlists";
-$txt['ENABLEBLACKLIST']              = "Enable blacklists";
-$txt['ENABLEWWNOTICE']              = "Notice admin on white/warn/black list hit";
+$txt['ENABLEBLOCKLIST']              = "Enable blocklists";
+$txt['ENABLEWWNOTICE']              = "Notice admin on want/warn/blocklist hit";
 $txt['WARNHIT']                     = "Warnlist hit";
-$txt['BLACKHIT']		    = "Blacklist hit";
-$txt['WHITELISTWARNING']            = 'Allowing users to manage whitelist can be very dangerous for the filter health.\n' .
+$txt['BLOCKHIT']		    = "Blocklist hit";
+$txt['WANTLISTWARNING']            = 'Allowing users to manage wantlist can be very dangerous for the filter health.\n' .
                                       'Refer to the documentation for more information and be sure of what you are doing !';
-$txt['WWHITWARNING']                = 'Enabling admin notification on white/warn/black list hit may be illegal on some countries.\n' .
+$txt['WWHITWARNING']                = 'Enabling admin notification on want/warn/blocklist hit may be illegal on some countries.\n' .
                                       'Please check your local legislation on that !';
-$txt['EDITSYSTEMWHITELIST']         = "edit global whitelist";
-$txt['EDITSYSTEMBLACKLIST']         = "edit global blacklist";
+$txt['EDITSYSTEMWANTLIST']         = "edit global wantlist";
+$txt['EDITSYSTEMBLOCKLIST']         = "edit global blocklist";
 $txt['EDITSYSTEMWARNLIST']          = "edit global warnlist";
-$txt['EDITDOMAINWHITELIST']         = "edit domain whitelist";
-$txt['EDITDOMAINBLACKLIST']         = "edit domain blacklist";
+$txt['EDITDOMAINWANTLIST']         = "edit domain wantlist";
+$txt['EDITDOMAINBLOCKLIST']         = "edit domain blocklist";
 $txt['EDITDOMAINWARNLIST']          = "edit domain warnlist";
-$txt['EDITWHITELIST']               = "edit whitelist";
-$txt['EDITBLACKLIST']               = "edit blacklist";
+$txt['EDITWANTLIST']               = "edit wantlist";
+$txt['EDITBLOCKLIST']               = "edit blocklist";
 $txt['EDITWARNLIST']                = "edit warnlist";
 
 $txt['MODULES']                     = "Modules";
@@ -379,7 +379,7 @@ $txt['PUTHAMHEADER']                = "Add header when not spam";
 
 $txt['HITSTOBESPAM']                = "Number of hit(s) to be spam";
 $txt['ENABLE']                      = "Enable";
-$txt['DNSLISTS']                    = "DNS blacklists";
+$txt['DNSLISTS']                    = "DNS blocklists";
 
 $txt['USEALLTRUSTED']               = "Enable all trusted path detection";
 $txt['SPFCHECKS']                   = "SPF checks";
@@ -568,10 +568,10 @@ $txt['ACTIVE']                      = "active";
 $txt['INNACTIVE']                   = "disabled";
 $txt['WWENTRY']                     = "Entry";
 $txt['CONFIRMWWENTRYDELETE']        = "Are you sure you want to delete permanently this entry ? ";
-$txt['WHITELISTFOR']                = "White list for __PARAM__";
-$txt['BLACKLISTFOR']                = "Black list for __PARAM__";
-$txt['WARNLISTFOR']                 = "Warn list for __PARAM__";
-$txt['WARNLISTFORGLOBAL']           = "Global warn list";
-$txt['WHITELISTFORGLOBAL']          = "Global white list";
-$txt['BLACKLISTFORGLOBAL']          = "Global black list";
+$txt['WANTLISTFOR']                = "Wantlist for __PARAM__";
+$txt['BLOCKLISTFOR']                = "Blocklist for __PARAM__";
+$txt['WARNLISTFOR']                 = "Warnlist for __PARAM__";
+$txt['WARNLISTFORGLOBAL']           = "Global warnlist";
+$txt['WANTLISTFORGLOBAL']          = "Global wantlist";
+$txt['BLOCKLISTFORGLOBAL']          = "Global blocklist";
 ?>

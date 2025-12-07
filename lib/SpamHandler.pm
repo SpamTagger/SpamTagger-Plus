@@ -55,8 +55,8 @@ sub new ($class = "SpamHandler", $myspec_this = {}) {
     reportspamtodnslists => 0,
     reportrbls           => '',
     rblsDefsPath         => $conf->get_option('SRCDIR') . "/etc/rbls/",
-    whitelistDomainsFile => $conf->get_option('SRCDIR')
-      . "/etc/rbls/whitelisted_domains.txt",
+    wantlistDomainsFile => $conf->get_option('SRCDIR')
+      . "/etc/rbls/wantlisted_domains.txt",
     TLDsFiles => $conf->get_option('VARDIR')
       . "/spool/spamtagger/rbls/two-level-tlds.txt "
       . $conf->get_option('VARDIR')
@@ -127,7 +127,7 @@ sub main_loop_hook ($this) {
       $this->{debug} );
     $this->{dnslists}->load_rbls(
       $this->{rblsDefsPath}, $this->{reportrbls},
-      'URIRBL',              $this->{whitelistDomainsFile},
+      'URIRBL',              $this->{wantlistDomainsFile},
       $this->{TLDsFiles},    $this->{localDomainsFile},
       'dnslists'
     );

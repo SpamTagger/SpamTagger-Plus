@@ -18,7 +18,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#   This script will dump the whitelist and warnlists for the system/domain/user
+#   This script will dump the wantlist and warnlists for the system/domain/user
 #
 #   Usage:
 #           dump_wwlists.pl [domain|user]
@@ -60,7 +60,7 @@ exit 0;
 ## dump_wwfiles
 
 sub dump_ww_files ($to, $filepath) {
-  my @types = ('warn', 'white');
+  my @types = ('warn', 'want');
 
   my $replica_db = DB->db_connect('replica', 'st_config');
 

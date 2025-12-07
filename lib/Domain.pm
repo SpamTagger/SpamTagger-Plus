@@ -112,7 +112,7 @@ sub dump_prefs ($this, $replica_db) {
   my $query =
     "SELECT d.id, p.viruswall, p.spamwall, p.virus_subject, p.content_subject, p.spam_tag,
     p.language, p.report_template, p.support_email, p.delivery_type,
-    p.enable_whitelists, p.enable_warnlists, p.enable_blacklists, p.notice_wwlists_hit, p.warnhit_template
+    p.enable_wantlists, p.enable_warnlists, p.enable_blocklists, p.notice_wwlists_hit, p.warnhit_template
     FROM domain d, domain_pref p WHERE d.prefs=p.id AND d.name='".$this->{name}."'";
 
   my %res = $replica_db->getHashRow($query);
@@ -131,7 +131,7 @@ sub dump_prefs_from_row ($this, $row) {
   my $stuid = getpwnam('SpamTagger');
 
   my @prefs_to_dump = (
-    'viruswall', 'report_template', 'virus_subject', 'enable_whitelists', 'language',
+    'viruswall', 'report_template', 'virus_subject', 'enable_wantlists', 'language',
     'warnhit_template', 'support_email', 'spamwall', 'enable_warnlists', 'content_subject',
     'notice_wwlists_hit', 'spam_tag', 'delivery_type'
   );

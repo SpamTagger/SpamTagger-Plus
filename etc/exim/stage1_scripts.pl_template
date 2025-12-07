@@ -70,7 +70,7 @@ sub external_callout_build_return ($result, $message) {
 }
 
 sub smtp_wl_ip_dom ($domain, $IP) {
-  my $file = "/var/spamtagger/spool/tmp/exim_stage1/rblwhitelists/$domain";
+  my $file = "/var/spamtagger/spool/tmp/exim_stage1/rblwantlists/$domain";
 
   return 'false' unless (-e $file );
   my $FH;
@@ -106,14 +106,14 @@ __ELSE__
     ( $IP =~ /:/ && WhIPs6->find($IP) ) ||
 __FI__
     ( $IP !~ /:/ && $WhIPs->find($IP) ) ) {
-    Exim::log_write("IP $IP is whitelisted for $domain (SMTP)");
+    Exim::log_write("IP $IP is wantlisted for $domain (SMTP)");
     return 'true';
   }
   return 'false';
 }
 
 sub spamc_wl_ip_dom ($domain, $IP) {
-  my $file = "/var/spamtagger/spool/tmp/exim_stage1/spamcwhitelists/$domain";
+  my $file = "/var/spamtagger/spool/tmp/exim_stage1/spamcwantlists/$domain";
 
   return 'false' unless (-e $file));
   my $FH;
@@ -149,7 +149,7 @@ __ELSE__
     ( $IP =~ /:/ && WhIPs6->find($IP) ) ||
 __FI__
     ( $IP !~ /:/ && $WhIPs->find($IP) ) ) {
-    Exim::log_write("IP $IP is whitelisted for $domain (SpamC)");
+    Exim::log_write("IP $IP is wantlisted for $domain (SpamC)");
     return 'true';
   }
   return 'false';

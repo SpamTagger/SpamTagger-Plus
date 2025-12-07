@@ -120,7 +120,7 @@
        <span class="m_accepted"><?php echo $this->t->_($element->getParam('outreport'))?></span>
      <?php } elseif ($element->getParam('outreport') == 'Pending') {?>
        <span class="m_pending"><?php echo $this->t->_($element->getParam('outreport'))?>...</span>
-     <?php } elseif (in_array($element->getParam('outreport'), array('Quarantined', 'Tagged', 'Dropped', 'Warnlisted', 'Whitelisted', 'Blacklisted'))) { ?>
+     <?php } elseif (in_array($element->getParam('outreport'), array('Quarantined', 'Tagged', 'Dropped', 'Warnlisted', 'Wantlisted', 'Blocklisted'))) { ?>
        <span class="m_accepted"><?php echo $this->t->_($element->getParam('outreport'))?></span>
      <?php } elseif (in_array($element->getParam('outreport'), array('Failed'))) { ?>
        <span class="m_failed"><?php echo $this->t->_($element->getParam('outreport'))?></span>

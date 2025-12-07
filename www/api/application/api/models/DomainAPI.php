@@ -75,9 +75,9 @@ class Api_Model_DomainAPI
 	 *     contentwall => can be 0 or 1, enable dangerous content filtering
 	 *     viruswall => can be 0 or 1, enable antivirus
 	 *     greylist => can be 0 or 1, enable greylisting
-	 *     whitelists => can be 0 or 1, enable whitelists
+	 *     wantlists => can be 0 or 1, enable wantlists
 	 *     warnlists => can be 0 or 1, enable warnlists
-	 *     notice_wwlists => can be 0 or 1, enable administrator warning when white or warn lists hit
+	 *     notice_wwlists => can be 0 or 1, enable administrator warning when want or warnlists hit
 	 *     prevent_spoof => can be 0 or 1, enable antispoofing
 	 *     require_incoming_tls => can be 0 or 1, reject unencrypted sessions to this domain
 	 *     reject_capital_domain => can be 0 or 1, rejects domain names containing capitals (if set to 0)
@@ -395,7 +395,7 @@ class Api_Model_DomainAPI
         if (isset($params['greylist']) && preg_match('/^[01]$/', $params['greylist'])) {
             $domain->setParam('greylist', $params['greylist']);
         }
-        foreach (array('whitelists' => 'enable_whitelists', 'warnlists' => 'enable_warnlists', 'notice_wwlists' => 'notice_wwlists_hit') as $key => $storekey) {
+        foreach (array('wantlists' => 'enable_wantlists', 'warnlists' => 'enable_warnlists', 'notice_wwlists' => 'notice_wwlists_hit') as $key => $storekey) {
         	if (isset($params[$key]) && preg_match('/^[01]$/', $params[$key])) {
         		$domain->setPref($storekey, $params[$key]);
         	}
@@ -535,7 +535,7 @@ class Api_Model_DomainAPI
             	}
             }
         }
-        foreach (array('whitelists' => 'enable_whitelists', 'warnlists' => 'enable_warnlists', 'notice_wwlists' => 'notice_wwlists_hit') as $key => $storekey) {
+        foreach (array('wantlists' => 'enable_wantlists', 'warnlists' => 'enable_warnlists', 'notice_wwlists' => 'notice_wwlists_hit') as $key => $storekey) {
         	if (empty($params) || in_array($key, $params)) {
         		if (!$domain->getPref($storekey)) {
         		    $data[$key] = "0";

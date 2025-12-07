@@ -417,7 +417,7 @@ class Default_Model_ReportingStats
 		switch ($type) {
 			case 'refused':
 				$els = array(  'rbl' => 'globalRefusedRBLCount+globalRefusedBackscatterCount',
-    		                   'blacklists'=>  'globalRefusedHostCount+globalRefusedBlacklistedSenderCount',
+    		                   'blocklists'=>  'globalRefusedHostCount+globalRefusedBlocklistedSenderCount',
     		                   'relay' => 'globalRefusedRelayCount',
     		                   'policies' => 'globalRefusedSpoofingCount+globalRefusedBATVCount+globalRefusedBadSPFCount+globalRefusedUnauthenticatedCount+globalRefusedUnencryptedCount+globalRefusedBadRDNSCount',
     	                       'callout' => 'globalRefusedCalloutCount',

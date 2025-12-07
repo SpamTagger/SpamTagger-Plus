@@ -39,8 +39,8 @@ prepare() {
     chown spamtagger:spamtagger $VARDIR/spool/tmp/exim_stage1/auth_cache
   fi
 
-  if [ ! -d $VARDIR/spool/tmp/exim/blacklists ]; then
-    mkdir $VARDIR/spool/tmp/exim/blacklists
+  if [ ! -d $VARDIR/spool/tmp/exim/blocklists ]; then
+    mkdir $VARDIR/spool/tmp/exim/blocklists
   fi
 
   touch $VARDIR/spool/tmp/exim/frozen_senders
@@ -52,7 +52,7 @@ prepare() {
   fi
 
   for f in hosts senders; do
-    touch $VARDIR/spool/tmp/exim/blacklists/$f
+    touch $VARDIR/spool/tmp/exim/blocklists/$f
   done
 
   ## copy certs

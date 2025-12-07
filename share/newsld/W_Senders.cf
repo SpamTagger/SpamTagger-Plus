@@ -15,11 +15,11 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-#   Whitelisted sender list
+#   Wantlisted sender list
 
 
-header    ST_DOMAIN_IP_WHITELIST  X-SpamTagger-White-IP-DOM =~ /WhIPDom/i
-score     ST_DOMAIN_IP_WHITELIST  -50.0
+header    ST_DOMAIN_IP_WANTLIST  X-SpamTagger-White-IP-DOM =~ /WhIPDom/i
+score     ST_DOMAIN_IP_WANTLIST  -50.0
 
 header    ST_NEWS_WFRMMC    From =~ /.*\@SpamTagger\.(com|ch|net|org)/i
 score     ST_NEWS_WFRMMC    -20.0

@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "電子報";
 $txt['NEWSLETTERSSHORTHELP'] = "您可以從這裡管理您的電子報。";
 $txt['NEWSLETTERSALLOW'] = "寄送";
 $txt['NEWSLETTERACCEPT'] = "接受此電子報";
-$txt['SPAM_WHITELIST_DISABLED'] = "本網域尚未啟用此清單（請與您的管理員連繫）。";
+$txt['SPAM_WANTLIST_DISABLED'] = "本網域尚未啟用此清單（請與您的管理員連繫）。";
 /*
  * generic buttons
  */
@@ -175,7 +175,7 @@ $txt['GROUPQUARANTINES'] = "所有位址";
  */
 $txt['INFORMATIONSABOUTMSG'] = "訊息內容";
 $txt['PREFILTERHITS'] = "Pre-filters";
-$txt['BLACKLISTS'] = "黑名單";
+$txt['BLOCKLISTS'] = "黑名單";
 $txt['FITLERSCORE'] = "Score";
 $txt['NONE'] = "none";
 $txt['HEADERS'] = "標頭";
@@ -238,7 +238,7 @@ $txt['USEDEFAULT'] = "使用預設";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "純文字";
 //old
-$txt['EDITWHITELIST'] = "編輯白名單";
+$txt['EDITWANTLIST'] = "編輯白名單";
 //old
 $txt['EDITWARNLIST'] = "編輯警告清單";
 /*
@@ -258,7 +258,7 @@ $txt['WWENTRY'] = "進入";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "是否確實要永久刪除此項？";
 //old
-$txt['WHITELISTFOR'] = "__PARAM__ 白名單";
+$txt['WANTLISTFOR'] = "__PARAM__ 白名單";
 //old
 $txt['WARNLISTFOR'] = "__PARAM__ 的警告清單";
 //old
@@ -385,15 +385,15 @@ $txt['ADDRESSLISTTOPIC'] = "地址簿";
 $txt['ADDRESSPARAMTOPIC'] = "Address設置";
 $txt['QUARPARAMTOPIC'] = "隔離顯示";
 $txt['WARNLISTTOPIC'] = "警告清單";
-$txt['WHITELISTTOPIC'] = "白名單";
-$txt['BLACKLISTTOPIC'] = "黑名單";
+$txt['WANTLISTTOPIC'] = "白名單";
+$txt['BLOCKLISTTOPIC'] = "黑名單";
 $txt['INTERFACETOPICTITLE'] = "介面設置";
 $txt['ADDRESSLISTTOPICTITLE'] = "地址簿";
 $txt['ADDRESSPARAMTOPICTITLE'] = "address 設置";
 $txt['QUARPARAMTOPICTITLE'] = "隔離顯示";
 $txt['WARNLISTTOPICTITLE'] = "警告清單";
-$txt['WHITELISTTOPICTITLE'] = "白名单";
-$txt['BLACKLISTTOPICTITLE'] = "黑名單";
+$txt['WANTLISTTOPICTITLE'] = "白名单";
+$txt['BLOCKLISTTOPICTITLE'] = "黑名單";
 /*
  * interface (new)
  */
@@ -455,20 +455,20 @@ $txt['REMOVEANENTRY'] = "禁用、啟用或刪除清單中的address";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "選擇要從清單中修改的位址或address, 然後按一下所需的操作按鈕。";
 $txt['REMTHEENTRY'] = "刪除選定內容";
 $txt['DISABLETHEENTRY'] = "禁用/啟用選擇";
-$txt['WHITELISTSHORTHELP'] = "白名單中包含的受信任寄件者位址將不會發生任何隔離保留. <br/> 警告: 此功能應作為臨時解決方案使用, 因為它降低了整體保護。
+$txt['WANTLISTSHORTHELP'] = "白名單中包含的受信任寄件者位址將不會發生任何隔離保留. <br/> 警告: 此功能應作為臨時解決方案使用, 因為它降低了整體保護。
                                   有關白色清單用法的詳細資訊, 請檢查手冊 (在 <a href=\"help.php\"> \"説明\" </a> 部分中提供)。
 ";
-$txt['BLACKLISTSHORTHELP'] = "黑名單中包含已列出的寄件者位址.。
+$txt['BLOCKLISTSHORTHELP'] = "黑名單中包含已列出的寄件者位址.。
                                   有關黑色清單用法的詳細資訊, 請檢查手冊 (在 <a href=\"help.php\"> \"説明\" </a> 部分中提供)。
 ";
-$txt['WHITELISTFORADDRESS'] = "位址的白色清單";
-$txt['ADDAWHITEENTRY'] = "向清單中添加位址";
-$txt['WHITELISTENTRYTOADD'] = "輸入要添加到白色清單中的位址。您還可以添加可選注釋。";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "選擇要從清單中修改的位址或位址, 然後按一下所需的操作按鈕。";
-$txt['BLACKLISTFORADDRESS'] = "位址的黑色清單";
-$txt['ADDABLACKENTRY'] = "向清單中添加位址";
-$txt['BLACKLISTENTRYTOADD'] = "輸入要添加到黑名單中的位址。您還可以添加可選注釋。";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "選擇要從清單中修改的位址或位址, 然後按一下所需的操作按鈕。";
+$txt['WANTLISTFORADDRESS'] = "位址的白色清單";
+$txt['ADDAWANTENTRY'] = "向清單中添加位址";
+$txt['WANTLISTENTRYTOADD'] = "輸入要添加到白色清單中的位址。您還可以添加可選注釋。";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "選擇要從清單中修改的位址或位址, 然後按一下所需的操作按鈕。";
+$txt['BLOCKLISTFORADDRESS'] = "位址的黑色清單";
+$txt['ADDABLOCKENTRY'] = "向清單中添加位址";
+$txt['BLOCKLISTENTRYTOADD'] = "輸入要添加到黑名單中的位址。您還可以添加可選注釋。";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "選擇要從清單中修改的位址或位址, 然後按一下所需的操作按鈕。";
 $txt['RECORDALREADYEXISTS'] = "此位址已存在於清單中。";
 /*
  * logout (new)
@@ -498,35 +498,35 @@ $txt['ADDRULE'] = "新增白名單規則";
 //
 $txt['ADDITIONALACTION'] = "額外的動作：";
 $txt['SPAMONLY'] = "僅顯示垃圾郵件";
-$txt['NOTBLACKLISTBODY'] = "加入黑名單時發生問題。";
-$txt['NOTBLACKLISTHEAD'] = "尚未將規則加入至黑名單中。";
-$txt['BLACKLISTBODY'] = "已將規則加入至黑名單。將來從此寄件者的信件都會被標記為垃圾郵件。";
-$txt['BLACKLISTHEAD'] = "已加入到黑名單中。";
+$txt['NOTBLOCKLISTBODY'] = "加入黑名單時發生問題。";
+$txt['NOTBLOCKLISTHEAD'] = "尚未將規則加入至黑名單中。";
+$txt['BLOCKLISTBODY'] = "已將規則加入至黑名單。將來從此寄件者的信件都會被標記為垃圾郵件。";
+$txt['BLOCKLISTHEAD'] = "已加入到黑名單中。";
 /*
- * Blacklist rule (not currently implemented)
+ * Blocklist rule (not currently implemented)
  */
-$txt['ADDBLACKLIST'] = "將來自此寄件者的郵件都列入黑名單嗎?";
-$txt['NOTNEWSWHITEBODY'] = "加入這些規則發生問題。";
-$txt['NOTNEWSWHITEHEAD'] = "不管電子報列表或是白名單都尚未加入。";
-$txt['WHITENOTNEWSBODY'] = "已將規則加入白名單，不過加入電子報白名單發生問題。";
-$txt['WHITENOTNEWSHEAD'] = "已加入白名單但是尚未加入電子報列表。";
-$txt['NEWSNOTWHITEBODY'] = "電子報規則已加入，但是加入白名單發生問題。";
-$txt['NEWSNOTWHITEHEAD'] = "已將規則加入電子報列表，但是尚未加入白名單。";
-$txt['NEWSWHITELISTBODY'] = "已將規則加入至電子報列表及白名單。將來從此寄件者的信件不會被標記為電子報或是垃圾郵件。";
-$txt['NEWSWHITELISTHEAD'] = "已將規則加入至電子報列表及白名單。";
-$txt['ADDWHITENEWSLIST'] = "未來將所有從相同寄件者垃圾郵件列入白名單? 並且將接受此寄件者的電子報?";
+$txt['ADDBLOCKLIST'] = "將來自此寄件者的郵件都列入黑名單嗎?";
+$txt['NOTNEWSWANTBODY'] = "加入這些規則發生問題。";
+$txt['NOTNEWSWANTHEAD'] = "不管電子報列表或是白名單都尚未加入。";
+$txt['WANTNOTNEWSBODY'] = "已將規則加入白名單，不過加入電子報白名單發生問題。";
+$txt['WANTNOTNEWSHEAD'] = "已加入白名單但是尚未加入電子報列表。";
+$txt['NEWSNOTWANTBODY'] = "電子報規則已加入，但是加入白名單發生問題。";
+$txt['NEWSNOTWANTHEAD'] = "已將規則加入電子報列表，但是尚未加入白名單。";
+$txt['NEWSWANTLISTBODY'] = "已將規則加入至電子報列表及白名單。將來從此寄件者的信件不會被標記為電子報或是垃圾郵件。";
+$txt['NEWSWANTLISTHEAD'] = "已將規則加入至電子報列表及白名單。";
+$txt['ADDWANTNEWSLIST'] = "未來將所有從相同寄件者垃圾郵件列入白名單? 並且將接受此寄件者的電子報?";
 /*
- * Newslist and Whitelist rule
+ * Newslist and Wantlist rule
  */
-$txt['ADDNEWSWHITELIST'] = "未來將接受所有從相同寄件者的電子報? 並且將此寄件者的垃圾郵件列入到白名單?";
-$txt['NOTWHITELISTBODY'] = "新增至白名單發生問題。";
-$txt['NOTWHITELISTHEAD'] = "尚未將規則加入至白名單。";
-$txt['WHITELISTBODY'] = "已將規則加入至白名單。將來從此寄件者的信件不會被標記為垃圾郵件。";
-$txt['WHITELISTHEAD'] = "已將此規則加入至白名單。";
+$txt['ADDNEWSWANTLIST'] = "未來將接受所有從相同寄件者的電子報? 並且將此寄件者的垃圾郵件列入到白名單?";
+$txt['NOTWANTLISTBODY'] = "新增至白名單發生問題。";
+$txt['NOTWANTLISTHEAD'] = "尚未將規則加入至白名單。";
+$txt['WANTLISTBODY'] = "已將規則加入至白名單。將來從此寄件者的信件不會被標記為垃圾郵件。";
+$txt['WANTLISTHEAD'] = "已將此規則加入至白名單。";
 /*
- * Whitelist rule
+ * Wantlist rule
  */
-$txt['ADDWHITELIST'] = "將所有來自同個寄件者的垃圾郵件列入白名單?";
+$txt['ADDWANTLIST'] = "將所有來自同個寄件者的垃圾郵件列入白名單?";
 $txt['NOTNEWSLISTBODY'] = "新增電子報白名單發生問題。";
 $txt['NOTNEWSLISTHEAD'] = "尚未加入到電子報規則列表。";
 $txt['NEWSLISTBODY'] = "已加入到電子報白名單。將來如果來此此寄件者的郵件不會被標記。";

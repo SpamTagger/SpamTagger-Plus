@@ -58,7 +58,7 @@ sub initialise ($class = $MODULE) {
     localDomainSFile => "",
     localDomains => {},
     builtInDomainsFile => "",
-    whiterbls => '',
+    wantrbls => '',
     rwlhits => 1,
     debug => 0,
     decisive_field => 'none',
@@ -154,13 +154,13 @@ sub initialise ($class = $MODULE) {
     }
   }
 
-  $conf{whiterbls} .= ' '.$conf{spflists};
+  $conf{wantrbls} .= ' '.$conf{spflists};
 
   $TrustedSources::dnslists = STDnsLists->new(
     \&MailScanner::Log::WarnLog, $conf{debug}
   );
   $TrustedSources::dnslists->load_rbls(
-    $conf{rblsDefsPath}, $conf{whiterbls}, 'IPRWL SPFLIST',
+    $conf{rblsDefsPath}, $conf{wantrbls}, 'IPRWL SPFLIST',
     '', '', '', $class
   );
 
@@ -356,14 +356,14 @@ sub Checks ($this, $message) { ## no critic
     return 0 if (!$returnspf);
   }
 
-  ## check DNS white lists
+  ## check DNS wantlists
   my $continue = 1;
   my $wholeheader = '';
   my $dnshitcount = 0;
   my ($data, $hitcount, $header) = $TrustedSources::dnslists->check_dns($message->{clientip}, 'IPRWL', blessed($this)." (".$message->{id}.")", $this->{rwlhits});
   $dnshitcount = $hitcount;
   if ($this->{rwlhits} && $dnshitcount >= $this->{rwlhits}) {
-    my $string = $this->{'neg_text'}."sender IP address is whitelisted by ".$header;
+    my $string = $this->{'neg_text'}."sender IP address is wantlisted by ".$header;
     MailScanner::Log::InfoLog(blessed($this)." result is ham ($string) for ".$message->{id});
     if ($this->{'putHamHeader'}) {
       $global::MS->{mta}->AddHeaderToOriginal($message, $this->{'header'}, $this->{'neg_text'}."is ham ($string) ".$this->{'neg_text'});

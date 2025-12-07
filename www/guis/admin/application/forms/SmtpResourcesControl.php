@@ -245,7 +245,7 @@ class Default_Form_SmtpResourcesControl extends ZendX_JQuery_Form
         require_once('Validate/IpList.php');
         $no_ratelimit_hosts = new Zend_Form_Element_Textarea('no_ratelimit_hosts', array(
               'label'    =>  $t->_('No rate limiting for these hosts')." :",
-              'title' => $t->_("Whitelist for the rate limit"),
+              'title' => $t->_("Wantlist for the rate limit"),
               'required'   => false,
               'rows' => 5,
               'cols' => 30,

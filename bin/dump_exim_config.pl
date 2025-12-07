@@ -80,14 +80,14 @@ if ( ! -d $tmpdir) {
 if ( ! -d "$VARDIR/spool/tmp/exim/stage1" ) {
   mkdir("$VARDIR/spool/tmp/exim/stage1") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d "$VARDIR/spool/tmp/exim/stage1/blacklists" ) {
-  mkdir("$VARDIR/spool/tmp/exim/stage1/blacklists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d "$VARDIR/spool/tmp/exim/stage1/blocklists" ) {
+  mkdir("$VARDIR/spool/tmp/exim/stage1/blocklists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d "$VARDIR/spool/tmp/exim/stage1/rblwhitelists" ) {
-  mkdir("$VARDIR/spool/tmp/exim/stage1/rblwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d "$VARDIR/spool/tmp/exim/stage1/rblwantlists" ) {
+  mkdir("$VARDIR/spool/tmp/exim/stage1/rblwantlists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
-if ( ! -d "$VARDIR/spool/tmp/exim/stage1/spamcwhitelists" ) {
-  mkdir("$VARDIR/spool/tmp/exim/stage1/spamcwhitelists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+if ( ! -d "$VARDIR/spool/tmp/exim/stage1/spamcwantlists" ) {
+  mkdir("$VARDIR/spool/tmp/exim/stage1/spamcwantlists") or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
 }
 
 our $db = DB->db_connect('replica', 'st_config');
@@ -107,8 +107,8 @@ my $exim_conf_lpd = dump_lists_ip_domain();
 my $syslog_restart = 0;
 foreach my $stage (@eximids) {
   if ($stage == 1) {
-    ## dump the blacklists files
-    dump_blacklists();
+    ## dump the blocklists files
+    dump_blocklists();
     fetch_effective_tlds();
   }
   %exim_conf = get_exim_config($stage) or fatal_error("NOEXIMCONFIGURATIONFOUND", "no exim configuration found for stage $stage");
@@ -283,11 +283,11 @@ sub dump_exim_file ($stage, $include_file = undef) {
   if ($exim_conf{'tls_use_ssmtp_port'} && $exim_conf{'__USE_INCOMINGTLS__'}) {
     $template->set_condition('USESSMTPPORT', 1);
   }
-  $template->set_condition('TAGMODEBYPASSWHITELISTS', 0);
-  if ($sys_conf{'__TAGMODEBYPASSWHITELISTS__'}) {
-    $template->set_condition('TAGMODEBYPASSWHITELISTS', 1);
+  $template->set_condition('TAGMODEBYPASSWANTLISTS', 0);
+  if ($sys_conf{'__TAGMODEBYPASSWANTLISTS__'}) {
+    $template->set_condition('TAGMODEBYPASSWANTLISTS', 1);
   }
-  if ($sys_conf{'__WHITELISTBOTHFROM__'}) {
+  if ($sys_conf{'__WANTLISTBOTHFROM__'}) {
     if ( ! -e "$VARDIR/spool/spamtagger/st-wl-on-both-from" ) {
       require File::Touch;
       File::Touch::touch("$VARDIR/spool/spamtagger/st-wl-on-both-from");
@@ -474,7 +474,7 @@ sub get_system_config {
   my %row = $db->get_hash_row(
     "SELECT hostname, default_domain, sysadmin, clientid, ad_server, ad_param, smtp_proxy,
     syslog_host, sc.use_syslog, do_stockme, use_ssl, servername, use_archiver, archiver_host,
-    trusted_ips, html_wl_ips, tag_mode_bypass_whitelist,whitelist_both_from
+    trusted_ips, html_wl_ips, tag_mode_bypass_wantlist,wantlist_both_from
     FROM system_conf sc, antispam an, httpd_config hc");
   return unless %row;
 
@@ -544,8 +544,8 @@ sub get_system_config {
   if ($row{'html_wl_ips'}) {
     $sconfig{'__HTML_CTRL_WL_HOSTS__'} = join(' ; ', expand_host_string($row{'html_wl_ips'},{'dumper'=>'exim/html_ctrl_wl_hosts'}));
   }
-  $sconfig{'__TAGMODEBYPASSWHITELISTS__'} = $row{'tag_mode_bypass_whitelist'};
-  $sconfig{'__WHITELISTBOTHFROM__'} = $row{'whitelist_both_from'};
+  $sconfig{'__TAGMODEBYPASSWANTLISTS__'} = $row{'tag_mode_bypass_wantlist'};
+  $sconfig{'__WANTLISTBOTHFROM__'} = $row{'wantlist_both_from'};
 
   my $http = "http://";
   if ( $row{'use_ssl'} =~ /true/i ) {
@@ -901,17 +901,17 @@ sub get_exim_config ($stage) {
   $config{'dkim_default_domain'} = $row{'dkim_default_domain'};
   $config{'dkim_default_pkey'} = $row{'dkim_default_pkey'};
   $config{'allow_relay_for_unknown_domains'} = $row{'allow_relay_for_unknown_domains'};
-  $config{'__FULL_WHITELIST_HOSTS__'} = '';
-  if (-e "$VARDIR/spool/spamtagger/full_whitelisted_hosts.list") {
+  $config{'__FULL_WANTLIST_HOSTS__'} = '';
+  if (-e "$VARDIR/spool/spamtagger/full_wantlisted_hosts.list") {
     my $fh;
-    open($fh, '<', "$VARDIR/spool/spamtagger/full_whitelisted_hosts.list");
+    open($fh, '<', "$VARDIR/spool/spamtagger/full_wantlisted_hosts.list");
     while (<$fh>) {
-      $config{'__FULL_WHITELIST_HOSTS__'} .= $_ . ' ';
+      $config{'__FULL_WANTLIST_HOSTS__'} .= $_ . ' ';
     }
-    chomp($config{'__FULL_WHITELIST_HOSTS__'});
+    chomp($config{'__FULL_WANTLIST_HOSTS__'});
   }
-  if ($config{'__FULL_WHITELIST_HOSTS__'} ne '') {
-    $config{'__FULL_WHITELIST_HOSTS__'} = join(' ; ',expand_host_string($config{'__FULL_WHITELIST_HOSTS__'},{'dumper'=>'exim/full_whitelist_hosts'}));
+  if ($config{'__FULL_WANTLIST_HOSTS__'} ne '') {
+    $config{'__FULL_WANTLIST_HOSTS__'} = join(' ; ',expand_host_string($config{'__FULL_WANTLIST_HOSTS__'},{'dumper'=>'exim/full_wantlist_hosts'}));
   }
   $config{'__ALLOW_LONG__'} = $row{'allow_long'};
   $config{'__FOLDING__'} = $row{'folding'};
@@ -944,13 +944,13 @@ sub dump_ignore_list ($ignorehosts, $filename) {
 }
 
 ###############################
-sub dump_blacklists {
+sub dump_blocklists {
   my %files = (
-    host_reject => 'blacklists/hosts',
-    sender_reject => 'blacklists/senders',
-    user_reject => 'blacklists/users',
-    recipient_reject => 'blacklists/recipients',
-    relay_refused_to_domain => 'blacklists/relaytodomains'
+    host_reject => 'blocklists/hosts',
+    sender_reject => 'blocklists/senders',
+    user_reject => 'blocklists/users',
+    recipient_reject => 'blocklists/recipients',
+    relay_refused_to_domain => 'blocklists/relaytodomains'
   );
   my %incoming_config = get_exim_config(1);
   foreach my $file (keys %files) {
@@ -960,7 +960,7 @@ sub dump_blacklists {
     if (open($FILE, ">", $filepath)) {
       if ($incoming_config{$file}) {
         if ($file =~ /host_reject/) {
-          foreach my $host (expand_host_string($incoming_config{$file},{'dumper'=>'exim/dump_blacklists/'.$file})) {
+          foreach my $host (expand_host_string($incoming_config{$file},{'dumper'=>'exim/dump_blocklists/'.$file})) {
             print $FILE $host."\n";
           }
         } else {
@@ -979,10 +979,10 @@ sub dump_blacklists {
 
 #############################
 sub dump_lists_ip_domain {
-  my @types = ('black-ip-dom', 'spam-ip-dom', 'white-ip-dom', 'wh-spamc-ip-dom');
-  unlink "$VARDIR/spool/tmp/exim/stage1/blacklists/ip-domain";
-  unlink glob "$VARDIR/spool/tmp/exim/stage1/rblwhitelists/*";
-  unlink glob "$VARDIR/spool/tmp/exim/stage1/spamcwhitelists/*";
+  my @types = ('block-ip-dom', 'spam-ip-dom', 'want-ip-dom', 'wh-spamc-ip-dom');
+  unlink "$VARDIR/spool/tmp/exim/stage1/blocklists/ip-domain";
+  unlink glob "$VARDIR/spool/tmp/exim/stage1/rblwantlists/*";
+  unlink glob "$VARDIR/spool/tmp/exim/stage1/spamcwantlists/*";
 
   my $request = "SELECT count(*) FROM wwlists where type in (";
   $request .= "'$_', " foreach (@types);
@@ -1023,12 +1023,12 @@ sub print_ip_domain_rule ($sender_list, $domain, $type) {
   my $smtp_rule = '';
 
   my $FH_IP_DOM;
-  if  ( ($type eq 'black-ip-dom') || ($type eq 'spam-ip-dom') )  {
-    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/blacklists/ip-domain";
-  } elsif  ($type eq 'white-ip-dom') {
-    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/rblwhitelists/$domain";
+  if  ( ($type eq 'block-ip-dom') || ($type eq 'spam-ip-dom') )  {
+    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/blocklists/ip-domain";
+  } elsif  ($type eq 'want-ip-dom') {
+    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/rblwantlists/$domain";
   } elsif  ($type eq 'wh-spamc-ip-dom') {
-    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/spamcwhitelists/$domain";
+    open $FH_IP_DOM, '>>', "$VARDIR/spool/tmp/exim/stage1/spamcwantlists/$domain";
   }
 
   $sender_list = join(' ; ', expand_host_string($sender_list,{'dumper'=>'exim/sender_list'}));
@@ -1036,21 +1036,21 @@ sub print_ip_domain_rule ($sender_list, $domain, $type) {
     $smtp_rule = <<"END";
 warn    hosts         = <; $sender_list
         domains       = <; $domain
-        add_header    = X-SpamTagger-Black-IP-DOM: quarantine
+        add_header    = X-SpamTagger-Block-IP-DOM: quarantine
 
 END
-  } elsif ($type eq 'black-ip-dom') {
+  } elsif ($type eq 'block-ip-dom') {
     $smtp_rule = <<"END";
 deny    hosts         = <; $sender_list
         domains       = <; $domain
-        message       = blacklisted host by domain: \$sender_host_address
-        set acl_c8    = smtp:refused:host_blacklist
+        message       = blocklisted host by domain: \$sender_host_address
+        set acl_c8    = smtp:refused:host_blocklist
         set acl_c9    = STATSADD
         set acl_c8    = smtp:refused
         set acl_c9    = STATSADD
 
 END
-  } elsif ( ($type eq 'white-ip-dom') || ($type eq 'wh-spamc-ip-dom') ) {
+  } elsif ( ($type eq 'want-ip-dom') || ($type eq 'wh-spamc-ip-dom') ) {
     $smtp_rule .= "$_\n" foreach (split(' ; ', $sender_list));
   }
 

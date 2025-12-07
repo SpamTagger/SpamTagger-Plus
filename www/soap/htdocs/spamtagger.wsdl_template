@@ -145,18 +145,18 @@
 <message name='addToNewslistResponse'>
   <part name='Result' type='xsd:string'/>
 </message>
-<message name='addToWhitelistRequest'>
+<message name='addToWantlistRequest'>
   <part name='dest' type='xsd:string'/>
   <part name='sender' type='xsd:string'/>
 </message>
-<message name='addToWhitelistResponse'>
+<message name='addToWantlistResponse'>
   <part name='Result' type='xsd:string'/>
 </message>
-<message name='addToBlacklistRequest'>
+<message name='addToBlocklistRequest'>
   <part name='dest' type='xsd:string'/>
   <part name='sender' type='xsd:string'/>
 </message>
-<message name='addToBlacklistResponse'>
+<message name='addToBlocklistResponse'>
   <part name='Result' type='xsd:string'/>
 </message>
 <message name='getReasonsRequest'>
@@ -321,13 +321,13 @@
     <input message='tns:addToNewslistRequest'/>
     <output message='tns:addToNewslistResponse'/>
   </operation>
-  <operation name='addToWhitelist'>
-    <input message='tns:addToWhitelistRequest'/>
-    <output message='tns:addToWhitelistResponse'/>
+  <operation name='addToWantlist'>
+    <input message='tns:addToWantlistRequest'/>
+    <output message='tns:addToWantlistResponse'/>
   </operation>
-  <operation name='addToBlacklist'>
-    <input message='tns:addToBlacklistRequest'/>
-    <output message='tns:addToBlacklistResponse'/>
+  <operation name='addToBlocklist'>
+    <input message='tns:addToBlocklistRequest'/>
+    <output message='tns:addToBlocklistResponse'/>
   </operation>
   <operation name='getReasons'>
     <input message='tns:getReasonsRequest'/>
@@ -480,8 +480,8 @@
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
-  <operation name='addToWhitelist'>
-    <soap:operation soapAction='urn:localhost-spamtagger#addToWhitelist'/>
+  <operation name='addToWantlist'>
+    <soap:operation soapAction='urn:localhost-spamtagger#addToWantlist'/>
     <input>
       <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
@@ -491,8 +491,8 @@
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
     </output>
   </operation>
-  <operation name='addToBlacklist'>
-    <soap:operation soapAction='urn:localhost-spamtagger#addToBlacklist'/>
+  <operation name='addToBlocklist'>
+    <soap:operation soapAction='urn:localhost-spamtagger#addToBlocklist'/>
     <input>
       <soap:body use='encoded' namespace='urn:localhost-spamtagger'
         encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>

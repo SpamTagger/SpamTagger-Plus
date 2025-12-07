@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Naujienlaiškiai";
 $txt['NEWSLETTERSSHORTHELP'] = "Čia galite tvarkyti savo naujienlaiškius.";
 $txt['NEWSLETTERSALLOW'] = "pristatymas";
 $txt['NEWSLETTERACCEPT'] = "Priimti šį naujienlaiškį";
-$txt['SPAM_WHITELIST_DISABLED'] = "Šis sąrašas nėra aktyvuotas Jūsų domenui ( susisiekite su administratoriumi).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Šis sąrašas nėra aktyvuotas Jūsų domenui ( susisiekite su administratoriumi).";
 /*
  * generic buttons
  */
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "All addresses";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Contents of the message";
 $txt['PREFILTERHITS'] = "Pre-filters";
-$txt['BLACKLISTS'] = "Blacklists";
+$txt['BLOCKLISTS'] = "Blocklists";
 $txt['FITLERSCORE'] = "Score";
 $txt['NONE'] = "none";
 $txt['HEADERS'] = "Headers";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "use default";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "plaintext";
 //old
-$txt['EDITWHITELIST'] = "edit whitelist";
+$txt['EDITWANTLIST'] = "edit wantlist";
 //old
 $txt['EDITWARNLIST'] = "edit warnlist";
 //old
@@ -263,7 +263,7 @@ $txt['WWENTRY'] = "Entry";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Are you sure you want to permanently delete this entry?";
 //old
-$txt['WHITELISTFOR'] = "Whitelist for __PARAM__";
+$txt['WANTLISTFOR'] = "Wantlist for __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Warnlist for __PARAM__";
 //old
@@ -392,16 +392,16 @@ $txt['ADDRESSLISTTOPIC'] = "Address group";
 $txt['ADDRESSPARAMTOPIC'] = "Address settings";
 $txt['QUARPARAMTOPIC'] = "Quarantine display";
 $txt['WARNLISTTOPIC'] = "Warnlist";
-$txt['WHITELISTTOPIC'] = "Whitelist";
-$txt['BLACKLISTTOPIC'] = "Blacklist";
+$txt['WANTLISTTOPIC'] = "Wantlist";
+$txt['BLOCKLISTTOPIC'] = "Blocklist";
 $txt['NEWSLISTTOPIC'] = "Newslist";
 $txt['INTERFACETOPICTITLE'] = "interface settings";
 $txt['ADDRESSLISTTOPICTITLE'] = "address group";
 $txt['ADDRESSPARAMTOPICTITLE'] = "address settings";
 $txt['QUARPARAMTOPICTITLE'] = "quarantine display";
 $txt['WARNLISTTOPICTITLE'] = "warnlist";
-$txt['WHITELISTTOPICTITLE'] = "whitelist";
-$txt['BLACKLISTTOPICTITLE'] = "blacklist";
+$txt['WANTLISTTOPICTITLE'] = "wantlist";
+$txt['BLOCKLISTTOPICTITLE'] = "blocklist";
 $txt['NEWSLISTTOPICTITLE'] = "newslist";
 /*
  * interface (new)
@@ -456,7 +456,7 @@ $txt['TODAY'] = "Today";
  */
 $txt['WARNLISTSHORTHELP'] = "The warnlist contains trusted sender addresses for which you want to be notified by e-mail whenever a message happens to be detected as spam. You can then immediatly release the message in case of a filtering error.<br />
 \t\t\t\t\t\t\t\t   Warning: This functionality should be used as a temporary solution as it decreases the overall protection.
-\t\t\t\t\t\t\t\t   Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on warn list usage. ";
+\t\t\t\t\t\t\t\t   Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on warnlist usage. ";
 $txt['WARNLISTFORADDRESS'] = "Warnlist for the address";
 $txt['ADDAWARNENTRY'] = "Add an address to the list";
 $txt['WARNLISTENTRYTOADD'] = "Enter the address you want to add to the warnlist. You can also add an optional comment.";
@@ -465,24 +465,24 @@ $txt['REMOVEANENTRY'] = "Disable, enable or remove an address from the list";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
 $txt['REMTHEENTRY'] = "Remove selection";
 $txt['DISABLETHEENTRY'] = "Disable/enable selection";
-$txt['WHITELISTSHORTHELP'] = "The whitelist contains trusted sender addresses for which no quarantine retention will ever occur.<br />
+$txt['WANTLISTSHORTHELP'] = "The wantlist contains trusted sender addresses for which no quarantine retention will ever occur.<br />
                                    Warning: This functionality should be used as a temporary solution, as it decreases the overall protection.
-                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on whitelist usage.
+                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on wantlist usage.
 ";
-$txt['BLACKLISTSHORTHELP'] = "The blacklist contains blacklisted sender addresses.
-                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on black list usage.
+$txt['BLOCKLISTSHORTHELP'] = "The blocklist contains blocklisted sender addresses.
+                                  Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on blocklist usage.
 ";
 $txt['NEWSLISTSHORTHELP'] = "The newsletter list contains addresses of desired newsletters.<br />
                                   Check the manual (available in section <a href=\"help.php\">\"Help\"</a>) for more information on newsletter list usage.
 ";
-$txt['WHITELISTFORADDRESS'] = "Whitelist for the address";
-$txt['ADDAWHITEENTRY'] = "Add an address to the list";
-$txt['WHITELISTENTRYTOADD'] = "Enter the address you want to add to the whitelist. You can also add an optional comment.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
-$txt['BLACKLISTFORADDRESS'] = "Blacklist for the address";
-$txt['ADDABLACKENTRY'] = "Add an address to the list";
-$txt['BLACKLISTENTRYTOADD'] = "Enter the address you want to add to the blacklist. You can also add an optional comment.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
+$txt['WANTLISTFORADDRESS'] = "Wantlist for the address";
+$txt['ADDAWANTENTRY'] = "Add an address to the list";
+$txt['WANTLISTENTRYTOADD'] = "Enter the address you want to add to the wantlist. You can also add an optional comment.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
+$txt['BLOCKLISTFORADDRESS'] = "Blocklist for the address";
+$txt['ADDABLOCKENTRY'] = "Add an address to the list";
+$txt['BLOCKLISTENTRYTOADD'] = "Enter the address you want to add to the blocklist. You can also add an optional comment.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Select the address or addresses you want to modify from the list and click on the desired action button.";
 $txt['NEWSLISTFORADDRESS'] = "Newsletter list for the address";
 $txt['ADDANEWSENTRY'] = "Add an address to the list";
 $txt['NEWSLISTENTRYTOADD'] = "Enter the address you want to add to the newsletter list. You can also add an optional comment.";
@@ -500,38 +500,38 @@ $txt['NLRELEASEDHEAD'] = "Newsletter has been allowed and released.";
 $txt['NLRELEASEDBODY'] = "The newsletter has been allowed and released. It should be delivered in your mailbox in a few minutes.";
 $txt['NLNOTRELEASEDHEAD'] = "Newsletter was not released";
 $txt['NLNOTRELEASEDBODY'] = "Kilo problema išleidžiant jūsų pranešimą.";
-$txt['NOTWHITELISTBODY'] = "Kilo problema įtraukiant baltąjį sąrašą.";
+$txt['NOTWANTLISTBODY'] = "Kilo problema įtraukiant baltąjį sąrašą.";
 $txt['ADDRULE'] = "Pridedama WWList taisyklė";
 //
 $txt['ADDITIONALACTION'] = "Papildomi veiksmai:";
-$txt['NOTBLACKLISTBODY'] = "Kilo problema įtraukiant juodąjį sąrašą.";
-$txt['NOTBLACKLISTHEAD'] = "Juodojo sąrašo taisyklė nepridėta.";
-$txt['BLACKLISTBODY'] = "Pridėta juodojo sąrašo taisyklė. Būsimi šio siuntėjo pranešimai visada bus pažymėti kaip nepageidaujami.";
-$txt['BLACKLISTHEAD'] = "Pridėta juodojo sąrašo taisyklė.";
+$txt['NOTBLOCKLISTBODY'] = "Kilo problema įtraukiant juodąjį sąrašą.";
+$txt['NOTBLOCKLISTHEAD'] = "Juodojo sąrašo taisyklė nepridėta.";
+$txt['BLOCKLISTBODY'] = "Pridėta juodojo sąrašo taisyklė. Būsimi šio siuntėjo pranešimai visada bus pažymėti kaip nepageidaujami.";
+$txt['BLOCKLISTHEAD'] = "Pridėta juodojo sąrašo taisyklė.";
 /*
- * Blacklist rule (not currently implemented)
+ * Blocklist rule (not currently implemented)
  */
-$txt['ADDBLACKLIST'] = "Į juodąjį sąrašą įtraukti visus būsimus to paties siuntėjo laiškus?";
-$txt['NOTNEWSWHITEBODY'] = "Kilo problema pridedant šias taisykles.";
-$txt['NOTNEWSWHITEHEAD'] = "Nei naujienų sąrašo, nei baltojo sąrašo taisyklė nepridėta.";
-$txt['WHITENOTNEWSBODY'] = "Pridėta baltojo sąrašo taisyklė, tačiau kilo problemų pridedant naujienlaiškio baltojo sąrašo taisyklę.";
-$txt['WHITENOTNEWSHEAD'] = "Baltasis sąrašas buvo pridėtas, bet naujienų sąrašas ne.";
-$txt['NEWSNOTWHITEBODY'] = "Buvo pridėta naujienlaiškio taisyklė, tačiau iškilo problema pridedant baltojo sąrašo taisyklę.";
-$txt['NEWSNOTWHITEHEAD'] = "Naujienų sąrašas buvo pridėtas, bet baltasis sąrašas ne.";
-$txt['NEWSWHITELISTBODY'] = "Pridėta naujienų sąrašo ir baltojo sąrašo taisyklė. Būsimi šio siuntėjo pranešimai nebus žymimi, jei bus aptikti kaip naujienlaiškiai arba nepageidaujami laiškai.";
-$txt['NEWSWHITELISTHEAD'] = "Pridėtos naujienų sąrašo ir baltojo sąrašo taisyklės.";
-$txt['ADDWHITENEWSLIST'] = "Į baltąjį sąrašą įtraukti visas būsimas to paties siuntėjo siunčiamas reklamines žinutes? Taip pat priimti visus šio siuntėjo naujienlaiškius?";
+$txt['ADDBLOCKLIST'] = "Į juodąjį sąrašą įtraukti visus būsimus to paties siuntėjo laiškus?";
+$txt['NOTNEWSWANTBODY'] = "Kilo problema pridedant šias taisykles.";
+$txt['NOTNEWSWANTHEAD'] = "Nei naujienų sąrašo, nei baltojo sąrašo taisyklė nepridėta.";
+$txt['WANTNOTNEWSBODY'] = "Pridėta baltojo sąrašo taisyklė, tačiau kilo problemų pridedant naujienlaiškio baltojo sąrašo taisyklę.";
+$txt['WANTNOTNEWSHEAD'] = "Baltasis sąrašas buvo pridėtas, bet naujienų sąrašas ne.";
+$txt['NEWSNOTWANTBODY'] = "Buvo pridėta naujienlaiškio taisyklė, tačiau iškilo problema pridedant baltojo sąrašo taisyklę.";
+$txt['NEWSNOTWANTHEAD'] = "Naujienų sąrašas buvo pridėtas, bet baltasis sąrašas ne.";
+$txt['NEWSWANTLISTBODY'] = "Pridėta naujienų sąrašo ir baltojo sąrašo taisyklė. Būsimi šio siuntėjo pranešimai nebus žymimi, jei bus aptikti kaip naujienlaiškiai arba nepageidaujami laiškai.";
+$txt['NEWSWANTLISTHEAD'] = "Pridėtos naujienų sąrašo ir baltojo sąrašo taisyklės.";
+$txt['ADDWANTNEWSLIST'] = "Į baltąjį sąrašą įtraukti visas būsimas to paties siuntėjo siunčiamas reklamines žinutes? Taip pat priimti visus šio siuntėjo naujienlaiškius?";
 /*
- * Newslist and Whitelist rule
+ * Newslist and Wantlist rule
  */
-$txt['ADDNEWSWHITELIST'] = "Priimti visus būsimus to paties siuntėjo naujienlaiškius? Taip pat įtraukti į baltąjį sąrašą visus šio siuntėjo nepageidaujamus pranešimus?";
-$txt['NOTWHITELISTHEAD'] = "Baltojo sąrašo taisyklė nebuvo pridėta.";
-$txt['WHITELISTBODY'] = "Pridėta baltojo sąrašo taisyklė. Būsimi šio siuntėjo pranešimai nebus žymimi, jei bus aptikti kaip nepageidaujami.";
-$txt['WHITELISTHEAD'] = "Baltojo sąrašo taisyklė pridėta.";
+$txt['ADDNEWSWANTLIST'] = "Priimti visus būsimus to paties siuntėjo naujienlaiškius? Taip pat įtraukti į baltąjį sąrašą visus šio siuntėjo nepageidaujamus pranešimus?";
+$txt['NOTWANTLISTHEAD'] = "Baltojo sąrašo taisyklė nebuvo pridėta.";
+$txt['WANTLISTBODY'] = "Pridėta baltojo sąrašo taisyklė. Būsimi šio siuntėjo pranešimai nebus žymimi, jei bus aptikti kaip nepageidaujami.";
+$txt['WANTLISTHEAD'] = "Baltojo sąrašo taisyklė pridėta.";
 /*
- * Whitelist rule
+ * Wantlist rule
  */
-$txt['ADDWHITELIST'] = "Į baltąjį sąrašą įtraukti visas būsimas to paties siuntėjo siunčiamas reklamines žinutes?";
+$txt['ADDWANTLIST'] = "Į baltąjį sąrašą įtraukti visas būsimas to paties siuntėjo siunčiamas reklamines žinutes?";
 $txt['NOTNEWSLISTBODY'] = "Kilo problema įtraukiant naujienlaiškį į baltąjį sąrašą.";
 $txt['NOTNEWSLISTHEAD'] = "Naujienų sąrašo taisyklė nepridėta.";
 $txt['NEWSLISTBODY'] = "Pridėta naujienlaiškių baltojo sąrašo taisyklė. Būsimi šio siuntėjo pranešimai nebus žymimi, jei bus aptikti kaip naujienlaiškiai.";

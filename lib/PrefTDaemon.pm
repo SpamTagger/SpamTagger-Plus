@@ -40,9 +40,9 @@ use PrefClient();
 use parent qw(SockTDaemon);
 
 my $prefs_      = &share( {} );
-my $whitelists_ = &share( {} );
+my $wantlists_ = &share( {} );
 my $warnlists_  = &share( {} );
-my $blacklists_  = &share( {} );
+my $blocklists_  = &share( {} );
 my %stats_ : shared = (
   'prefqueries'      => 0,
   'prefsubqueries'   => 0,
@@ -120,11 +120,11 @@ sub data_read ($this, $data) {
     return $result;
   }
 
-  $this->do_log('BLACKLIST PREFT'.$data, 'prefdaemon', 'debug');
+  $this->do_log('BLOCKLIST PREFT'.$data, 'prefdaemon', 'debug');
 
-  ## WHITELIST and WARNLSIT query
+  ## WANTLIST and WARNLSIT query
   if ( $data =~
-m/^(WHITE|WARN|BLACK)\s+([-_.!\/\$+#=*&\@a-z0-9]+)\s+([-_.!\/\$+#=*&a-z0-9]+\@[-_.a-z0-9]+)/i
+m/^(WANT|WARN|BLOCK)\s+([-_.!\/\$+#=*&\@a-z0-9]+)\s+([-_.!\/\$+#=*&a-z0-9]+\@[-_.a-z0-9]+)/i
     )
   {
     my $type   = $1;
@@ -137,11 +137,11 @@ m/^(WHITE|WARN|BLACK)\s+([-_.!\/\$+#=*&\@a-z0-9]+)\s+([-_.!\/\$+#=*&a-z0-9]+\@[-
 
     ## first check if global system allows wwlist
     return $result
-      if ( $type eq 'BLACK'
-        && !$this->get_object_preference( '_global', 'enable_blacklists' ) );
+      if ( $type eq 'BLOCK'
+        && !$this->get_object_preference( '_global', 'enable_blocklists' ) );
     return $result
-      if ( $type eq 'WHITE'
-      && !$this->get_object_preference( '_global', 'enable_whitelists' ) );
+      if ( $type eq 'WANT'
+      && !$this->get_object_preference( '_global', 'enable_wantlists' ) );
     return $result
       if ( $type eq 'WARN'
       && !$this->get_object_preference( '_global', 'enable_warnlists' ) );
@@ -151,11 +151,11 @@ m/^(WHITE|WARN|BLACK)\s+([-_.!\/\$+#=*&\@a-z0-9]+)\s+([-_.!\/\$+#=*&a-z0-9]+\@[-
     if ($domain) {
       #return $result
       return $result
-        if ( $type eq 'BLACK'
-          && !$this->get_object_preference( $domain, 'enable_blacklists' ) );
+        if ( $type eq 'BLOCK'
+          && !$this->get_object_preference( $domain, 'enable_blocklists' ) );
       return $result
-        if ( $type eq 'WHITE'
-          && !$this->get_object_preference( $domain, 'enable_whitelists' ) );
+        if ( $type eq 'WANT'
+          && !$this->get_object_preference( $domain, 'enable_wantlists' ) );
       return $result
         if ( $type eq 'WARN'
           && !$this->get_object_preference( $domain, 'enable_warnlists' ) );
@@ -169,7 +169,7 @@ m/^(WHITE|WARN|BLACK)\s+([-_.!\/\$+#=*&\@a-z0-9]+)\s+([-_.!\/\$+#=*&a-z0-9]+\@[-
 
   ## CLEAR command
   if ( $data =~
-    m/^CLEAR\s+(PREF|BLACK|WHITE|WARN|STATS)\s+([-_.!\$+#=*&\@a-z0-9]+)?/i )
+    m/^CLEAR\s+(PREF|BLOCK|WANT|WARN|STATS)\s+([-_.!\$+#=*&\@a-z0-9]+)?/i )
   {
     my $what   = $1;
     my $object = lc($2);
@@ -362,9 +362,9 @@ sub fetch_user_pref ($this, $object, $pref) {
 sub fetch_domain_pref ($this, $object, $pref) {
   $this->add_stat( 'prefsubqueries', 1 );
 
-  $pref = 'enable_whitelists' if ( $pref eq 'has_whitelist' );
+  $pref = 'enable_wantlists' if ( $pref eq 'has_wantlist' );
   $pref = 'enable_warnlists' if ( $pref eq 'has_warnlist' );
-  $pref = 'enable_blacklists' if ( $pref eq 'has_blacklist' );
+  $pref = 'enable_blocklists' if ( $pref eq 'has_blocklist' );
 
   my $query = "SELECT $pref FROM domain_pref p, domain d WHERE p.id=d.prefs AND d.name='$object'";
   my $result = $this->fetch_backend_pref( $query, $pref );
@@ -440,9 +440,9 @@ sub get_object_cached_ww ($this, $type, $object, $sender) {
   $this->add_stat( 'wwsubqueries', 1 );
   my $key = get_ww_cache_key($object);
 
-  my $cache_ = $whitelists_;
+  my $cache_ = $wantlists_;
   if ( $type eq 'WARN' ) { $cache_ = $warnlists_; }
-  if ( $type eq 'BLACK' ) { $cache_ = $blacklists_; }
+  if ( $type eq 'BLOCK' ) { $cache_ = $blocklists_; }
   if ( defined( $cache_->{$key} )
     && defined( $cache_->{$key}->{'value'} )
     && defined( $cache_->{$key}->{'time'} )
@@ -486,9 +486,9 @@ sub get_object_backend_ww ($this, $type, $object, $sender) {
   $type = lc($type);
 
   $this->add_stat( 'wwsubqueries', 1 );
-  my $cache_ = $whitelists_;
+  my $cache_ = $wantlists_;
   if ( $type eq 'warn' ) { $cache_ = $warnlists_; }
-  if ( $type eq 'black' ) { $cache_ = $blacklists_; }
+  if ( $type eq 'block' ) { $cache_ = $blocklists_; }
 
   return '_NOBACKEND' if ( !$this->connect_backend() );
   my $query = "SELECT sender FROM wwlists WHERE recipient='$object' AND type='$type' AND status=1";
@@ -547,9 +547,9 @@ sub list_match ($reg, $sender) {
 }
 
 sub create_ww_array_cache ($this, $type, $key) {
-  my $cache_ = $whitelists_;
+  my $cache_ = $wantlists_;
   $cache_ = $warnlists_ if ( $type eq 'warn' );
-  $cache_ = $blacklists_ if ( $type eq 'black' );
+  $cache_ = $blocklists_ if ( $type eq 'block' );
 
   lock $cache_;
   $cache_->{$key} = &share( {} );

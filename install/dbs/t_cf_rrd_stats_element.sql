@@ -52,13 +52,13 @@ INSERT INTO rrd_stats_element VALUES(NULL, 6, 'dangerous', 'DERIVE', 'LAST', 'SP
 
 ## refused
 INSERT INTO rrd_stats_element VALUES(NULL, 7, 'countrbl', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedRBLCount + SPAMTAGGER-MIB::globalRefusedBackscatterCount','0','U', 'rbl',1,'area','','12.0lf','');
-INSERT INTO rrd_stats_element VALUES(NULL, 7, 'countblacklists', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedHostCount + SPAMTAGGER-MIB::globalRefusedBlacklistedSenderCount','0','U', 'blacklists',2,'stack','','12.0lf','');
+INSERT INTO rrd_stats_element VALUES(NULL, 7, 'countblocklists', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedHostCount + SPAMTAGGER-MIB::globalRefusedBlocklistedSenderCount','0','U', 'blocklists',2,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 7, 'countrelay', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedRelayCount','0','U', 'relay',3,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 7, 'countpolicies', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedBATVCount + SPAMTAGGER-MIB::globalRefusedBadSPFCount + SPAMTAGGER-MIB::globalRefusedSpoofingCount + SPAMTAGGER-MIB::globalRefusedUnauthenticatedCount + SPAMTAGGER-MIB::globalRefusedUnencryptedCount','0','U', 'policies',4,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 7, 'countcallout', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedCalloutCount','0','U', 'callout',5,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 7, 'countsyntax', 'GAUGE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedLocalpartCount + SPAMTAGGER-MIB::globalRefusedBadSenderCount + SPAMTAGGER-MIB::globalRefusedBadSenderCount','0','U', 'syntax',6,'stack','','12.0lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 8, 'rbl', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedRBLCount + SPAMTAGGER-MIB::globalRefusedBackscatterCount','0','10000', 'rbl',1,'line','','8.2lf','');
-INSERT INTO rrd_stats_element VALUES(NULL, 8, 'blacklists', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedHostCount + SPAMTAGGER-MIB::globalRefusedBlacklistedSenderCount','0','10000', 'blacklists',2,'line','','8.2lf','');
+INSERT INTO rrd_stats_element VALUES(NULL, 8, 'blocklists', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedHostCount + SPAMTAGGER-MIB::globalRefusedBlocklistedSenderCount','0','10000', 'blocklists',2,'line','','8.2lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 8, 'relay', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedRelayCount','0','10000', 'relay',3,'line','','8.2lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 8, 'policies', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedBATVCount + SPAMTAGGER-MIB::globalRefusedBadSPFCount + SPAMTAGGER-MIB::globalRefusedSpoofingCount + SPAMTAGGER-MIB::globalRefusedUnauthenticatedCount + SPAMTAGGER-MIB::globalRefusedUnencryptedCount','0','10000', 'policies',4,'line','','8.2lf','');
 INSERT INTO rrd_stats_element VALUES(NULL, 8, 'callout', 'DERIVE', 'LAST', 'SPAMTAGGER-MIB::globalRefusedCalloutCount','0','10000', 'callout',5,'line','','8.2lf','');

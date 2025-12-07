@@ -55,24 +55,24 @@ class Default_Form_DomainAdvanced extends Zend_Form {
 		$wwelement = new Default_Model_WWElement();
 		require_once('Validate/IpList.php');
 
-		$black_ip_dom = new Zend_Form_Element_Textarea('black_ip_dom', array(
-			'label'		=>  $t->_('Blacklist those IPs at SMTP stage')." :",
+		$block_ip_dom = new Zend_Form_Element_Textarea('block_ip_dom', array(
+			'label'		=>  $t->_('Blocklist those IPs at SMTP stage')." :",
 			'title'		=> $t->_("List of IPs or subnets to be rejected at SMTP stage for the current domain"),
 			'required'	=> false,
 			'rows'		=> 5,
 			'cols'		=> 30,
 			'filters'	=> array('StringToLower', 'StringTrim'))
 		);
-		$black_ip_dom->addValidator(new Validate_IpList());
-		$black_ip_dom->setValue($wwelement->fetchAllField($this->_domain->getParam('name'), 'black-ip-dom', 'sender'));
+		$block_ip_dom->addValidator(new Validate_IpList());
+		$block_ip_dom->setValue($wwelement->fetchAllField($this->_domain->getParam('name'), 'block-ip-dom', 'sender'));
 	        if ($user_role != 'administrator') {
-			$black_ip_dom->setAttrib('disabled', true);
-			$black_ip_dom->setAttrib('readonly', true);
+			$block_ip_dom->setAttrib('disabled', true);
+			$block_ip_dom->setAttrib('readonly', true);
 		}
-		$this->addElement($black_ip_dom);
+		$this->addElement($block_ip_dom);
 
 		$spam_ip_dom = new Zend_Form_Element_Textarea('spam_ip_dom', array(
-			'label'    =>  $t->_('Blacklist those IPs at AntiSpam stage')." :",
+			'label'    =>  $t->_('Blocklist those IPs at AntiSpam stage')." :",
 			'title' => $t->_("List of IPs or subnets to be blocked at AntiSpam stage for the current domain"),
 			'required'   => false,
 			'rows' => 5,
@@ -86,25 +86,25 @@ class Default_Form_DomainAdvanced extends Zend_Form {
 		}
 		$this->addElement($spam_ip_dom);
 
-		$white_ip_dom = new Zend_Form_Element_Textarea('white_ip_dom', array(
-			'label'    =>  $t->_('Whitelist those IPs at SMTP stage')." :",
-			'title' => $t->_("List of IPs or subnets to be whitelisted at SMTP stage for the current domain"),
+		$want_ip_dom = new Zend_Form_Element_Textarea('want_ip_dom', array(
+			'label'    =>  $t->_('Wantlist those IPs at SMTP stage')." :",
+			'title' => $t->_("List of IPs or subnets to be wantlisted at SMTP stage for the current domain"),
 			'required'   => false,
 			'rows' => 5,
 			'cols' => 30,
 			'filters'    => array('StringToLower', 'StringTrim')));
-		$white_ip_dom->addValidator(new Validate_IpList());
-		$white_ip_dom->setValue($wwelement->fetchAllField($this->_domain->getParam('name'), 'white-ip-dom', 'sender'));
+		$want_ip_dom->addValidator(new Validate_IpList());
+		$want_ip_dom->setValue($wwelement->fetchAllField($this->_domain->getParam('name'), 'want-ip-dom', 'sender'));
 	        if ($user_role != 'administrator') {
-			$white_ip_dom->setAttrib('disabled', true);
-			$white_ip_dom->setAttrib('readonly', true);
+			$want_ip_dom->setAttrib('disabled', true);
+			$want_ip_dom->setAttrib('readonly', true);
 		}
-		$this->addElement($white_ip_dom);
+		$this->addElement($want_ip_dom);
 
 
 		$wh_spamc_ip_dom = new Zend_Form_Element_Textarea('wh_spamc_ip_dom', array(
-			'label'    =>  $t->_('Whitelist those IPs at AntiSpam stage')." :",
-			'title' => $t->_("List of IPs or subnets to be whitelisted at AntiSpam stage for the current domain"),
+			'label'    =>  $t->_('Wantlist those IPs at AntiSpam stage')." :",
+			'title' => $t->_("List of IPs or subnets to be wantlisted at AntiSpam stage for the current domain"),
 			'required'   => false,
 			'rows' => 5,
 			'cols' => 30,
@@ -131,9 +131,9 @@ class Default_Form_DomainAdvanced extends Zend_Form {
 
 	public function setParams($request, $domain) {
 		$wwelement = new Default_Model_WWElement();
-		$wwelement->setBulkSender($domain->getParam('name'), $request->getParam('black_ip_dom'), 'black-ip-dom');
+		$wwelement->setBulkSender($domain->getParam('name'), $request->getParam('block_ip_dom'), 'block-ip-dom');
 		$wwelement->setBulkSender($domain->getParam('name'), $request->getParam('spam_ip_dom'), 'spam-ip-dom');
-		$wwelement->setBulkSender($domain->getParam('name'), $request->getParam('white_ip_dom'), 'white-ip-dom');
+		$wwelement->setBulkSender($domain->getParam('name'), $request->getParam('want_ip_dom'), 'want-ip-dom');
 		$wwelement->setBulkSender($domain->getParam('name'), $request->getParam('wh_spamc_ip_dom'), 'wh-spamc-ip-dom');
 
 		return true;

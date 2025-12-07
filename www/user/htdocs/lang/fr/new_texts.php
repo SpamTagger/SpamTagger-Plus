@@ -97,7 +97,7 @@ $txt['ASKPURGECONFIRM']         = "Etes-vous s&ucirc;r de vouloir purger les __P
  */
 $txt['INFORMATIONSABOUTMSG']    = "Information sur le message";
 $txt['PREFILTERHITS']           = "Pr&eacute;-filtres";
-$txt['BLACKLISTS']              = "Listes noires";
+$txt['BLOCKLISTS']              = "Listes noires";
 $txt['FITLERSCORE']             = "Score";
 $txt['NONE']                    = "aucun";
 $txt['HEADERS']                 = "En-t&ecirc;tes";
@@ -201,14 +201,14 @@ $txt['ADDRESSLISTTOPIC']        = "Liste des adresses";
 $txt['ADDRESSPARAMTOPIC']       = "Param&egrave;tres des adresses";
 $txt['QUARPARAMTOPIC']          = "Liste de quarantaine";
 $txt['WARNLISTTOPIC']           = "Liste d'avertissement";
-$txt['WHITELISTTOPIC']          = "Liste blanche";
-$txt['BLACKLISTTOPIC']          = "Liste noire";
+$txt['WANTLISTTOPIC']          = "Liste blanche";
+$txt['BLOCKLISTTOPIC']          = "Liste noire";
 $txt['ADDRESSLISTTOPICTITLE']   = "liste des adresses";
 $txt['ADDRESSPARAMTOPICTITLE']  = "param&egrave;tres des adresses";
 $txt['QUARPARAMTOPICTITLE']     = "liste de quarantaine";
 $txt['WARNLISTTOPICTITLE']      = "liste d'avertissement";
-$txt['WHITELISTTOPICTITLE']     = "liste blanche";
-$txt['BLACKLISTTOPICTITLE']     = "liste noire";
+$txt['WANTLISTTOPICTITLE']     = "liste blanche";
+$txt['BLOCKLISTTOPICTITLE']     = "liste noire";
 
 /*
  * interface (new)
@@ -273,17 +273,17 @@ $txt['REMOVEANENTRYSHORTHELP']  = "S&eacute;lectionnez la (ou les) entr&eacute;e
 $txt['REMTHEENTRY']             = "Supprimer";
 $txt['DISABLETHEENTRY']         = "D&eacute;sactiver/R&eacute;activer";
 
-$txt['WHITELISTSHORTHELP']      = "La liste blanche ou \"WhiteList\" permet d'ajouter les adresses de certains de vos correspondants
+$txt['WANTLISTSHORTHELP']      = "La liste blanche ou \"WhiteList\" permet d'ajouter les adresses de certains de vos correspondants
                                    pour lesquels aucun blocage ne sera opp&eacute;r&eacute;.<br />
                                    Aujourd'hui les spammeurs sont capables d'adresser un spam &agrave; un destinataire en se
                                    faisant passer pour une personne connue de ce dernier.
                                    L'utilisation de la liste blanche est donc fortement d&eacute;conseill&eacute;.
                                    Pr&eacute;f&eacute;rez plut&ocirc;t la list d'avertissement.";
-$txt['WHITELISTSHORTHELP']      = "La liste noir ou \"BlackList\" permet d'ajouter les addresses que vous souhaitez bloquer.";
-$txt['WHITELISTFORADDRESS']     = "Liste blanche pour l'adresse";
-$txt['BLACKLISTFORADDRESS']     = "Liste blanche pour l'adresse";
-$txt['ADDAWHITEENTRY']          = "Ajouter une adresse &agrave; la liste blanche";
-$txt['WHITELISTENTRYTOADD']     = "Entrez l'adresse que vous souhaitez ajouter &agrave; la liste blanche";
+$txt['WANTLISTSHORTHELP']      = "La liste noir ou \"BlockList\" permet d'ajouter les addresses que vous souhaitez bloquer.";
+$txt['WANTLISTFORADDRESS']     = "Liste blanche pour l'adresse";
+$txt['BLOCKLISTFORADDRESS']     = "Liste blanche pour l'adresse";
+$txt['ADDAWANTENTRY']          = "Ajouter une adresse &agrave; la liste blanche";
+$txt['WANTLISTENTRYTOADD']     = "Entrez l'adresse que vous souhaitez ajouter &agrave; la liste blanche";
 $txt['RECORDALREADYEXISTS']     = "Cette entr&eacute;e existe d&eacute;j&agrave;";
 
 /*

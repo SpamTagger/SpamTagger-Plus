@@ -47,43 +47,43 @@ sub get_no_news_tag_subject {
   return "Subject:".$subject;
 }
 
-sub is_blacklisted ($local_part, $domain_part) {
+sub is_blocklisted ($local_part, $domain_part) {
   # Get parameters values
   my $sender      = Exim::expand_string('$sender_address');
   my $sender_body = Exim::expand_string('$header_From');
   my $user        = $local_part . "@" . $domain_part;
 
   my $email = Email::create($user);
-  my $blacklisted = ($email->has_in_white_warn_list('blacklist', $sender) || $email->has_in_white_warn_list('blacklist', $sender_body));
+  my $blocklisted = ($email->has_in_want_warn_list('blocklist', $sender) || $email->has_in_want_warn_list('blocklist', $sender_body));
   my $header_status = Exim::expand_string('$header_X-SpamTagger-Status');
-  my $blacklist_hash = get_blacklisted_flag($local_part, $domain_part);
+  my $blocklist_hash = get_blocklisted_flag($local_part, $domain_part);
 
-  if ($header_status =~ m/\Q$blacklist_hash/ && $blacklisted) {
+  if ($header_status =~ m/\Q$blocklist_hash/ && $blocklisted) {
     return 0;
   } else {
-    return $blacklisted;
+    return $blocklisted;
   }
 }
 
-## Generate md5 sum flag for blacklisted
-sub get_blacklisted_flag ($local_part, $domain_part) {
+## Generate md5 sum flag for blocklisted
+sub get_blocklisted_flag ($local_part, $domain_part) {
   my $sender      = Exim::expand_string('$sender_address');
   my $sender_body = Exim::expand_string('$header_From');
   my $user        = $local_part . "@" . $domain_part;
 
   my $email = Email::create($user);
 
-  # The blacklist works on MAIL FROM (SMTP) and FROM Body
-  my $blacklisted = $email->has_in_white_warn_list('blacklist', $sender_body);
-  if ($blacklisted)  {
+  # The blocklist works on MAIL FROM (SMTP) and FROM Body
+  my $blocklisted = $email->has_in_want_warn_list('blocklist', $sender_body);
+  if ($blocklisted)  {
      $sender = $sender_body;
   }
 
   my $conf = ReadConfig::get_instance();
   my $client_id = $conf->get_option('CLIENTID');
-  my $blacklist_digest = $client_id . $sender . $client_id;
+  my $blocklist_digest = $client_id . $sender . $client_id;
 
-  return md5_hex($blacklist_digest);
+  return md5_hex($blocklist_digest);
 }
 
 sub quarantine_bounce ($local_part, $domain_part) {

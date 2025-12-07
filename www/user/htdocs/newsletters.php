@@ -150,14 +150,14 @@ if (!$bad_arg) {
 
     $is_sender_body_added_to_wl = send_SOAP_request(
         $source,
-        "addNewsletterToWhitelist",
+        "addNewsletterToWantlist",
         array($dest, $sender_body),
         array("OK", "DUPLICATEENTRY")
     );
 
     $is_sender_added_to_wl = send_SOAP_request(
         $source,
-        "addNewsletterToWhitelist",
+        "addNewsletterToWantlist",
         array($dest, $sender),
         array("OK", "DUPLICATEENTRY")
     );

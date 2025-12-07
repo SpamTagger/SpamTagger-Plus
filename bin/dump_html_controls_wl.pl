@@ -33,7 +33,7 @@ use ReadConfig;
 
 our $config = ReadConfig::get_instance();
 
-my $file = '/var/spamtagger/spool/tmp/mailscanner/whitelist_HTML';
+my $file = '/var/spamtagger/spool/tmp/mailscanner/wantlist_HTML';
 unlink($file);
 
 do_htmls_wl();

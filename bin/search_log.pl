@@ -638,8 +638,8 @@ sub process_stage_four_logs ($id) {
             if ($shline =~ /is warnlisted/) {
                 $outreport = 'Warnlisted';
             }
-            if ($shline =~ /is whitelisted/) {
-                $outreport = 'Whitelisted';
+            if ($shline =~ /is wantlisted/) {
+                $outreport = 'Wantlisted';
             }
             if ($shline =~ /want quarantine/) {
                 $outreport = 'Quarantined';

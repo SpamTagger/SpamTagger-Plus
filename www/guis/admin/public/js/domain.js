@@ -31,11 +31,11 @@ $(document).ready(function(){
 		loadDomainPanel($("#domainpanel").val());
     });
 
-    $("#enable_whitelists").click(function(event){
-                 if ($("#enable_whitelists").is(':checked')) {
-             $("#whitelist_list").show();
+    $("#enable_wantlists").click(function(event){
+                 if ($("#enable_wantlists").is(':checked')) {
+             $("#wantlist_list").show();
                  } else {
-                 $("#whitelist_list").hide();
+                 $("#wantlist_list").hide();
                  }
     });
 
@@ -47,11 +47,11 @@ $(document).ready(function(){
                  }
     });
 
-    $("#enable_blacklists").click(function(event){
-                 if ($("#enable_blacklists").is(':checked')) {
-             $("#blacklist_list").show();
+    $("#enable_blocklists").click(function(event){
+                 if ($("#enable_blocklists").is(':checked')) {
+             $("#blocklist_list").show();
                  } else {
-                 $("#blacklist_list").hide();
+                 $("#blocklist_list").hide();
                  }
     });
 

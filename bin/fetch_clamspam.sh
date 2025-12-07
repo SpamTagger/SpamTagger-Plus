@@ -75,7 +75,7 @@ fi
 
 . $SRCDIR/lib/updates/download_files.sh
 
-ret=$(downloadDatas "$VARDIR/spool/clamspam/" "clamspam3" $randomize "clamav" "\|local_whitelist.ign2" "noexit")
+ret=$(downloadDatas "$VARDIR/spool/clamspam/" "clamspam3" $randomize "clamav" "\|local_wantlist.ign2" "noexit")
 
 if [ ! -d "$VARDIR/spool/tmp/clamspam" ]; then
   mkdir "$VARDIR/spool/tmp/clamspam"

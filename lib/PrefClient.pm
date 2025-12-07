@@ -131,16 +131,16 @@ sub extract_sender ($this, $sender) {
   return $sender;
 }
 
-sub is_whitelisted ($this, $object, $sender) {
+sub is_wantlisted ($this, $object, $sender) {
   return '_BADOBJECT' if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i);
 
-  my $query = "WHITE $object $sender";
-  if (my $result = $this->query("WHITE $object $sender")) {
+  my $query = "WANT $object $sender";
+  if (my $result = $this->query("WANT $object $sender")) {
     return $result;
   }
   $sender = $this->extractSender($sender);
   return 0 unless ($sender);
-  return $this->query("WHITE $object $sender");
+  return $this->query("WANT $object $sender");
 }
 
 sub is_warnlisted ($this, $object, $sender) {
@@ -154,17 +154,17 @@ sub is_warnlisted ($this, $object, $sender) {
   return $this->query("WARN $object $sender");
 }
 
-sub is_blacklisted ($this, $object, $sender) {
+sub is_blocklisted ($this, $object, $sender) {
   return '_BADOBJECT' if ($object !~ m/^[-_.!\$+#=*&\@a-z0-9]+$/i);
 
-  my $query = "BLACK $object $sender";
+  my $query = "BLOCK $object $sender";
   my $result;
-  if ($result = $this->query("BLACK $object $sender")) {
+  if ($result = $this->query("BLOCK $object $sender")) {
     return $result;
   }
   $sender = $this->extractSender($sender);
   return 0 unless ($sender);
-  return $this->query("BLACK $object $sender");
+  return $this->query("BLOCK $object $sender");
 }
 
 sub log_stats {

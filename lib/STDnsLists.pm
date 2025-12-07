@@ -43,7 +43,7 @@ sub new ($class, $logfunction = sub { print STDERR shift."\n"; }, $debug = 0) {
 
   $this->{rbls}                      = {};
   $this->{useable_rbls}               = ();
-  $this->{whitelisted_domains}        = {};
+  $this->{wantlisted_domains}        = {};
   $this->{tlds}                      = {};
   $this->{local_domains}              = {};
   $this->{maxurilength}              = 150;
@@ -65,7 +65,7 @@ sub new ($class, $logfunction = sub { print STDERR shift."\n"; }, $debug = 0) {
 sub load_rbls
   (
     $this, $rblspath, $selected_rbls, $rbls_type,
-    $whitelist_domains_file, $tlds_file, $local_domains_file, $prelog
+    $wantlist_domains_file, $tlds_file, $local_domains_file, $prelog
   )
 {
   my $DIR;
@@ -136,22 +136,22 @@ sub load_rbls
     &{ $this->{logfunction} }("$prelog not using any RBLs");
   }
 
-  ## loading whitelisted domains
+  ## loading wantlisted domains
   my $FILE;
-  if ( open($FILE, '<', $whitelist_domains_file ) ) {
+  if ( open($FILE, '<', $wantlist_domains_file ) ) {
     while (<$FILE>) {
       if (/\s*([-_.a-zA-Z0-9]+)/) {
-        $this->{whitelisted_domains}{$1} = 1;
+        $this->{wantlisted_domains}{$1} = 1;
       }
     }
     close $FILE;
     &{ $this->{logfunction} }( "$prelog loaded " .
-        keys( %{ $this->{whitelisted_domains} } )
-        . " whitelisted domains" );
-  } elsif ( $whitelist_domains_file ne '' ) {
+        keys( %{ $this->{wantlisted_domains} } )
+        . " wantlisted domains" );
+  } elsif ( $wantlist_domains_file ne '' ) {
     &{ $this->{logfunction} }(
-          "$prelog could not load domains whitelist file ("
-        . $whitelist_domains_file
+          "$prelog could not load domains wantlist file ("
+        . $wantlist_domains_file
         . ") !" );
   }
 
@@ -335,16 +335,16 @@ m/([a-zA-Z0-9-_.]{4,25})[ |[(*'"]{0,5}@[ |\])*'"]{0,5}([a-zA-Z0-9-_\.]{4,25}\.[ 
   return 0;
 }
 
-sub is_valid_domain ($this, $domain, $usewhitelist, $prelog) {
+sub is_valid_domain ($this, $domain, $usewantlist, $prelog) {
   $domain =~ s/\%//g;
 
   if ( $domain =~ m/[a-z0-9\-_.:]+[.:][a-z0-9]{2,15}$/ ) {
-    if ($usewhitelist) {
-      foreach my $wd ( keys %{ $this->{whitelisted_domains} } ) {
+    if ($usewantlist) {
+      foreach my $wd ( keys %{ $this->{wantlisted_domains} } ) {
         if ( $domain =~ m/([^.]{0,150}\.$wd)$/ || $domain eq $wd ) {
           if ( $this->{debug} ) {
             &{ $this->{logfunction} }( $prelog
-                . " has found whitelisted domain: $domain" );
+                . " has found wantlisted domain: $domain" );
           }
           return 0;
         }

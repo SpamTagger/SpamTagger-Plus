@@ -1,4 +1,4 @@
-header   __ST_SPF_WL       X-SpamTagger-SPF =~ /whitelisted/i
+header   __ST_SPF_WL       X-SpamTagger-SPF =~ /wantlisted/i
 
 header   __ST_SPF_FAIL       X-SpamTagger-SPF =~ /\bfail\b/i
 header   __ST_SPF_SOFTFAIL   X-SpamTagger-SPF =~ /\bsoftfail\b/i

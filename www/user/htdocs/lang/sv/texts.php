@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Nyhetsbrev";
 $txt['NEWSLETTERSSHORTHELP'] = "Här kan du hantera dina nyhetsbrev.";
 $txt['NEWSLETTERSALLOW'] = "leverera";
 $txt['NEWSLETTERACCEPT'] = "Acceptera detta nyhetsbrev";
-$txt['SPAM_WHITELIST_DISABLED'] = "Listan är inte aktiverad för denna domän (kontakta din administratör).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Listan är inte aktiverad för denna domän (kontakta din administratör).";
 /*
  * generic buttons
  */
@@ -178,7 +178,7 @@ $txt['GROUPQUARANTINES'] = "Alla adresser";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Meddelandets innehåll";
 $txt['PREFILTERHITS'] = "Pre-filters";
-$txt['BLACKLISTS'] = "Svartlistor";
+$txt['BLOCKLISTS'] = "Svartlistor";
 $txt['FITLERSCORE'] = "Poäng";
 $txt['NONE'] = "ingen";
 $txt['HEADERS'] = "Huvuden";
@@ -241,7 +241,7 @@ $txt['USEDEFAULT'] = "använd standard";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "vanlig text";
 //old
-$txt['EDITWHITELIST'] = "redigera vitlista";
+$txt['EDITWANTLIST'] = "redigera vitlista";
 //old
 $txt['EDITWARNLIST'] = "redigera varningslista";
 /*
@@ -261,7 +261,7 @@ $txt['WWENTRY'] = "Post";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Är du säker på att du vill ta bort denna post permanent?";
 //old
-$txt['WHITELISTFOR'] = "Vitlista för __PARAM__";
+$txt['WANTLISTFOR'] = "Vitlista för __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Varningslista för __PARAM__";
 //old
@@ -388,15 +388,15 @@ $txt['ADDRESSLISTTOPIC'] = "Adress grupp";
 $txt['ADDRESSPARAMTOPIC'] = "Adress inställningar";
 $txt['QUARPARAMTOPIC'] = "Visa karantän";
 $txt['WARNLISTTOPIC'] = "Varningslista";
-$txt['WHITELISTTOPIC'] = "Vitlista";
-$txt['BLACKLISTTOPIC'] = "Svartlista";
+$txt['WANTLISTTOPIC'] = "Vitlista";
+$txt['BLOCKLISTTOPIC'] = "Svartlista";
 $txt['INTERFACETOPICTITLE'] = "gränssnittsinställningar";
 $txt['ADDRESSLISTTOPICTITLE'] = "adress grupp";
 $txt['ADDRESSPARAMTOPICTITLE'] = "adress inställningar";
 $txt['QUARPARAMTOPICTITLE'] = "visa karantän";
 $txt['WARNLISTTOPICTITLE'] = "varningslista";
-$txt['WHITELISTTOPICTITLE'] = "vitlista";
-$txt['BLACKLISTTOPICTITLE'] = "svartlista";
+$txt['WANTLISTTOPICTITLE'] = "vitlista";
+$txt['BLOCKLISTTOPICTITLE'] = "svartlista";
 /*
  * interface (new)
  */
@@ -459,21 +459,21 @@ $txt['REMOVEANENTRY'] = "Inaktivera, aktivera eller ta bort en adress från list
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Välj den adress eller de adresser du vill ändra från listan och klicka på önskad åtgärdsknapp.";
 $txt['REMTHEENTRY'] = "Ta bort val";
 $txt['DISABLETHEENTRY'] = "Inaktivera / aktivera val";
-$txt['WHITELISTSHORTHELP'] = "Vitlistan innehåller betrodda avsändaradresser för vilka karantän inte någonsin kommer att inträffa.<br />
+$txt['WANTLISTSHORTHELP'] = "Vitlistan innehåller betrodda avsändaradresser för vilka karantän inte någonsin kommer att inträffa.<br />
                                    Varning: denna funktion bör användas som en temporär lösning då den minskar det övergripande skyddet.
                                   Se manualen (i avsnitt <a href=\"help.php\">\"Hjälp\"</a>) för mer information om hur vitlistor kan användas.
 ";
-$txt['BLACKLISTSHORTHELP'] = "Svartlistan innehåller svartlistade avsändaradresser.
+$txt['BLOCKLISTSHORTHELP'] = "Svartlistan innehåller svartlistade avsändaradresser.
                                   Kontrollera manualen (tillgänglig under <a href=\"help.php\">\"Hjälp\"</a>) för mer information om användning av svartlistor.
 ";
-$txt['WHITELISTFORADDRESS'] = "Vitlista för adressen";
-$txt['ADDAWHITEENTRY'] = "Lägg till en adress till listan";
-$txt['WHITELISTENTRYTOADD'] = "Ange adressen du vill lägga till på vitlistan. Du kan även ange en valfri kommentar.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Välj adressen eller adresserna du vill ändra i listan och klicka på önskad åtgärdsknapp.";
-$txt['BLACKLISTFORADDRESS'] = "Svartlista för adressen";
-$txt['ADDABLACKENTRY'] = "Lägg till en adress till listan";
-$txt['BLACKLISTENTRYTOADD'] = "Ange adressen du vill lägga till i svartlistan. Du kan också lägga till en valfri kommentar.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Välj den adress eller de adresser du vill ändra från listan och klicka på önskad åtgärdsknapp.";
+$txt['WANTLISTFORADDRESS'] = "Vitlista för adressen";
+$txt['ADDAWANTENTRY'] = "Lägg till en adress till listan";
+$txt['WANTLISTENTRYTOADD'] = "Ange adressen du vill lägga till på vitlistan. Du kan även ange en valfri kommentar.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Välj adressen eller adresserna du vill ändra i listan och klicka på önskad åtgärdsknapp.";
+$txt['BLOCKLISTFORADDRESS'] = "Svartlista för adressen";
+$txt['ADDABLOCKENTRY'] = "Lägg till en adress till listan";
+$txt['BLOCKLISTENTRYTOADD'] = "Ange adressen du vill lägga till i svartlistan. Du kan också lägga till en valfri kommentar.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Välj den adress eller de adresser du vill ändra från listan och klicka på önskad åtgärdsknapp.";
 $txt['RECORDALREADYEXISTS'] = "Den här adressen finns redan i listan.";
 /*
  * logout (new)
@@ -510,9 +510,9 @@ $txt['ADDNEWSLIST'] = "Acceptera all framtida nyhetsbrev från samma avsändare?
 $txt['NEWSLISTHEAD'] = "Regel för Nyhetslista har lagts till.";
 $txt['NEWSLISTBODY'] = "En regel för vitlista för nyhetsbrev har lagts till. Framtida meddelande från denna avsändare kommer inte att flaggas om det identifieras som nyhetsbrev.";
 /*
- * Whitelist rule
+ * Wantlist rule
  */
-$txt['ADDWHITELIST'] = "Vitlista all framtida skräppost från samma avsändare?";
+$txt['ADDWANTLIST'] = "Vitlista all framtida skräppost från samma avsändare?";
 /*
  * SOAP errors
  */
@@ -532,4 +532,4 @@ $txt['NOTNEWSLISTBODY'] = "Ett problem uppstod med att lägga till vitlista för
  */
 $txt['ORIGINALSENDER'] = "Endast original avsändaradress";
 $txt['ENTIREDOMAIN'] = "Hela domänen";
-$txt['WHITELISTHEAD'] = "Regel för vitlista har lagts till.";
+$txt['WANTLISTHEAD'] = "Regel för vitlista har lagts till.";

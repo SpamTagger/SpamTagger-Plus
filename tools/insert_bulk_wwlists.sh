@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
   echo "sender recipient type"
   echo "if the recipient should be a whole domain, you need to include the '@' sign on it for example @spamtagger.org"
   echo "if the rule is for all domains please use --- as domain name"
-  echo "type can be either white or black"
+  echo "type can be either want or block"
   exit 0
 fi
 

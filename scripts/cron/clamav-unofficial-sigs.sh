@@ -848,7 +848,7 @@ function decode_third_party_signature_by_signature_name() {
   xshok_pretty_echo_and_log "Input a third-party signature name to decode (e.g: Sanesecurity.Junk.15248) or"
   xshok_pretty_echo_and_log "a hexadecimal encoded data string and press enter:"
   read -r input
-  # Remove quotes and .UNOFFICIAL from the whitelist input string
+  # Remove quotes and .UNOFFICIAL from the wantlist input string
   input="$(echo "${input}" | tr -d "'" | tr -d '"' | tr -d '`')"
   input=${input/\.UNOFFICIAL/}
   if echo "${input}" | $grep_bin "\\." >/dev/null; then
@@ -1198,11 +1198,11 @@ function clamscan_integrity_test_specific_database_file() { # databasefile
 function output_signatures_triggered_during_ham_directory_scan() {
   xshok_pretty_echo_and_log ""
   if [ -n "$ham_dir" ]; then
-    if [ -r "${work_dir_work_configs}/whitelist.hex" ]; then
+    if [ -r "${work_dir_work_configs}/wantlist.hex" ]; then
       xshok_pretty_echo_and_log "The following third-party signatures triggered hits during the HAM Directory scan:"
 
-      $grep_bin -h -f "${work_dir_work_configs}/whitelist.hex" "$work_dir"/*/*.ndb | cut -d ":" -f 1
-      $grep_bin -h -f "${work_dir_work_configs}/whitelist.hex" "$work_dir"/*/*.db | cut -d "=" -f 1
+      $grep_bin -h -f "${work_dir_work_configs}/wantlist.hex" "$work_dir"/*/*.ndb | cut -d ":" -f 1
+      $grep_bin -h -f "${work_dir_work_configs}/wantlist.hex" "$work_dir"/*/*.db | cut -d "=" -f 1
     else
       xshok_pretty_echo_and_log "No third-party signatures have triggered hits during the HAM Directory scan."
     fi
@@ -1211,13 +1211,13 @@ function output_signatures_triggered_during_ham_directory_scan() {
   fi
 }
 
-# Adds a signature whitelist entry in the newer ClamAV IGN2 format
-function add_signature_whitelist_entry() { #signature
-  xshok_pretty_echo_and_log "Signature Whitelist" "="
+# Adds a signature wantlist entry in the newer ClamAV IGN2 format
+function add_signature_wantlist_entry() { #signature
+  xshok_pretty_echo_and_log "Signature Wantlist" "="
   if [ -n "$1" ]; then
     input="$1"
   else
-    xshok_pretty_echo_and_log "Input a third-party signature name that you wish to whitelist and press enter"
+    xshok_pretty_echo_and_log "Input a third-party signature name that you wish to wantlist and press enter"
     read -r input
   fi
   if [ -n "$input" ]; then
@@ -1249,52 +1249,52 @@ function add_signature_whitelist_entry() { #signature
     fi
 
     if [ -n "$sig_name" ]; then
-      if ! $grep_bin -m 1 "$sig_name" my-whitelist.ign2 >/dev/null 2>&1; then
-        cp -f -p my-whitelist.ign2 "$work_dir_work_configs" 2>/dev/null
-        echo "$sig_name" >>"${work_dir_work_configs}/my-whitelist.ign2"
+      if ! $grep_bin -m 1 "$sig_name" my-wantlist.ign2 >/dev/null 2>&1; then
+        cp -f -p my-wantlist.ign2 "$work_dir_work_configs" 2>/dev/null
+        echo "$sig_name" >>"${work_dir_work_configs}/my-wantlist.ign2"
         shopt -s nocasematch
         if [ "$yaratest" != "YARA" ]; then
           echo "$sig_full" >>"${work_dir_work_configs}/tracker.txt"
         fi
 
-        if $clamscan_bin --quiet -d "${work_dir_work_configs}/my-whitelist.ign2" "${work_dir_work_configs}/scan-test.txt"; then
-          if $rsync_bin -pcqt "${work_dir_work_configs}/my-whitelist.ign2" "$clam_dbs"; then
-            perms chown -f "${clam_user}:${clam_group}" my-whitelist.ign2
+        if $clamscan_bin --quiet -d "${work_dir_work_configs}/my-wantlist.ign2" "${work_dir_work_configs}/scan-test.txt"; then
+          if $rsync_bin -pcqt "${work_dir_work_configs}/my-wantlist.ign2" "$clam_dbs"; then
+            perms chown -f "${clam_user}:${clam_group}" my-wantlist.ign2
 
             if [ ! -s "${work_dir_work_configs}/monitor-ign.txt" ]; then
               # Create "monitor-ign.txt" file for clamscan database integrity testing.
               echo "This is the monitor ignore file..." >"${work_dir_work_configs}/monitor-ign.txt"
             fi
 
-            perms chmod -f 0644 my-whitelist.ign2 "${work_dir_work_configs}/monitor-ign.txt"
+            perms chmod -f 0644 my-wantlist.ign2 "${work_dir_work_configs}/monitor-ign.txt"
             if [ "$selinux_fixes" == "yes" ]; then
               restorecon "${clam_dbs}/local.ign"
             fi
             do_clamd_reload="4"
             clamscan_reload_dbs
 
-            xshok_pretty_echo_and_log "Signature '${input}' has been added to my-whitelist.ign2 and all databases have been reloaded."
+            xshok_pretty_echo_and_log "Signature '${input}' has been added to my-wantlist.ign2 and all databases have been reloaded."
             if [ "$yaratest" != "YARA" ]; then
               xshok_pretty_echo_and_log "The script will track any changes to the offending signature and will automatically remove it, "
               xshok_pretty_echo_and_log "if the signature is modified or removed from the third-party database."
             fi
           else
 
-            xshok_pretty_echo_and_log "Failed to successfully update my-whitelist.ign2 file - SKIPPING."
+            xshok_pretty_echo_and_log "Failed to successfully update my-wantlist.ign2 file - SKIPPING."
           fi
         else
 
-          xshok_pretty_echo_and_log "Clamscan reports my-whitelist.ign2 database integrity is bad - SKIPPING."
+          xshok_pretty_echo_and_log "Clamscan reports my-wantlist.ign2 database integrity is bad - SKIPPING."
         fi
       else
 
-        xshok_pretty_echo_and_log "Signature '${input}' already exists in my-whitelist.ign2 - no action taken."
+        xshok_pretty_echo_and_log "Signature '${input}' already exists in my-wantlist.ign2 - no action taken."
       fi
     else
 
       xshok_pretty_echo_and_log "Signature '${input}' could not be found."
 
-      xshok_pretty_echo_and_log "This script will only create a whitelise entry in my-whitelist.ign2 for ClamAV"
+      xshok_pretty_echo_and_log "This script will only create a wantlist entry in my-wantlist.ign2 for ClamAV"
       xshok_pretty_echo_and_log "'UNOFFICIAL' third-Party signatures as found in the *.ndb *.hdb *.db databases."
     fi
   else
@@ -1314,7 +1314,7 @@ function clamscan_reload_dbs() {
       elif [ "$do_clamd_reload" == "3" ]; then
         xshok_pretty_echo_and_log "File 'local.ign' has changed, reloading ClamAV databases" "="
       elif [ "$do_clamd_reload" == "4" ]; then
-        xshok_pretty_echo_and_log "File 'my-whitelist.ign2' has changed, reloading ClamAV databases" "="
+        xshok_pretty_echo_and_log "File 'my-wantlist.ign2' has changed, reloading ClamAV databases" "="
       else
         xshok_pretty_echo_and_log "Update(s) detected, reloading ClamAV databases" "="
       fi
@@ -1522,7 +1522,7 @@ ${ofs} -t, --test-database ${ofe} Clamscan integrity test a specific database fi
 ${ofb}
 ${ofs} -o, --output-triggered ${ofe} If HAM directory scanning is enabled in the script's ${oft} configuration file, then output names of any third-party ${oft} signatures that triggered during the HAM directory scan
 ${ofb}
-${ofs} -w, --whitelist <signature-name> ${ofe} Adds a signature whitelist entry in the newer ClamAV IGN2 ${oft} format to 'my-whitelist.ign2' in order to temporarily resolve ${oft} a false-positive issue with a specific third-party signature. ${oft} Script added whitelist entries will automatically be removed ${oft} if the original signature is either modified or removed from ${oft} the third-party signature database
+${ofs} -w, --wantlist <signature-name> ${ofe} Adds a signature wantlist entry in the newer ClamAV IGN2 ${oft} format to 'my-wantlist.ign2' in order to temporarily resolve ${oft} a false-positive issue with a specific third-party signature. ${oft} Script added wantlist entries will automatically be removed ${oft} if the original signature is either modified or removed from ${oft} the third-party signature database
 ${ofb}
 ${ofs} --check-clamav ${ofe} If ClamD status check is enabled and the socket path is correctly ${oft} specifiedthen test to see if clamd is running or not
 ${ofb}
@@ -2357,8 +2357,8 @@ while true; do
     output_signatures_triggered_during_ham_directory_scan
     exit
     ;;
-  -w | --whitelist)
-    add_signature_whitelist_entry "${2}"
+  -w | --wantlist)
+    add_signature_wantlist_entry "${2}"
     exit
     ;;
   --check-clamav)
@@ -2802,20 +2802,20 @@ fi
 
 ############################################################################################
 
-# If "ham_dir" variable is set, then create initial whitelist files (skipped if first-time script run).
+# If "ham_dir" variable is set, then create initial wantlist files (skipped if first-time script run).
 test_dir="$work_dir/test"
 if [ -n "$ham_dir" ] && [ -d "$work_dir" ] && [ ! -d "$test_dir" ]; then
   if [ -d "$ham_dir" ]; then
     xshok_mkdir_ownership "$test_dir"
     cp -f -p "$work_dir"/*/*.ndb "$test_dir"
     cp -f -p "$work_dir"/*/*.db "$test_dir"
-    $clamscan_bin --infected --no-summary -d "$test_dir" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >>"${work_dir_work_configs}/whitelist.txt"
-    $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/*.ndb" | cut -d "*" -f 2 | sort | uniq >"${work_dir_work_configs}/whitelist.hex"
-    $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/*.db" | cut -d "=" -f 2 | awk '{ printf("=%s\n", $1);}' | sort | uniq >>"${work_dir_work_configs}/whitelist.hex"
+    $clamscan_bin --infected --no-summary -d "$test_dir" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >>"${work_dir_work_configs}/wantlist.txt"
+    $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/*.ndb" | cut -d "*" -f 2 | sort | uniq >"${work_dir_work_configs}/wantlist.hex"
+    $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/*.db" | cut -d "=" -f 2 | awk '{ printf("=%s\n", $1);}' | sort | uniq >>"${work_dir_work_configs}/wantlist.hex"
     cd "$test_dir" || exit
     for db_file in *; do
       [[ -e ${db_file} ]] || break # Handle the case of no files
-      $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "$db_file" >"$db_file-tmp"
+      $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "$db_file" >"$db_file-tmp"
       mv -f "$db_file-tmp" "$db_file"
       if $clamscan_bin --quiet -d "$db_file" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
         if $rsync_bin -pcqt "$db_file" "$clam_dbs"; then
@@ -2827,14 +2827,14 @@ if [ -n "$ham_dir" ] && [ -d "$work_dir" ] && [ ! -d "$test_dir" ]; then
         fi
       fi
     done
-    if [ -r "${work_dir_work_configs}/whitelist.hex" ]; then
-      xshok_pretty_echo_and_log "Initial HAM directory scan whitelist file created in ${work_dir_work_configs}"
+    if [ -r "${work_dir_work_configs}/wantlist.hex" ]; then
+      xshok_pretty_echo_and_log "Initial HAM directory scan wantlist file created in ${work_dir_work_configs}"
     else
       xshok_pretty_echo_and_log "No false-positives detected in initial HAM directory scan"
     fi
   else
     xshok_pretty_echo_and_log "WARNING: Cannot locate HAM directory: ${ham_dir}"
-    xshok_pretty_echo_and_log "Skipping initial whitelist file creation. Fix 'ham_dir' path in config file"
+    xshok_pretty_echo_and_log "Skipping initial wantlist file creation. Fix 'ham_dir' path in config file"
   fi
 fi
 
@@ -3040,12 +3040,12 @@ cp -f -p "$current_dbs_file" "$purge"
   echo "${work_dir_work_configs}/last-si-update.txt"
   echo "${work_dir_work_configs}/local.ign"
   echo "${work_dir_work_configs}/monitor-ign.txt"
-  echo "${work_dir_work_configs}/my-whitelist.ign2"
+  echo "${work_dir_work_configs}/my-wantlist.ign2"
   echo "${work_dir_work_configs}/tracker.txt"
   echo "${work_dir_work_configs}/previous-dbs.txt"
   echo "${work_dir_work_configs}/scan-test.txt"
   echo "${work_dir_work_configs}/ss-include-dbs.txt"
-  echo "${work_dir_work_configs}/whitelist.hex"
+  echo "${work_dir_work_configs}/wantlist.hex"
   echo "${work_dir_gpg}/publickey.gpg"
   echo "$work_dir_gpg/secring.gpg"
   echo "${work_dir_gpg}/ss-keyring.gpg*"
@@ -3181,11 +3181,11 @@ if [ "$sanesecurity_enabled" == "yes" ]; then
                         false
                       fi
                     else
-                      $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_sanesecurity}/${db_file}" >"${test_dir}/${db_file}"
-                      $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
-                      $grep_bin -h -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex-tmp"
-                      mv -f "${work_dir_work_configs}/whitelist.hex-tmp" "${work_dir_work_configs}/whitelist.hex"
-                      $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
+                      $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_sanesecurity}/${db_file}" >"${test_dir}/${db_file}"
+                      $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
+                      $grep_bin -h -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex-tmp"
+                      mv -f "${work_dir_work_configs}/wantlist.hex-tmp" "${work_dir_work_configs}/wantlist.hex"
+                      $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
                       mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
                       if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                         xshok_pretty_echo_and_log "Clamscan reports Sanesecurity ${db_file} database integrity tested good"
@@ -3328,10 +3328,10 @@ if [ "$securiteinfo_enabled" == "yes" ]; then
                     xshok_pretty_echo_and_log "Failed to successfully update SecuriteInfo production database file: ${db_file} - SKIPPING"
                   fi
                 else
-                  $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_securiteinfo}/${db_file}" >"${test_dir}/${db_file}"
-                  $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
-                  $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex"
-                  $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
+                  $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_securiteinfo}/${db_file}" >"${test_dir}/${db_file}"
+                  $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
+                  $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex"
+                  $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
                   mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
                   if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                     xshok_pretty_echo_and_log "Clamscan reports SecuriteInfo ${db_file} database integrity tested good"
@@ -3505,10 +3505,10 @@ if [ "$linuxmalwaredetect_enabled" == "yes" ]; then
                     xshok_pretty_echo_and_log "Failed to successfully update LinuxMalwareDetect production database file: ${db_file} - SKIPPING"
                   fi
                 else
-                  $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_linuxmalwaredetect}/${db_file}" >"${test_dir}/${db_file}"
-                  $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
-                  $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex"
-                  $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
+                  $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_linuxmalwaredetect}/${db_file}" >"${test_dir}/${db_file}"
+                  $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
+                  $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex"
+                  $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
                   mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
                   if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                     xshok_pretty_echo_and_log "Clamscan reports LinuxMalwareDetect ${db_file} database integrity tested good"
@@ -3648,10 +3648,10 @@ if [ "$interserver_enabled" == "yes" ]; then
                   xshok_pretty_echo_and_log "Failed to successfully update interServer production database file: ${db_file} - SKIPPING"
                 fi
               else
-                $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_interserver}/${db_file}" >"${test_dir}/${db_file}"
-                $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
-                $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex"
-                $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
+                $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_interserver}/${db_file}" >"${test_dir}/${db_file}"
+                $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
+                $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex"
+                $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
                 mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
                 if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                   xshok_pretty_echo_and_log "Clamscan reports interServer ${db_file} database integrity tested good"
@@ -3795,10 +3795,10 @@ if [ "$malwareexpert_enabled" == "yes" ]; then
                     xshok_pretty_echo_and_log "Failed to successfully update Malware Expert production database file: ${db_file} - SKIPPING"
                   fi
                 else
-                  $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_malwareexpert}/${db_file}" >"${test_dir}/${db_file}"
-                  $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
-                  $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex"
-                  $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
+                  $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_malwareexpert}/${db_file}" >"${test_dir}/${db_file}"
+                  $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
+                  $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex"
+                  $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
                   mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
                   if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                     xshok_pretty_echo_and_log "Clamscan reports Malware Expert ${db_file} database integrity tested good"
@@ -3945,10 +3945,10 @@ if [ "$malwarepatrol_enabled" == "yes" ]; then
                 xshok_pretty_echo_and_log "Failed to successfully update MalwarePatrol production database file: ${malwarepatrol_db} - SKIPPING"
               fi
             else
-              $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_malwarepatrol}/${malwarepatrol_db}" >"${test_dir}/${malwarepatrol_db}"
-              $clamscan_bin --infected --no-summary -d "${test_dir}/${malwarepatrol_db}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
-              $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${malwarepatrol_db}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex"
-              $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${malwarepatrol_db}" >"${test_dir}/${malwarepatrol_db}-tmp"
+              $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_malwarepatrol}/${malwarepatrol_db}" >"${test_dir}/${malwarepatrol_db}"
+              $clamscan_bin --infected --no-summary -d "${test_dir}/${malwarepatrol_db}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
+              $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/${malwarepatrol_db}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex"
+              $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${malwarepatrol_db}" >"${test_dir}/${malwarepatrol_db}-tmp"
               mv -f "${test_dir}/${malwarepatrol_db}-tmp" "${test_dir}/${malwarepatrol_db}"
               if $clamscan_bin --quiet -d "${test_dir}/${malwarepatrol_db}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                 xshok_pretty_echo_and_log "Clamscan reports MalwarePatrol ${malwarepatrol_db} database integrity tested good"
@@ -4081,10 +4081,10 @@ if [ "$urlhaus_enabled" == "yes" ]; then
                   xshok_pretty_echo_and_log "Failed to successfully update urlhaus production database file: ${db_file} - SKIPPING"
                 fi
               else
-                $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_urlhaus}/${db_file}" >"${test_dir}/${db_file}"
-                $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
-                $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex"
-                $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
+                $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_urlhaus}/${db_file}" >"${test_dir}/${db_file}"
+                $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
+                $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex"
+                $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
                 mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
                 if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                   xshok_pretty_echo_and_log "Clamscan reports urlhaus ${db_file} database integrity tested good"
@@ -4225,10 +4225,10 @@ if [ "$yararulesproject_enabled" == "yes" ]; then
                   xshok_pretty_echo_and_log "Failed to successfully update yararulesproject production database file: ${db_file} - SKIPPING"
                 fi
               else
-                $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_yararulesproject}/${db_file}" >"${test_dir}/${db_file}"
-                $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
-                $grep_bin -h -f "${work_dir_work_configs}/whitelist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex"
-                $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
+                $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_yararulesproject}/${db_file}" >"${test_dir}/${db_file}"
+                $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
+                $grep_bin -h -f "${work_dir_work_configs}/wantlist.txt" "${test_dir}/${db_file}" | cut -d "*" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex"
+                $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
                 mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
                 if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                   xshok_pretty_echo_and_log "Clamscan reports yararulesproject ${db_file} database integrity tested good"
@@ -4389,16 +4389,16 @@ if [ "$additional_enabled" == "yes" ]; then
                   xshok_pretty_echo_and_log "Failed to successfully update additional production database file: ${db_file} - SKIPPING"
                 fi
               else
-                $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${work_dir_add}/${db_file}" >"${test_dir}/${db_file}"
-                $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/whitelist.txt"
+                $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${work_dir_add}/${db_file}" >"${test_dir}/${db_file}"
+                $clamscan_bin --infected --no-summary -d "${test_dir}/${db_file}" "$ham_dir"/* | command "$sed_bin" 's/\.UNOFFICIAL FOUND//' | awk '{print $NF}' >"${work_dir_work_configs}/wantlist.txt"
                 if [[ "${work_dir_add}/${db_file}" == *.db ]]; then
-                  $grep_bin -h -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" | cut -d "=" -f 2 | awk '{ printf("=%s\n", $1);}' | sort | uniq >>"${work_dir_work_configs}/whitelist.hex-tmp"
-                  mv -f "${work_dir_work_configs}/whitelist.hex-tmp" "${work_dir_work_configs}/whitelist.hex"
+                  $grep_bin -h -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" | cut -d "=" -f 2 | awk '{ printf("=%s\n", $1);}' | sort | uniq >>"${work_dir_work_configs}/wantlist.hex-tmp"
+                  mv -f "${work_dir_work_configs}/wantlist.hex-tmp" "${work_dir_work_configs}/wantlist.hex"
                 else
-                  $grep_bin -h -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" | cut -d "=" -f 2 | sort | uniq >>"${work_dir_work_configs}/whitelist.hex-tmp"
-                  mv -f "${work_dir_work_configs}/whitelist.hex-tmp" "${work_dir_work_configs}/whitelist.hex"
+                  $grep_bin -h -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" | cut -d "=" -f 2 | sort | uniq >>"${work_dir_work_configs}/wantlist.hex-tmp"
+                  mv -f "${work_dir_work_configs}/wantlist.hex-tmp" "${work_dir_work_configs}/wantlist.hex"
                 fi
-                $grep_bin -h -v -f "${work_dir_work_configs}/whitelist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
+                $grep_bin -h -v -f "${work_dir_work_configs}/wantlist.hex" "${test_dir}/${db_file}" >"${test_dir}/${db_file}-tmp"
                 mv -f "${test_dir}/${db_file}-tmp" "${test_dir}/${db_file}"
                 if $clamscan_bin --quiet -d "${test_dir}/${db_file}" "${work_dir_work_configs}/scan-test.txt" 2>&10; then
                   xshok_pretty_echo_and_log "Clamscan reports additional ${db_file} database integrity tested good"
@@ -4466,7 +4466,7 @@ else
 fi
 
 ###################################################
-# Generate whitelists
+# Generate wantlists
 ###################################################
 # Check to see if the local.ign file exists, and if it does, check to see if any of the script
 # added bypass entries can be removed due to offending signature modifications or removals.
@@ -4519,16 +4519,16 @@ if [ -r "${clam_dbs}/local.ign" ] && [ -s "${work_dir_work_configs}/monitor-ign.
       xshok_pretty_echo_and_log "Clamscan reports local.ign database integrity is bad - SKIPPING"
     fi
   else
-    xshok_pretty_echo_and_log "No whitelist signature changes found in local.ign" "="
+    xshok_pretty_echo_and_log "No wantlist signature changes found in local.ign" "="
   fi
 fi
 
-# Check to see if my-whitelist.ign2 file exists, and if it does, check to see if any of the script
-# added whitelist entries can be removed due to offending signature modifications or removals.
-if [ -r "${clam_dbs}/my-whitelist.ign2" ] && [ -s "${work_dir_work_configs}/tracker.txt" ]; then
+# Check to see if my-wantlist.ign2 file exists, and if it does, check to see if any of the script
+# added wantlist entries can be removed due to offending signature modifications or removals.
+if [ -r "${clam_dbs}/my-wantlist.ign2" ] && [ -s "${work_dir_work_configs}/tracker.txt" ]; then
   ign2_updated=0
   cd "$clam_dbs" || exit
-  cp -f -p my-whitelist.ign2 "${work_dir_work_configs}/my-whitelist.ign2"
+  cp -f -p my-wantlist.ign2 "${work_dir_work_configs}/my-wantlist.ign2"
 
   xshok_pretty_echo_and_log "" "=" "80"
   touch "${work_dir_work_configs}/tracker-tmp.txt"
@@ -4541,9 +4541,9 @@ if [ -r "${clam_dbs}/my-whitelist.ign2" ] && [ -s "${work_dir_work_configs}/trac
       sig_full="$(echo "$entry" | cut -d ":" -f 2-)"
       sig_name="$(echo "$entry" | cut -d ":" -f 2)"
       if ! $grep_bin -F "$sig_full" "$sig_file" >/dev/null 2>&1; then
-        perl -i -ne "print unless /$sig_name$/" "${work_dir_work_configs}/my-whitelist.ign2"
+        perl -i -ne "print unless /$sig_name$/" "${work_dir_work_configs}/my-wantlist.ign2"
         perl -i -ne "print unless /:$sig_name:/" "${work_dir_work_configs}/tracker-tmp.txt"
-        xshok_pretty_echo_and_log "${sig_name} signature no longer exists in ${sig_file}, whitelist entry removed from my-whitelist.ign2"
+        xshok_pretty_echo_and_log "${sig_name} signature no longer exists in ${sig_file}, wantlist entry removed from my-wantlist.ign2"
         ign2_updated="1"
       fi
     fi
@@ -4554,33 +4554,33 @@ if [ -r "${clam_dbs}/my-whitelist.ign2" ] && [ -s "${work_dir_work_configs}/trac
 
   xshok_pretty_echo_and_log "" "=" "80"
   if [ "$ign2_updated" == "1" ]; then
-    if $clamscan_bin --quiet -d "${work_dir_work_configs}/my-whitelist.ign2" "${work_dir_work_configs}/scan-test.txt"; then
-      if $rsync_bin -pcqt "${work_dir_work_configs}/my-whitelist.ign2" "$clam_dbs"; then
-        perms chown -f "${clam_user}:${clam_group}" "${clam_dbs}/my-whitelist.ign2"
-        perms chmod -f 0644 "${clam_dbs}/my-whitelist.ign2" "${work_dir_work_configs}/tracker.txt"
+    if $clamscan_bin --quiet -d "${work_dir_work_configs}/my-wantlist.ign2" "${work_dir_work_configs}/scan-test.txt"; then
+      if $rsync_bin -pcqt "${work_dir_work_configs}/my-wantlist.ign2" "$clam_dbs"; then
+        perms chown -f "${clam_user}:${clam_group}" "${clam_dbs}/my-wantlist.ign2"
+        perms chmod -f 0644 "${clam_dbs}/my-wantlist.ign2" "${work_dir_work_configs}/tracker.txt"
         if [ "$selinux_fixes" == "yes" ]; then
-          restorecon "${clam_dbs}/my-whitelist.ign2"
+          restorecon "${clam_dbs}/my-wantlist.ign2"
           restorecon "${work_dir_work_configs}/tracker.txt"
         fi
         do_clamd_reload=4
       else
-        xshok_pretty_echo_and_log "Failed to successfully update my-whitelist.ign2 file - SKIPPING"
+        xshok_pretty_echo_and_log "Failed to successfully update my-wantlist.ign2 file - SKIPPING"
       fi
     else
-      xshok_pretty_echo_and_log "Clamscan reports my-whitelist.ign2 database integrity is bad - SKIPPING"
+      xshok_pretty_echo_and_log "Clamscan reports my-wantlist.ign2 database integrity is bad - SKIPPING"
     fi
   else
-    xshok_pretty_echo_and_log "No whitelist signature changes found in my-whitelist.ign2"
+    xshok_pretty_echo_and_log "No wantlist signature changes found in my-wantlist.ign2"
   fi
 fi
 
-# Check for non-matching whitelist.hex signatures and remove them from the whitelist file (signature modified or removed).
+# Check for non-matching wantlist.hex signatures and remove them from the wantlist file (signature modified or removed).
 if [ -n "$ham_dir" ]; then
-  if [ -r "${work_dir_work_configs}/whitelist.hex" ]; then
-    $grep_bin -h -f "${work_dir_work_configs}/whitelist.hex" "$work_dir"/*/*.ndb | cut -d "*" -f 2 | tr -d "\\r" | sort | uniq >"${work_dir_work_configs}/whitelist.tmp"
-    $grep_bin -h -f "${work_dir_work_configs}/whitelist.hex" "$work_dir"/*/*.db | cut -d "=" -f 2 | awk '{ printf("=%s\n", $1);}' | sort | uniq >>"${work_dir_work_configs}/whitelist.tmp"
-    mv -f "${work_dir_work_configs}/whitelist.tmp" "${work_dir_work_configs}/whitelist.hex"
-    rm -f "${work_dir_work_configs}/whitelist.txt"
+  if [ -r "${work_dir_work_configs}/wantlist.hex" ]; then
+    $grep_bin -h -f "${work_dir_work_configs}/wantlist.hex" "$work_dir"/*/*.ndb | cut -d "*" -f 2 | tr -d "\\r" | sort | uniq >"${work_dir_work_configs}/wantlist.tmp"
+    $grep_bin -h -f "${work_dir_work_configs}/wantlist.hex" "$work_dir"/*/*.db | cut -d "=" -f 2 | awk '{ printf("=%s\n", $1);}' | sort | uniq >>"${work_dir_work_configs}/wantlist.tmp"
+    mv -f "${work_dir_work_configs}/wantlist.tmp" "${work_dir_work_configs}/wantlist.hex"
+    rm -f "${work_dir_work_configs}/wantlist.txt"
     rm -f "${test_dir}/*.*"
     xshok_pretty_echo_and_log "WARNING: Signature(s) triggered on HAM directory scan - signature(s) removed"
   else

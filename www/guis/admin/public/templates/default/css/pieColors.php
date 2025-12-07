@@ -18,7 +18,7 @@ $data_colors['relayed'] = array("R"=>100,"G"=>150,"B"=>255);
 
 // refused
 $data_colors['rbl'] = array("R"=>140,"G"=>40,"B"=>40);
-$data_colors['blacklists'] = array("R"=>160,"G"=>80,"B"=>80);
+$data_colors['blocklists'] = array("R"=>160,"G"=>80,"B"=>80);
 $data_colors['relay'] = array("R"=>200,"G"=>130,"B"=>130);
 $data_colors['policies'] = array("R"=>240,"G"=>170,"B"=>170);
 $data_colors['callout'] = array("R"=>255,"G"=>210,"B"=>210);

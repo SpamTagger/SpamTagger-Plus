@@ -12,7 +12,7 @@ $txt['NEWSLETTERSTOPICTITLE'] = "Nyhetsbrev";
 $txt['NEWSLETTERSSHORTHELP'] = "Her kan du håndtere dine nyhetsbrev.";
 $txt['NEWSLETTERSALLOW'] = "lever";
 $txt['NEWSLETTERACCEPT'] = "Godta dette nyhetsbrevet";
-$txt['SPAM_WHITELIST_DISABLED'] = "Denne listen er ikke aktivert for dette domenet (kontakt din administrator).";
+$txt['SPAM_WANTLIST_DISABLED'] = "Denne listen er ikke aktivert for dette domenet (kontakt din administrator).";
 /*
  * generic buttons
  */
@@ -175,7 +175,7 @@ $txt['GROUPQUARANTINES'] = "Alle adresser";
  */
 $txt['INFORMATIONSABOUTMSG'] = "Innholdet av meldingen";
 $txt['PREFILTERHITS'] = "Forhåndsfilter";
-$txt['BLACKLISTS'] = "Svartelister";
+$txt['BLOCKLISTS'] = "Svartelister";
 $txt['FITLERSCORE'] = "Poengsum";
 $txt['NONE'] = "ingen";
 $txt['HEADERS'] = "Hoder";
@@ -238,7 +238,7 @@ $txt['USEDEFAULT'] = "bruk forvalg";
 $txt['SUMMHTML'] = "HTML";
 $txt['SUMMTEXT'] = "klartekst";
 //old
-$txt['EDITWHITELIST'] = "rediger hvitliste";
+$txt['EDITWANTLIST'] = "rediger hvitliste";
 //old
 $txt['EDITWARNLIST'] = "rediger advarselsliste";
 /*
@@ -258,7 +258,7 @@ $txt['WWENTRY'] = "Oppføring";
 //old
 $txt['CONFIRMWWENTRYDELETE'] = "Er du sikker på at du ønsker å slette denne oppføringen for godt?";
 //old
-$txt['WHITELISTFOR'] = "Hvitliste for __PARAM__";
+$txt['WANTLISTFOR'] = "Hvitliste for __PARAM__";
 //old
 $txt['WARNLISTFOR'] = "Advarselsliste for __PARAM__";
 //old
@@ -385,15 +385,15 @@ $txt['ADDRESSLISTTOPIC'] = "Adressegruppe";
 $txt['ADDRESSPARAMTOPIC'] = "Adresseinnstillinger";
 $txt['QUARPARAMTOPIC'] = "Visning av karantene";
 $txt['WARNLISTTOPIC'] = "Advarselsliste";
-$txt['WHITELISTTOPIC'] = "Hvitliste";
-$txt['BLACKLISTTOPIC'] = "Svarteliste";
+$txt['WANTLISTTOPIC'] = "Hvitliste";
+$txt['BLOCKLISTTOPIC'] = "Svarteliste";
 $txt['INTERFACETOPICTITLE'] = "grensesnittsinnstillinger";
 $txt['ADDRESSLISTTOPICTITLE'] = "adressegruppe";
 $txt['ADDRESSPARAMTOPICTITLE'] = "adresseinnstillinger";
 $txt['QUARPARAMTOPICTITLE'] = "karantenevisning";
 $txt['WARNLISTTOPICTITLE'] = "advarselsliste";
-$txt['WHITELISTTOPICTITLE'] = "hvitliste";
-$txt['BLACKLISTTOPICTITLE'] = "svarteliste";
+$txt['WANTLISTTOPICTITLE'] = "hvitliste";
+$txt['BLOCKLISTTOPICTITLE'] = "svarteliste";
 /*
  * interface (new)
  */
@@ -450,14 +450,14 @@ $txt['REMOVEANENTRY'] = "Skru av, skru på, eller fjern en adresse fra listen";
 $txt['REMOVEAWARNENTRYSHORTHELP'] = "Velg adressen eller adressene du ønsker å endre fra listen og klikk på ønsket handlingsknapp.";
 $txt['REMTHEENTRY'] = "Fjern utvalg";
 $txt['DISABLETHEENTRY'] = "Skru av/på utvalg";
-$txt['WHITELISTFORADDRESS'] = "Hvitliste for adressen";
-$txt['ADDAWHITEENTRY'] = "Legg til en adresse i listen";
-$txt['WHITELISTENTRYTOADD'] = "Skriv inn adressen du ønsker å legge til i hvitlisten. Du kan også legge til en valgfri kommentar.";
-$txt['REMOVEAWHITEENTRYSHORTHELP'] = "Velg adressen eller adressene du ønsker å modifisere fra listen og klikk ønsket handlingsknapp.";
-$txt['BLACKLISTFORADDRESS'] = "Svarteliste for adressen";
-$txt['ADDABLACKENTRY'] = "Legg til en adresse på listen";
-$txt['BLACKLISTENTRYTOADD'] = "Legg til adressen du ønsker å legge til på svartelisten. Du kan også legge til en valgfri kommentar.";
-$txt['REMOVEABLACKENTRYSHORTHELP'] = "Velg adressen eller adressene du ønsker å modifisere fra listen og klikk på ønsket handlingsknapp.";
+$txt['WANTLISTFORADDRESS'] = "Hvitliste for adressen";
+$txt['ADDAWANTENTRY'] = "Legg til en adresse i listen";
+$txt['WANTLISTENTRYTOADD'] = "Skriv inn adressen du ønsker å legge til i hvitlisten. Du kan også legge til en valgfri kommentar.";
+$txt['REMOVEAWANTENTRYSHORTHELP'] = "Velg adressen eller adressene du ønsker å modifisere fra listen og klikk ønsket handlingsknapp.";
+$txt['BLOCKLISTFORADDRESS'] = "Svarteliste for adressen";
+$txt['ADDABLOCKENTRY'] = "Legg til en adresse på listen";
+$txt['BLOCKLISTENTRYTOADD'] = "Legg til adressen du ønsker å legge til på svartelisten. Du kan også legge til en valgfri kommentar.";
+$txt['REMOVEABLOCKENTRYSHORTHELP'] = "Velg adressen eller adressene du ønsker å modifisere fra listen og klikk på ønsket handlingsknapp.";
 $txt['RECORDALREADYEXISTS'] = "Denne adressen er allerede i listen.";
 /*
  * logout (new)
@@ -470,11 +470,11 @@ $txt['BEENLOGGEDOUT'] = "Hvis du ønsker å starte ei ny økt, klikk på denne l
 $txt['WARNLISTSHORTHELP'] = "Advarselslisten inneholder betrodde avsenderadresser du ønsker å motta merknad per e-post for når en melding blir antatt å være søppelpost. Du kan umiddelbart omgjøre dette i fall en filtreringsfeil har inntruffet.<br />
 \t\t\t\t\t\t\t\t   Advarsel: Denne funksjonen bør brukes som midlertidig løsning, siden det senker den helhetlige beskyttelsen.
 \t\t\t\t\t\t\t\t   Sjekk menualen (tilgjengelig i delen som heter <a href=\"help.php\">\"Hjelp\"</a>) for mer informasjon om advarselslistebruk. ";
-$txt['WHITELISTSHORTHELP'] = "Hvitlisten inneholder betrodde avsenderadresser som ikke er innebefattet av karanteneprogrammet.<br />
+$txt['WANTLISTSHORTHELP'] = "Hvitlisten inneholder betrodde avsenderadresser som ikke er innebefattet av karanteneprogrammet.<br />
                                    Advarsel: Denne funksjonen bør kun brukes som midlertidig løsning, siden den senker den helhetlige beskyttelsen.
                                   Sjekk manualen (tilgjengelig i delen som heter <a href=\"help.php\">\"Hjelp\"</a>) for mer info om hvitlistebruk.
 ";
-$txt['BLACKLISTSHORTHELP'] = "Svartelisten inneholder svartelistede avsenderadresser.
+$txt['BLOCKLISTSHORTHELP'] = "Svartelisten inneholder svartelistede avsenderadresser.
                                   Sjekk manualen (tilgjengelig i delen som heter <a href=\"help.php\">\"Hjelp\"</a>) for mer informasjon om svartelistebruk.
 ";
 /*

@@ -35,7 +35,7 @@ our $SRCDIR = $conf->get_option('SRCDIR');
 my $config = {
   'rbls' => '',
   'rblsDefsPath' => '',
-  'whitelistDomainsFile' => '',
+  'wantlistDomainsFile' => '',
   'TLDsFiles' => '',
   'localDomainsFile' => ''
 };
@@ -91,7 +91,7 @@ $config->{rbls} = join(' ', keys(%rbl_levels));
 
 # Initialize lookup library
 my $dnslists = STDnsLists->new(sub{ print STDERR "STDERR: " . shift . "\n"; });
-$dnslists->load_rbls( $config->{rblsDefsPath}, $config->{rbls}, 'URIRBL', $config->{whitelistDomainsFile}, $config->{TLDsFiles}, $config->{localDomainsFile}, $0);
+$dnslists->load_rbls( $config->{rblsDefsPath}, $config->{rbls}, 'URIRBL', $config->{wantlistDomainsFile}, $config->{TLDsFiles}, $config->{localDomainsFile}, $0);
 
 # Build input hash
 my $current;
@@ -199,7 +199,7 @@ foreach my $file (@order) {
   foreach (@finals) {
     if (defined($uniq{$_})) {
       $uniq{$_}++;
-    # Ignore whitelisted
+    # Ignore wantlisted
     } elsif ($_ == 0) {
       next;
     } else {

@@ -84,7 +84,7 @@ sub Checks ($this, $message) { ## no critic
     }
 
     if ($hl =~ m/^X-SpamTagger-White-IP-DOM: WhIPDom/i) {
-      my $string = 'sending IP is whitelisted for this domain';
+      my $string = 'sending IP is wantlisted for this domain';
       if ($this->{debug}) {
           MailScanner::Log::InfoLog(blessed($this)." result is ham ($string) for ".$message->{id});
       }
