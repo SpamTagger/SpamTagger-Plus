@@ -9,8 +9,8 @@ if [ "$SRCDIR" = "" ]; then
   SRCDIR=/usr/spamtagger
 fi
 
-COMMAND=/opt/dcc/libexec/dccifd
-HOME=/opt/dcc/var
+COMMAND=/usr/bin/dccifd
+HOME=/var/lib/dcc
 
 test_dcc() {
 
@@ -38,7 +38,7 @@ start | restart | reload)
   if [ ! -f $HOME/map ]; then
     echo -n "    generating map file (from $SRCDIR/etc/dcc/map.txt)..."
     chmod og-rw $SRCDIR/etc/dcc/map.txt
-    /opt/dcc/bin/cdcc "load $SRCDIR/etc/dcc/map.txt" >/dev/null 2>&1
+    /usr/bin/cdcc "load $SRCDIR/etc/dcc/map.txt" >/dev/null 2>&1
     chmod og+r $SRCDIR/etc/dcc/map.txt
     chown dcc:dcc $HOME/map
     echo -n "done. "

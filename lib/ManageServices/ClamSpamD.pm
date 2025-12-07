@@ -40,7 +40,7 @@ sub config ($class) {
   my $config = {
     'name'     => 'clamspamd',
     'cmndline'  => 'clamav/clamspamd.conf',
-    'cmd'    => '/opt/clamav/sbin/clamd',
+    'cmd'    => '/usr/bin/clamd',
     'conffile'  => $class->{'conf'}->get_option('SRCDIR').'/etc/clamav/clamspamd.conf',
     'pidfile'  => $class->{'conf'}->get_option('VARDIR').'/run/clamav/clamspamd.pid',
     'logfile'  => $class->{'conf'}->get_option('VARDIR').'/log/clamav/clamspamd.log',

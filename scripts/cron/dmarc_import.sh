@@ -8,7 +8,7 @@ VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-echo "select hostname, password from master;" | $SRCDIR/bin/st_mysql -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
+echo "select hostname, password from master;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
 MHOST=$(cat /var/tmp/master.conf | cut -d':' -f1)
 MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
 

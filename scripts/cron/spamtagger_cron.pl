@@ -121,16 +121,16 @@ my $slave_dbh = DB->connect("slave", "st_config");
 if (!$slave_dbh) {
   printf ("ERROR: no slave database found on this system ! \n");
   ## try to properly kill all databases
-  `$SRCDIR/etc/init.d/mysql_slave stop`;
-  `$SRCDIR/etc/init.d/mysql_master stop`;
+  `$SRCDIR/etc/init.d/mariadb_slave stop`;
+  `$SRCDIR/etc/init.d/mariadb_master stop`;
   sleep 5;
   ## kill them hard
-  `killall -KILL mysqld mysqld_safe`;
+  `killall -KILL mariadbd mariadbd_safe`;
   sleep 2;
   ## and restart them
-  `$SRCDIR/etc/init.d/mysql_master start`;
+  `$SRCDIR/etc/init.d/mariadb_master start`;
   sleep 2;
-  `$SRCDIR/etc/init.d/mysql_slave start`;
+  `$SRCDIR/etc/init.d/mariadb_slave start`;
   exit 1;
 }
 
@@ -217,8 +217,8 @@ unless ($skip) {
     'exim_stage4' => 0,
     'apache' => 0,
     'mailscanner' => 0,
-    'mysql_master' => 0,
-    'mysql_slave' => 0,
+    'mariadb_master' => 0,
+    'mariadb_slave' => 0,
     'snmpd' => 0,
     'greylistd' => 0,
     'cron' => 0,
@@ -228,7 +228,7 @@ unless ($skip) {
     'clamspamd' => 0,
     'spamhandler' => 0,
   );
-  ($tmp, $proc{'exim_stage1'}, $proc{'exim_stage2'}, $proc{'exim_stage4'}, $proc{'apache'}, $proc{'mailscanner'}, $proc{'mysql_master'}, $proc{'mysql_slave'}, $proc{'snmpd'},$proc{'greylistd'},$proc{'cron'},$proc{'preftdaemon'},$proc{'spamd'},$proc{'clamd'},$proc{'clamspamd'},$proc{'spamhandler'}) = split('\|', $res);
+  ($tmp, $proc{'exim_stage1'}, $proc{'exim_stage2'}, $proc{'exim_stage4'}, $proc{'apache'}, $proc{'mailscanner'}, $proc{'mariadb_master'}, $proc{'mariadb_slave'}, $proc{'snmpd'},$proc{'greylistd'},$proc{'cron'},$proc{'preftdaemon'},$proc{'spamd'},$proc{'clamd'},$proc{'clamspamd'},$proc{'spamhandler'}) = split('\|', $res);
 
   foreach my $key (keys %proc) {
     if ($proc{$key} < 1) {
@@ -368,7 +368,7 @@ if ($itsmidnight) {
   ###############
   ## log rotation
   ###############
-  ## first do the log rotation and NOT fork as it shut down mysql_slave which is used by others scripts
+  ## first do the log rotation and NOT fork as it shut down mariadb_slave which is used by others scripts
   print "rotating logs...\n";
   $rc = create_lockfile('rotate.lock', '/tmp/', time+4*60*60, 'rotate_logs');
   if ($rc!=0) {

@@ -54,7 +54,7 @@ chown($uid, $gid, $authorized_file);
 ############################
 sub do_known_hosts {
   my $dbh = DBI->connect(
-    "DBI:mysql:database=st_config;host=localhost;mysql_socket=$VARDIR/run/mysql_master/mysqld.sock",
+    "DBI:mariadb:database=st_config;host=localhost;mariadb_socket=$VARDIR/run/mariadb_master/mariadbd.sock",
     "spamtagger", $config->('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
   ) or return;
 
@@ -73,7 +73,7 @@ sub do_known_hosts {
 
 sub do_authorized_keys {
   my $dbh = DBI->connect(
-    "DBI:mysql:database=st_config;host=localhost;mysql_socket=$VARDIR/run/mysql_slave/mysqld.sock",
+    "DBI:mariadb:database=st_config;host=localhost;mariadb_socket=$VARDIR/run/mariadb_slave/mariadbd.sock",
     "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
   ) or return;
 

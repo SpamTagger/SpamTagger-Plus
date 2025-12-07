@@ -12,7 +12,7 @@ use ReadConfig;
 our $config = ReadConfig::get_instance();
 
 my $slave_dbh = DBI->connect(
-  "DBI:mysql:database=st_config;mysql_socket=".$config->get_option('VARDIR')."/run/mysql_slave/mysqld.sock",
+  "DBI:mariadb:database=st_config;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock",
   "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
 );
 

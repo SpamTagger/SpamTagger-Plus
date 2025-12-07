@@ -3,6 +3,7 @@
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -72,12 +73,6 @@ if [[ "$ret" -eq "1" ]]; then
 fi
 
 . $SRCDIR/lib/updates/download_files.sh
-
-ST_FILE_DIR=/opt/file/share/misc/
-ret=$(downloadDatas "$ST_FILE_DIR" "magic" $randomize "null" "" "noexit")
-if [[ "$ret" -eq "1" ]]; then
-  log "Magic downloaded"
-fi
 
 removeLockFile "$FILE_NAME"
 exit 0

@@ -4,6 +4,7 @@
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -107,7 +108,7 @@ for file in $(ls); do
 
     # test if it is malformed
     if [ "$PERFORM_VERIFICATION" -eq "1" ]; then
-      MALFORMEDFILE=$(/opt/clamav/bin/clamscan -d ${file} ${testfile} 2>&1 >/dev/null | grep Malfor | grep -v ERROR | awk {'print $5'} | sed 's/:$//')
+      MALFORMEDFILE=$(/usr/bin/clamscan -d ${file} ${testfile} 2>&1 >/dev/null | grep Malfor | grep -v ERROR | awk {'print $5'} | sed 's/:$//')
 
       # If the file is malformed, remove it
       if [ ! -z "${MALFORMEDFILE}" ]; then

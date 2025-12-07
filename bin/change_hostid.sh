@@ -70,6 +70,6 @@ if [ "$CONFIRM" = "" ]; then
 fi
 
 sed -i "s/^HOSTID.*$/HOSTID = $NEWID/g" $CONFFILE
-echo "update slave set id=$NEWID where id=$OLDID;" | /usr/spamtagger/bin/st_mysql -m st_config
+echo "update slave set id=$NEWID where id=$OLDID;" | /usr/spamtagger/bin/st_mariadb -m st_config
 echo "SUCCESS"
 exit 0

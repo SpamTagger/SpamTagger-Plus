@@ -137,7 +137,7 @@ $subject = clean($subject);
 
 ## connect to local slave configuration database as we need it a lot of time from now
 our $config_dbh = DB->db_connect('slave', 'st_config');
-$config_dbh->{mysql_auto_reconnect} = 1;
+$config_dbh->{mariadb_auto_reconnect} = 1;
 
 my $delivery_type = get_delivery_type();
 if ( $delivery_type == 2 ) {
@@ -358,7 +358,7 @@ sub no_such_address ($to, $domain) {
 
 sub log_in_master ($host, $port, $password) {
   my $master_dbh = DB->db_connect('master', 'st_spool');
-  $master_dbh->{mysql_auto_reconnect} = 1;
+  $master_dbh->{mariadb_auto_reconnect} = 1;
 
   my $table = "misc";
   if ( $to_local =~ /^([a-z,A-Z])/ ) {
@@ -384,7 +384,7 @@ sub log_in_master ($host, $port, $password) {
 sub log_in_slave ($in_master) {
 
   my $slave_dbh = DB->db_connect('slave', 'st_spool') or return 0;
-  $slave_dbh->{mysql_auto_reconnect} = 1;
+  $slave_dbh->{mariadb_auto_reconnect} = 1;
 
   my $table = "misc";
   if ( $to_local =~ /^([a-z,A-Z])/ ) {

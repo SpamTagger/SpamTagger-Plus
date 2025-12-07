@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 function check_status() {
   echo "Checking slave status..."
 
-  STATUS=$(echo 'show slave status\G' | /usr/spamtagger/bin/st_mysql -s)
+  STATUS=$(echo 'show slave status\G' | /usr/spamtagger/bin/st_mariadb -s)
   if grep -vq "Slave_SQL_Running: Yes" <<<$(echo $STATUS); then
     echo "Slave_SQL_Running failed"
     RUN=1
@@ -103,7 +104,7 @@ if [ "SRCDIR" = "" ]; then
 fi
 
 echo "starting slave db..."
-$SRCDIR/etc/init.d/mysql_slave start
+$SRCDIR/etc/init.d/mariadb_slave start
 sleep 5
 
 check_status
@@ -119,7 +120,7 @@ fi
 # Resync
 
 MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
-echo "select hostname, password from master;" | $SRCDIR/bin/st_mysql -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
+echo "select hostname, password from master;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
 
 if [ "$MHOST" != "" ]; then
   export MHOST
@@ -132,35 +133,35 @@ else
   export MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
 fi
 
-/opt/mysql5/bin/mysqldump -S$VARDIR/run/mysql_slave/mysqld.sock -uspamtagger -p$MYSPAMTAGGERPWD st_config update_patch >/var/tmp/updates.sql
+/usr/bin/mariadb-dump -S$VARDIR/run/mariadb_slave/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD st_config update_patch >/var/tmp/updates.sql
 
-/opt/mysql5/bin/mysqldump -h $MHOST -uspamtagger -p$MPASS --master-data st_config >/var/tmp/master.sql
-$SRCDIR/etc/init.d/mysql_slave stop
+/usr/bin/mariadb-dump -h $MHOST -uspamtagger -p$MPASS --master-data st_config >/var/tmp/master.sql
+$SRCDIR/etc/init.d/mariadb_slave stop
 sleep 2
-rm $VARDIR/spool/mysql_slave/master.info >/dev/null 2>&1
-rm $VARDIR/spool/mysql_slave/mysqld-relay* >/dev/null 2>&1
-rm $VARDIR/spool/mysql_slave/relay-log.info >/dev/null 2>&1
-$SRCDIR/etc/init.d/mysql_slave start nopass
+rm $VARDIR/spool/mariadb_slave/master.info >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_slave/mariadbd-relay* >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_slave/relay-log.info >/dev/null 2>&1
+$SRCDIR/etc/init.d/mariadb_slave start nopass
 sleep 5
-echo "STOP SLAVE;" | $SRCDIR/bin/st_mysql -s
+echo "STOP SLAVE;" | $SRCDIR/bin/st_mariadb -s
 sleep 2
-rm $VARDIR/spool/mysql_slave/master.info >/dev/null 2>&1
-rm $VARDIR/spool/mysql_slave/mysqld-relay* >/dev/null 2>&1
-rm $VARDIR/spool/mysql_slave/relay-log.info >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_slave/master.info >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_slave/mariadbd-relay* >/dev/null 2>&1
+rm $VARDIR/spool/mariadb_slave/relay-log.info >/dev/null 2>&1
 
-$SRCDIR/bin/st_mysql -s st_config </var/tmp/master.sql
+$SRCDIR/bin/st_mariadb -s st_config </var/tmp/master.sql
 
 sleep 2
-echo "CHANGE MASTER TO master_host='$MHOST', master_user='spamtagger', master_password='$MPASS'; " | $SRCDIR/bin/st_mysql -s
+echo "CHANGE MASTER TO master_host='$MHOST', master_user='spamtagger', master_password='$MPASS'; " | $SRCDIR/bin/st_mariadb -s
 # Return code should be 0 if there are no errors. Log code to RUN to catch errors that might not be presented with 'check_status'
-$SRCDIR/bin/st_mysql -s st_config </var/tmp/master.sql
+$SRCDIR/bin/st_mariadb -s st_config </var/tmp/master.sql
 RUN=$?
-echo "START SLAVE;" | $SRCDIR/bin/st_mysql -s
+echo "START SLAVE;" | $SRCDIR/bin/st_mariadb -s
 sleep 5
 
-$SRCDIR/etc/init.d/mysql_slave restart
+$SRCDIR/etc/init.d/mariadb_slave restart
 sleep 5
-$SRCDIR/bin/st_mysql -s st_config </var/tmp/updates.sql
+$SRCDIR/bin/st_mariadb -s st_config </var/tmp/updates.sql
 
 # Run the check again and record results
 check_status

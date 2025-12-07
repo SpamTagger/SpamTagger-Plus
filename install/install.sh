@@ -13,6 +13,8 @@ if [ "$VARDIR" = "" ]; then
   fi
 fi
 
+RELPATH=$(dirname $0)
+
 export STVERSION="$(grep VARIANT_ID /etc/os-release | cut -d '=' -f 2)"
 
 ###############################################
@@ -24,9 +26,8 @@ fi
 
 ###############################################
 ### check or create spool dirs
-#echo ""
 echo -n " - Checking/creating spool directories...              "
-./ST_create_vars.sh 2>&1 >>$LOGFILE
+$RELPATH/ST_create_vars.sh 2>&1 >>$LOGFILE
 echo "[done]"
 
 ###############################################
@@ -50,7 +51,7 @@ fi
 
 for service in exim; do
   RET="$(systemctl is-active service >/dev/null)"
-  if [ $RET == 0 ]; then
+  if [[ $RET == 0 ]]; then
     systemctl disable --now $service
   fi
 done
@@ -83,11 +84,11 @@ echo -n " - Creating databases...                               "
 #MYSPAMTAGGERPWD=$(pwgen -1)
 #echo "MYSPAMTAGGERPWD = $MYSPAMTAGGERPWD" >>$CONFFILE
 #export MYSPAMTAGGERPWD
-#./ST_prepare_dbs.sh 2>&1 >>$LOGFILE
+$RELPATH/ST_prepare_dbs.sh 2>&1 >>$LOGFILE
 
 ## recreate my_slave.cnf
-#$SRCDIR/bin/dump_mysql_config.pl 2>&1 >> $LOGFILE
-#$SRCDIR/etc/init.d/mysql_slave restart 2>&1 >>$LOGFILE
+#$SRCDIR/bin/dump_mariadb_config.pl 2>&1 >> $LOGFILE
+#$SRCDIR/etc/init.d/mariadb_slave restart 2>&1 >>$LOGFILE
 echo "[done]"
 sleep 5
 
@@ -99,7 +100,7 @@ sleep 5
 echo -n " - Installing MTA...                                   "
 #./install_exim.sh 2>&1 >>$LOGFILE
 
-$SRCDIR/bin/dump_exim_config.pl 2>&1 >>$LOGFILE
+$RELPATH/../bin/dump_exim_config.pl 2>&1 >>$LOGFILE
 echo "[done]"
 
 ###############################################
@@ -115,7 +116,7 @@ echo -n " - Building Antispam tools...                          "
 #./install_pyzor.sh 2>&1 >>$LOGFILE
 # SpamAssassin has a CentOS package
 # ./install_sa.sh 2>&1 >>$LOGFILE
-cd $SRCDIR/install 2>&1 >>$LOGFILE
+#cd $SRCDIR/install 2>&1 >>$LOGFILE
 echo "[done]"
 
 ###############################################
@@ -124,7 +125,7 @@ echo "[done]"
 # TODO: Build from GitHub. We currently have a lightly modified fork, but hopefully we can move
 # all of the modifications into a plugin or two and significantly reduce our modifications to a
 # minimal patchset that can be applied to upstream at build time.
-cd $SRCDIR/install
+#cd $RELPATH
 echo -n " - Installing MailScanner engine...                                "
 #./install_mailscanner.sh 2>&1 >>$LOGFILE
 #ln -s $SRCDIR/etc/mailscanner/spam.assassin.prefs.conf $SRCDIR/share/spamassassin/mailscanner.cf 2>&1 >/dev/null
@@ -138,7 +139,7 @@ if [ "$LOGLINE" == "" ]; then
   echo "local0.err      $VARDIR/log/mailscanner/errorlog" >>/etc/syslog.conf
 fi
 RET="$(systemctl is-active rsyslog >/dev/null)"
-if [ $RET == 0 ]; then
+if [[ $RET == 0 ]]; then
   systemctl restart rsyslog
 else
   systemctl enable --now rsyslog
@@ -196,18 +197,22 @@ cp $VARDIR/run/spamtagger.status $VARDIR/run/spamtagger.127.0.0.1.status
 # TODO: Apply default certificates directly to Apache configuration so that the temporary web server
 # works in order to direct the user to the installer
 ## import default certificate
-CERTFILE=$SRCDIR/etc/apache/certs/default.pem
-KF=$(grep -n 'BEGIN RSA PRIVATE KEY' $CERTFILE | cut -d':' -f1)
-KT=$(grep -n 'END RSA PRIVATE KEY' $CERTFILE | cut -d':' -f1)
-CF=$(grep -n 'BEGIN CERTIFICATE' $CERTFILE | cut -d':' -f1)
-CT=$(grep -n 'END CERTIFICATE' $CERTFILE | cut -d':' -f1)
-KEY=$(sed -n "${KF},${KT}p;${KT}q" $CERTFILE)
-CERT=$(sed -n "${CF},${CT}p;${CT}q" $CERTFILE)
+CERTFILE=/etc/spamtagger/apache/certs/default.crt
+KEYFILE=/etc/spamtagger/apache/certs/default.key
+if [[ -f $CERTFILE ]]; then
+  KF=$(grep -n 'BEGIN RSA PRIVATE KEY' $CERTFILE | cut -d':' -f1)
+  KT=$(grep -n 'END RSA PRIVATE KEY' $CERTFILE | cut -d':' -f1)
+  CF=$(grep -n 'BEGIN CERTIFICATE' $CERTFILE | cut -d':' -f1)
+  CT=$(grep -n 'END CERTIFICATE' $CERTFILE | cut -d':' -f1)
+  KEY=$(sed -n "${KF},${KT}p;${KT}q" $CERTFILE)
+  CERT=$(sed -n "${CF},${CT}p;${CT}q" $CERTFILE)
+else
+  
 # TODO: Generate unique self signed certs upon setting a hostname in installer.pl. Insert after
 # database is created
 #QUERY="USE st_config; UPDATE httpd_config SET tls_certificate_data='${CERT}', tls_certificate_key='${KEY}';"
-#echo "$QUERY" | $SRCDIR/bin/st_mysql -m 2>&1 >>$LOGFILE
-#echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP SpamTagger Plus ($STVERSION) \$tod_full';" | $SRCDIR/bin/st_mysql -m st_config 2>&1 >>$LOGFILE
+#echo "$QUERY" | $SRCDIR/bin/st_mariadb -m 2>&1 >>$LOGFILE
+#echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP SpamTagger Plus ($STVERSION) \$tod_full';" | $SRCDIR/bin/st_mariadb -m st_config 2>&1 >>$LOGFILE
 
 ###############################################
 ### installing spamtagger cron job
@@ -235,3 +240,4 @@ systemctl restart cron 2>&1 >>$LOGFILE
 #$SRCDIR/etc/init.d/apache restart 2>&1 >>$LOGFILE
 #$SRCDIR/bin/collect_rrd_stats.pl 2>&1 >>$LOGFILE
 #echo "[done]"
+openssl genrsa -out /etc/spamtagger/apache/privkey.pem

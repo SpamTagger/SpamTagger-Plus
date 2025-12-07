@@ -46,8 +46,8 @@ sub db_connect ($class, $type, $db, $critical_p = 0) {
 
   # determine socket to use
   my $conf = ReadConfig::get_instance();
-  my $socket = $conf->get_option('VARDIR')."/run/mysql_master/mysqld.sock";
-  $socket = $conf->get_option('VARDIR')."/run/mysql_slave/mysqld.sock" if ($type =~ /slave/);
+  my $socket = $conf->get_option('VARDIR')."/run/mariadb_master/mariadbd.sock";
+  $socket = $conf->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock" if ($type =~ /slave/);
 
   my $dbh;
   my $realmaster = 0;
@@ -72,14 +72,14 @@ sub db_connect ($class, $type, $db, $critical_p = 0) {
       $dbase = $db->{'database'};
     }
     if (! ( $host eq "" || $port eq "" || $password eq "") ) {
-      $dbh = DBI->connect("DBI:mysql:database=$dbase;host=$host:$port;",
+      $dbh = DBI->connect("DBI:MariaDB:database=$dbase;host=$host:$port;",
 			  "spamtagger", $password, {RaiseError => 0, PrintError => 0, AutoCommit => 1}
       )	or fatal_error("CANNOTCONNECTDB", $critical);
       $realmaster = 1;
     }
   }
   if ($realmaster < 1) {
-    $dbh = DBI->connect("DBI:mysql:database=$db;host=localhost;mysql_socket=$socket",
+    $dbh = DBI->connect("DBI:MariaDB:database=$db;host=localhost;mariadb_socket=$socket",
 			"spamtagger", $conf->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
     ) or fatal_error("CANNOTCONNECTDB", $critical);
   }
@@ -204,8 +204,7 @@ sub get_hash_row ($this, $query, $nowarnings = 0) {
   my $dbh = $this->{dbh};
   my %results;
 
-  my $sth = $dbh->prepare($query);
-  my $res = $sth->execute();
+  my $res = $dbh->execute($query);
   unless (defined($res)) {
   	unless ($nowarnings) {
       print "WARNING, CANNOT QUERY ($query => ".$dbh->errstr.")\n";
@@ -213,10 +212,8 @@ sub get_hash_row ($this, $query, $nowarnings = 0) {
     return %results;
   }
 
-  my $ret = $sth->fetchrow_hashref();
+  my $ret = $dbh->fetchrow_hashref();
   $results{$_} = $ret->{$_} foreach (keys(%{$ret}));
-  
-  $sth->finish();
   return %results;
 }
 

@@ -32,8 +32,8 @@ EXIM1=exim_stage1
 EXIM2=exim_stage2
 EXIM4=exim_stage4
 MS=mailscanner
-MYSLAVE=mysql_slave
-MYMASTER=mysql_master
+MYSLAVE=mariadb_slave
+MYMASTER=mariadb_master
 APACHE=apache
 SNMP=snmpd
 GREYLISTD=greylistd
@@ -63,14 +63,11 @@ case "$1" in
     fi
 
     ## checking for opt binaries
-    for i in mysql4 mysql5 MailScanner bogofilter clamav exim4 spamtagger php5; do
+    for i in MailScanner exim4; do
       if [ ! -d /opt/$i ]; then
         ln -s /usr/$i /opt/$i >/dev/null 2>&1
       fi
     done
-    if [ ! -d /opt/apache2 ]; then
-      ln -s /usr/apache /opt/apache2 >/dev/null 2>&1
-    fi
 
     $INITDIR/$MYMASTER start
     $INITDIR/$MYSLAVE start

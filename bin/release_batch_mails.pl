@@ -142,8 +142,8 @@ $SRCDIR="/usr/spamtagger" if ( $SRCDIR eq '' );
 my $MYSPAMTAGGERPWD=`grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3`;
 chomp $MYSPAMTAGGERPWD;
 
-my $SOCKET="$VARDIR/run/mysql_slave/mysqld.sock";
-my $COMMAND="/opt/mysql5/bin/mysql";
+my $SOCKET="$VARDIR/run/mariadb_slave/mariadbd.sock";
+my $COMMAND="/usr/bin/mariadb";
 
 my $QUERY="SELECT exim_id, to_user, to_domain, sender, M_score, is_newsletter, M_subject FROM spam WHERE";
 foreach (qw | to_domain to_user is_newsletter forced |) {

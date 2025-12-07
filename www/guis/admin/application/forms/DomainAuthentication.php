@@ -15,7 +15,7 @@ class Default_Form_DomainAuthentication extends Zend_Form
 
 	protected $_connectors = array('none', 'imap', 'pop3', 'ldap', 'smtp', 'local', 'radius', 'sql', 'tequila');
 
-	protected $_addresslookups = array('at_login', 'ldap', 'local', 'text_file', 'param_add', 'mysql');
+	protected $_addresslookups = array('at_login', 'ldap', 'local', 'text_file', 'param_add', 'mariadb');
 	protected $_usernameformats = array('username_only', 'at_add', 'percent_add');
 
 	public function __construct($domain)

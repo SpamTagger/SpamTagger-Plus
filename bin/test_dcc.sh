@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ X-SpamTagger-SpamCheck: polluriel, SpamAssassin (score=1001.654, requis 5,
         RAZOR2_CHECK 0.15)
 X-SpamTagger-SpamScore: oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
-XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X" | /opt/dcc/bin/dccproc -Q -d -H | cut -d'-' -f-2)
+XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X" | /usr/bin/dccproc -Q -d -H | cut -d'-' -f-2)
 
 if [ "$RES" = "X-DCC" ]; then
   echo "DCCOK"

@@ -60,8 +60,8 @@ my %processes_tmpl = (
   '3' => {'name'=>'Outgoing MTA', 'pstring'=>'exim/exim_stage4.conf'},
   '4' => {'name'=>'Filtering engine', 'pstring'=>'MailScanner'},
   '5' => {'name'=>'Web Interface', 'pstring'=>'apache/httpd.conf'},
-  '6' => {'name'=>'Master database', 'pstring'=>'mysql/my_master.cnf'},
-  '7' => {'name'=>'Slave database', 'pstring'=>'mysql/my_slave.cnf'},
+  '6' => {'name'=>'Master database', 'pstring'=>'mariadb/my_master.cnf'},
+  '7' => {'name'=>'Slave database', 'pstring'=>'mariadb/my_slave.cnf'},
   '8' => {'name'=>'SNMP daemon', 'pstring'=>'snmp/snmpd.conf'},
   '9' => {'name'=>'Greylisting daemon', 'pstring'=>'greylistd/greylistd.conf'},
   '10' => {'name'=>'Scheduler', 'pstring'=>'/usr/sbin/cron'},
@@ -151,7 +151,7 @@ sub get_patch_level {
   }
 
   if ($patch eq 'Unknown') {
-    my $dbh = DBI->connect("DBI:mysql:database=st_config;mysql_socket=".$conf->get_option('VARDIR')."/run/mysql_slave/mysqld.sock",
+    my $dbh = DBI->connect("DBI:mariadb:database=st_config;mariadb_socket=".$conf->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock",
       "spamtagger",$conf->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 1} );
     my $sth = $dbh->prepare("SELECT id FROM update_patch ORDER BY id DESC LIMIT 1");
     if ($sth->execute()) {

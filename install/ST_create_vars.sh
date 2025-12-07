@@ -5,6 +5,7 @@ if [ "$VARDIR" == "" ]; then
   VARDIR=/var/spamtagger
 fi
 
+ETCDIR=/etc/spamtagger
 DEFAULTUID=spamtagger
 DEFAULTGID=spamtagger
 
@@ -46,6 +47,7 @@ function check_dir {
 ## BEGIN SCRIPT
 ################
 
+check_dir $ETCDIR
 check_dir $VARDIR
 
 ####
@@ -54,6 +56,7 @@ check_dir $VARDIR
 check_dir $VARDIR/log
 check_dir $VARDIR/spool
 check_dir $VARDIR/run
+check_dir $ETCDIR/apache
 
 ####
 # create exim dirs
@@ -72,18 +75,18 @@ check_dir $VARDIR/spool/exim_stage4/paniclog
 check_dir $VARDIR/spool/exim_stage4/spamstore
 
 ####
-# create mysql dirs
+# create mariadb dirs
 
-check_dir $VARDIR/log/mysql_master mysql spamtagger
-check_dir $VARDIR/log/mysql_slave mysql spamtagger
-chmod -R g+ws $VARDIR/log/mysql_master
-chmod -R g+ws $VARDIR/log/mysql_slave
+check_dir $VARDIR/log/mariadb_master mariadb spamtagger
+check_dir $VARDIR/log/mariadb_slave mariadb spamtagger
+chmod -R g+ws $VARDIR/log/mariadb_master
+chmod -R g+ws $VARDIR/log/mariadb_slave
 
-check_dir $VARDIR/spool/mysql_master mysql spamtagger
-check_dir $VARDIR/spool/mysql_slave mysql spamtagger
+check_dir $VARDIR/spool/mariadb_master mariadb spamtagger
+check_dir $VARDIR/spool/mariadb_slave mariadb spamtagger
 
-check_dir $VARDIR/run/mysql_master mysql spamtagger
-check_dir $VARDIR/run/mysql_slave mysql spamtagger
+check_dir $VARDIR/run/mariadb_master mariadb spamtagger
+check_dir $VARDIR/run/mariadb_slave mariadb spamtagger
 
 ####
 # create spamtagger dirs

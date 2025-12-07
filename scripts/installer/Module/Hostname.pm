@@ -59,7 +59,7 @@ sub run($this) {
       $name .= " $1";
     }
     `echo 127.0.0.1 localhost $name >> $this->{hostsfile}`;
-    `echo "UPDATE httpd_config SET servername = '$name';" | /usr/mailcleaner/bin/mc_mysql -m mc_config`;
+    `echo "UPDATE httpd_config SET servername = '$name';" | /usr/mailcleaner/bin/mc_mariadb -m mc_config`;
     `sed -i -r 's/(MCHOSTNAME *= *).*/\\1$name/' /etc/mailcleaner.conf`;
     `/usr/mailcleaner/etc/init.d/apache restart`;
   } else {

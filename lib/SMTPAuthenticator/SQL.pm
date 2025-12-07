@@ -33,7 +33,7 @@ use DBI();
 
 sub new ($server, $port, $params = {}) {
   my $usessl = 0;
-  my $database_type = 'mysql';
+  my $database_type = 'mariadb';
   my $database = '';
   my $dbtable = '',
   my $dbuser = '',
@@ -61,12 +61,12 @@ sub new ($server, $port, $params = {}) {
   if ($server eq 'local') {
     require ReadConfig;
     my $conf = ReadConfig::get_instance();
-    my $socket = $conf->get_option('VARDIR')."/run/mysql_slave/mysqld.sock";
+    my $socket = $conf->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock";
 
-    $dsn = "DBI:mysql:database=st_config;host=localhost;mysql_socket=$socket";
+    $dsn = "DBI:mariadb:database=st_config;host=localhost;mariadb_socket=$socket";
     $dbuser = 'spamtagger';
     $dbpass = $conf->get_option('MYSPAMTAGGERPWD');
-    $dbtable = 'mysql_auth';
+    $dbtable = 'mariadb_auth';
     $loginfield = 'username';
     $passfield = 'password';
   }

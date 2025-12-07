@@ -57,7 +57,7 @@ my $cluid = getpwnam('clamav');
 my $clgid = getgrnam('clamav');
 my $stuid = getpwnam('spamtagger');
 my $stgid = getgrnam('spamtagger');
-my $myuid = getpwnam('mysql');
+my $myuid = getpwnam('mariadb');
 our $services = {
   'apache' => {
     'uid' => $stuid,
@@ -151,22 +151,22 @@ our $services = {
       'warnlog' => [ '%b %d' ],
     },
   },
-  'mysql_master' => {
+  'mariadb_master' => {
     'uid' => $myuid,
     'gid' => $stuid,
-    'start' => '/usr/spamtagger/etc/init.d/mysql_master start',
-    'stop' => '/usr/spamtagger/etc/init.d/mysql_master stop',
+    'start' => '/usr/spamtagger/etc/init.d/mariadb_master start',
+    'stop' => '/usr/spamtagger/etc/init.d/mariadb_master stop',
     'files' => {
-      'mysql.log' => [ '%y%m%d' ],
+      'mariadb.log' => [ '%y%m%d' ],
     },
   },
-  'mysql_slave' => {
+  'mariadb_slave' => {
     'uid' => $myuid,
     'gid' => $stuid,
-    'start' => '/usr/spamtagger/etc/init.d/mysql_slave start',
-    'stop' => '/usr/spamtagger/etc/init.d/mysql_slave stop',
+    'start' => '/usr/spamtagger/etc/init.d/mariadb_slave start',
+    'stop' => '/usr/spamtagger/etc/init.d/mariadb_slave stop',
     'files' => {
-      'mysql.log' => [ '%y%m%d' ],
+      'mariadb.log' => [ '%y%m%d' ],
     },
   }
 };

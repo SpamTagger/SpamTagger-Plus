@@ -36,7 +36,7 @@ if [ -z "$(find $VARDIR/spool/clamspam -type f)" ]; then
 fi
 
 echo "["$(date "+%Y-%m-%d %H:%M:%S")"] Starting ClamAV update..." >>$VARDIR/log/clamav/freshclam.log
-/opt/clamav/bin/freshclam --user=clamav --config-file=$SRCDIR/etc/clamav/freshclam.conf --daemon-notify=$SRCDIR/etc/clamav/clamd.conf >>$VARDIR/log/clamav/freshclam.log 2>&1
+/usr/bin/freshclam --user=clamav --config-file=$SRCDIR/etc/clamav/freshclam.conf --daemon-notify=$SRCDIR/etc/clamav/clamd.conf >>$VARDIR/log/clamav/freshclam.log 2>&1
 
 RET=$?
 
@@ -55,7 +55,7 @@ else
     echo "done"
     echo -n " Retrying download... "
     echo "["$(date "+%Y-%m-%d %H:%M:%S")"] Retrying download... " >>$VARDIR/log/clamav/freshclam.log
-    /opt/clamav/bin/freshclam --user=clamav --config-file=$SRCDIR/etc/clamav/freshclam.conf --daemon-notify=$SRCDIR/etc/clamav/clamd.conf --quiet
+    /usr/bin/freshclam --user=clamav --config-file=$SRCDIR/etc/clamav/freshclam.conf --daemon-notify=$SRCDIR/etc/clamav/clamd.conf --quiet
 
     RET2=$?
     if [ $RET2 -le 1 ]; then

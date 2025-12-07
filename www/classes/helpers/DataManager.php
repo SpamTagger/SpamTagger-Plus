@@ -149,10 +149,10 @@ class DataManager {
   private function connect() {
     if (! isset($this->db_handle) or DB::isError($this->db_handle)) {
         if ($this->getOption('SOCKET') != "") {
-          $dsn = "mysql://".$this->getOption('USER').":".$this->getOption('MYSPAMTAGGERPWD').
+          $dsn = "mariadb://".$this->getOption('USER').":".$this->getOption('MYSPAMTAGGERPWD').
                 "@unix(".$this->getOption('SOCKET').")/".$this->getOption('DATABASE');
         } else {
-          $dsn = "mysql://".$this->getOption('USER').":".$this->getOption('PASSWORD').
+          $dsn = "mariadb://".$this->getOption('USER').":".$this->getOption('PASSWORD').
                 "@".$this->getOption('HOST').":".$this->getOption('PORT')."/".$this->getOption('DATABASE');
         }
         $options = array(

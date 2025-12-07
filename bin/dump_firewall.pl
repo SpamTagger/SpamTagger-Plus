@@ -44,7 +44,7 @@ my $start_script = $config->get_option('SRCDIR')."/etc/firewall/start";
 my $stop_script = $config->get_option('SRCDIR')."/etc/firewall/stop";
 my %services = (
   'web' => ['80|443', 'TCP'],
-  'mysql' => ['3306:3307', 'TCP'],
+  'mariadb' => ['3306:3307', 'TCP'],
   'snmp' => ['161', 'UDP'],
   'ssh' => ['22', 'TCP'],
   'mail' => ['25', 'TCP'],
@@ -63,7 +63,7 @@ unlink($stop_script);
 
 my $dbh;
 $dbh = DBI->connect(
-  "DBI:mysql:database=st_config;host=localhost;mysql_socket=".$config->get_option('VARDIR')."/run/mysql_slave/mysqld.sock",
+  "DBI:mariadb:database=st_config;host=localhost;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_slave/mariadbd.sock",
   "spamtagger",
   $config->get_option('MYSPAMTAGGERPWD'),
   {RaiseError => 0, PrintError => 0}
@@ -138,7 +138,7 @@ sub get_default_rules {
   foreach my $host (keys %masters_slaves) {
     next if ($host =~ /127\.0\.0\.1/ || $host =~ /^\:\:1$/);
 
-    $rules{"$host mysql TCP"} = [ $services{'mysql'}[0], $services{'mysql'}[1], $host];
+    $rules{"$host mariadb TCP"} = [ $services{'mariadb'}[0], $services{'mariadb'}[1], $host];
     $rules{"$host snmp UDP"} = [ $services{'snmp'}[0], $services{'snmp'}[1], $host];
     $rules{"$host ssh TCP"} = [ $services{'ssh'}[0], $services{'ssh'}[1], $host];
     $rules{"$host soap TCP"} = [ $services{'soap'}[0], $services{'soap'}[1], $host];

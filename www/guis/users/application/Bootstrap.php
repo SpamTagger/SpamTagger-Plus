@@ -34,7 +34,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
     	$writeConfigDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
-                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
+                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mariadb_master/mariadbd.sock",
                               'username'    => 'spamtagger',
                               'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_config'
@@ -45,7 +45,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         $spoolDb = new Zend_Db_Adapter_Pdo_Mysql(array(
     	                      'host'        => 'localhost',
-                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mysql_master/mysqld.sock",
+                              'unix_socket' => $stconfig->getOption('VARDIR')."/run/mariadb_master/mariadbd.sock",
                               'username'    => 'spamtagger',
                               'password'    => $stconfig->getOption('MYSPAMTAGGERPWD'),
                               'dbname'      => 'st_spool'

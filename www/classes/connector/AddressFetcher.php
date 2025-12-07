@@ -23,7 +23,7 @@ abstract class AddressFetcher {
                                      'ldap' => array('ldap lookup', 'LDAPLookup'),
                                      'text_file'  => array('text file lookup', 'FileLookup'),
                                      'param_add' => array('add a parameter', 'AddParam'),
-                                     'mysql' => array('sql lookup', 'SQLLookup'),
+                                     'mariadb' => array('sql lookup', 'SQLLookup'),
                                      'local' => array('local', 'SQLLookup')
                                      );
 

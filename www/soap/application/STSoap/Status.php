@@ -96,7 +96,7 @@ class STSoap_Status
 	if ($element == 'processes') {
 		$data = array();
 		$cmd = $config->getOption('SRCDIR')."/bin/get_status.pl -s";
-		$order = array('exim_stage1', 'exim_stage2', 'exim_stage4', 'apache', 'mailscanner', 'mysql_master', 'mysql_slave', 'snmpd',
+		$order = array('exim_stage1', 'exim_stage2', 'exim_stage4', 'apache', 'mailscanner', 'mariadb_master', 'mariadb_slave', 'snmpd',
 		               'greylistd', 'cron', 'preftdaemon', 'spamd', 'clamd', 'clamspamd', 'spamhandler', 'newsld', 'firewall');
 		$reg = str_repeat('\|([0-9])', count($order));
 		$cmdres = `$cmd`;

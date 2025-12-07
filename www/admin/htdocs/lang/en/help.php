@@ -215,7 +215,7 @@ password database.
 This is the mechanism used for authentication.
 <ul>
 <li><b>local</b>: authenticate against users local to the machine.
-<li><b>mysql</b>: authenticate against a mysql database.
+<li><b>mariadb</b>: authenticate against a mariadb database.
 <li><b>imap</b>: authenticate against an imap server.
 <li><b>pop3</b>: authenticate against a pop3 server.
 <li><b>ldap</b>: authenticate against a ldap or active directory server.
@@ -224,7 +224,7 @@ This is the mechanism used for authentication.
 <h2>Server and Port: </h2>
 This is the name or IP address of the server against which you want SpamTagger
 to do the authentication. The field after the \":\" is the port used for the
-authentication. (The standard IANA-assigned ports are 3306 for mysql, 143 for
+authentication. (The standard IANA-assigned ports are 3306 for mariadb, 143 for
 imap, 110 for pop3, 389 for ldap, and 1812 for radius.)
 <h2>Use SSL:</h2>
 If enabled, the sessions established for user authentication will be encrypted.
@@ -253,7 +253,7 @@ SpamTagger can deduce the e-mail address based on the username.
 <li><b>username@domain: </b>the address will be constructed with the username and the domain name.
 <li><b>ldap lookup: </b>the address(es) will be fetched from the ldap/active directory.
 <li><b>text file lookup: </b>the address(es) will be fetched from a local file.
-<li><b>mysql lookup: </b>the address(es) will be fetched from a mysql server.
+<li><b>mariadb lookup: </b>the address(es) will be fetched from a mariadb server.
 </ul>
 
 <h2><b>LDAP SUPPLEMENTARY FIELDS</b></h2>

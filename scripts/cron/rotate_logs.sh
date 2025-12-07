@@ -4,7 +4,7 @@
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
-#   Copyright (C) 2023 John Mertz <git@john.me.tz>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -172,25 +172,25 @@ fi
 ## MySQL Slave ##
 #################
 if [ -x /usr/bin/savelog ]; then
-  if [ -s $VARDIR/log/mysql_slave/mysql.log ]; then
-    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mysql_slave/mysql.log >/dev/null
+  if [ -s $VARDIR/log/mariadb_slave/mariadb.log ]; then
+    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mariadb_slave/mariadb.log >/dev/null
   fi
 fi
 
-/opt/mysql5/bin/mysqladmin -S $VARDIR/run/mysql_slave/mysqld.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
-$SRCDIR/etc/init.d/mysql_slave restart
+/usr/bin/mariadb-admin -S $VARDIR/run/mariadb_slave/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
+$SRCDIR/etc/init.d/mariadb_slave restart
 
 ##################
 ## MySQL Master ##
 ##################
 if [ -x /usr/bin/savelog ]; then
-  if [ -s $VARDIR/log/mysql_master/mysql.log ]; then
-    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mysql_master/mysql.log >/dev/null
+  if [ -s $VARDIR/log/mariadb_master/mariadb.log ]; then
+    savelog -p -c $DAYSTOKEEP -C $VARDIR/log/mariadb_master/mariadb.log >/dev/null
   fi
 fi
 
-/opt/mysql5/bin/mysqladmin -S $VARDIR/run/mysql_master/mysqld.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
-$SRCDIR/etc/init.d/mysql_master restart
+/usr/bin/mariadb-admin -S $VARDIR/run/mariadb_master/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD flush-logs
+$SRCDIR/etc/init.d/mariadb_master restart
 
 ###################
 ## Resync checks ##

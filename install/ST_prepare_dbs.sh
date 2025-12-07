@@ -24,50 +24,50 @@ if [ "$CLIENTORG" = "" ]; then
 fi
 VARDIR_SANE=$(echo $VARDIR | perl -pi -e 's/\//\\\//g')
 
-echo "-- removing previous mysql databases and stopping mysql"
-$SRCDIR/etc/init.d/mysql_slave stop 2>&1
-$SRCDIR/etc/init.d/mysql_master stop 2>&1
-rm -rf $VARDIR/spool/mysql_master/*
-rm -rf $VARDIR/spool/mysql_slave/* 2>&1
-rm -rf $VARDIR/log/mysql_master/*
-rm -rf $VARDIR/log/mysql_slave/* 2>&1
-rm -rf $VARDIR/run/mysql_master/*
-rm -rf $VARDIR/run/mysql_slave/* 2>&1
+echo "-- removing previous mariadb databases and stopping mariadb"
+$SRCDIR/etc/init.d/mariadb_slave stop 2>&1
+$SRCDIR/etc/init.d/mariadb_master stop 2>&1
+rm -rf $VARDIR/spool/mariadb_master/*
+rm -rf $VARDIR/spool/mariadb_slave/* 2>&1
+rm -rf $VARDIR/log/mariadb_master/*
+rm -rf $VARDIR/log/mariadb_slave/* 2>&1
+rm -rf $VARDIR/run/mariadb_master/*
+rm -rf $VARDIR/run/mariadb_slave/* 2>&1
 
 ##
-# first, ask for the mysql admin password
+# first, ask for the mariadb admin password
 if [ "$MYROOTPWD" = "" ]; then
-  echo -n "enter mysql root password: "
+  echo -n "enter mariadb root password: "
   read -s MYROOTPWD
   echo ""
 fi
 
 if [ "$MYSPAMTAGGERPWD" = "" ]; then
-  echo -n "enter mysql spamtagger password: "
+  echo -n "enter mariadb spamtagger password: "
   read -s MYSPAMTAGGERPWD
   echo ""
 fi
 
-$SRCDIR/bin/dump_mysql_config.pl 2>&1
+$SRCDIR/bin/dump_mariadb_config.pl 2>&1
 
 echo "-- generating slave database"
-/opt/mysql5/scripts/mysql_install_db --datadir=${VARDIR}/spool/mysql_slave --basedir=/opt/mysql5/ --defaults-file=$SRCDIR/etc/mysql/my_slave.cnf 2>&1
-chown -R mysql:mysql ${VARDIR}/spool/mysql_slave 2>&1
+/usr/bin/mariadb-install-db --datadir=${VARDIR}/spool/mariadb_slave --defaults-file=$SRCDIR/etc/mariadb/my_slave.cnf 2>&1
+chown -R mysql:mysql ${VARDIR}/spool/mariadb_slave 2>&1
 
 #
 # master
 
 echo "-- generating master database"
-/opt/mysql5/scripts/mysql_install_db --datadir=${VARDIR}/spool/mysql_master --basedir=/opt/mysql5/ --defaults-file=$SRCDIR/etc/mysql/my_master.cnf 2>&1
-chown -R mysql:mysql ${VARDIR}/spool/mysql_master 2>&1
+/usr/bin/mariadb-install-db --datadir=${VARDIR}/spool/mariadb_master --defaults-file=$SRCDIR/etc/mariadb/my_master.cnf 2>&1
+chown -R mysql:mysql ${VARDIR}/spool/mariadb_master 2>&1
 
 ##
 # start db
 
-cp $SRCDIR/etc/mysql/my_slave.cnf_template $SRCDIR/etc/mysql/my_slave.cnf
-echo "-- starting mysql"
-$SRCDIR/etc/init.d/mysql_slave start 2>&1
-$SRCDIR/etc/init.d/mysql_master start 2>&1
+cp $SRCDIR/etc/mariadb/my_slave.cnf_template $SRCDIR/etc/mariadb/my_slave.cnf
+echo "-- starting mariadb"
+$SRCDIR/etc/init.d/mariadb_slave start 2>&1
+$SRCDIR/etc/init.d/mariadb_master start 2>&1
 sleep 30
 
 ##
@@ -75,7 +75,7 @@ sleep 30
 
 echo "-- deleting default databases and users and creating spamtagger dbs and user"
 cat >/tmp/tmp_install.sql <<EOF
-USE mysql;
+USE mariadb;
 UPDATE user SET Password=PASSWORD('$MYROOTPWD') WHERE User='root';
 DELETE FROM user WHERE User='';
 DELETE FROM db WHERE User='';
@@ -95,7 +95,7 @@ GRANT ALL PRIVILEGES ON st_spool.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGE
 GRANT ALL PRIVILEGES ON st_stats.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGERPWD' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON dmarc_reporting.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGERPWD' WITH GRANT OPTION;
 GRANT REPLICATION SLAVE , REPLICATION CLIENT ON * . * TO  spamtagger@"%";
-USE mysql;
+USE mariadb;
 UPDATE user SET Reload_priv='Y' WHERE User='spamtagger';
 UPDATE user SET Repl_slave_priv='Y', Repl_client_priv='Y' WHERE User='spamtagger';
 FLUSH PRIVILEGES;
@@ -103,8 +103,8 @@ EOF
 
 sleep 5
 
-/opt/mysql5/bin/mysql -S ${VARDIR}/run/mysql_slave/mysqld.sock </tmp/tmp_install.sql 2>&1
-/opt/mysql5/bin/mysql -S ${VARDIR}/run/mysql_master/mysqld.sock </tmp/tmp_install.sql 2>&1
+/usr/bin/mariadb -S ${VARDIR}/run/mariadb_slave/mariadbd.sock </tmp/tmp_install.sql 2>&1
+/usr/bin/mariadb -S ${VARDIR}/run/mariadb_master/mariadbd.sock </tmp/tmp_install.sql 2>&1
 
 rm /tmp/tmp_install.sql 2>&1
 
@@ -112,14 +112,14 @@ echo "-- creating spamtagger configuration tables"
 $SRCDIR/bin/check_db.pl --update 2>&1
 echo "-- creating spamtagger spool tables"
 
-for SOCKDIR in mysql_slave mysql_master; do
+for SOCKDIR in mariadb_slave mariadb_master; do
   for file in $(ls dbs/spam/*.sql); do
-    /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_spool <$file
+    /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_spool <$file
   done
-  /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_spool <dbs/t_sp_spam.sql
+  /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_spool <dbs/t_sp_spam.sql
 done
 
-/opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mysql_master/mysqld.sock dmarc_reporting <dbs/dmarc_reporting.sql
+/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_master/mariadbd.sock dmarc_reporting <dbs/dmarc_reporting.sql
 
 echo "-- inserting config and default values"
 
@@ -132,36 +132,36 @@ if [ "$ISMASTER" = "Y" ]; then
   MASTERPASSWD=$MYSPAMTAGGERPWD
 fi
 
-for SOCKDIR in mysql_master; do
-  echo "INSERT INTO system_conf (organisation, company_name, hostid, clientid, default_domain, contact_email, summary_from, analyse_to, falseneg_to, falsepos_to, src_dir, var_dir) VALUES ('$CLIENTORG', '$STHOSTNAME', '$HOSTID', '$CLIENTID', '$DEFAULTDOMAIN', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$SRCDIR', '$VARDIR');" | /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_config
-  echo "INSERT INTO slave (id, hostname, password, ssh_pub_key) VALUES ('$HOSTID', '127.0.0.1', '$MYSPAMTAGGERPWD', '$HOSTKEY');" | /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_config
-  echo "INSERT INTO master (hostname, password, ssh_pub_key) VALUES ('$MASTERHOST', '$MASTERPASSWD', '$MASTERKEY');" | /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_config
-  echo "INSERT INTO httpd_config (serveradmin, servername) VALUES('root', 'spamtagger');" | /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mysqld.sock st_config
+for SOCKDIR in mariadb_master; do
+  echo "INSERT INTO system_conf (organisation, company_name, hostid, clientid, default_domain, contact_email, summary_from, analyse_to, falseneg_to, falsepos_to, src_dir, var_dir) VALUES ('$CLIENTORG', '$STHOSTNAME', '$HOSTID', '$CLIENTID', '$DEFAULTDOMAIN', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$SRCDIR', '$VARDIR');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
+  echo "INSERT INTO slave (id, hostname, password, ssh_pub_key) VALUES ('$HOSTID', '127.0.0.1', '$MYSPAMTAGGERPWD', '$HOSTKEY');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
+  echo "INSERT INTO master (hostname, password, ssh_pub_key) VALUES ('$MASTERHOST', '$MASTERPASSWD', '$MASTERKEY');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
+  echo "INSERT INTO httpd_config (serveradmin, servername) VALUES('root', 'spamtagger');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
 done
 
 sleep 10
-$SRCDIR/etc/init.d/mysql_slave restart nopass
+$SRCDIR/etc/init.d/mariadb_slave restart nopass
 sleep 15
 ## MySQL redundency
-echo "STOP SLAVE; CHANGE MASTER TO master_host='$MASTERHOST', master_user='spamtagger', master_password='$MASTERPASSWD'; START SLAVE;" | /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config
+echo "STOP SLAVE; CHANGE MASTER TO master_host='$MASTERHOST', master_user='spamtagger', master_password='$MASTERPASSWD'; START SLAVE;" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_slave/mariadbd.sock st_config
 sleep 5
-$SRCDIR/etc/init.d/mysql_slave restart
+$SRCDIR/etc/init.d/mariadb_slave restart
 sleep 15
 
 ## creating stats tables
-/opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config <dbs/t_st_maillog.sql
+/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_slave/mariadbd.sock st_config <dbs/t_st_maillog.sql
 
 ## creating local update table
-/opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config <dbs/t_cf_update_patch.sql
+/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_slave/mariadbd.sock st_config <dbs/t_cf_update_patch.sql
 
 ## creating temp soap authentication table
-/opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_spool <dbs/t_sp_soap_auth.sql
+/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_slave/mariadbd.sock st_spool <dbs/t_sp_soap_auth.sql
 
 ## creating web admin user
-echo "INSERT INTO administrator (username, password, can_manage_users, can_manage_domains, can_configure, can_view_stats, can_manage_host, domains) VALUES('admin', ENCRYPT('$WEBADMINPWD'), 1, 1, 1, 1, 1, '*');" | /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mysql_master/mysqld.sock st_config
+echo "INSERT INTO administrator (username, password, can_manage_users, can_manage_domains, can_configure, can_view_stats, can_manage_host, domains) VALUES('admin', ENCRYPT('$WEBADMINPWD'), 1, 1, 1, 1, 1, '*');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_master/mariadbd.sock st_config
 
 ## inserting last version update
-echo "INSERT INTO update_patch VALUES('$ACTUALUPDATE', NOW(), NOW(), 'OK', 'CD release');" | /opt/mysql5/bin/mysql -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mysql_slave/mysqld.sock st_config
+echo "INSERT INTO update_patch VALUES('$ACTUALUPDATE', NOW(), NOW(), 'OK', 'CD release');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_slave/mariadbd.sock st_config
 
-#$SRCDIR/etc/init.d/mysql_master stop
+#$SRCDIR/etc/init.d/mariadb_master stop
 echo "-- DONE -- spamtagger dbs are ready !"

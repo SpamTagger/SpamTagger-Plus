@@ -25,7 +25,7 @@
    */
    protected $spec_settings_ = array(
                               'usessl' => false,
-                              'database_type' => 'mysql',
+                              'database_type' => 'mariadb',
                               'database' => 'st_config',
                               'table' => 'mysql_auth',
                               'user' => 'spamtagger',
@@ -43,7 +43,7 @@
     */
    protected $spec_settings_type_ = array(
                               'usessl' => array('checkbox', 'true'),
-                              'database_type' => array('select', array('mysql' => 'mysql')),
+                              'database_type' => array('select', array('mariadb' => 'mariadb')),
                               'database' => array('text', 20),
                               'table' => array('text', 20),
                               'user' => array('text', 20),

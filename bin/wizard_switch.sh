@@ -50,7 +50,7 @@ if [ "$VARDIR" = "" ]; then
 fi
 
 getWizardStatus() {
-  req=$(echo "SELECT count(*) FROM external_access WHERE service='configurator' AND port='4242' AND protocol='TCP' \G" | $SRCDIR/bin/st_mysql -m st_config | grep -v ". row" | cut -d ':' -f2)
+  req=$(echo "SELECT count(*) FROM external_access WHERE service='configurator' AND port='4242' AND protocol='TCP' \G" | $SRCDIR/bin/st_mariadb -m st_config | grep -v ". row" | cut -d ':' -f2)
   [ "$req" -ge "1" ] && req=1
   return $req
 }
@@ -94,9 +94,9 @@ updateWizardStatus() {
   enableWizard="INSERT INTO external_access VALUES(NULL, 'configurator', '4242', 'TCP', '0.0.0.0/0', NULL);"
   disableWizard="DELETE FROM external_access WHERE service='configurator' AND port='4242' AND protocol='TCP';"
   if [ "$1" -eq "1" ]; then
-    echo $enableWizard | $SRCDIR/bin/st_mysql -m st_config
+    echo $enableWizard | $SRCDIR/bin/st_mariadb -m st_config
   else
-    echo $disableWizard | $SRCDIR/bin/st_mysql -m st_config
+    echo $disableWizard | $SRCDIR/bin/st_mariadb -m st_config
   fi
   return 1 # external_access changed
 }

@@ -54,7 +54,7 @@ Deliver Unparsable TNEF = __DELIVERBADTNEF__
 TNEF Expander = /usr/bin/tnef
 TNEF Timeout = __TNEFTIMEOUT__
 
-File Command = /opt/file/bin/mc2-file
+File Command = /usr/bin/file
 File Timeout = __FILETIMEOUT__
 Gunzip Command = /bin/gunzip
 Gunzip Timeout = 50

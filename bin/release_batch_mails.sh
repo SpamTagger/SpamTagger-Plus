@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -33,8 +34,8 @@ if [ "SRCDIR" = "" ]; then
 fi
 MYSPAMTAGGERPWD=$(grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
-SOCKET=$VARDIR/run/mysql_slave/mysqld.sock
-COMMAND=/opt/mysql5/bin/mysql
+SOCKET=$VARDIR/run/mariadb_slave/mariadbd.sock
+COMMAND=/usr/bin/mariadb
 
 if [[ -z $1 ]]; then
   echo "Please input a sender address"

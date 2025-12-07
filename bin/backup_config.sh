@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -38,4 +39,4 @@ if [ "$BACKUPFILE" = "" ]; then
   BACKUPFILE="spamtagger_config_.sql"
 fi
 
-/opt/mysql5/bin/mysqldump -u spamtagger -p$MYSPAMTAGGERPWD -S $VARDIR/run/mysql_master/mysqld.sock --ignore-table=st_config.update_patch --ignore-table=st_config.master --ignore-table=st_config.slave --master-data=2 st_config >$BACKUPFILE
+/usr/bin/mariadb-dump -u spamtagger -p$MYSPAMTAGGERPWD -S $VARDIR/run/mariadb_master/mariadbd.sock --ignore-table=st_config.update_patch --ignore-table=st_config.master --ignore-table=st_config.slave --master-data=2 st_config >$BACKUPFILE

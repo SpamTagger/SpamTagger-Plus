@@ -34,7 +34,7 @@ class ExternalAccessRule extends PrefHandler {
     */
    static public $available_services_ = array(
                                     'web'    => array('80|443', 'TCP'),
-                                    'mysql'  => array('3306:3307', 'TCP'),
+                                    'mariadb'  => array('3306:3307', 'TCP'),
                                     'snmp'   => array('161', 'UDP'),
                                     'ssh'    => array('22', 'TCP'),
                                     'mail'   => array('25', 'TCP'),

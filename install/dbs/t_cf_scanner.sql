@@ -14,9 +14,9 @@ CREATE TABLE scanner (
 );
 
 -- create default preferences set
-INSERT INTO scanner VALUES(1, 'clamd', 'ClamAV (daemon)', 1, '/opt/clamav', 1, '', '');
+INSERT INTO scanner VALUES(1, 'clamd', 'ClamAV (daemon)', 1, '/usr/sbin', 1, '', '');
 INSERT INTO scanner VALUES(2, 'clamavmodule', 'ClamAV (module)', 0, '/tmp', 1, '', '');
-INSERT INTO scanner VALUES(3, 'clamav', 'ClamAV', 0, '/opt/clamav', 1, '', '');
+INSERT INTO scanner VALUES(3, 'clamav', 'ClamAV', 0, '/usr', 1, '', '');
 INSERT INTO scanner VALUES(4, 'etrust', 'eTrust', 0, '/usr/etrust', 0, '', '');
 INSERT INTO scanner VALUES(5, 'trend', 'TrendMicro', 0, '/pack/trend', 0, '', '');
 INSERT INTO scanner VALUES(6, 'sophos', 'Sophos', 0, '/usr/local/sophos', 0, '', '');

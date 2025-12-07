@@ -65,7 +65,7 @@ razor_timeout __RAZOR_TIMEOUT__
 endif
 
 ifplugin Mail::SpamAssassin::Plugin::DCC
-dcc_path /opt/dcc/bin/dccproc
+dcc_path /usr/bin/dccproc
 dcc_dccifd_path __VARDIR__/run/dcc/dcc.sock
 dcc_timeout __DCC_TIMEOUT__
 endif

@@ -3,7 +3,8 @@
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2017 Florian Billebault <florian.billebault@gmail.com>
 #   Copyright (C) 2017 Mentor Reka <reka.mentor@gmail.com>
-
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
+#
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
 #   the Free Software Foundation; either version 2 of the License, or
@@ -152,7 +153,7 @@ ${SRCDIR}/etc/init.d/spamtagger stop
 echo Dump of ClamAV config and update of ClamAV antivirus files
 ${SRCDIR}/bin/dump_clamav_config.pl
 cdel -f /var/spamtagger/spool/clamav/{{main,daily,bytecode}.c{v,l}d,mirrors.dat}
-/opt/clamav/bin/freshclam --user=clamav --config-file=${SRCDIR}/etc/clamav/freshclam.conf
+/usr/bin/freshclam --user=clamav --config-file=${SRCDIR}/etc/clamav/freshclam.conf
 
 STARTERSPATH="/root/starters"
 
@@ -238,27 +239,28 @@ cp -Rf "${STARTERSPATH}/clamspam/"* ${VARDIR}/spool/clamspam/
 cp -f "${STARTERSPATH}/wordlist.db" ${VARDIR}/spool/bogofilter/database/
 cp -f "${STARTERSPATH}/bayes_toks" ${VARDIR}/spool/spamassassin/
 cp -f "${STARTERSPATH}/others/issue" /etc/issue
+# TODO: We were installing this from install/src, this needs to be re-implemented
 cp -f "${STARTERSPATH}/magic.mgc" /opt/file/share/misc/magic.mgc
 
 echo Create file for backup IF 192.168.1.42
 echo -e 'auto eth0:0\nallow-hotplug eth0:0\niface eth0:0 inet static\n\taddress 192.168.1.42\n\tnetmask 255.255.255.0\n' >/etc/network/interfaces.d/configif.conf
 
 echo Set port access for the configurator
-echo "DELETE FROM external_access where service='configurator'" | ${SRCDIR}/bin/st_mysql -m st_config
-echo "INSERT INTO external_access values(NULL, 'configurator', '4242', 'TCP', '0.0.0.0/0', 'NULL')" | ${SRCDIR}/bin/st_mysql -m st_config
+echo "DELETE FROM external_access where service='configurator'" | ${SRCDIR}/bin/st_mariadb -m st_config
+echo "INSERT INTO external_access values(NULL, 'configurator', '4242', 'TCP', '0.0.0.0/0', 'NULL')" | ${SRCDIR}/bin/st_mariadb -m st_config
 
 echo Set default value in DB
-echo "update domain_pref set allow_newsletters=0,prevent_spoof=1 where id=(select prefs from domain where name='__global__')\G" | ${SRCDIR}/bin/st_mysql -m st_config
+echo "update domain_pref set allow_newsletters=0,prevent_spoof=1 where id=(select prefs from domain where name='__global__')\G" | ${SRCDIR}/bin/st_mariadb -m st_config
 
 echo Insert Version in DB
-echo "DELETE FROM update_patch WHERE id='${patchID}';" | ${SRCDIR}/bin/st_mysql -s st_config
-echo "INSERT INTO update_patch VALUES ('${patchID}', '${patchDate}', '${patchTime}', 'OK', '${reason}');" | ${SRCDIR}/bin/st_mysql -s st_config
+echo "DELETE FROM update_patch WHERE id='${patchID}';" | ${SRCDIR}/bin/st_mariadb -s st_config
+echo "INSERT INTO update_patch VALUES ('${patchID}', '${patchDate}', '${patchTime}', 'OK', '${reason}');" | ${SRCDIR}/bin/st_mariadb -s st_config
 
 echo "Reset MySQL Binary logs"
-echo 'STOP SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
-echo 'RESET SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
-echo 'RESET MASTER' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_master/mysqld.sock -uroot -p"$dbPassword"
-echo 'START SLAVE' | /opt/mysql5/bin/mysql --socket ${VARDIR}/run/mysql_slave/mysqld.sock -uroot -p"$dbPassword"
+echo 'STOP SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_slave/mariadbd.sock -uroot -p"$dbPassword"
+echo 'RESET SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_slave/mariadbd.sock -uroot -p"$dbPassword"
+echo 'RESET MASTER' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_master/mariadbd.sock -uroot -p"$dbPassword"
+echo 'START SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_slave/mariadbd.sock -uroot -p"$dbPassword"
 
 ${SRCDIR}/etc/init.d/spamtagger stop
 
@@ -279,8 +281,8 @@ echo Delete Others data files not useful anymore
 cdel -rf "${STARTERSPATH}/others"
 
 echo Delete ST logs
-cdel -rf "${VARDIR}/log/"{apache,clamav,exim_stage1,exim_stage2,exim_stage4,spamtagger,mailscanner,mysql_slave}"/*"
-cdel -rf "${VARDIR}/log/mysql_master/*.log*"
+cdel -rf "${VARDIR}/log/"{apache,clamav,exim_stage1,exim_stage2,exim_stage4,spamtagger,mailscanner,mariadb_slave}"/*"
+cdel -rf "${VARDIR}/log/mariadb_master/*.log*"
 cdel -rf "/root/Updater4ST/*.log"
 
 echo Delete old system logs and Empty recent logs files
@@ -288,4 +290,4 @@ find /var/log/ -type f -name "*.*gz" | while read logdata; do cdel -f "$logdata"
 [ "$devMode" == "false" ] && find /var/log/ -type f -exec truncate -s0 {} \;
 
 echo Delete History files
-cdel -f "/root/"{.bash_history,.nano_history,.mysql_history}
+cdel -f "/root/"{.bash_history,.nano_history,.mariadb_history}

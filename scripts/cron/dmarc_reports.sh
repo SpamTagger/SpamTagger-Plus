@@ -9,16 +9,16 @@ if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
-DOIT=$(echo "SELECT dmarc_enable_reports FROM mta_config WHERE stage=1;" | $SRCDIR/bin/st_mysql -s st_config | grep -v 'dmarc_enable_reports')
+DOIT=$(echo "SELECT dmarc_enable_reports FROM mta_config WHERE stage=1;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'dmarc_enable_reports')
 if [ "$DOIT" != "1" ]; then
   exit 0
 fi
-echo "select hostname, password from master;" | $SRCDIR/bin/st_mysql -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
+echo "select hostname, password from master;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/master.conf
 MHOST=$(cat /var/tmp/master.conf | cut -d':' -f1)
 MPASS=$(cat /var/tmp/master.conf | cut -d':' -f2)
 ISMASTER=$(grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3)
 
-SYSADMIN=$(echo "SELECT summary_from FROM system_conf;" | $SRCDIR/bin/st_mysql -s st_config | grep '\@')
+SYSADMIN=$(echo "SELECT summary_from FROM system_conf;" | $SRCDIR/bin/st_mariadb -s st_config | grep '\@')
 if [ "$SYSADMIN" != "" ]; then
   SYSADMIN=" --report-email $SYSADMIN"
 fi

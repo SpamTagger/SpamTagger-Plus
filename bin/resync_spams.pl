@@ -68,7 +68,7 @@ foreach my $s_h (@slavesarray) {
     }
 
     foreach my $l ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','misc', 'num') {
-      my $dumpcmd = "/opt/mysql5/bin/mysqldump --insert-ignore -t --skip-opt -h".$s_h->{'hostname'}." -P".$s_h->{'port'}." -uspamtagger -p".$s_h->{'password'}." st_spool spam_$l -w \"in_master='0' and ( date_in < '$date' or ( date_in = '$date' and time_in < '$time') )\"";
+      my $dumpcmd = "/usr/bin/mariadb-dump --insert-ignore -t --skip-opt -h".$s_h->{'hostname'}." -P".$s_h->{'port'}." -uspamtagger -p".$s_h->{'password'}." st_spool spam_$l -w \"in_master='0' and ( date_in < '$date' or ( date_in = '$date' and time_in < '$time') )\"";
       output("($sid) - exporting spam_$l ...");
       my $res = `$dumpcmd > $TMPDIR/spam_$l-$sid.sql`;
       if ( ! $res eq '' ) {
@@ -78,7 +78,7 @@ foreach my $s_h (@slavesarray) {
       }
 
       output("($sid) - reimporting spam_$l ...");
-      my $exportcmd = $conf->get_option('SRCDIR')."/bin/st_mysql -m st_spool < $TMPDIR/spam_$l-$sid.sql";
+      my $exportcmd = $conf->get_option('SRCDIR')."/bin/st_mariadb -m st_spool < $TMPDIR/spam_$l-$sid.sql";
       $res = `$exportcmd`;
       if ( ! $res eq '' ) {
          print "Something went wrong while reimporting spams on table: spam_$l from host ".$s_h->{'hostname'}.":\n";

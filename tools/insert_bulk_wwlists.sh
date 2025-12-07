@@ -27,7 +27,7 @@ if [ "$ISMASTER" = "Y" ] || [ "$ISMASTER" = "y" ]; then
   sed -i 's/"---"/""/' $FILE
 
   sleep 1
-  st_mysql -m st_config <$FILE
+  st_mariadb -m st_config <$FILE
 else
   echo "Please run this script on your master host"
 fi

@@ -82,9 +82,9 @@ function messagesniffer() {
     apt-get update &>>$LOGFILE
     env PATH=$PATH:/usr/sbin:/sbin apt-get install --yes --force-yes st-messagesniffer &>>$LOGFILE
     printf "Installing MessageSniffer ... \n"
-    echo "UPDATE prefilter SET position=position+1 WHERE position > 1;" | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
-    echo "INSERT INTO prefilter VALUES(NULL, 1, 'MessageSniffer', 1, 2, 0, 1, 'pos_decisive', 10, 2000000, 'X-MessageSniffer', 1, 1, 1);" | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
-    echo "UPDATE MessageSniffer set licenseid='${license_id}', authentication='${auth_code}';" | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
+    echo "UPDATE prefilter SET position=position+1 WHERE position > 1;" | ${SRCDIR}/bin/st_mariadb -m st_config &>>$LOGFILE
+    echo "INSERT INTO prefilter VALUES(NULL, 1, 'MessageSniffer', 1, 2, 0, 1, 'pos_decisive', 10, 2000000, 'X-MessageSniffer', 1, 1, 1);" | ${SRCDIR}/bin/st_mariadb -m st_config &>>$LOGFILE
+    echo "UPDATE MessageSniffer set licenseid='${license_id}', authentication='${auth_code}';" | ${SRCDIR}/bin/st_mariadb -m st_config &>>$LOGFILE
     printf "Restarting MailScanner ... \n"
 
     printf "MessageSniffer has been correctly installed \n"
@@ -254,13 +254,13 @@ EOF
   # Enable SpamHaus at PreRBLs level
   ### ZEN
   if [[ "$shpackage" -eq "1" || "$shpackage" -eq "3" ]]; then
-    echo 'UPDATE PreRBLs set lists=concat(lists, " SPAMHAUSZEN");' | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
-    echo 'UPDATE antispam set sa_rbls=concat(sa_rbls, " SPAMHAUSZEN");' | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
+    echo 'UPDATE PreRBLs set lists=concat(lists, " SPAMHAUSZEN");' | ${SRCDIR}/bin/st_mariadb -m st_config &>>$LOGFILE
+    echo 'UPDATE antispam set sa_rbls=concat(sa_rbls, " SPAMHAUSZEN");' | ${SRCDIR}/bin/st_mariadb -m st_config &>>$LOGFILE
   fi
   ### Content
   if [[ "$shpackage" -eq "1" || "$shpackage" -eq "3" ]]; then
-    echo 'UPDATE UriRBLs set rbls=concat(lists, " SPAMHAUSDBL SPAMHAUSHBL SPAMHAUSZRD");' | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
-    echo 'UPDATE antispam set sa_rblsconcat(sa_rbls, " SPAMHAUSDBL SPAMHAUSHBL SPAMHAUSZRD");' | ${SRCDIR}/bin/st_mysql -m st_config &>>$LOGFILE
+    echo 'UPDATE UriRBLs set rbls=concat(lists, " SPAMHAUSDBL SPAMHAUSHBL SPAMHAUSZRD");' | ${SRCDIR}/bin/st_mariadb -m st_config &>>$LOGFILE
+    echo 'UPDATE antispam set sa_rblsconcat(sa_rbls, " SPAMHAUSDBL SPAMHAUSHBL SPAMHAUSZRD");' | ${SRCDIR}/bin/st_mariadb -m st_config &>>$LOGFILE
   fi
 
   printf "SpamHaus installed. \n"
@@ -364,64 +364,12 @@ function eset() {
     exit 1
   fi
 
-  echo "UPDATE scanner set active = 1 WHERE name = 'esetsefs';" | /usr/spamtagger/bin/st_mysql -m st_config
+  echo "UPDATE scanner set active = 1 WHERE name = 'esetsefs';" | /usr/spamtagger/bin/st_mariadb -m st_config
   printf "Restarting services ... \n"
   /usr/spamtagger/etc/init.d/mailscanner restart 2>/dev/null
 
   echo ${FONT_BOLD}${FONT_GREEN}ESET enabled Successfully${FONT_RESET}
 
-  exit 0
-}
-
-function kaspersky() {
-  if [ "$MCVERSION" -lt "2016" ]; then
-    printf "You can't install Kaspersky option in smaller version than 2016.xx \n"
-    exit 1
-  fi
-
-  printf "Please provide Kaspersky licenses informations. \n"
-  read -p "The PATH to the Kaspersky license file (ended with .key or .KEY): " key_file
-
-  # check if file exists
-  if [[ ! -e ${key_file} ]]; then
-    echo "The file ${key_file} doesnt exists"
-    exit 1
-  fi
-
-  if [[ $(echo $key_file | sed 's/.KEY/\L&/g') != *.key ]]; then
-    echo "The file ${key_file} is not a Kaspersky key file"
-    exit 1
-  fi
-
-  printf "Installing Kaspersky ... \n"
-  KASPERSKYSCANNER=/opt/kaspersky
-  KASPERSKYUPDATER=/opt/kaspersky-updater
-
-  # Install the new Kaspersky-64-2.0
-  apt-get update &>>$LOGFILE
-  env PATH=$PATH:/usr/sbin:/sbin apt-get install --yes --force-yes kaspersky-64-2.0 &>>$LOGFILE
-
-  # Update Kaspersky databases
-  printf "Updating Kaspersky databases ... \n"
-  $SRCDIR/etc/init.d/kaspersky stop &>>$LOGFILE
-  rm -f $KASPERSKYSCANNER/bin/*.key &>>$LOGFILE
-  rm -f $KASPERSKYUPDATER/bin/*.key &>>$LOGFILE
-  cp -f ${key_file} $KASPERSKYSCANNER/bin/$(basename $key_file | sed 's/.KEY/\L&/g') &>>$LOGFILE
-  cp -f ${key_file} $KASPERSKYUPDATER/bin/$(basename $key_file | sed 's/.KEY/\L&/g') &>>$LOGFILE
-  ls $KASPERSKYUPDATER/bin/*.key &>>$LOGFILE
-
-  if $KASPERSKYUPDATER/bin/keepup2date8.sh --licinfo --simplelic | grep "0x00000000. Success"; then
-    $KASPERSKYUPDATER/bin/keepup2date8.sh --simplelic --download &>>$LOGFILE
-    $SRCDIR/etc/init.d/kaspersky restart &>>$LOGFILE
-    echo "EXEC: Kaspersky updated" &>>$LOGFILE
-  else
-    $KASPERSKYUPDATER/bin/keepup2date8.sh --licinfo --simplelic
-    printf "Error during the update of Kaspersky databases. \n Notes for SpamTagger support: %s"
-  fi
-  $KASPERSKYUPDATER/bin/keepup2date8.sh --licinfo --simplelic | sed -n '8p' &>>$LOGFILE
-  printf "${FONT_BOLD}${FONT_RED}IMPORTANT: ${FONT_RESET}"
-  printf "In order to enable Kaspersky, please restart the filtering engine: \n"
-  printf "\t ${SRCDIR}/etc/init.d/mailscanner restart \n"
   exit 0
 }
 

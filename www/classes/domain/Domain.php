@@ -92,7 +92,7 @@ class Domain extends PrefHandler {
 
   /**
    * Authentication connector object used by the domain
-   * This is used to define how users will be authenticated (remote via imap/pop/ldap etc.. or local via mysql)
+   * This is used to define how users will be authenticated (remote via imap/pop/ldap etc.. or local via mariadb)
    * @var Connector
    */
   private $connector;

@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -46,14 +47,14 @@ dump_file("clamd.conf");
 dump_file("clamspamd.conf");
 
 # recreate links
-my $cmd = "rm /opt/clamav/etc/*.conf >/dev/null 2>&1";
+my $cmd = "rm /etc/clamav/*.conf >/dev/null 2>&1";
 `$cmd`;
-$cmd = "ln -s $SRCDIR/etc/clamav/*.conf /opt/clamav/etc/ >/dev/null 2>&1";
+$cmd = "ln -s $SRCDIR/etc/clamav/*.conf /etc/clamav/ >/dev/null 2>&1";
 `$cmd`;
 
-$cmd = "rm /opt/clamav/share/clamav/* >/dev/null 2>&1";
+$cmd = "rm /var/lib/clamav/* >/dev/null 2>&1";
 `$cmd`;
-$cmd = "ln -s $VARDIR/spool/clamav/* /opt/clamav/share/clamav/ >/dev/null 2>&1";
+$cmd = "ln -s $VARDIR/spool/clamav/* /var/lib/clamav/ >/dev/null 2>&1";
 `$cmd`;
 $cmd = "chown clamav:clamav -R $VARDIR/spool/clamav $VARDIR/log/clamav/ >/dev/null 2>&1";
 `$cmd`;

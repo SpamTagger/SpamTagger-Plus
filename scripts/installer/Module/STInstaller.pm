@@ -32,7 +32,7 @@ use lib '/usr/spamtagger/lib/';
 use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
 use ReadConfig();
-use STUtils qw( valid_rfc822_email );
+use InputValidator qw( validate );
 
 my $conf = {};
 $conf = ReadConfig::get_instance() if (-e '/etc/spamtagger.conf');
@@ -56,7 +56,7 @@ sub new($class) {
     install_variables => {
       'WEBADMINPWD' => undef,
       'ORGANIZATION' => undef,
-      'STHOSTNAME' => 'spamtagger',
+      'HOSTNAME' => undef,
       'CLIENTTECHMAIL' => undef,
     },
     default_configs => {
@@ -90,7 +90,7 @@ sub new($class) {
   my $hostname = `hostname`;
   chomp($hostname);
   $this->{config_variables}->{HELONAME} = $hostname unless (defined($this->{'config_variables'}->{'HELONAME'} && $this->{'config_variables'}->{'HELONAME'} ne ''));
-  $this->{install_variables}->{STHOSTNAME} = $hostname unless (defined($this->{'install_variables'}->{'STHOSTNAME'} && $this->{'install_variables'}->{'STHOSTNAME'} ne ''));
+  $this->{install_variables}->{HOSTNAME} = $hostname unless (defined($this->{'install_variables'}->{'HOSTNAME'} && $this->{'install_variables'}->{'HOSTNAME'} ne ''));
 
   return bless $this, $class;
 }
@@ -98,6 +98,7 @@ sub new($class) {
 sub run($this) {
   my @basemenu = (
     'Host ID', 
+    'Hostname', 
     'Web admin password', 
     'Database password', 
     'Admin details',
@@ -121,33 +122,45 @@ sub do_menu($this, $basemenu, $currentstep, $error) {
   return 0 if $res eq 'Exit';
 
   if ($res eq 'Host ID') {
-    my $suggest = 1;
+    my $host_id;
     do {
-      print("Host ID must be a non-zero integer. Try again.\n") if ($suggest != 1);
-      $suggest = $this->host_id()
-    } while ($suggest !~ /[1-9]\d*/);
-    $this->{'config_variables'}->{'HOSTID'} = $suggest;
+      print("Host ID must be a non-zero integer. Try again.\n") if (defined($host_id));
+      $host_id = $this->host_id();
+      $host_id =~ s/^0*//;
+    } until (validate('host_id', $host_id));
+    $this->{'config_variables'}->{'HOSTID'} = $host_id;
     $$currentstep = 2;
+    return 1;
+  }
+
+  if ($res eq 'Hostname') {
+    my $hostname;
+    do {
+      print("Hostname must be a valid FQDN. Try again.\n") if (defined($hostname));
+      $hostname = $this->hostname();
+    } until (validate('fqdn', $hostname));
+    $this->{'install_variables'}->{'HOSTNAME'} = $hostname;
+    $$currentstep = 3;
     return 1;
   }
 
   if ($res eq 'Web admin password') {
     $this->{'install_variables'}->{'WEBADMINPWD'} = $this->web_admin_pwd();
-    $$currentstep = 3;
+    $$currentstep = 4;
     return 1;
   }
 
   if ($res eq 'Database password') {
     $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} = $this->database_pwd();
     $this->{'config_variables'}->{'MASTERPWD'} = $this->{'config_variables'}->{'MYSPAMTAGGERPWD'};
-    $$currentstep = 4;
+    $$currentstep = 5;
     return 1;
   }
 
   if ($res eq 'Admin details') {
     $this->{'install_variables'}->{'ORGANIZATION'} = $this->organization();
     $this->{'install_variables'}->{'CLIENTTECHMAIL'} = $this->support_email();
-    $$currentstep = 5;
+    $$currentstep = 6;
     return 1;
   }
 
@@ -158,6 +171,8 @@ sub do_menu($this, $basemenu, $currentstep, $error) {
         $$error = "Fatal error: Failed to open $this->{'conffile'} for writing. Quitting.\n";
       } elsif ($ret == 254) {
         $$error = "Installation abandoned\n";
+      } elsif ($ret == 253) {
+        $$error = "Debian bootstrap command ($this->{'config_variables'}->{'SRCDIR'}/debian_bootstrap/install.sh) did not complete successfully.\n";
       } else {
         $$error = "Missing necessary variable. Please follow all earlier steps before applying.\n";
         $$currentstep = $ret;
@@ -174,6 +189,14 @@ sub host_id($this) {
   my $suggest = $this->{'config_variables'}->{'HOSTID'} //= $this->{'default_configs'}->{'HOSTID'};
   $suggest = 1 if ($suggest eq '');
   $dlg->build('Enter the unique ID of this SpamTagger Plus in your infrastucture', $suggest);
+  return $dlg->display();
+}
+
+sub hostname($this) {
+  my $dlg = $this->{'dfact'}->simple();
+  my $suggest = $this->{'config_variables'}->{'HOSTNAME'} //= `hostname`;
+  $suggest = '' if ($suggest !~ m/[\w\-]+\.\w+/);
+  $dlg->build('Enter the public hostname of this SpamTagger Plus appliance', $suggest);
   return $dlg->display();
 }
 
@@ -252,8 +275,8 @@ sub support_email($this) {
   my $suggest;
   if (defined($this->{'install_variables'}->{'CLIENTTECHMAIL'})) {
     $suggest = $this->{'install_variables'}->{'CLIENTTECHMAIL'};
-  } elsif (valid_rfc822_email('a@'.$this->{'install_variables'}->{'ORGANIZATION'})) {
-    $suggest = lc('support@'.$this->{'install_variables'}->{'ORGANIZATION'});
+  } elsif (validate('rfc822_email','support@'.$this->{'install_variables'}->{'HOSTNAME'})) {
+    $suggest = lc('support@'.$this->{'install_variables'}->{'HOSTNAME'});
   } else {
     $suggest = 'root@localhost';
   }
@@ -262,17 +285,18 @@ sub support_email($this) {
     print("$answer is not a valid email address. Try again.\n") if ($answer);
     $dlg->build('Support email address for your users', $suggest);
     $answer = $dlg->display();
-  } until (valid_rfc822_email($answer));
+  } until (validate('public_email', $answer));
   return lc($answer);
 }
 
 sub check_variables($this) {
-  return 1 unless (defined($this->{'config_variables'}->{'HOSTID'}) && $this->{'config_variables'}->{'HOSTID'} ne '');
-  return 2 unless (defined($this->{'install_variables'}->{'WEBADMINPWD'}) && $this->{'install_variables'}->{'WEBADMINPWD'} ne '' && $this->{'install_variables'}->{'WEBADMINPWD'} ne 'STPassw0rd');
-  return 3 unless (defined($this->{'config_variables'}->{'MYSPAMTAGGERPWD'}) && $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} ne '' && $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} ne 'STPassw0rd');
-  return 3 unless (defined($this->{'config_variables'}->{'MASTERPWD'}) && $this->{'config_variables'}->{'MASTERPWD'} ne 'STPassw0rd');
-  return 4 unless (defined($this->{'install_variables'}->{'ORGANIZATION'}) && $this->{'install_variables'}->{'ORGANIZATION'} ne '');
-  return 4 unless (defined($this->{'install_variables'}->{'CLIENTTECHMAIL'}) && $this->{'install_variables'}->{'CLIENTTECHMAIL'} ne '');
+  return 1 unless (defined($this->{'config_variables'}->{'HOSTID'}) && validate('host_id', $this->{'config_variables'}->{'HOSTID'}));
+  return 2 unless (defined($this->{'install_variables'}->{'HOSTNAME'}) && validate('fqdn', $this->{'install_variables'}->{'HOSTNAME'}));
+  return 3 unless (defined($this->{'install_variables'}->{'WEBADMINPWD'}) && $this->{'install_variables'}->{'WEBADMINPWD'} ne '' && $this->{'install_variables'}->{'WEBADMINPWD'} ne 'STPassw0rd');
+  return 4 unless (defined($this->{'config_variables'}->{'MYSPAMTAGGERPWD'}) && $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} ne '' && $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} ne 'STPassw0rd');
+  return 4 unless (defined($this->{'config_variables'}->{'MASTERPWD'}) && $this->{'config_variables'}->{'MASTERPWD'} ne 'STPassw0rd');
+  return 5 unless (defined($this->{'install_variables'}->{'ORGANIZATION'}) && $this->{'install_variables'}->{'ORGANIZATION'} ne '');
+  return 6 unless (defined($this->{'install_variables'}->{'CLIENTTECHMAIL'}) && $this->{'install_variables'}->{'CLIENTTECHMAIL'} ne '');
   return 0;
 }
 
@@ -302,7 +326,8 @@ sub apply_configuration($this) {
 
   unless ($this->is_bootstrapped) {
     print "Configuring Debian...\n";
-    `cd $this->{SRCDIR}; debian-bootstrap/install.sh`;
+    #`cd $this->{'config_variables'}->{'SRCDIR'}; debian-bootstrap/install.sh`;
+    #return 253 unless ($this->is_bootstrapped);
   }
   foreach (keys(%{$this->{'config_variables'}})) {
     $ENV{$_} = $this->{'config_variables'}->{$_}; ## no critic
@@ -311,8 +336,8 @@ sub apply_configuration($this) {
     $ENV{$_} = $this->{'install_variables'}->{$_}; ## no critic
   }
   $this->{'install_variables'}->{'WEBADMINPWD'} = $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} if ($this->{'install_variables'} eq 'SAME AS DATABASE PASSWORD');
-  print("Running $this->{'config_variables'}->{SRCDIR}/install/install.sh. This will take some time. Installation logs will be saved to /tmp/spamtagger-installer.log\n");
-  `LOGFILE="/tmp/spamtagger-installer.log" FORCEDBREINSTALL=1 $this->{'config_variables'}->{SRCDIR}/install/install.sh`;
+  print("Running $this->{'config_variables'}->{'SRCDIR'}/install/install.sh. This will take some time. Installation logs will be saved to /tmp/spamtagger-installer.log\n");
+  `LOGFILE="/tmp/spamtagger-installer.log" FORCEDBREINSTALL=1 $this->{'config_variables'}->{'SRCDIR'}/install/install.sh`;
 
   my $dlg = $this->{'dfact'}->simple();
   $dlg->clear();
@@ -328,18 +353,12 @@ sub apply_configuration($this) {
 }
 
 sub is_bootstrapped($this) {
-  # TODO: Update to look for mc-exim instead when available
-  # if (-d '/opt/exim4/bin/exim') {
-  if (-e '/opt/exim4/bin/exim') {
-    return 1;
-  }
+  return 1 if (-e '/opt/exim4/bin/exim');
   return 0;
 }
 
 sub is_installed($this) {
-  if ( -e '/etc/spamtagger.conf' ) {
-    return 1;
-  }
+  return 1 if ( -e '/etc/spamtagger.conf' );
   return 0;
 }
 

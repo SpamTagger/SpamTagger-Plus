@@ -28,7 +28,7 @@ sub my_own_exit ($exit_code = 0) {
   exit($exit_code);
 }
 
-my $slave_status = `echo 'show slave status\\G' |/usr/spamtagger/bin/st_mysql -s`;
+my $slave_status = `echo 'show slave status\\G' |/usr/spamtagger/bin/st_mariadb -s`;
 
 if ($slave_status eq '') {
   # Réparer resync_db.sh

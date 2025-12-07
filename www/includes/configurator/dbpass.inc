@@ -24,7 +24,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
   die ('Try again later.');
 ?>
 	<h2 class="text-center">Step: <?php echo $validStep['title'] ?></h2>
-	<p>This password will be set for mysql root and spamtagger account.</p>
+	<p>This password will be set for mariadb root and spamtagger account.</p>
 	<p class="text-danger">Please change this password only before setting a cluster. Otherwise, unset your cluster and reset it after this change.</p>
         <form class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF']."?step=".$_GET['step']; ?>" method="post">
 	  <div class="form-group">

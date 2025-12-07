@@ -24,7 +24,7 @@ class Default_Model_Logfile
 	      'freshclam' =>  array('basefile' => 'clamav/freshclam.log', 'cat' => 'Updates', 'name' => 'Antivirus engine', 'pos' => 1),
 
 	      'apache' => array('basefile' => 'apache/access.log', 'cat' => 'Misc', 'name' => 'Web server', 'pos' => 1),
-	      'mysql_slave' => array('basefile' => 'mysql_slave/mysql.log', 'cat' => 'Misc', 'name' => 'Local database', 'pos' => 2),
+	      'mariadb_slave' => array('basefile' => 'mariadb_slave/mariadb.log', 'cat' => 'Misc', 'name' => 'Local database', 'pos' => 2),
 	);
 
 	protected $_values = array(

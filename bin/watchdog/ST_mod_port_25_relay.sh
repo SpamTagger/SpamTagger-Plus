@@ -26,7 +26,7 @@ my_own_exit() {
 
 #### MAIN
 #### Lorsque le module a trouvé une erreur, il est censé sortir avec my_own_exit "#ERREUR" (avec #ERREUR : chiffre : retour de la commande)
-BLOCK25AUTH=$(echo "SELECT block_25_auth FROM mta_config WHERE stage = 1;" | st_mysql -s st_config | tail -n 1)
+BLOCK25AUTH=$(echo "SELECT block_25_auth FROM mta_config WHERE stage = 1;" | st_mariadb -s st_config | tail -n 1)
 # Le jour dernier
 if [ $BLOCK25AUTH ] && [[ "$BLOCK25AUTH" -eq "0" ]]; then
   LOG_FILE="/var/spamtagger/log/exim_stage1/mainlog"

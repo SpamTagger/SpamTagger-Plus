@@ -62,7 +62,7 @@ if [[ "$ret" -eq "1" ]]; then
 fi
 
 # Check if customer choose to send anonymous statistics
-ACCEPT_SEND_STATISTICS=$(echo "SELECT accept_send_statistics FROM registration LIMIT 1\G" | $SRCDIR/bin/st_mysql -m st_community | grep -v "*" | cut -d ':' -f2 | tr -d '[:space:]')
+ACCEPT_SEND_STATISTICS=$(echo "SELECT accept_send_statistics FROM registration LIMIT 1\G" | $SRCDIR/bin/st_mariadb -m st_community | grep -v "*" | cut -d ':' -f2 | tr -d '[:space:]')
 if [ "$ACCEPT_SEND_STATISTICS" != "1" ]; then
   exit 0
 fi

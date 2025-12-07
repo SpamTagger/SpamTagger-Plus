@@ -52,7 +52,7 @@ fi
 PIDFILE=$VARDIR/run/httpd.pid
 #
 # the path to your httpd binary, including options if necessary
-HTTPD="/opt/apache2/bin/httpd -f $SRCDIR/etc/apache/httpd.conf"
+HTTPD="/usr/sbin/apache2 -f $SRCDIR/etc/apache/httpd.conf"
 #
 # a command that outputs a formatted text version of the HTML at the
 # url given on the command line.  Designed for lynx, however other
@@ -77,9 +77,9 @@ prepare() {
     chown spamtagger:spamtagger $sessiondb
   fi
   rm /etc/apache/php.ini >/dev/null 2>&1
-  rm /etc/opt/php5/php.ini >/dev/null 2>&1
+  rm /etc/php/8.4/apache/php.ini >/dev/null 2>&1
   ln -s $SRCDIR/etc/apache/php.ini /etc/apache/php.ini >/dev/null 2>&1
-  ln -s $SRCDIR/etc/apache/php.ini /etc/opt/php5/php.ini >/dev/null 2>&1
+  ln -s $SRCDIR/etc/apache/php.ini /etc/php/8.4/apache/php.ini >/dev/null 2>&1
   chown -R $VARDIR/log/mailscanner >/dev/null 2>&1
   chown -R spamtagger $VARDIR/run/configurator
 
@@ -150,7 +150,7 @@ EOF
 
 createStubStatus() {
   ## create stub status files
-  hosts=$(echo "select hostname from slave" | $SRCDIR/bin/st_mysql -s st_config | sed '1d')
+  hosts=$(echo "select hostname from slave" | $SRCDIR/bin/st_mariadb -s st_config | sed '1d')
   for h in $hosts; do
     file=$VARDIR/run/spamtagger.$h.status
     if [ ! -f $file ]; then

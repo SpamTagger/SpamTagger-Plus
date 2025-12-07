@@ -4,6 +4,7 @@
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -42,7 +43,6 @@ fi
 ## export some environment variables
 export DB_FILE_INCLUDE=/usr/db/include
 export DB_FILE_LIB=/usr/db/lib
-export PATH=$PATH:/opt/mysql5/bin:/usr/rrdtools/bin:/opt/clamav/bin
 export ZLIB_INCLUDE=/usr/zlib/include
 export ZLIB_LIB=/usr/zlib/lib
 export BUILD_ZLIB=no

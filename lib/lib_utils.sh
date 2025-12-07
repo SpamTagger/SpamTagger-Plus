@@ -49,7 +49,7 @@ function removeLockFile() {
 }
 
 function slaveSynchronized() {
-  slave_status=$(echo "SHOW SLAVE STATUS\G" | ${SRCDIR}/bin/st_mysql -s)
+  slave_status=$(echo "SHOW SLAVE STATUS\G" | ${SRCDIR}/bin/st_mariadb -s)
   Last_IO_Errno=$(echo "${slave_status}" | awk '/Last_IO_Errno/{print $NF}')
   Last_SQL_Errno=$(echo "${slave_status}" | awk '/Last_SQL_Errno/{print $NF}')
   if [[ $Last_IO_Errno == "0" && $Last_SQL_Errno == "0" ]]; then

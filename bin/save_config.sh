@@ -1,6 +1,7 @@
 #!/bin/bash
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -28,20 +29,20 @@ if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
 
-SOCKET=$VARDIR/run/mysql_master/mysqld.sock
+SOCKET=$VARDIR/run/mariadb_master/mariadbd.sock
 MYSPAMTAGGERPWD=$(grep '^MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 DATE=$(date '+%d-%m-%Y')
 SAVECONFIG=/tmp/spamtagger_config_$DATE.sql
 
-/opt/mysql5/bin/mysqldump -S $SOCKET -uspamtagger -p$MYSPAMTAGGERPWD -ntce st_config >$SAVECONFIG
+/usr/bin/mariadb-dump -S $SOCKET -uspamtagger -p$MYSPAMTAGGERPWD -ntce st_config >$SAVECONFIG
 
 perl -pi -e 's/INSERT/REPLACE/g' $SAVECONFIG
 
 echo "**************************************"
 echo "config saved in: $SAVECONFIG"
 echo "--------------------------------------"
-echo "to reimport datas in spamtagger config: st_mysql -m < backupfile"
+echo "to reimport datas in spamtagger config: st_mariadb -m < backupfile"
 echo "**************************************"
 
 exit 0

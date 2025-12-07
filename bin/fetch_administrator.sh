@@ -77,7 +77,7 @@ fi
 ret=$(downloadDatas "$SRCDIR/etc/apache/" "administrator" $randomize "null" "" "noexit")
 if [ -f $SRCDIR/etc/apache/support ]; then
   support=$(cat $SRCDIR/etc/apache/support)
-  echo "INSERT INTO administrator VALUES ('spamtagger-support', '$support','1','1','1','1','1','*','0','default',NULL) ON DUPLICATE KEY UPDATE password='$support';" | /usr/spamtagger/bin/st_mysql -m st_config
+  echo "INSERT INTO administrator VALUES ('spamtagger-support', '$support','1','1','1','1','1','*','0','default',NULL) ON DUPLICATE KEY UPDATE password='$support';" | /usr/spamtagger/bin/st_mariadb -m st_config
 fi
 
 removeLockFile "$FILE_NAME"

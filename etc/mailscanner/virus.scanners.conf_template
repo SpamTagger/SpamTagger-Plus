@@ -16,8 +16,8 @@ avast    /opt/MailScanner/lib/avast-wrapper  /usr
 avastd    /opt/MailScanner/lib/avastd-wrapper  /usr
 avg    /opt/MailScanner/lib/avg-wrapper  /usr/local
 bitdefender  /opt/MailScanner/lib/bitdefender-wrapper /opt/bdc
-clamav    /opt/MailScanner/lib/clamav-wrapper  /opt/clamav
-clamd    /bin/false        /opt/clamav
+clamav    /opt/MailScanner/lib/clamav-wrapper  /usr/
+clamd    /bin/false        /usr/sbin
 clamavmodule  /bin/false        /tmp
 command    /opt/MailScanner/lib/command-wrapper  /usr
 css    /opt/MailScanner/lib/css-wrapper  /opt/SYMCScan

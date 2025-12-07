@@ -100,10 +100,10 @@ foreach my $database (split(',', $databases)) {
   output("Connected to database");
 
   if ($checkmode) {
-    ## mysql check mode
+    ## mariadb check mode
     my_check_repair_database(\$db, 0);
   } elsif ($repairmode) {
-    ## mysql repair mode
+    ## mariadb repair mode
     my_check_repair_database(\$db, 1);
   } elsif ($updatemode) {
     compare_update_database(\$db, $database, 1);
@@ -272,29 +272,29 @@ sub my_check_repair_database ($db_ref, $repair) {
 sub add_database ($dbtype, $dbname) {
   $dbtype = 'master' if ($dbtype ne 'slave');
 
-  my $mysqld = $conf->get_option('SRCDIR')."/etc/init.d/mysql_".$dbtype;
+  my $mariadbd = $conf->get_option('SRCDIR')."/etc/init.d/mariadb_".$dbtype;
   print "Restarting $dbtype database to change permissions...\n";
-  `$mysqld restart nopass 2>&1`;
+  `$mariadbd restart nopass 2>&1`;
   sleep(20);
-  my $dbr = DB->db_connect($dbtype, 'mysql');
+  my $dbr = DB->db_connect($dbtype, 'mariadb');
   print "Creating database $dbname...\n";
   $dbr->execute("CREATE DATABASE $dbname");
   print "Adding new permissions...\n";
   $dbr->execute("INSERT INTO db VALUES('%', '".$dbname."', 'spamtagger', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y')");
   $dbr->db_disconnect();
   print "Restarting $dbtype database with new permissions...\n";
-  `$mysqld restart 2>&1`;
+  `$mariadbd restart 2>&1`;
   sleep(20);
   my $descfile = $conf->get_option('SRCDIR')."/install/dbs/".$dbname.".sql";
   if (-f $descfile) {
     print "Creating schema...\n";
-    my $mysql = $conf->get_option('SRCDIR')."/bin/st_mysql";
+    my $mariadb = $conf->get_option('SRCDIR')."/bin/st_mariadb";
     if ($dbtype eq 'slave') {
-      $mysql .= " -s $dbname";
+      $mariadb .= " -s $dbname";
     } else {
-      $mysql .= " -m $dbname";
+      $mariadb .= " -m $dbname";
     }
-    `$mysql < $descfile 2>&1`;
+    `$mariadb < $descfile 2>&1`;
   }
 
   print "Done.\n";
@@ -305,9 +305,9 @@ sub add_database ($dbtype, $dbname) {
 ## check replication status and try to fix if wanted
 sub check_replication_status ($fix) {
   my $haserror = 0;
-  my $logfile = $conf->get_option('VARDIR')."/log/mysql_slave/mysql.log";
+  my $logfile = $conf->get_option('VARDIR')."/log/mariadb_slave/mariadb.log";
   if (! -f $logfile) {
-    print "WARNING: slave mysql log file not found ! ($logfile)\n";
+    print "WARNING: slave mariadb log file not found ! ($logfile)\n";
     return 0;
   }
   my $outlog = `tail -4 $logfile`;
@@ -327,7 +327,7 @@ sub check_replication_status ($fix) {
       my $query = "ALTER TABLE $3 DROP COLUMN $1;";
       my $dbr = DB->db_connect('slave', $2);
       if ( $dbr->execute($query)) {
-       my $cmd = $conf->get_option('SRCDIR')."/etc/init.d/mysql_slave restart >/dev/null 2>&1";
+       my $cmd = $conf->get_option('SRCDIR')."/etc/init.d/mariadb_slave restart >/dev/null 2>&1";
        my $resexec = `$cmd`;
        print " should be fixed!\n";
       } else {
@@ -360,7 +360,7 @@ sub compare_update_database ($db_ref, $dbname, $update) {
         if ($dbtype eq 'slave') {
           $type = '-s';
         }
-        my $cmd = $conf->get_option('SRCDIR')."/bin/st_mysql $type < ".$reftables{$table} ." 2>&1";
+        my $cmd = $conf->get_option('SRCDIR')."/bin/st_mariadb $type < ".$reftables{$table} ." 2>&1";
         my $res = `$cmd`;
         if (! $res eq '' ) {
           print "ERROR, cannot create database: $res\nABORTED\n";

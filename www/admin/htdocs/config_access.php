@@ -25,7 +25,7 @@ global $sysconf_;
 global $admin_;
 
 /// list of services to be managed
-$services_name = array('web', 'mysql', 'snmp', 'ssh', 'mail', 'soap');
+$services_name = array('web', 'mariadb', 'snmp', 'ssh', 'mail', 'soap');
 $services = array();
 
 // check authorizations
@@ -85,9 +85,9 @@ $replace = array(
         "__WEBGUIPORT__" => $services['web']->getDefaultPort(),
         "__WEBGUIPROTOCOL__" => $services['web']->getDefaultProtocol(),
         "__FORM_INPUTWEBGUIIPS__" => $aform->input('web_ips', 30, $services['web']->getAllowedIPSString()),
-        "__DBPORT__" => $services['mysql']->getDefaultPort(),
-        "__DBPROTOCOL__" => $services['mysql']->getDefaultProtocol(),
-        "__FORM_INPUTDBIPS__" => $aform->input('mysql_ips', 30, $services['mysql']->getAllowedIPSString()),
+        "__DBPORT__" => $services['mariadb']->getDefaultPort(),
+        "__DBPROTOCOL__" => $services['mariadb']->getDefaultProtocol(),
+        "__FORM_INPUTDBIPS__" => $aform->input('mariadb_ips', 30, $services['mariadb']->getAllowedIPSString()),
         "__SNMPDPORT__" => $services['snmp']->getDefaultPort(),
         "__SNMPPROTOCOL__" => $services['snmp']->getDefaultProtocol(),
         "__FORM_INPUTSNMPIPS__" => $aform->input('snmp_ips', 30, $services['snmp']->getAllowedIPSString()),

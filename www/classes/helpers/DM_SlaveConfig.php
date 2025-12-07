@@ -21,7 +21,7 @@ class DM_SlaveConfig extends DataManager {
     public function __construct() {
         parent :: __construct();
 
-        $socket = $this->getConfig('VARDIR')."/run/mysql_slave/mysqld.sock";
+        $socket = $this->getConfig('VARDIR')."/run/mariadb_slave/mariadbd.sock";
         $this->setOption('SOCKET', $socket);
         $this->setOption('DATABASE', 'st_config');
     }

@@ -45,7 +45,7 @@ class Default_Model_DomainPrefMapper
         foreach ($conf->getAvailableParams() as $key) {
         	$conf->setParam($key, $row->$key);
         }
-        if ($conf->getParam('auth_type') == 'mysql') {
+        if ($conf->getParam('auth_type') == 'mariadb') {
            $conf->setParam('auth_type', 'local');
         }
     }

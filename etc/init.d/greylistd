@@ -14,8 +14,8 @@ if [ "VARDIR" = "" ]; then
 fi
 
 config=$SRCDIR/etc/greylistd/greylistd.conf
-client=/opt/greylistd/bin/greylist
-daemon=/opt/greylistd/sbin/greylistd
+client=/usr/bin/greylist
+daemon=/usr/sbin/greylistd
 rundir=$VARDIR/run/greylistd
 datadir=$VARDIR/spool/greylistd
 pidfile=$rundir/pid

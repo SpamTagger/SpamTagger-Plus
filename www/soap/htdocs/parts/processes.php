@@ -17,8 +17,8 @@ $services_ = array(
   'MTA4' => array('restartfile' => "exim_stage4.rn", 'starter' => "S_exim_stage4.sh", 'stopper' => "H_exim_stage4.sh", 'restarter' => "R_exim_stage4.sh"),
   'ENGINE' => array('restartfile' => "mailscanner.rn", 'starter' => "S_mailscanner.sh", 'stopper' => "H_mailscanner.sh", 'restarter' => "R_mailscanner.sh"),
   'HTTPD' => array('restartfile' => "apache.rn", 'starter' => "S_apache.sh", 'stopper' => "H_exim_apache.sh", 'restarter' => "R_apache.sh"),
-  'MASTERDB' => array('restartfile' => "mysql_master.rn", 'starter' => "S_mysql_master.sh", 'stopper' => "H_mysql_master.sh", 'restarter' => "R_mysql_master.sh"),
-  'SLAVEDB' => array('restartfile' => "mysql_slave.rn", 'starter' => "S_mysql_slave.sh", 'stopper' => "H_mysql_slave.sh", 'restarter' => "R_mysql_slave.sh"),
+  'MASTERDB' => array('restartfile' => "mariadb_master.rn", 'starter' => "S_mariadb_master.sh", 'stopper' => "H_mariadb_master.sh", 'restarter' => "R_mariadb_master.sh"),
+  'SLAVEDB' => array('restartfile' => "mariadb_slave.rn", 'starter' => "S_mariadb_slave.sh", 'stopper' => "H_mariadb_slave.sh", 'restarter' => "R_mariadb_slave.sh"),
   'SNMPD' => array('restartfile' => "snmpd.rn", 'starter' => "S_snmpd.sh", 'stopper' => "H_snmpd.sh", 'restarter' => "R_snmpd.sh"),
   'GREYLISTD' => array('restartfile' => "greylistd.rn", 'starter' => "S_greylistd.sh", 'stopper' => "H_greylistd.sh", 'restarter' => "R_greylistd.sh"),
   'CRON' => array('restartfile' => "cron.rn", 'starter' => "S_cron.sh", 'stopper' => "H_cron.sh", 'restarter' => "R_cron.sh"),
@@ -201,7 +201,7 @@ function restartService($sid, $service) {
     $res = trim($res);
 
 
-    # postpone the job to let the mysql sync finish the propagation
+    # postpone the job to let the mariadb sync finish the propagation
     # but first find out previous already pending jobs
     $atcheck = `atq | cut -f1`;
     $atjobs = preg_split('/\n/', $atcheck);

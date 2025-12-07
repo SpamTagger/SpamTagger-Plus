@@ -19,7 +19,7 @@ sub initialise ($class = $MODULE) {
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
   my $configfile = $confdir."/$class.cf";
   %conf = (
-    command => '/opt/clamav/bin/clamdscan --no-summary --config-file=__CONFIGFILE__ -',
+    command => '/usr/bin/clamdscan --no-summary --config-file=__CONFIGFILE__ -',
     header => "X-$class",
     putHamHeader => 0,
     putSpamHeader => 1,

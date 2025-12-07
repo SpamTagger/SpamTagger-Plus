@@ -35,7 +35,7 @@ class ConnectorSettings {
                               'none' => 'SQLSettings',
                               'local' => 'SQLSettings',
                               'sql' => 'SQLSettings',
-                              'mysql' => 'SQLSettings',
+                              'mariadb' => 'SQLSettings',
                               'imap'  => 'SimpleServerSettings',
                               'pop3'  => 'SimpleServerSettings',
                               'ldap'  => 'LDAPSettings',

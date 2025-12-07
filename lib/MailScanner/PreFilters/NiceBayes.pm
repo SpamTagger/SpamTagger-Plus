@@ -38,8 +38,9 @@ sub initialise($class = $MODULE) {
   my $confdir = MailScanner::Config::Value('prefilterconfigurations');
   my $configfile = $confdir."/$class.cf";
   %conf = (
-    command => '/opt/bogofilter/bin/bogofilter -c __CONFIGFILE__ -v',
-    configFile => '/opt/bogofilter/etc/bogofilter.cf',
+    command => '/usr/bin/bogofilter -c __CONFIGFILE__ -v',
+    # TODO: Move/create this file
+    configFile => $confdir.'/bogofilter.cf',
     header => "X-$class",
     putHamHeader => 0,
     putSpamHeader => 1,
