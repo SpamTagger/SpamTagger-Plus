@@ -54,6 +54,7 @@ libhtml-parser-perl
 libhtml-tagset-perl
 libinline-c-perl
 libio-compress-perl
+libio-interactive-perl
 libio-socket-inet6-perl
 libio-socket-ssl-perl
 libio-string-perl

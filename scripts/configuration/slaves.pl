@@ -126,7 +126,7 @@ sub delete_replica {
   }
   printf "\n******\ntype any key to return to main menu";
   ReadMode 'cbreak';
-  my $key = <stdin>;
+  my $key = <STDIN>;
   ReadMode 'normal';
   chomp($key);
   return;
@@ -185,6 +185,7 @@ sub set_as_replica {
   my $source = <STDIN>;
   ($source) = $source =~ m/\s*(\S+)\s*$/;
   printf "Enter source password: ";
+  my $password = <STDIN>;
   chomp($password);
 
   print "Syncing to source host (this may take a few minutes)... ";

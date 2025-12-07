@@ -30,7 +30,7 @@ use DB();
 use Email();
 use MailTemplate();
 use LWP::UserAgent();
-use STUtils qw( valid_rfc822_email );
+use InputValidator qw( validate );
 
 my $conf = ReadConfig::get_instance();
 if ($conf->get_option('ISMASTER') !~ /^[y|Y]$/) {
@@ -60,7 +60,7 @@ if (-e $custom_recipient && open($fh, '<', $custom_recipient)) {
 } else {
   $recipient = $sysconf->get_pref('sysadmin');
 }
-unless (valid_rfc822_email($recipient)) {
+unless (validate('rfc822_email', $recipient)) {
   die "Invalid recipient address: $recipient\n";
 }
 my $email = Email::create($recipient);
