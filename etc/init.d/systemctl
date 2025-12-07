@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Provides compatibility with SystemD using old init script paths. Running this
+# directly will not work, since $0 must be the name of a real service. Instead,
+# each service should be symlinked here, such that:
+#     etc/init.d/apache2 start
+# will result in:
+#     systemctl start apache2
+
+SERVICE=$(echo $0 | sed -r 's/(.*\/)?([^\/]*)$/\2/')
+ACTION=$1
+if [[ $ACTION == 'restart' ]]; then
+    $0 stop
+    $0 start
+    exit
+fi
+
+echo -n "$ACTION $SERVICE: "
+if [[ $ACTION == 'status' ]]; then
+    systemctl is-active $SERVICE
+    exit
+fi
+
+systemctl $@ $SERVICE
+STATUS=$(systemctl is-active $SERVICE)
+echo $STATUS

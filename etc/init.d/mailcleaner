@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+
+usage () {
+	echo "usage: $0 [start|stop|restart|status]"
+	exit
+}
+
+SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+if [ "$SRCDIR" = "" ]; then
+	SRCDIR="/usr/mailcleaner"
+fi
+
+if [ -z $1 ]; then
+	usage
+fi
+
+if [ $1 = 'start' ]; then
+	systemctl start mailcleaner.target
+elif [ $1 = 'stop' ]; then
+	systemctl start mailcleaner-stopped.target
+elif [ $1 = 'restart' ]; then
+	$0 stop
+	$0 start
+elif [ $1 = 'status' ]; then
+	$SRCDIR/bin/get_status.pl -s -v
+else
+	usage
+fi
