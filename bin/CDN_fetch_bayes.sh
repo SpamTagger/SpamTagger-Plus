@@ -36,10 +36,10 @@ if [ "$VARDIR" = "" ]; then
 fi
 
 LOGFILE="$VARDIR/log/spamtagger/downloadDatas.log"
-SERVER="mailcleanerdl.alinto.net"
+SERVER="spamtaggerdl.alinto.net"
 ROOTDIR="/bayes/"
 
-. $SRCDIR/lib/lib_utils.sh
+. $SRCDIR/lib/STUtils.sh
 
 function log {
   echo "["$(date "+%Y/%m/%d %H:%M:%S")"] $1" >>$LOGFILE

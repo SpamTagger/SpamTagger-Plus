@@ -53,7 +53,7 @@ if [ "$REGISTERED" != "2" ]; then
   exit 0
 fi
 
-. $SRCDIR/lib/lib_utils.sh
+. $SRCDIR/lib/STUtils.sh
 FILE_NAME=$(basename -- "$0")
 FILE_NAME="${FILE_NAME%.*}"
 ret=$(createLockFile "$FILE_NAME")

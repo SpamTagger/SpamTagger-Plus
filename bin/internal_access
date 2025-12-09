@@ -11,7 +11,7 @@ if [ "$VARDIR" = "" ]; then
   VARDIR="/var/spamtagger"
 fi
 
-source ${SRCDIR}/lib/lib_utils.sh
+source ${SRCDIR}/lib/STUtils.sh
 
 if [ $(replicaSynchronized) == "false" ]; then
   echo "The replica database is not synchronized, quitting..."
