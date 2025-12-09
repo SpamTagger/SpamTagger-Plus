@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,127 +18,173 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#
 #   This script will dump the exim configuration file from the configuration
 #   setting found in the database.
 #
 #   Usage:
 #           dump_greylistd_config.pl
+#
 
 use v5.40;
+use strict;
 use warnings;
 use utf8;
+use Carp qw( confess );
 
-use lib '/usr/spamtagger/lib/';
-use ReadConfig();
-use DB();
+my ($SRCDIR, $VARDIR);
+BEGIN {
+    if ($0 =~ m/(\S*)\/\S+.pl$/) {
+        my $path = $1."/../lib";
+        unshift (@INC, $path);
+    }
+    require ReadConfig;
+    my $conf = ReadConfig::get_instance();
+    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+    $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
+}
 
-my $conf = ReadConfig::get_instance();
+use STUtils qw(open_as);
+use File::Touch;
+use File::Path qw(make_path);
 
-my $lasterror;
+require DB;
+
 my $DEBUG = 0;
 
-my %greylist_conf = get_greylist_config() or fatal_error("NOGREYLISTDONFIGURATIONFOUND", "no greylistd configuration found");
+my %greylist_conf = get_greylist_config();
+my $trusted_ips = get_trusted_ips();
 
-my $uid = getpwnam( 'spamtagger' );
-my $gid = getgrnam( 'spamtagger' );
+our $uid = getpwnam( 'spamtagger' );
+our $gid = getgrnam( 'spamtagger' );
+our $confdir = "/etc/greylistd";
 
-dump_greylistd_file(\%greylist_conf) or fatal_error("CANNOTDUMPGREYLISTDFILE", $lasterror);
-
-dump_domain_to_avoid($greylist_conf{'__AVOID_DOMAINS_'});
-
-my $domainsfile = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/domains_to_greylist.list";
-if ( ! -f $domainsfile) {
-  my $res=`touch $domainsfile`;
-  chown $uid, $gid, $domainsfile;
+foreach my $dir (
+    "${VARDIR}/spool/greylistd",
+    "${VARDIR}/run/greylistd"
+) {
+    chmod(0755, $dir) if ( -d $dir );
+    make_path($dir, {'mode'=>0755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
 }
 
-print "DUMPSUCCESSFUL";
-
-#############################
-sub get_greylist_config {
-  my $replica_db = DB->db_connect('replica', 'st_config');
-
-  my %configs = $replica_db->get_hash_row(
-    "SELECT retry_min, retry_max, expire, avoid_domains FROM greylistd_config"
-  );
-  $replica_db->db_disconnect();
-
-  my %ret;
-
-  $ret{'__RETRYMIN__'} = $configs{'retry_min'};
-  $ret{'__RETRYMAX__'} = $configs{'retry_max'};
-  $ret{'__EXPIRE__'} = $configs{'expire'};
-  $ret{'__AVOID_DOMAINS_'} = $configs{'avoid_domains'};
-
-  return %ret;
+if ( -e $confdir && !-l $confdir ) {
+    unlink(glob($confdir."/*"));
+    rmdir($confdir);
 }
 
-#############################
-sub dump_domain_to_avoid ($domains) {
-   my @domains_to_avoid;
-   if (! $domains eq "") {
-     @domains_to_avoid = split /\s*[\,\:\;]\s*/, $domains;
-   }
+symlink("${SRCDIR}/${confdir}", $confdir);
 
-   my $file = $conf->get_option('VARDIR')."/spool/tmp/spamtagger/domains_to_avoid_greylist.list";
-   my $DOMAINTOAVOID;
-   unless (open($DOMAINTOAVOID, ">", $file) ) {
-    $lasterror = "Cannot open template file: $file";
-    return 0;
-  }
-  print "$DOMAINTOAVOID $_\n" foreach (@domains_to_avoid);
-  close $DOMAINTOAVOID;
-  return 1;
+symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/spamtagger') unless (-e '/etc/apparmor.d/spamtagger');
+
+dump_greylistd_file(\%greylist_conf);
+
+dump_domain_to_avoid($greylist_conf{'__AVOID_DOMAINS__'});
+
+dump_trusted_ips($trusted_ips);
+
+foreach my $dir (
+    "/etc/greylistd",
+    glob("/etc/greylistd/*"),
+    "${VARDIR}/spool/greylistd",
+    "${VARDIR}/run/greylistd",
+    glob("${VARDIR}/run/greylistd*"),
+) {
+    mkdir($dir) unless (-d $dir);
+    chown($uid, $gid, $dir);
 }
 
-#############################
-sub dump_greylistd_file ($href) {
-  my $srcpath = $conf->get_option('SRCDIR');
-  my $varpath = $conf->get_option('VARDIR');
+foreach my $file (
+    glob("${VARDIR}/spool/greylistd/*"),
+    "${VARDIR}/spool/tmp/spamtagger/domains_to_greylist.list",
+    "${SRCDIR}/${confdir}/config",
+    "${SRCDIR}/${confdir}/whitelist-hosts",
+) {
+    touch($file) unless(-f $file);
+    chown($uid, $gid, $file);
+}
+unlink "${VARDIR}/run/greylistd/socket" if (-e "${VARDIR}/run/greylistd/socket");
 
-  my $template_file = $srcpath."/etc/greylistd/greylistd.conf_template";
-  my $target_file = $srcpath."/etc/greylistd/greylistd.conf";
+sub get_greylist_config()
+{
+    my $replica_db = DB::connect('replica', 'mc_config');
 
-  my $TEMPLATE;
-  unless (open($TEMPLATE, "<", $template_file) ) {
-    $lasterror = "Cannot open template file: $template_file";
-    return 0;
-  }
-  my $TARGET;
-  unless (open($TARGET, ">", $target_file) ) {
-    $lasterror = "Cannot open target file: $target_file";
-    close $template_file;
-    return 0;
-  }
+    my %configs = $replica_db->getHashRow(
+        "SELECT retry_min, retry_max, expire, avoid_domains FROM greylistd_config"
+    );
+    my %ret;
 
-  while(my $line = <$TEMPLATE>) {
+    $ret{'__RETRYMIN__'} = $configs{'retry_min'};
+    $ret{'__RETRYMAX__'} = $configs{'retry_max'};
+    $ret{'__EXPIRE__'} = $configs{'expire'};
+    $ret{'__AVOID_DOMAINS__'} = $configs{'avoid_domains'};
 
-    $line =~ s/__VARDIR__/$varpath/g;
-    $line =~ s/__SRCDIR__/$srcpath/g;
+    return %ret;
+}
 
-    foreach my $key (keys %{$href}) {
-      $line =~ s/$key/$href->{$key}/g;
+sub get_trusted_ips()
+{
+    my $replica_db = DB::connect('replica', 'mc_config');
+
+    my %configs = $replica_db->getHashRow(
+        "SELECT trusted_ips FROM antispam;"
+    );
+
+    return $configs{'trusted_ips'};
+}
+
+sub dump_domain_to_avoid($domains)
+{
+    my @domains_to_avoid;
+    if (! $domains eq "") {
+        @domains_to_avoid = split /\s*[\,\:\;]\s*/, $domains;
     }
 
-    print $TARGET $line;
-  }
+    my $dir = "${VARDIR}/spool/tmp/spamtagger/";
+    make_path($dir, {'mode'=>0755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
+    my $file = "${dir}/domains_to_avoid_greylist.list";
+    my $DOMAINTOAVOID;
+    confess "Cannot open $file: $!" unless ($DOMAINTOAVOID = ${open_as($file)} );
 
-  close $TEMPLATE;
-  close $TARGET;
-
-  chown $uid, $gid, $target_file;
-  return 1;
+    foreach my $adomain (@domains_to_avoid) {
+        print $DOMAINTOAVOID $adomain."\n";
+    }
+    close $DOMAINTOAVOID;
 }
 
-#############################
-sub fatal_error ($msg, $full) {
-  print $msg;
-  print "\n Full information: $full \n" if ($DEBUG);
-  exit(0);
+sub dump_trusted_ips($ips)
+{
+    my $file = "${SRCDIR}/${confdir}/whitelist-hosts";
+    unlink($file) if (-e $file);
+    return 0 unless (defined($ips));
+    return 0 if ($ips =~ /^\s*$/);
+    my $TRUSTED_IPS;
+    confess "Cannot open $file: $!" unless ($TRUSTED_IPS = ${open_as($file)} );
+    print $TRUSTED_IPS $ips;
+    close $TRUSTED_IPS;
 }
 
-#############################
-sub print_usage {
-  print "Bad usage: dump_exim_config.pl [stage-id]\n\twhere stage-id is an integer between 0 and 4 (0 or null for all).\n";
-  exit(0);
+sub dump_greylistd_file($greylistd_conf)
+{
+    my $template_file = "${SRCDIR}/${confdir}/config_template";
+    my $target_file = "${SRCDIR}/${confdir}/config";
+
+    my ($TEMPLATE, $TARGET);
+    confess "Cannot open $template_file: $!\n" unless ($TEMPLATE = ${open_as($template_file, '<')} );
+    confess "Cannot open $target_file: $!\n" unless ($TARGET = ${open_as($target_file)} );
+
+    while(<$TEMPLATE>) {
+        my $line = $_;
+
+        $line =~ s/__VARDIR__/$VARDIR/g;
+        $line =~ s/__SRCDIR__/$SRCDIR/g;
+
+        foreach my $key (keys %{$greylistd_conf}) {
+            $line =~ s/$key/$greylistd_conf->{$key}/g;
+        }
+
+        print $TARGET $line;
+    }
+
+    close $TEMPLATE;
+    close $TARGET;
 }

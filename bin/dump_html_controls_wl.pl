@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
-#   Copyright (C) 2020 MailCleaner
 #   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -18,49 +17,50 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#
 #   This script will dump the ssh key files
 #
 #   Usage:
-#     dump_html_controls_wl.pl
+#           dump_html_controls_wl.pl
 
 use v5.40;
+use strict;
 use warnings;
 use utf8;
+use Carp qw( confess );
 
-use lib '/usr/spamtagger/lib/';
-use DBI;
-use ReadConfig;
+my ($SRCDIR, $VARDIR);
+BEGIN {
+    if ($0 =~ m/(\S*)\/\S+.pl$/) {
+        my $path = $1."/../lib";
+        unshift (@INC, $path);
+    }
+    require ReadConfig;
+    my $conf = ReadConfig::get_instance();
+    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+    $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
+}
 
-our $config = ReadConfig::get_instance();
+use STUtils qw(open_as);
+require DB;
 
-my $file = '/var/spamtagger/spool/tmp/mailscanner/wantlist_HTML';
+my $file = "${VARDIR}/spool/tmp/mailscanner/whitelist_HTML";
 unlink($file);
 
-do_htmls_wl();
+my $dbh =  DB::connect('replica', 'mc_config');
 
-############################
-sub do_htmls_wl {
-  my $dbh;
-  $dbh = DBI->connect("DBI:mariadb:database=st_config;host=localhost;mariadb_socket=".$config->get_option('VARDIR')."/run/mariadb_replica/mariadbd.sock",
-      "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0})
-      or return;
+my $sth = $dbh->prepare("SELECT sender FROM wwlists WHERE type='htmlcontrols'");
+$sth->execute() or return;
 
-  my $sth = $dbh->prepare("SELECT sender FROM wwlists WHERE type='htmlcontrols'");
-  $sth->execute() or return;
+my $count=0;
 
-  my $count=0;
-
-  my $HTML_WL;
-  open($HTML_WL, '>', $file);
-  while (my $ref = $sth->fetchrow_hashref() ) {
+my $HTML_WL;
+confess "Cannot open $file: $!\n" unless ($HTML_WL = ${open_as($file)});
+while (my $ref = $sth->fetchrow_hashref() ) {
     print $HTML_WL $ref->{'sender'}."\n";
     $count++;
-  }
-  $sth->finish();
-  close $HTML_WL;
-
-  # Unlink file if it is empty
-  unlink $file unless $count;
-
-  return;
 }
+$sth->finish();
+close $HTML_WL;
+
+unlink $file unless $count;

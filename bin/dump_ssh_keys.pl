@@ -25,20 +25,28 @@
 #           dump_ssh_keys.pl
 
 use v5.40;
+use strict;
 use warnings;
 use utf8;
+use Carp qw( confess );
 
-use lib '/usr/spamtagger/lib/';
-use DBI;
-use ReadConfig;
+our ($SRCDIR, $VARDIR;
+BEGIN {
+    if ($0 =~ m/(\S*)\/\S+.pl$/) {
+        my $path = $1."/../lib";
+        unshift (@INC, $path);
+    }
+    require ReadConfig;
+    my $conf = ReadConfig::get_instance();
+    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+    $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
+}
 
-our $config = ReadConfig::get_instance();
-my $VARDIR = $config->get_option('VARDIR');
+use STUtils qw(open_as);
+require DB;
 
-my $DEBUG = 1;
-
-my $known_hosts_file = "$VARDIR/.ssh/known_hosts";
-my $authorized_file = "$VARDIR/.ssh/authorized_keys";
+my $known_hosts_file = ${VARDIR}."/.ssh/known_hosts";
+my $authorized_file = ${VARDIR}."/.ssh/authorized_keys";
 
 unlink($known_hosts_file);
 unlink($authorized_file);
@@ -51,41 +59,36 @@ chown($uid, $gid, $known_hosts_file);
 do_authorized_keys();
 chown($uid, $gid, $authorized_file);
 
-############################
-sub do_known_hosts {
-  my $dbh = DBI->connect(
-    "DBI:mariadb:database=st_config;host=localhost;mariadb_socket=$VARDIR/run/mariadb_source/mariadbd.sock",
-    "spamtagger", $config->('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
-  ) or return;
+sub do_known_hosts()
+{
+    my $dbh = DB::connect('replica', 'mc_config');
 
-  my $sth = $dbh->prepare("SELECT hostname, ssh_pub_key FROM replica");
-  $sth->execute() or return;
+    my $sth = $dbh->prepare("SELECT hostname, ssh_pub_key FROM replica");
+    $sth->execute() or return;
 
-  my $KNOWNHOST;
-  open($KNOWNHOST, ">>", $known_hosts_file);
-  while (my $ref = $sth->fetchrow_hashref() ) {
-    print $KNOWNHOST $ref->{'hostname'}." ".$ref->{'ssh_pub_key'}."\n";
+    my $KNOWNHOST;
+    confess "Cannot open $KNOWNHOST: $!" unless ($KNOWNHOST = ${open_as($known_hosts_file, '>>')});
+    while (my $ref = $sth->fetchrow_hashref() ) {
+        print $KNOWNHOST $ref->{'hostname'}." ".$ref->{'ssh_pub_key'}."\n";
+    }
     close $KNOWNHOST;
-  }
-  $sth->finish();
-  return;
+    $sth->finish();
+    return;
 }
 
-sub do_authorized_keys {
-  my $dbh = DBI->connect(
-    "DBI:mariadb:database=st_config;host=localhost;mariadb_socket=$VARDIR/run/mariadb_replica/mariadbd.sock",
-    "spamtagger", $config->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
-  ) or return;
+sub do_authorized_keys()
+{
+    my $dbh = DB::connect('replica', 'mc_config');
 
-  my $sth = $dbh->prepare("SELECT ssh_pub_key FROM source");
-  $sth->execute() or return;
+    my $sth = $dbh->prepare("SELECT ssh_pub_key FROM source");
+    $sth->execute() or return;
 
-  my $AUTHORIZED_KEYS;
-  open($AUTHORIZED_KEYS, ">>", $authorized_file);
-  while (my $ref = $sth->fetchrow_hashref() ) {
-    print $AUTHORIZED_KEYS $ref->{'ssh_pub_key'}."\n";
-    close $AUTHORIZED_KEYS;
-  }
-  $sth->finish();
-  return;
+    my $AUTHORIZED;
+    confess "Cannot open $AUTHORIZED $!" unless ($AUTHORIZED = ${open_as($authorized_file, '>>')});
+    while (my $ref = $sth->fetchrow_hashref() ) {
+        print $AUTHORIZED $ref->{'ssh_pub_key'}."\n";
+    }
+    close $AUTHORIZED;
+    $sth->finish();
+    return;
 }

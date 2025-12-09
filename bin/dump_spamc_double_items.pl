@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 #
 #   SpamTagger Plus - Open Source Spam Filtering
-#   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
@@ -17,40 +16,51 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#   Usage:
-#           dump_spamc_double_items.pl
 
 use v5.40;
+use strict;
 use warnings;
 use utf8;
+use Carp qw( confess );
+
+our ($conf, $SRCDIR);
+BEGIN {
+    if ($0 =~ m/(\S*)\/\S+.pl$/) {
+        my $path = $1."/../lib";
+        unshift (@INC, $path);
+    }
+    require ReadConfig;
+    $conf = ReadConfig::get_instance();
+    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+}
+
+use STUtils qw(open_as);
 
 my $i = 0;
 my $j = 0;
 
-unlink '/usr/spamtagger/share/spamassassin/double_item_uri.cf';
-
-exit if ( ! -f '/usr/spamtagger/share/spamassassin/double_item_uri.txt' );
+my $path = "$SRCDIR/share/spamassassin";
+exit if ( ! -f "$path/double_item_uri.txt" );
 
 my ($FH_TXT, $RULES);
-open($FH_TXT, '<', '/usr/spamtagger/share/spamassassin/double_item_uri.txt');
-open($RULES, '>', '/usr/spamtagger/share/spamassassin/double_item_uri.cf');
+confess "Cannot open $path/double_item_uri.txt" unless ($FH_TXT = ${open_as("$path/double_item_uri.txt",'<')});
+confess "Cannot open $path/double_item_uri.cf" unless ($RULES = ${open_as("$path/double_item_uri.cf")});
 while (<$FH_TXT>) {
-        $_ =~ s/^\s*//;
-        $_ =~ s/\s*$//;
-        next if ( $_ =~ m/^#/ );
-        my ($w1, $w2) = split(' ', $_);
-        next if ( ! defined($w2) );
-        print $RULES "# auto generated rule to prevent links containing both $w1 and $w2\n";
-        print $RULES "uri __ST_URI_DBL_ITEM_$i /$w1.*$w2/i\n";
-        $j = $i;
-        $i++;
-        print $RULES "uri __ST_URI_DBL_ITEM_$i /$w2.*$w1/i\n";
+    $_ =~ s/^\s*//;
+    $_ =~ s/\s*$//;
+    next if ( $_ =~ m/^#/ );
+    my ($w1, $w2) = split(' ', $_);
+    next if ( ! defined($w2) );
+    print $RULES "# auto generated rule to prevent links containing both $w1 and $w2\n";
+    print $RULES "uri __MC_URI_DBL_ITEM_$i /$w1.*$w2/i\n";
+    $j = $i;
+    $i++;
+    print $RULES "uri __MC_URI_DBL_ITEM_$i /$w2.*$w1/i\n";
 
-        print $RULES "\nmeta ST_URI_DBL_ITEM_$j ( __ST_URI_DBL_ITEM_$j || __ST_URI_DBL_ITEM_$i )\n";
-        print $RULES "describe ST_URI_DBL_ITEM_$j Link containing both $w1 and $w2\n";
-        print $RULES "score ST_URI_DBL_ITEM_$j 7.0\n\n";
-        $i++;
+    print $RULES "\nmeta MC_URI_DBL_ITEM_$j ( __MC_URI_DBL_ITEM_$j || __MC_URI_DBL_ITEM_$i )\n";
+    print $RULES "describe MC_URI_DBL_ITEM_$j Link containing both $w1 and $w2\n";
+    print $RULES "score MC_URI_DBL_ITEM_$j 7.0\n\n";
+    $i++;
 }
-close($FH_TXT);
-close($RULES);
+close $FH_TXT;
+close $RULES;

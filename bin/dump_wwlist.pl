@@ -18,91 +18,87 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#   This script will dump the wantlist and warnlists for the system/domain/user
+#
+#   This script will dump the whitelist and warnlists for the system/domain/user
 #
 #   Usage:
 #           dump_wwlists.pl [domain|user]
 
 use v5.40;
+use strict;
 use warnings;
 use utf8;
+use Carp qw( confess );
 
-use lib '/usr/spamtagger/lib/';
-use ReadConfig();
-use DB();
+my ($SRCDIR, $VARDIR);
+BEGIN {
+    if ($0 =~ m/(\S*)\/\S+.pl$/) {
+        my $path = $1."/../lib";
+        unshift (@INC, $path);
+    }
+    require ReadConfig;
+    my $conf = ReadConfig::get_instance();
+    $SRCDIR = $conf->get_option('SRCDIR');
+    $VARDIR = $conf->get_option('VARDIR');
+    unshift(@INC, $SRCDIR."/lib");
+}
 
-my $conf = ReadConfig::get_instance();
-my $op = $conf->get_option('SRCDIR');
+use STUtils qw( create_and_open );
+use File::Path qw( make_path );
+
+require DB;
+
 my $uid = getpwnam( 'spamtagger' );
 my $gid = getgrnam( 'spamtagger' );
 
 my $what = shift;
 if (!defined($what)) {
-  $what = "";
+    $what = "";
 }
 my $to = "";
-my $filepath = $conf->get_option('VARDIR')."/spool/spamtagger/prefs/";
+my $filepath = "${VARDIR}/spool/spamtagger/prefs/";
 if ($what =~ /^\@([a-zA-Z0-9\.\_\-]+)$/) {
-  $to = $what;
-  $filepath .= $1."/_global/";
+    $to = $what;
+    $filepath .= $1."/_global/";
 } elsif ($what =~ /^([a-zA-Z0-9\.\_\-]+)\@([a-zA-Z0-9\.\_\-]+)/) {
-  $to = $what;
-  $filepath .= $2."/".$1."@".$2."/";
+    $to = $what;
+    $filepath .= $2."/".$1."@".$2."/";
 } else {
-  $filepath .= "_global/";
+    $filepath .= "_global/";
 }
 
-dump_ww_files($to, $filepath);
-print "DUMPSUCCESSFUL";
-exit 0;
+my $replica_db = DB::connect('replica', 'mc_config');
 
-#####################################
-## dump_wwfiles
+dumpWWFiles($to, $filepath);
 
-sub dump_ww_files ($to, $filepath) {
-  my @types = ('warn', 'want');
+$replica_db->disconnect();
 
-  my $replica_db = DB->db_connect('replica', 'st_config');
+sub dumpWWFiles($to,$filepath)
+{
+    my @types = ('warn', 'white');
 
-  foreach my $type (@types) {
-    ## get list
-    my @list = $replica_db->get_list(
-      "SELECT sender FROM wwlists WHERE status=1 AND type='".$type."' AND recipient='".$to."'"
-    );
+    foreach my $type (@types) {
+        my @list = $replica_db->getList("SELECT sender FROM wwlists WHERE
+            status=1 AND type='".$type."' AND recipient='".$to."'"
+        );
 
-    # first remove file if exists
-    my $file = $filepath."/".$type.".list";
-    if ( -f $file) {
-       unlink $file;
+        my $file = $filepath."/".$type.".list";
+        if ( -f $file) {
+            unlink $file;
+        }
+
+        next unless (scalar(@list));
+
+        make_path($filepath, {'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'});
+
+        my $WWFILE;
+        confess "Failed to open $file\n" unless ($WWFILE = ${create_and_open($file)});
+
+        foreach my $entry (@list) {
+            print $WWFILE "$entry\n";
+        }
+
+        close $WWFILE;
     }
-
-    # exit if list empty
-    if (!@list) {
-       next;
-    }
-
-    # create directory if needed
-    create_dirs($filepath);
-
-    # and write the file down
-    my $WWFILE;
-    return 0 unless (open($WWFILE, ">", $file) );
-
-    print $WWFILE "$_\n" foreach (@list);
-
-    close $WWFILE;
-    chown 'spamtagger', $file;
-  }
-  $replica_db->db_disconnect();
-  return 1;
-}
-
-#####################################
-## create_dir
-
-sub create_dirs($path) {
-  my $cmd = "mkdir -p $path";
-  my $res = `$cmd`;
-  chown $uid, $gid, $path;
-  return;
+    return 1;
 }

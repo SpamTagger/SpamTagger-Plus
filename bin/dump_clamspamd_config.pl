@@ -19,11 +19,11 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This script will dump the clamav configuration file with the configuration
+#   This script will dump the clamspamd configuration file with the configuration
 #   settings found in the database.
 #
 #   Usage:
-#           dump_clamav_config.pl
+#           dump_clamspamd_config.pl
 
 use v5.40;
 use strict;
@@ -31,7 +31,7 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-our ($SRCDIR, $VARDIR, $HTTPPROXY);
+our ($SRCDIR, $VARDIR);
 BEGIN {
     if ($0 =~ m/(\S*)\/\S+.pl$/) {
         my $path = $1."/../lib";
@@ -41,13 +41,15 @@ BEGIN {
     my $conf = ReadConfig::get_instance();
     $SRCDIR = $conf->get_option('SRCDIR');
     $VARDIR = $conf->get_option('VARDIR');
-    $HTTPPROXY = $conf->get_option('HTTPPROXY');
     unshift(@INC, $SRCDIR."/lib");
 }
 
-use STUtils qw( open_as rmrf );
+use STUtils qw( open_as );
 
 my $lasterror;
+
+# Dump configuration
+dump_file("clamspamd.conf");
 
 my $uid = getpwnam( 'spamtagger' );
 my $gid = getgrnam( 'spamtagger' );
@@ -57,11 +59,6 @@ if (-e $conf && ! -s $conf) {
 	unlink(glob("$conf/*"), $conf);
 }
 symlink($SRCDIR."/".$conf, $conf) unless (-l $conf);
-unless (-l "/var/lib/clamav/") {
-	rmrf("/var/lib/clamav/") if (-e "/var/lib/clamav");
-	printf("Creating symlink $VARDIR/spool/clamav\n");
-	symlink($VARDIR."/spool/clamav", "/var/lib/clamav");
-}
 
 # Create necessary dirs/files if they don't exist
 foreach my $dir (
@@ -70,6 +67,7 @@ foreach my $dir (
     $VARDIR."/log/clamav",
     $VARDIR."/run/clamav",
     $VARDIR."/spool/clamav",
+    $VARDIR."/spool/clamspam",
 ) {
     mkdir($dir) unless (-d $dir);
     chown($uid, $gid, $dir);
@@ -77,11 +75,11 @@ foreach my $dir (
 
 foreach my $file (
     glob($SRCDIR."/etc/clamav/*"),
+    $SRCDIR."/etc/clamav/clamspamd.conf",
     glob($VARDIR."/log/clamav/*"),
     glob($VARDIR."/run/clamav/*"),
-    glob($VARDIR."/spool/clamav/*"),
+    glob($VARDIR."/spool/clamspam/*"),
 ) {
-	print("Taking ownership of $file\n");
     chown($uid, $gid, $file);
 }
 
@@ -104,11 +102,6 @@ symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/spamtagger') unless (-e '/etc/
 # SystemD auth causes timeouts
 `sed -iP '/^session.*pam_systemd.so/d' /etc/pam.d/common-session`;
 
-# Dump configuration
-dump_file("clamav.conf");
-dump_file("clamd.conf");
-dump_file("freshclam.conf");
-
 #############################
 sub dump_file($file)
 {
@@ -119,30 +112,12 @@ sub dump_file($file)
     confess "Cannot open $template_file" unless ( $TEMPLATE = ${open_as($template_file,'<',0664,'clamav:clamav')} );
     confess "Cannot open $template_file" unless ( $TARGET = ${open_as($target_file,'>',0664,'clamav:clamav')} );
 
-    my $proxy_server = "";
-    my $proxy_port = "";
-    if ($HTTPPROXY) {
-        if ($HTTPPROXY =~ m/http\:\/\/(\S+)\:(\d+)/) {
-            $proxy_server = $1;
-            $proxy_port = $2;
-        }
-    }
-
     while(<$TEMPLATE>) {
         my $line = $_;
 
         $line =~ s/__VARDIR__/${VARDIR}/g;
-        $line =~ s/__SRCDIR__/${SRCDIR}/g;
-        if ($proxy_server =~ m/\S+/) {
-            $line =~ s/\#HTTPProxyServer __HTTPPROXY__/HTTPProxyServer $proxy_server/g;
-            $line =~ s/\#HTTPProxyPort __HTTPPROXYPORT__/HTTPProxyPort $proxy_port/g;
-        }
 
         print $TARGET $line;
-    }
-
-    if (($file eq "clamd.conf") && ( -e "/var/spamtagger/spool/spamtagger/mc-experimental-macros")) {
-        print $TARGET "OLE2BlockMacros yes";
     }
 
     close $TEMPLATE;

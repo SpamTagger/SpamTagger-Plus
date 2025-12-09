@@ -18,115 +18,120 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#
 #   This script will dump the messagesniffer configuration file with the configuration
 #   settings found in the database.
 #
 #   Usage:
 #           dump_messagesniffer_config.pl
 
+
 use v5.40;
+use strict;
 use warnings;
 use utf8;
+use Carp qw( confess );
 
-use lib '/usr/spamtagger/lib/';
-use DBI;
-use ReadConfig;
+our ($SRCDIR, $VARDIR, $HTTPPROXY;
+BEGIN {
+    if ($0 =~ m/(\S*)\/\S+.pl$/) {
+        my $path = $1."/../lib";
+        unshift (@INC, $path);
+    }
+    require ReadConfig;
+    my $conf = ReadConfig::get_instance();
+    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+    $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
+    $HTTPPROXY = $conf->get_option('HTTPPROXY') || '';
+}
 
-our $conf = ReadConfig::get_instance();
-our $VARDIR = $conf->get_option('VARDIR');
-our $SRCDIR = $conf->get_option('SRCDIR');
+use STUtils qw(open_as);
+require DB;
 
-my $DEBUG = 1;
+our $DEBUG = 1;
 
 my $lasterror;
 
-our $dbh = DBI->connect("DBI:mariadb:database=st_config;host=localhost;mariadb_socket=$VARDIR/run/mariadb_replica/mariadbd.sock",
-  "spamtagger", $conf->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 0}
-) or fatal_error("CANNOTCONNECTDB", $dbh->errstr);
+my $dbh = DB::connect('replica', 'mc_config');
 
 my %messagesniffer_conf;
 %messagesniffer_conf = get_messagesniffer_config() or fatal_error("NOMESSAGESNIFFERCONFIGURATIONFOUND", "no MessageSniffer configuration found");
 
-$dbh->db_disconnect();
-
 if (!defined($messagesniffer_conf{'__LICENSEID__'})) {
-  $messagesniffer_conf{'__LICENSEID__'} = '';
+    $messagesniffer_conf{'__LICENSEID__'} = '';
 }
 if (!defined($messagesniffer_conf{'__AUTHENTICATION__'})) {
-  $messagesniffer_conf{'__AUTHENTICATION__'} = '';
+    $messagesniffer_conf{'__AUTHENTICATION__'} = '';
 }
 
-my $uid = getpwnam( 'snfuser' );
-my $gid = getgrnam( 'snfuser' );
+our ($uid, $gid);
+confess "Unable to detect 'snfuser' user" unless $uid = getpwnam( 'snfuser' );
+confess "Unable to detect 'snfuser' group" unless $gid = getgrnam( 'snfuser' );
 
+our $dir = "$SRCDIR/etc/messagesniffer";
+unless ( -d $dir ) {
+    confess "Cannot create dir $dir: $!\n" unless make_path($dir, { 'mode' => 0755, 'user' => $uid, 'group' => $gid });
+}
 dump_file("SNFServer.xml");
-chown $uid, $gid, "SNFServer.xml";
 dump_file("identity.xml");
-chown $uid, $gid, "identity.xml";
 dump_file("getRulebase");
-chown $uid, $gid, "getRulebase";
 
-chmod 0755, "$SRCDIR/etc/messagesniffer/getRulebase"; ## no critic (leading zero octal notation)
-
-print "DUMPSUCCESSFUL";
+$dbh->disconnect();
 
 #############################
-sub dump_file ($file) {
-  my $template_file = "$SRCDIR'}/etc/messagesniffer/".$file."_template";
-  my $target_file = "$SRCDIR'}/etc/messagesniffer/".$file;
+sub dump_file($file)
+{
+    my $template_file = "${dir}/${file}_template";
+    my $target_file = "${dir}/${file}";
 
-  my ($TEMPLATE, $TARGET);
-  unless (open($TEMPLATE, '<', $template_file) ) {
-    $lasterror = "Cannot open template file: $template_file";
-    return 0;
-  }
-  unless (open($TARGET, ">", $target_file) ) {
-    $lasterror = "Cannot open target file: $target_file";
-    close $template_file;
-    return 0;
-  }
+    my ($TEMPLATE, $TARGET);
+    confess "Cannot open $template_file: $!\n" unless ($TEMPLATE = ${open_as($template_file, '<', 0755, "snfuser:snfuser")});
+    confess "Cannot open $target_file: $!\n" unless ($TARGET = ${open_as($target_file, '>', 0755, "snfuser:snfuser")});
 
-  my $proxy_server = "";
-  my $proxy_port = "";
-  if ($conf->get_option('HTTPPROXY')) {
-    if ($conf->get_option('HTTPPROXY') =~ m/http\:\/\/(\S+)\:(\d+)/) {
-      $proxy_server = $1;
-      $proxy_port = $2;
+    my $proxy_server = "";
+    my $proxy_port = "";
+    if ($HTTPPROXY =~ m/http\:\/\/(\S+)\:(\d+)/) {
+        $proxy_server = $1;
+        $proxy_port = $2;
     }
-  }
 
-  while(my $line = <$TEMPLATE>) {
-    $line =~ s/__VARDIR__/$VARDIR/g;
-    $line =~ s/__SRCDIR__/$SRCDIR/g;
-    if ($proxy_server =~ m/\S+/) {
-      $line =~ s/\#HTTPProxyServer __HTTPPROXY__/HTTPProxyServer $proxy_server/g;
-      $line =~ s/\#HTTPProxyPort __HTTPPROXYPORT__/HTTPProxyPort $proxy_port/g;
+    while(<$TEMPLATE>) {
+        my $line = $_;
+
+        $line =~ s/__VARDIR__/${VARDIR}/g;
+        $line =~ s/__SRCDIR__/${SRCDIR}/g;
+        if ($proxy_server =~ m/\S+/) {
+            $line =~ s/\#HTTPProxyServer __HTTPPROXY__/HTTPProxyServer $proxy_server/g;
+            $line =~ s/\#HTTPProxyPort __HTTPPROXYPORT__/HTTPProxyPort $proxy_port/g;
+        }
+        $line =~ s/__LICENSEID__/$messagesniffer_conf{'__LICENSEID__'}/g;
+        $line =~ s/__AUTHENTICATION__/$messagesniffer_conf{'__AUTHENTICATION__'}/g;
+
+        print $TARGET $line;
     }
-    $line =~ s/__LICENSEID__/$messagesniffer_conf{'__LICENSEID__'}/g;
-    $line =~ s/__AUTHENTICATION__/$messagesniffer_conf{'__AUTHENTICATION__'}/g;
 
-    print $TARGET $line;
-  }
+    close $TEMPLATE;
+    close $TARGET;
 
-  close $TEMPLATE;
-  close $TARGET;
-
-  return 1;
+    return 1;
 }
 
 #############################
-sub get_messagesniffer_config {
-  my %config;
+sub get_messagesniffer_config()
+{
+    my %config;
 
-  my $sth = $dbh->prepare("SELECT licenseid, authentication FROM MessageSniffer");
-  $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
+    my $sth = $dbh->prepare("SELECT licenseid, authentication FROM MessageSniffer");
+    $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
 
-  return if ($sth->rows < 1);
+    if ($sth->rows < 1) {
+        return;
+    }
+    my $ref = $sth->fetchrow_hashref() or return;
 
-  my $ref = $sth->fetchrow_hashref();
-  $config{'__LICENSEID__'} = $ref->{'licenseid'};
-  $config{'__AUTHENTICATION__'} = $ref->{'authentication'};
+    $config{'__LICENSEID__'} = $ref->{'licenseid'};
+    $config{'__AUTHENTICATION__'} = $ref->{'authentication'};
 
-  $sth->finish();
-  return %config;
+    $sth->finish();
+    return %config;
 }

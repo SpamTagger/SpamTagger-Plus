@@ -19,11 +19,11 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#   This script will dump the clamav configuration file with the configuration
+#   This script will dump the freshclam configuration file with the configuration
 #   settings found in the database.
 #
 #   Usage:
-#           dump_clamav_config.pl
+#           dump_freshclam_config.pl [--agree-to-unofficial|--remove_unofficial]
 
 use v5.40;
 use strict;
@@ -31,7 +31,7 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-our ($SRCDIR, $VARDIR, $HTTPPROXY);
+our ($SRCDIR, $VARDIR);
 BEGIN {
     if ($0 =~ m/(\S*)\/\S+.pl$/) {
         my $path = $1."/../lib";
@@ -41,11 +41,13 @@ BEGIN {
     my $conf = ReadConfig::get_instance();
     $SRCDIR = $conf->get_option('SRCDIR');
     $VARDIR = $conf->get_option('VARDIR');
-    $HTTPPROXY = $conf->get_option('HTTPPROXY');
     unshift(@INC, $SRCDIR."/lib");
 }
 
-use STUtils qw( open_as rmrf );
+my $unofficial = shift || 0;
+
+use STUtils qw( open_as );
+use File::Touch qw( touch );
 
 my $lasterror;
 
@@ -57,19 +59,14 @@ if (-e $conf && ! -s $conf) {
 	unlink(glob("$conf/*"), $conf);
 }
 symlink($SRCDIR."/".$conf, $conf) unless (-l $conf);
-unless (-l "/var/lib/clamav/") {
-	rmrf("/var/lib/clamav/") if (-e "/var/lib/clamav");
-	printf("Creating symlink $VARDIR/spool/clamav\n");
-	symlink($VARDIR."/spool/clamav", "/var/lib/clamav");
-}
 
 # Create necessary dirs/files if they don't exist
 foreach my $dir (
-    "/etc/clamav",
-    $SRCDIR."/etc/clamav",
-    $VARDIR."/log/clamav",
-    $VARDIR."/run/clamav",
-    $VARDIR."/spool/clamav",
+    $SRCDIR."/etc/clamav/",
+    $VARDIR."/log/clamav/",
+    $VARDIR."/run/clamav/",
+    $VARDIR."/spool/clamspam/",
+    $VARDIR."/spool/clamav/",
 ) {
     mkdir($dir) unless (-d $dir);
     chown($uid, $gid, $dir);
@@ -77,11 +74,21 @@ foreach my $dir (
 
 foreach my $file (
     glob($SRCDIR."/etc/clamav/*"),
+    $VARDIR."/log/clamav/freshclam.log",
+) {
+    touch($file) unless (-e $file);
+}
+
+foreach my $file (
+    $VARDIR."/log/clamav",
     glob($VARDIR."/log/clamav/*"),
+    $VARDIR."/run/clamav",
     glob($VARDIR."/run/clamav/*"),
+    $VARDIR."/spool/clamspam",
+    glob($VARDIR."/spool/clamspam/*"),
+    $VARDIR."/spool/clamav",
     glob($VARDIR."/spool/clamav/*"),
 ) {
-	print("Taking ownership of $file\n");
     chown($uid, $gid, $file);
 }
 
@@ -89,7 +96,7 @@ foreach my $file (
 mkdir '/etc/sudoers.d' unless (-d '/etc/sudoers.d');
 if (open(my $fh, '>', '/etc/sudoers.d/clamav')) {
     print $fh "
-User_Alias  CLAMAV = spamtagger
+User_Alias  CLAMAV = spamtagger 
 Cmnd_Alias  CLAMBIN = /usr/sbin/clamd
 
 CLAMAV      * = (ROOT) NOPASSWD: CLAMBIN
@@ -105,9 +112,55 @@ symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/spamtagger') unless (-e '/etc/
 `sed -iP '/^session.*pam_systemd.so/d' /etc/pam.d/common-session`;
 
 # Dump configuration
-dump_file("clamav.conf");
-dump_file("clamd.conf");
 dump_file("freshclam.conf");
+
+print STDERR "To enable ClamAV Unofficial Signatures, either run with '--agree-to-unofficial' or add *exactly* the following to $VARDIR/spool/spamtagger/clamav-unofficial-sigs:
+I have read the terms of use at: https://sanesecurity.com/usage/linux-scripts/\n" unless update_unofficial($unofficial);
+
+sub remove_unofficial() {
+    my @dest = glob("${VARDIR}/spool/clamav/*");
+    foreach my $d (@dest) {
+        my $s = $d;
+        $s =~ s/clamav/clamav\/unofficial-sigs/;
+        if (-l $d && $s eq readlink($d)) {
+            unlink($d);
+            unlink($s);
+        }
+    }
+    rmdir("${VARDIR}/spool/clamav/unofficial-sigs/");
+    return 0;
+}
+
+sub update_unofficial($unofficial) {
+    return remove_unofficial() if ($unofficial eq '--remove-unofficial');
+    if ($unofficial eq '--agree-to-unofficial') {
+        print "By running with '--agree-to-unofficial', you are confirming that you have read and agree to the terms at https://sanesecurity.com/usage/linux-scripts/\n";
+        if (open(my $fh, '>', "${VARDIR}/spool/spamtagger/clamav-unofficial-sigs")) {
+            print $fh "I have read the terms of use at: https://sanesecurity.com/usage/linux-scripts/";
+            close $fh;
+        }
+    } else {
+        return remove_unofficial() unless (-e "${VARDIR}/spool/spamtagger/clamav-unofficial-sigs");
+        use Digest::SHA;
+        my $sha = Digest::SHA->new();
+        $sha->addfile("${VARDIR}/spool/spamtagger/clamav-unofficial-sigs");
+        return remove_unofficial unless ($sha->hexdigest() eq "69c58585c04b136a3694b9546b77bcc414b52b12");
+    }
+
+    # First time install
+	if (! -d "$VARDIR/spool/clamav/unofficial-sigs") {
+	    mkdir("$VARDIR/spool/clamav/unofficial-sigs");
+        `${SRCDIR}/scripts/cron/clamav-unofficial-sigs.sh`;
+    }
+
+    # Create links if missing
+    foreach my $s (glob("${VARDIR}/spool/clamav/unofficial-sigs/*")) {
+        my $d = $s;
+        $d =~ s/unofficial-sigs\///;
+        symlink($s, $d) unless (-e $d);
+    }
+    return 1;
+}
 
 #############################
 sub dump_file($file)
@@ -119,30 +172,12 @@ sub dump_file($file)
     confess "Cannot open $template_file" unless ( $TEMPLATE = ${open_as($template_file,'<',0664,'clamav:clamav')} );
     confess "Cannot open $template_file" unless ( $TARGET = ${open_as($target_file,'>',0664,'clamav:clamav')} );
 
-    my $proxy_server = "";
-    my $proxy_port = "";
-    if ($HTTPPROXY) {
-        if ($HTTPPROXY =~ m/http\:\/\/(\S+)\:(\d+)/) {
-            $proxy_server = $1;
-            $proxy_port = $2;
-        }
-    }
-
     while(<$TEMPLATE>) {
         my $line = $_;
 
         $line =~ s/__VARDIR__/${VARDIR}/g;
-        $line =~ s/__SRCDIR__/${SRCDIR}/g;
-        if ($proxy_server =~ m/\S+/) {
-            $line =~ s/\#HTTPProxyServer __HTTPPROXY__/HTTPProxyServer $proxy_server/g;
-            $line =~ s/\#HTTPProxyPort __HTTPPROXYPORT__/HTTPProxyPort $proxy_port/g;
-        }
 
         print $TARGET $line;
-    }
-
-    if (($file eq "clamd.conf") && ( -e "/var/spamtagger/spool/spamtagger/mc-experimental-macros")) {
-        print $TARGET "OLE2BlockMacros yes";
     }
 
     close $TEMPLATE;
