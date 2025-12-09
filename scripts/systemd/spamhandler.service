@@ -1,0 +1,16 @@
+[Unit]
+Description=SpamHandler daemon for SpamTagger
+After=mariadb@replica.service
+Requires=mariadb@replica.service
+PartOf=mailscanner.service spamtagger.target
+
+[Service]
+User=spamtagger
+Group=spamtagger
+PrivateTmp=false
+Type=forking
+#ExecStartPre=+/usr/spamtagger/bin/dump_stats_daemon.pl %I
+ExecStart=/usr/spamtagger/bin/daemon_starter.pl SpamHandler -d start
+
+[Install]
+WantedBy=spamtagger.target

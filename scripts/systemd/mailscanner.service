@@ -1,0 +1,25 @@
+[Unit]
+Description=MailScanner Anti-Virus daemon for SpamTagger
+Requires=mariadb@replica.service preftdaemon.service
+BindsTo=clamav-daemon.service clamspamd.service exim4@2.service spamd@newsld.service spamd@spamd.service spamd@newsld.service spamhandler.service
+After=mariadb@replica.service
+Before=exim4@2.service
+PartOf=spamtagger.target
+
+[Service]
+Type=forking
+User=spamtagger
+Group=spamtagger
+Restart=unless-stopped
+TimeoutSec=1min
+IgnoreSIGPIPE=no
+KillMode=process
+GuessMainPID=no
+RemainAfterExim=yes
+ExecStartPre=+/usr/spamtagger/bin/dump_mailscanner_config.pl %I
+ExecStart=/usr/lib/MailScanner/init/ms-init start
+ExecStop=/usr/lib/MailScanner/init/ms-init stop
+PIDFile=/var/spamtagger/run/spamtagger.pid
+
+[Install]
+WantedBy=spamtagger.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=SpamLogger daemon for SpamTagger
+After=mariadb@replica.service
+Requires=mariadb@replica.service
+PartOf=mailscanner.service spamtagger.target
+
+[Service]
+User=mailscanner
+Group=spamtagger
+PrivateTmp=false
+Type=forking
+ExecStart=/usr/spamtagger/bin/spamloggerdaemon.pl /usr/spamtagger/etc/spamlogger/spamlogger.conf
+
+[Install]
+WantedBy=spamtagger.target

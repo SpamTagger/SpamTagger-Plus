@@ -1,0 +1,12 @@
+[Unit]
+Requires=mariadb@replica.socket
+After=network.target mariadb@replica.socket
+Conflicts=sendmail.service postfix.service
+PartOf=spamtagger.target
+
+[Service]
+User=spamtagger
+Group=spamtagger
+PrivateTmp=false
+EnvironmentFile=-/etc/sysconfig/exim
+ExecStartPre=+/usr/spamtagger/bin/dump_exim_config.pl %I

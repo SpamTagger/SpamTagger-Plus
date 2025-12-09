@@ -1,0 +1,17 @@
+[Unit]
+Description=Preferences daemon for SpamTagger
+After=mariadb@replica.service
+Requires=mariadb@replica.service
+PartOf=spamtagger.target
+
+[Service]
+User=spamtagger
+Group=spamtagger
+PrivateTmp=false
+Type=forking
+#ExecStartPre=+/usr/spamtagger/bin/dump_stats_daemon.pl %I
+ExecStart=/usr/spamtagger/bin/daemon_starter.pl PrefTDaemon -d start
+KillSignal=SIGKILL
+
+[Install]
+WantedBy=spamtagger.target

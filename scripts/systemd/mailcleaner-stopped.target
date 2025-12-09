@@ -1,0 +1,5 @@
+[Unit]
+Description=SpamTagger - SMTP Antivirus/Antispam Gateway
+Requires=sshd.service
+Conflicts=spamtagger.target
+AllowIsolate=yes

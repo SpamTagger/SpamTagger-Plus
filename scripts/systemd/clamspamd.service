@@ -1,0 +1,19 @@
+[Unit]
+Description=ClamAV Spam daemon for SpamTagger
+Documentation=man:clamd(8) man:clamd.conf(5) https://docs.clamav.net/
+Requires=mariadb@replica.service
+After=clamav-daemon.socket mariadb@replica.service
+#ConditionPathExistsGlob=/var/spamtagger/spool/clamspam/*db
+PartOf=mailscanner.service spamtagger.target
+
+[Service]
+Type=forking
+User=spamtagger
+Group=spamtagger
+ExecStartPre=+/usr/spamtagger/bin/dump_clamspamd_config.pl
+ExecStart=/usr/sbin/clamd --config-file=/usr/spamtagger/etc/clamav/clamspamd.conf
+ExecReload=/bin/kill -USR2 $MAINPID
+TimeoutStartSec=420
+
+[Install]
+WantedBy=spamtagger.target

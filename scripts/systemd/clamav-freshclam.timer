@@ -1,0 +1,9 @@
+[Unit]
+Description=Freshclam timer for SpamTagger
+After=network.service network-online.target
+
+[Timer]
+OnUnitActiveSec=1h
+
+[Install]
+WantedBy=spamtagger.target
