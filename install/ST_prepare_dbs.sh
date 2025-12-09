@@ -25,8 +25,10 @@ fi
 VARDIR_SANE=$(echo $VARDIR | perl -pi -e 's/\//\\\//g')
 
 echo "-- removing previous mariadb databases and stopping mariadb"
-$SRCDIR/etc/init.d/mariadb_replica stop 2>&1
-$SRCDIR/etc/init.d/mariadb_source stop 2>&1
+systemctl stop mariadb
+systemctl disable mariadb
+systemctl stop mariadb@replica
+systemctl stop mariadb@source
 rm -rf $VARDIR/spool/mariadb_source/*
 rm -rf $VARDIR/spool/mariadb_replica/* 2>&1
 rm -rf $VARDIR/log/mariadb_source/*
