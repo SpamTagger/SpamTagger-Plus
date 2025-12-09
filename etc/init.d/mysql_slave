@@ -1,1 +1,1 @@
-./etc/init.d/mariadb_slave
+mariadb@replica
