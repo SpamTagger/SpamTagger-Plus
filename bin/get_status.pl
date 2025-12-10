@@ -18,18 +18,30 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#
 #   This script will output some informations on the status of the system
+#
 
 use v5.40;
+use strict;
 use warnings;
 use utf8;
+use Carp qw( confess );
 
-use lib '/usr/spamtagger/lib/';
-use ReadConfig();
-
-our $config = ReadConfig::get_instance();
-our $SRCDIR = $config->get_option('SRCDIR');
-our $VARDIR = $config->get_option('VARDIR');
+my ($SRCDIR, $MYMAILCLEANERPWD);
+our ($VARDIR);
+BEGIN {
+    if ($0 =~ m/(\S*)\/\S+.pl$/) {
+        my $path = $1."/../lib";
+        unshift (@INC, $path);
+    }
+    require ReadConfig;
+    my $conf = ReadConfig::getInstance();
+    $SRCDIR = $conf->getOption('SRCDIR') || '/usr/spamtagger';
+    $VARDIR = $conf->getOption('VARDIR') || '/var/spamtagger';
+    confess "Could not get DB password" unless ($MYMAILCLEANERPWD = $conf->getOption('MYMAILCLEANERPWD'));
+    unshift(@INC, $SRCDIR."/lib");
+}
 
 # Process codes:
 my %codes = (
@@ -39,8 +51,14 @@ my %codes = (
     '3' => 'needs restart',
     '4' => 'currently stopping',
     '5' => 'currently starting',
-    '6' => 'currently restarting (currently procesing stop/start script)'
+    '6' => 'currently restarting (currently procesing stop/start script)',
+    '255' => 'invalid service',
 );
+
+if ($0 =~ m/(\S*)\/\S+.pl$/) {
+    my $path = $1."/../lib";
+    unshift (@INC, $path);
+}
 
 my $mode_given;
 my $verbose = 0;
@@ -62,23 +80,23 @@ my $mode = "";
 my $cmd;
 
 my @order = (
-    { 'id' => 'exim_stage1', 'proc' => 'exim/exim_stage1.conf', 'human' => 'Incoming' },
-    { 'id' => 'exim_stage2', 'proc' => 'exim/exim_stage2.conf', 'human' => 'Filtering' },
-    { 'id' => 'exim_stage4', 'proc' => 'exim/exim_stage4.conf', 'human' => 'Outgoing' },
-    { 'id' => 'apache', 'proc' => 'apache/httpd.conf', 'human' => 'Web Server' },
-    { 'id' => 'mailscanner', 'proc' => 'MailScanner', 'human' => 'Filtering Engine' },
-    { 'id' => 'mariadb_source', 'proc' => 'mariadb/my_source.cnf', 'human' => 'Master Database' },
-    { 'id' => 'mariadb_replica', 'proc' => 'mariadb/my_replica.cnf', 'human' => 'Slave Database' },
-    { 'id' => 'snmpd', 'proc' => 'snmpd.conf', 'human' => 'SNMP Daemon' },
-    { 'id' => 'greylistd', 'proc' => 'greylistd/greylistd.conf', 'human' => 'Greylist Daemon' },
-    { 'id' => 'cron', 'proc' => '/usr/sbin/cron', 'human' => 'Scheduler' },
-    { 'id' => 'preftdaemon', 'proc' => 'PrefTDaemon', 'human' => 'Preferences Daemon' },
-    { 'id' => 'spamd', 'proc' => 'spamd.sock', 'human' => 'SpamAssassin Daemon' },
-    { 'id' => 'clamd', 'proc' => 'clamd.conf', 'human' => 'ClamAV Daemon' },
-    { 'id' => 'clamspamd', 'proc' => 'clamspamd.conf', 'human' => 'ClamSpam Daemon' },
-    { 'id' => 'newsld', 'proc' => 'newsld.sock', 'human' => 'Newsletter Daemon' },
-    { 'id' => 'spamhandler', 'proc' => 'SpamHandler', 'human' => 'SpamHandler Daemon' },
-    { 'id' => 'firewall', 'proc' => 'SpamHandler', 'human' => 'Firewall' }
+    { 'id' => 'exim_stage1', 'service' => 'exim4@1', 'human' => 'Incoming' },
+    { 'id' => 'exim_stage2', 'service' => 'exim4@2', 'human' => 'Filtering' },
+    { 'id' => 'exim_stage4', 'service' => 'exim4@4', 'human' => 'Outgoing' },
+    { 'id' => 'apache', 'service' => 'apache2', 'human' => 'Web Server' },
+    { 'id' => 'mailscanner', 'service' => 'mailscanner', 'human' => 'Filtering Engine' },
+    { 'id' => 'mysql_master', 'service' => 'mariadb@master', 'human' => 'Master Database' },
+    { 'id' => 'mysql_slave', 'service' => 'mariadb@slave', 'human' => 'Slave Database' },
+    { 'id' => 'snmpd', 'service' => 'snmpd', 'human' => 'SNMP Daemon' },
+    { 'id' => 'greylistd', 'service' => 'greylistd', 'human' => 'Greylist Daemon' },
+    { 'id' => 'cron', 'service' => 'cron', 'human' => 'Scheduler' },
+    { 'id' => 'preftdaemon', 'service' => 'preftdaemon', 'human' => 'Preferences Daemon' },
+    { 'id' => 'spamd', 'service' => 'spamd@spamd', 'human' => 'SpamAssassin Daemon' },
+    { 'id' => 'clamd', 'service' => 'clamav-daemon', 'human' => 'ClamAV Daemon' },
+    { 'id' => 'clamspamd', 'service' => 'clamspamd', 'human' => 'ClamSpam Daemon' },
+    { 'id' => 'newsld', 'service' => 'spamd@newsld', 'human' => 'Newsletter Daemon' },
+    { 'id' => 'spamhandler', 'service' => 'spamhandler', 'human' => 'SpamHandler Daemon' },
+    { 'id' => 'firewall', 'service' => 'ufw', 'human' => 'Firewall (ufw)' }
 );
 
 my $res;
@@ -86,51 +104,42 @@ if (! $mode_given) {
     usage();
 }
 if ($mode_given =~ /s/) {
-    my $restartdir = "$VARDIR/run/";
+    my $restartdir = $VARDIR."/run/";
     my @output;
     my $i = 0;
-    $cmd = "ps -efww";
-    $res = `$cmd`;
     foreach my $service (@order) {
-    last if ($service->{'id'} eq 'firewall');
-    my $key = $service->{'id'};
+        my $key = $service->{'id'};
         my $st = 0;
-        if ($res =~ /$service->{'proc'}/ ) {
-            $st = 1;
+        if (defined($service->{'service'})) {
+            $st = system("systemctl is-active --quiet $service->{'service'}");
+            # Old error codes are inverted
+            if ($st == 0) {
+                $st = 1;
+            } else {
+                $st = 0;
+            }
+        } else {
+            $order[$i++]{'status'} = 255;
+            next;
         }
-        if ($st == 0 && -f "$restartdir/$key.stopped") {
+        if ($st == 0 && -f $restartdir."/".$key.".stopped") {
             $st = 2;
         }
-        if ( -f "$restartdir$key.rn") {
+        if ( -f $restartdir.$key.".rn") {
             $st = 3;
         }
-        if ( -f "$restartdir$key.start.rs") {
+        if ( -f $restartdir.$key.".start.rs") {
             $st = 4;
         }
-        if ( -f "$restartdir$key.stop.rs") {
+        if ( -f $restartdir.$key.".stop.rs") {
             $st = 5;
         }
-        if ( -f "$restartdir$key.restart.rs") {
+        if ( -f $restartdir.$key.".restart.rs") {
             $st = 6;
         }
         $order[$i++]{'status'} = $st;
     }
 
-    $res = `cat /tmp/fw.lock 2> /dev/null`;
-    my $st = 2;
-    if ($res =~ /^1$/) {
-        $st = 1;
-    }
-    if (-f "${restartdir}firewall.restart.rs") {
-        $st = 6
-    } elsif (-f "${restartdir}firewall.stop.rs") {
-        $st = 5;
-    } elsif (-f "${restartdir}firewall.start.rs") {
-        $st = 4;
-    } elsif (-f "${restartdir}firewall.rn") {
-        $st = 3;
-    }
-    $order[$i]->{'status'} = $st;
     if ($verbose) {
         foreach my $service (@order) {
             printf("%-20s %s\n", $service->{'human'}.':', $codes{$service->{'status'}});
@@ -146,15 +155,15 @@ if ($mode_given =~ /s/) {
     foreach ( 0 .. 2 ) {
     my $key = $order[$_]->{'id'};
         if ($key eq 'exim_stage2') {
-            my $subcmd = "grep -e '^MTA\\s*=\\s*eximms' $SRCDIR/etc/mailscanner/MailScanner.conf";
+            my $subcmd = "grep -e '^MTA\\s*=\\s*eximms' ".${SRCDIR}."/etc/mailscanner/MailScanner.conf";
             my $type = `$subcmd`;
             if ($type eq '') {
-                $cmd = "/opt/exim4/bin/exim -C $SRCDIR/etc/exim/$key.conf -bpc";
+                $cmd = "runuser -u Debian-exim -- /opt/exim4/bin/exim -C ${VARDIR}/spool/tmp/exim/${key}.conf -bpc 2>/dev/null";
             } else {
-                $cmd = "ls $VARDIR/spool/exim_stage2/input/*.env 2>&1 | grep -v 'No such' | wc -l";
+                $cmd = "ls ${VARDIR}/spool/exim_stage2/input/*.env 2>&1 | grep -v 'No such' | wc -l";
             }
         } else {
-            $cmd = "/opt/exim4/bin/exim -C $SRCDIR/etc/exim/$key.conf -bpc";
+            $cmd = "runuser -u Debian-exim -- /opt/exim4/bin/exim -C ${VARDIR}/spool/tmp/exim/${key}.conf -bpc 2>/dev/null";
         }
         $res = `$cmd`;
         chomp($res);
@@ -207,7 +216,7 @@ if ($mode_given =~ /s/) {
     }
     print "\n" unless ($verbose);
 } elsif ($mode_given =~ /t/) {
-    $cmd = "/opt/exim4/bin/exim -C $SRCDIR/etc/exim/exim_stage2.conf -bp | head -1 | cut -d' ' -f2";
+    $cmd = "/opt/exim4/bin/exim -C ${VARDIR}/spool/tmp/exim/exim/exim_stage2.conf -bp | head -1 | cut -d' ' -f2";
     $res = `$cmd`;
     chomp($res);
     if ($verbose) {
@@ -215,11 +224,24 @@ if ($mode_given =~ /s/) {
     } else {
         print($res."\n");
     }
+} elsif ($mode_given =~ /u/) {
+    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S ${VARDIR}/run/mysql_slave/mysqld.sock -uspamtagger -p${MYMAILCLEANERPWD}";
+    $res = `$cmd`;
+    my $patch = "";
+    if ($res =~ /^(\d+)\s+(\S+)$/) {
+        $patch = $1;
+    }
+    if ($verbose) {
+        print "Patch level: $patch\n";
+    } else {
+        print $patch."\n";
+    }
 } else {
     usage();
 }
 
-sub usage {
+sub usage
+{
     print(
 "Usage:
     get_status.pl [-s, -p, -l, -d, -m, -t, -u] <-v>
@@ -245,8 +267,19 @@ sub usage {
     -d: output disks usage
     -m: output memory counters
     -t: output the maximum waiting time for a message in each spool
+    -u: output the last system patch
     -v: verbose print for humans
     -h: this menu
 ");
     exit(1);
+}
+
+sub getNumberOfGreylistDomains
+{
+    my $cmd = "wc -l ".$VARDIR."/spool/spamtagger/domains_to_greylist.list  | cut -d' ' -f1";
+    my $res = `$cmd`;
+    if ($res =~ m/(\d+)\s+/) {
+        return $1;
+    }
+    return 0;
 }
