@@ -23,9 +23,9 @@
 #   database as the spamtagger user.
 #
 #   Usage:
-#           st_mariadb [-s, -m]
-#   -s: connect to the replica database
-#   -m: connect to the source database
+#           st_mariadb [-s, -r]
+#   -r: connect to the replica database
+#   -s: connect to the source database
 
 VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
@@ -34,14 +34,14 @@ fi
 
 case $1 in
 
-"-s" | "-replica")
-  SOCKET=$VARDIR/run/mariadb_replica/mariadbd.sock
-  ;;
-"-m" | "-source")
+"-s" | "-source")
   SOCKET=$VARDIR/run/mariadb_source/mariadbd.sock
   ;;
+"-r" | "-replica")
+  SOCKET=$VARDIR/run/mariadb_replica/mariadbd.sock
+  ;;
 *)
-  echo "bad usage: use -s or -m flag to connect to replica or source database"
+  echo "bad usage: use -s or -r flag to connect to replica or source database"
   exit
   ;;
 esac
