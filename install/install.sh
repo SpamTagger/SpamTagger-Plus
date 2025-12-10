@@ -36,14 +36,14 @@ if [ ! -d $VARDIR/.ssh ]; then
   mkdir $VARDIR/.ssh
 fi
 
-if [ ! -f $VARDIR/.ssh/id_ed25519 ]; then
-  ssh-keygen -q -t ed25519 -f $VARDIR/.ssh/id_ed25519 -N ""
+if [ ! -f $VARDIR/.ssh/id_internal ]; then
+  ssh-keygen -t ed25519 -f $VARDIR/.ssh/id_internal -P ''
   chown -R spamtagger:spamtagger $VARDIR/.ssh
 fi
 
-if [ "$ISMASTER" = "Y" ]; then
-  MASTERHOST=127.0.0.1
-  MASTERKEY=$(cat $VARDIR/.ssh/id_ed25519.pub)
+if [ "$ISSOURCE" = "Y" ]; then
+  SOURCEHOST=127.0.0.1
+  SOURCEKEY=$(cat $VARDIR/.ssh/id_internal.pub)
 fi
 
 ###############################################
