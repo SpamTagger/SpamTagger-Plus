@@ -221,8 +221,8 @@ public function showProcesses($t, $colors, $nr, $rh, $rw) {
                     'MTA4' => $status->mtaoutgoing,
                     'HTTPD' => $status->httpd,
                     'ENGINE' => $status->engine,
-                    'MASTERDB' => $status->sourcedb,
-                    'SLAVEDB' => $status->replicadb,
+                    'SOURCEDB' => $status->sourcedb,
+                    'REPLICADB' => $status->replicadb,
                     'SNMPD' => $status->snmpd,
                     'GREYLISTD' => $status->greylistd,
                     'CRON' => $status->cron,
@@ -233,7 +233,7 @@ public function showProcesses($t, $colors, $nr, $rh, $rw) {
     $template = str_replace("__STATUS__", $this->draw_status($soapvalue, $colors), $t);
     $template = str_replace("__NEEDRESTART__", $this->needRestart($nr, $tag), $template);
     $template = str_replace("__NAME__", $lang_->print_txt($tag), $template);
-    if ($tag == "HTTPD" || $tag == "SLAVEDB") {
+    if ($tag == "HTTPD" || $tag == "REPLICADB") {
       $template = preg_replace("/__IF_STOP__(.*)__ENDIF_STOP__/", "", $template);
       $template = preg_replace("/__IF_START__(.*)__ENDIF_START__/", "", $template);
     } else {

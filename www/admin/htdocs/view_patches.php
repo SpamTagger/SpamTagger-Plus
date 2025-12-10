@@ -28,7 +28,7 @@ if (!isset($_GET['h']) || !is_numeric($_GET['h'])) {
   $soaper = new Soaper();
   $ret = $soaper->load($host);
   if ($ret != "OK") {
-    $error = "CANNOTCONNECTTOSLAVE";
+    $error = "CANNOTCONNECTTOREPLICA";
   }
 
   // authenticate admin

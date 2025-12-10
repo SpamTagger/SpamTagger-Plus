@@ -16,14 +16,14 @@ fi
 echo "select hostname, password from source;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/source.conf
 MHOST=$(cat /var/tmp/source.conf | cut -d':' -f1)
 MPASS=$(cat /var/tmp/source.conf | cut -d':' -f2)
-ISMASTER=$(grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3)
+ISSOURCE=$(grep 'ISSOURCE' /etc/spamtagger.conf | cut -d ' ' -f3)
 
 SYSADMIN=$(echo "SELECT summary_from FROM system_conf;" | $SRCDIR/bin/st_mariadb -s st_config | grep '\@')
 if [ "$SYSADMIN" != "" ]; then
   SYSADMIN=" --report-email $SYSADMIN"
 fi
 
-if [ "$ISMASTER" == "Y" ] || [ "$ISMASTER" == "y" ]; then
+if [ "$ISSOURCE" == "Y" ] || [ "$ISSOURCE" == "y" ]; then
   echo -n "Generating DMARC reports..."
   if [ ! -d /tmp/dmarc_reports ]; then
     mkdir /tmp/dmarc_reports

@@ -40,7 +40,7 @@ public function load($host, $timeout = 20) {
                        array("connection_timeout" => $time, "trace" => 0, "exceptions" => 1, "classmap" => $SoapClassMap));
   } catch (Exception $e) {
     //@todo  catch more exceptions
-    return "SOAPERRORCANNOTCONNECTSLAVE";
+    return "SOAPERRORCANNOTCONNECTREPLICA";
   }
   return "OK";
 }

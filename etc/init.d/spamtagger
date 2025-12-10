@@ -24,7 +24,7 @@ VARDIR=`grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3`
 if [ "$VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-ISMASTER=`grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3`
+ISSOURCE=`grep 'ISSOURCE' /etc/spamtagger.conf | cut -d ' ' -f3`
 
 NAME=spamtagger
 FW=firewall
@@ -32,8 +32,8 @@ EXIM1=exim_stage1
 EXIM2=exim_stage2
 EXIM4=exim_stage4
 MS=mailscanner
-MYSLAVE=mariadb_replica
-MYMASTER=mariadb_source
+MYREPLICA=mariadb_replica
+MYSOURCE=mariadb_source
 APACHE=apache
 SNMP=snmpd
 GREYLISTD=greylistd
@@ -69,14 +69,14 @@ case "$1" in
       fi
     done
 
-    $INITDIR/$MYMASTER start
-    $INITDIR/$MYSLAVE start
+    $INITDIR/$MYSOURCE start
+    $INITDIR/$MYREPLICA start
     # Restart FW in background so that Fail2Ban does not hold up other processes
     $INITDIR/$FW restart &
     sleep 5
 
     echo -n "  Resyncing DB... "
-    $INITDIR/$MYSLAVE restart 2>&1 > /dev/null
+    $INITDIR/$MYREPLICA restart 2>&1 > /dev/null
     echo "done."
     $INITDIR/$SNMP start
     $INITDIR/$STATSDAEMON start
@@ -135,8 +135,8 @@ case "$1" in
     $INITDIR/$STATSDAEMON stop
     $INITDIR/$PREFTDAEMON stop
     $INITDIR/$SPAMLOGGER stop
-    $INITDIR/$MYSLAVE stop
-    $INITDIR/$MYMASTER stop
+    $INITDIR/$MYREPLICA stop
+    $INITDIR/$MYSOURCE stop
     ;;
   restart)
     $0 stop $2

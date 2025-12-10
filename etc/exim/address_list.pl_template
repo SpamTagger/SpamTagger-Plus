@@ -42,7 +42,7 @@ close $AFILE;
 
 print "OK ".$ret." - address list saved in $afile\n";
 
-if ($conf->get_option('ISMASTER') =~ m/^(Y|y|yes|YES)$/) {
+if ($conf->get_option('ISSOURCE') =~ m/^(Y|y|yes|YES)$/) {
   my $replica_db = DB->db_connect('replica', 'st_config');
   my @sources = $replica_db->getListOfHash("SELECT hostname from source");
   my @replicas = $replica_db->getListOfHash("SELECT hostname from replica");

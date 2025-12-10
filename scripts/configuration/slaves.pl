@@ -221,7 +221,7 @@ sub set_as_replica {
   print "done.\n";
 
   # TODO: We should (and may) have a library to update these values rather than creating a shell
-  `perl -pi -e 's/ISMASTER = Y/ISMASTER = N/' /etc/spamtagger.conf`;
+  `perl -pi -e 's/ISSOURCE = Y/ISSOURCE = N/' /etc/spamtagger.conf`;
   `perl -pi -e 's/(.*collect_rrd.*)/#\$1/' /var/spool/cron/crontabs/root`;
   `crontab /var/spool/cron/crontabs/root 2>&1`;
   print "Host is now a replica of $source\n";

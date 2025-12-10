@@ -64,7 +64,7 @@
 
         $this->acl->allow('manager', 'Menu_Configuration');
 
-        if ($sysconf->getOption('ISMASTER') == 'Y') {
+        if ($sysconf->getOption('ISSOURCE') == 'Y') {
 
           $this->acl->allow('hotline', 'user');
           $this->acl->allow('hotline', 'index');

@@ -16,8 +16,8 @@ if [ ! -f $FILE ]; then
   exit 0
 fi
 
-ISMASTER=$(grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3)
-if [ "$ISMASTER" = "Y" ] || [ "$ISMASTER" = "y" ]; then
+ISSOURCE=$(grep 'ISSOURCE' /etc/spamtagger.conf | cut -d ' ' -f3)
+if [ "$ISSOURCE" = "Y" ] || [ "$ISSOURCE" = "y" ]; then
   sed -i 's/^\s*//' $FILE
   sed -i 's/ /", "/g' $FILE
   sed -i 's/^/insert ignore into wwlists (sender, recipient, type, comments) values ("/' $FILE
@@ -27,7 +27,7 @@ if [ "$ISMASTER" = "Y" ] || [ "$ISMASTER" = "y" ]; then
   sed -i 's/"---"/""/' $FILE
 
   sleep 1
-  st_mariadb -m st_config <$FILE
+  st_mariadb -s st_config <$FILE
 else
   echo "Please run this script on your source host"
 fi

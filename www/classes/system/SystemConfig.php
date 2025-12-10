@@ -155,7 +155,7 @@ class SystemConfig extends PrefHandler {
                 case 'MYSPAMTAGGERPWD' :
                     $this->dbpassword_ = $value;
                     break;
-                case 'ISMASTER' :
+                case 'ISSOURCE' :
                     if ($value == "Y") {
                         $this->issource_ = 1;
                     }

@@ -222,7 +222,7 @@ sub get_process_status ($oid) {
   if ($count > 0) {
     $status = 'RUNNING';
   } else {
-    $status = 'STOPPED'  if ($proc == 6 && $conf->get_option('ISMASTER') eq 'Y');
+    $status = 'STOPPED'  if ($proc == 6 && $conf->get_option('ISSOURCE') eq 'Y');
     $status = 'STOPPED' if ($proc == 9);
   }
   return (ASN_OCTET_STR, $status);

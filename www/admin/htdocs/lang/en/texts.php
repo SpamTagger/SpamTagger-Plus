@@ -487,8 +487,8 @@ $txt['MTA2']                        = "Filtering";
 $txt['MTA4']                        = "Outgoing";
 $txt['ENGINE']                      = "Engine";
 $txt['HTTPD']                       = "Web access";
-$txt['MASTERDB']                    = "Master DB";
-$txt['SLAVEDB']                     = "Slave DB";
+$txt['SOURCEDB']                    = "Source DB";
+$txt['REPLICADB']                   = "Replica DB";
 $txt['SNMPD']                       = "SNMP agent";
 $txt['GREYLISTD']                   = "Greylist";
 $txt['CRON']                        = "Scheduler";
@@ -543,8 +543,8 @@ $txt['LOGFILE']                     = "Log file";
 $txt['TODAY']                       = "Today";
 $txt['LOGLINES']                    = "Number of line displayed";
 
-$txt['ISNOTAMASTER']                = "is NOT a source";
-$txt['ISAMASTER']                   = "is a source";
+$txt['ISNOTASOURCE']                = "is NOT a source";
+$txt['ISASOURCE']                   = "is a source";
 
 $txt['FIREWALL']                    = "Firewall";
 

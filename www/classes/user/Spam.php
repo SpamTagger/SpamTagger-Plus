@@ -476,7 +476,7 @@ public function setReplacements($template, $replace) {
      'BLOCKLISTS' => $this->displayGlobalValue($this->getData('M_rbls')),
      'FITLERSCORE' => $this->displayGlobalValue($this->getData('M_score')),
      'PARTS' => $this->getMIMEPartsType(),
-     'STORESLAVE' => $this->getData('store_replica')
+     'STOREREPLICA' => $this->getData('store_replica')
   );
 
   if (!empty($_SESSION['user'])) {

@@ -30,7 +30,7 @@ $replace = array(
         "__LANG__" => $lang_->getLanguage(),
         "__DATE__" => strftime("%d.%m.%Y %H:%M.%S"),
         "__HOSTID__" => $sysconf_->getPref('hostid'),
-        "__MASTER__" => isMaster(),
+        "__SOURCE__" => isMaster(),
         "__INT_WEBSITE__" => $integrator->getInfo('SiteInternet'),
         "__INT_COMPANY__" => $integrator->getInfo('Company'),
         "__INT_TECHNAME__" => $integrator->getInfo('Surname_T')." ".$integrator->getInfo('Name_T'),
@@ -50,8 +50,8 @@ function isMaster() {
   global $sysconf_;
 
   if ($sysconf_->issource_ < 1) {
-    return $lang_->print_txt('ISNOTAMASTER');
+    return $lang_->print_txt('ISNOTASOURCE');
   }
-  return $lang_->print_txt("ISAMASTER");
+  return $lang_->print_txt("ISASOURCE");
 }
 ?>

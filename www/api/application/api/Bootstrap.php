@@ -59,7 +59,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	protected function _initAuth()
 	{
                 $config = SpamTagger_Config::getInstance();
-                if ($config->getOption('ISMASTER') != 'Y' ) {
+                if ($config->getOption('ISSOURCE') != 'Y' ) {
                    Zend_Registry::get('response')->setResponse(404, 'API is only available on source host');
                 }
 

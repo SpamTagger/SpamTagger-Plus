@@ -102,7 +102,7 @@ if ('dbpass.inc' == basename($_SERVER['SCRIPT_FILENAME']))
                       $sth = $replica->prepare("UPDATE st_config.replica SET password=:newpassdb where id=:hostid");
                       $retdbreplicareplica = $sth->execute(array(':newpassdb' => $_POST['newpassdb'], ':hostid' => $actual_hostid)) == true ? 0 : 1;
 
-		      $sth = $replica->prepare("STOP SLAVE; CHANGE MASTER TO MASTER_PASSWORD=:sourcepass; START SLAVE;");
+		      $sth = $replica->prepare("STOP REPLICA; CHANGE SOURCE TO SOURCE_PASSWORD=:sourcepass; START REPLICA;");
                       $retdbreplic = $sth->execute(array(':sourcepass' => $_POST['newpassdb'])) == true ? 0 : 1;
 
                       touch('/var/spamtagger/run/configurator/dbpass');

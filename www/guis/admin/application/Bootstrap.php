@@ -103,7 +103,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $sysconf = SpamTagger_Config::getInstance();
 
         $view->is_replica = 1;
-        if ($sysconf->getOption('ISMASTER') == 'Y') {
+        if ($sysconf->getOption('ISSOURCE') == 'Y') {
              $view->is_replica = 0;
         }
 

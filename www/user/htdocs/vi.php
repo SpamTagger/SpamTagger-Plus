@@ -85,7 +85,7 @@ $replace = array(
    '__BODY__' => displayBody(),
    '__NEWS__' => $spam->getData('is_newsletter'),
    '__PARTS__' => getMIMEParts(),
-   '__STORESLAVE__' => $spam->getData('store_replica')
+   '__STOREREPLICA__' => $spam->getData('store_replica')
 );
 
 $replace = $spam->setReplacements($template_, $replace);

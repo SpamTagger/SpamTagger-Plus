@@ -87,7 +87,7 @@ function send_SOAP_request($host, $request, $params) {
     if ($ret == "OK") {
         return $soaper->queryParam($request, $params);
     } else {
-        return "FAILEDCONNMASTER";
+        return "FAILEDCONNSOURCE";
     }
 }
 

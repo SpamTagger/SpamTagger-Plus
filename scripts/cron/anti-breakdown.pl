@@ -115,7 +115,7 @@ sub remove_and_save_ST_RBLs {
 
   my $source_dbh = DB->db_connect('source', 'st_config');
   if ( ! defined($source_dbh) ) {
-    warn "CANNOTCONNECTMASTERDB\n", $source_dbh->errstr;
+    warn "CANNOTCONNECTSOURCEDB\n", $source_dbh->errstr;
     return 0;
   }
 
@@ -168,7 +168,7 @@ sub handle_dns_ok {
     # Database connexion
     my $source_dbh = DB->db_connect('source', 'st_config');
     if ( ! defined($source_dbh) ) {
-      warn "CANNOTCONNECTMASTERDB\n", $source_dbh->errstr;
+      warn "CANNOTCONNECTSOURCEDB\n", $source_dbh->errstr;
       return 0;
     }
 

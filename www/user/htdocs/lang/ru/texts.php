@@ -258,7 +258,7 @@ $txt['DISPLAYEDINFOSS'] = "<strong>Сообщений показано: </strong
 //old
 $txt['QUARANTINETITLE'] = "Список карантина для __PARAM__";
 $txt['PARTS'] = "Части";
-$txt['STORESLAVE'] = "Хранилище";
+$txt['STOREREPLICA'] = "Хранилище";
 //old
 $txt['MAIN'] = "основной";
 //old

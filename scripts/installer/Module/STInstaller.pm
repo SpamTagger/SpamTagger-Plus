@@ -47,11 +47,11 @@ sub new($class) {
       'VARDIR' => '/var/spamtagger',
       'HOSTID' => undef,
       'DEFAULTDOMAIN' => '',
-      'ISMASTER' => 'Y',
+      'ISSOURCE' => 'Y',
       'MYSPAMTAGGERPWD' => undef,
       'HELONAME' => undef,
-      'MASTERIP' => undef,
-      'MASTERPWD' => undef,
+      'SOURCEIP' => undef,
+      'SOURCEPWD' => undef,
     },
     install_variables => {
       'WEBADMINPWD' => undef,
@@ -63,8 +63,8 @@ sub new($class) {
       'HOSTID' => 1,
       'MYSPAMTAGGERPWD' => 'STPassw0rd',
       'HELONAME' => '',
-      'MASTERIP' => '127.0.0.1',
-      'MASTERPWD' => 'STPassw0rd',
+      'SOURCEIP' => '127.0.0.1',
+      'SOURCEPWD' => 'STPassw0rd',
     }
   };
   # Load variables from existing config file, if set
@@ -152,7 +152,7 @@ sub do_menu($this, $basemenu, $currentstep, $error) {
 
   if ($res eq 'Database password') {
     $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} = $this->database_pwd();
-    $this->{'config_variables'}->{'MASTERPWD'} = $this->{'config_variables'}->{'MYSPAMTAGGERPWD'};
+    $this->{'config_variables'}->{'SOURCEPWD'} = $this->{'config_variables'}->{'MYSPAMTAGGERPWD'};
     $$currentstep = 5;
     return 1;
   }
@@ -294,7 +294,7 @@ sub check_variables($this) {
   return 2 unless (defined($this->{'install_variables'}->{'HOSTNAME'}) && validate('fqdn', $this->{'install_variables'}->{'HOSTNAME'}));
   return 3 unless (defined($this->{'install_variables'}->{'WEBADMINPWD'}) && $this->{'install_variables'}->{'WEBADMINPWD'} ne '' && $this->{'install_variables'}->{'WEBADMINPWD'} ne 'STPassw0rd');
   return 4 unless (defined($this->{'config_variables'}->{'MYSPAMTAGGERPWD'}) && $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} ne '' && $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} ne 'STPassw0rd');
-  return 4 unless (defined($this->{'config_variables'}->{'MASTERPWD'}) && $this->{'config_variables'}->{'MASTERPWD'} ne 'STPassw0rd');
+  return 4 unless (defined($this->{'config_variables'}->{'SOURCEPWD'}) && $this->{'config_variables'}->{'SOURCEPWD'} ne 'STPassw0rd');
   return 5 unless (defined($this->{'install_variables'}->{'ORGANIZATION'}) && $this->{'install_variables'}->{'ORGANIZATION'} ne '');
   return 6 unless (defined($this->{'install_variables'}->{'CLIENTTECHMAIL'}) && $this->{'install_variables'}->{'CLIENTTECHMAIL'} ne '');
   return 0;
