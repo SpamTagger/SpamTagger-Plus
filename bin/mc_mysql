@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Legacy support to make DB accesses easier for MC users
+CMD=$(echo $0 | sed 's/mc_mysql/st_mariadb/')
+ARG=$(echo $1 | sed 's/-s/-r/' | sed 's/-m/-s/')
+REM=$(echo $@ | sed -r "s/^$1 //" | sed 's/mc_/st_/g')
+
+setterm --foreground red
+echo "Interpretting MailCleaner commandline: $0 $@"
+echo "as SpamTagger commandline: $CMD $ARG $REM"
+setterm --foreground default
+$CMD $ARG $REM
