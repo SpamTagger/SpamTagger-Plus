@@ -39,4 +39,4 @@ if [ "$BACKUPFILE" = "" ]; then
   BACKUPFILE="spamtagger_config_.sql"
 fi
 
-/usr/bin/mariadb-dump -u spamtagger -p$MYSPAMTAGGERPWD -S $VARDIR/run/mariadb_source/mariadbd.sock --ignore-table=st_config.update_patch --ignore-table=st_config.source --ignore-table=st_config.replica --source-data=2 st_config >$BACKUPFILE
+/usr/bin/mariadb-dump -u spamtagger -p$MYSPAMTAGGERPWD -S $VARDIR/run/mariadb_source/mariadbd.sock --ignore-table=st_config.source --ignore-table=st_config.replica --source-data=2 st_config >$BACKUPFILE

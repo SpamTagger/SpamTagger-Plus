@@ -26,6 +26,5 @@ innodb_lock_wait_timeout = 10
 
 replicate-do-db=mc_config
 replicate-ignore-db=mc_spool
-replicate-ignore-table=mc_config.update_patch
 server-id=__REPLICAID__
 log-bin =st___REPLICAID__-bin

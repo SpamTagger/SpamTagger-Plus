@@ -22,7 +22,7 @@
 #   the up-to-date database from SpamTagger Update Services
 #
 #   Usage:
-#           check_db.pl [-s|-m] [--dbs=database] [--update|--mycheck|--myrepair] [-r|-R]
+#           check_db.pl [-s|-r] [--dbs=database] [--update|--mycheck|--myrepair] [-r|-R]
 
 use v5.40;
 use warnings;
@@ -45,9 +45,9 @@ my $repfix = 0;
 ## parse arguments
 while (my $arg=shift) {
  if ($arg eq "-s") {
-   $dbtype='replica';
- } elsif ($arg eq '-m') {
    $dbtype='source';
+ } elsif ($arg eq '-r') {
+   $dbtype='replica';
  } elsif ($arg eq '--update') {
    $updatemode=1;
  } elsif ($arg eq '--mycheck') {
@@ -62,7 +62,7 @@ while (my $arg=shift) {
    $repfix=1;
  } else {
    print "unknown argmuent: $arg\n";
-   print "Usage: check_db.pl [-s|-m] [--dbs=database] [--update] [--mycheck|--myrepair] [-r|-R]\n";
+   print "Usage: check_db.pl [-s|-r] [--dbs=database] [--update] [--mycheck|--myrepair] [-r|-R]\n";
    exit 1;
  }
 }
@@ -290,9 +290,9 @@ sub add_database ($dbtype, $dbname) {
     print "Creating schema...\n";
     my $mariadb = $conf->get_option('SRCDIR')."/bin/st_mariadb";
     if ($dbtype eq 'replica') {
-      $mariadb .= " -s $dbname";
+      $mariadb .= " -r $dbname";
     } else {
-      $mariadb .= " -m $dbname";
+      $mariadb .= " -s $dbname";
     }
     `$mariadb < $descfile 2>&1`;
   }
@@ -356,9 +356,9 @@ sub compare_update_database ($db_ref, $dbname, $update) {
     if (! defined($actualtables{$table})) {
       print "     MISSING table $table..";
       if ($update) {
-        my $type = '-m';
+        my $type = '-s';
         if ($dbtype eq 'replica') {
-          $type = '-s';
+          $type = '-r';
         }
         my $cmd = $conf->get_option('SRCDIR')."/bin/st_mariadb $type < ".$reftables{$table} ." 2>&1";
         my $res = `$cmd`;

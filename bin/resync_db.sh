@@ -29,7 +29,7 @@
 function check_status() {
   echo "Checking replica status..."
 
-  STATUS=$(echo 'show replica status\G' | /usr/spamtagger/bin/st_mariadb -s)
+  STATUS=$(echo 'show replica status\G' | /usr/spamtagger/bin/st_mariadb -r)
   if grep -vq "Slave_SQL_Running: Yes" <<<$(echo $STATUS); then
     echo "Slave_SQL_Running failed"
     RUN=1
@@ -120,7 +120,7 @@ fi
 # Resync
 
 MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
-echo "select hostname, password from source;" | $SRCDIR/bin/st_mariadb -s st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/source.conf
+echo "select hostname, password from source;" | $SRCDIR/bin/st_mariadb -r st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/source.conf
 
 if [ "$MHOST" != "" ]; then
   export MHOST
@@ -133,8 +133,6 @@ else
   export MPASS=$(cat /var/tmp/source.conf | cut -d':' -f2)
 fi
 
-/usr/bin/mariadb-dump -S$VARDIR/run/mariadb_replica/mariadbd.sock -uspamtagger -p$MYSPAMTAGGERPWD st_config update_patch >/var/tmp/updates.sql
-
 /usr/bin/mariadb-dump -h $MHOST -uspamtagger -p$MPASS --source-data st_config >/var/tmp/source.sql
 $SRCDIR/etc/init.d/mariadb_replica stop
 sleep 2
@@ -143,25 +141,24 @@ rm $VARDIR/spool/mariadb_replica/mariadbd-relay* >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
 $SRCDIR/etc/init.d/mariadb_replica start nopass
 sleep 5
-echo "STOP SLAVE;" | $SRCDIR/bin/st_mariadb -s
+echo "STOP SLAVE;" | $SRCDIR/bin/st_mariadb -r
 sleep 2
 rm $VARDIR/spool/mariadb_replica/source.info >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/mariadbd-relay* >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
 
-$SRCDIR/bin/st_mariadb -s st_config </var/tmp/source.sql
+$SRCDIR/bin/st_mariadb -r st_config </var/tmp/source.sql
 
 sleep 2
-echo "CHANGE MASTER TO source_host='$MHOST', source_user='spamtagger', source_password='$MPASS'; " | $SRCDIR/bin/st_mariadb -s
+echo "CHANGE MASTER TO source_host='$MHOST', source_user='spamtagger', source_password='$MPASS'; " | $SRCDIR/bin/st_mariadb -r
 # Return code should be 0 if there are no errors. Log code to RUN to catch errors that might not be presented with 'check_status'
-$SRCDIR/bin/st_mariadb -s st_config </var/tmp/source.sql
+$SRCDIR/bin/st_mariadb -r st_config </var/tmp/source.sql
 RUN=$?
-echo "START SLAVE;" | $SRCDIR/bin/st_mariadb -s
+echo "START SLAVE;" | $SRCDIR/bin/st_mariadb -r
 sleep 5
 
 $SRCDIR/etc/init.d/mariadb_replica restart
 sleep 5
-$SRCDIR/bin/st_mariadb -s st_config </var/tmp/updates.sql
 
 # Run the check again and record results
 check_status

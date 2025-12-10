@@ -2,7 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
-#   Copyright (C) 2023 John Mertz <git@john.me.tz>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -215,18 +215,6 @@ if ($mode_given =~ /s/) {
     } else {
         print($res."\n");
     }
-} elsif ($mode_given =~ /u/) {
-    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /usr/bin/mariadb --skip-column-names -S $VARDIR/run/mariadb_replica/mariadbd.sock -uspamtagger -p".$config->get_option('MYSPAMTAGGERPWD');
-    $res = `$cmd`;
-    my $patch = "";
-    if ($res =~ /^(\d+)\s+(\S+)$/) {
-        $patch = $1;
-    }
-    if ($verbose) {
-        print "Patch level: $patch\n";
-    } else {
-        print $patch."\n";
-    }
 } else {
     usage();
 }
@@ -257,7 +245,6 @@ sub usage {
     -d: output disks usage
     -m: output memory counters
     -t: output the maximum waiting time for a message in each spool
-    -u: output the last system patch
     -v: verbose print for humans
     -h: this menu
 ");

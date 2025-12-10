@@ -137,12 +137,12 @@ sub get_patch_level {
 
   my $patch = 'Unknown';
 
-  my $patchfile = $conf->get_option('SRCDIR').'/etc/spamtagger/patchlevel.def';
+  my $patchfile = '/etc/os-release';
   if (-f $patchfile) {
     my $pfile;
     if (open($pfile, '<', $patchfile)) {
       while(<$pfile>) {
-        if (/^(\d+)$/) {
+        if (/^IMAGE_VERSION=(\d+\.\d+)$/) {
           $patch = $1;
         }
       }
@@ -150,19 +150,6 @@ sub get_patch_level {
     }
   }
 
-  if ($patch eq 'Unknown') {
-    my $dbh = DBI->connect("DBI:mariadb:database=st_config;mariadb_socket=".$conf->get_option('VARDIR')."/run/mariadb_replica/mariadbd.sock",
-      "spamtagger",$conf->get_option('MYSPAMTAGGERPWD'), {RaiseError => 0, PrintError => 1} );
-    my $sth = $dbh->prepare("SELECT id FROM update_patch ORDER BY id DESC LIMIT 1");
-    if ($sth->execute()) {
-      if (my $row = $sth->fetchrow_hashref()) {
-        if (defined($row) && defined($row->{'id'})) {
-          $patch = $row->{'id'};
-        }
-      }
-    }
-    $sth->finish();
-  }
   chomp($patch);
   return (ASN_OCTET_STR , $patch);
 }

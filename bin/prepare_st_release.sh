@@ -252,10 +252,6 @@ echo "INSERT INTO external_access values(NULL, 'configurator', '4242', 'TCP', '0
 echo Set default value in DB
 echo "update domain_pref set allow_newsletters=0,prevent_spoof=1 where id=(select prefs from domain where name='__global__')\G" | ${SRCDIR}/bin/st_mariadb -m st_config
 
-echo Insert Version in DB
-echo "DELETE FROM update_patch WHERE id='${patchID}';" | ${SRCDIR}/bin/st_mariadb -s st_config
-echo "INSERT INTO update_patch VALUES ('${patchID}', '${patchDate}', '${patchTime}', 'OK', '${reason}');" | ${SRCDIR}/bin/st_mariadb -s st_config
-
 echo "Reset MySQL Binary logs"
 echo 'STOP SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
 echo 'RESET SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
