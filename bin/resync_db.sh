@@ -104,7 +104,7 @@ if [ "SRCDIR" = "" ]; then
 fi
 
 echo "starting replica db..."
-$SRCDIR/etc/init.d/mariadb_replica start
+systemctl start mariadb@replica
 sleep 5
 
 check_status
@@ -121,6 +121,10 @@ fi
 
 MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
 echo "select hostname, password from source;" | $SRCDIR/bin/st_mariadb -r st_config | grep -v 'password' | tr -t '[:blank:]' ':' >/var/tmp/source.conf
+if [[ "$(cat /var/tmp/source.conf)" == "" ]]; then
+  echo "No server defined in 'source' table."
+  exit 1
+fi
 
 if [ "$MHOST" != "" ]; then
   export MHOST
@@ -133,15 +137,16 @@ else
   export MPASS=$(cat /var/tmp/source.conf | cut -d':' -f2)
 fi
 
-/usr/bin/mariadb-dump -h $MHOST -uspamtagger -p$MPASS --source-data st_config >/var/tmp/source.sql
-$SRCDIR/etc/init.d/mariadb_replica stop
+/usr/bin/mariadb-dump -h $MHOST -uspamtagger -p$MPASS --master-data st_config >/var/tmp/source.sql
+systemctl stop mariadb@replica.socket
 sleep 2
+
 rm $VARDIR/spool/mariadb_replica/source.info >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/mariadbd-relay* >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
-$SRCDIR/etc/init.d/mariadb_replica start nopass
+systemctl start mariadb@replica-nopass
 sleep 5
-echo "STOP SLAVE;" | $SRCDIR/bin/st_mariadb -r
+echo "STOP REPLICA;" | $SRCDIR/bin/st_mariadb -r
 sleep 2
 rm $VARDIR/spool/mariadb_replica/source.info >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/mariadbd-relay* >/dev/null 2>&1
@@ -150,14 +155,15 @@ rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
 $SRCDIR/bin/st_mariadb -r st_config </var/tmp/source.sql
 
 sleep 2
-echo "CHANGE MASTER TO source_host='$MHOST', source_user='spamtagger', source_password='$MPASS'; " | $SRCDIR/bin/st_mariadb -r
+echo "CHANGE SOURCE TO source_host='$MHOST', source_user='spamtagger', source_password='$MPASS'; " | $SRCDIR/bin/st_mariadb -r
 # Return code should be 0 if there are no errors. Log code to RUN to catch errors that might not be presented with 'check_status'
 $SRCDIR/bin/st_mariadb -r st_config </var/tmp/source.sql
 RUN=$?
-echo "START SLAVE;" | $SRCDIR/bin/st_mariadb -r
+echo "START REPLICA;" | $SRCDIR/bin/st_mariadb -r
 sleep 5
 
-$SRCDIR/etc/init.d/mariadb_replica restart
+systemctl stop mariadb@replica-nopass
+systemctl start mariadb@replica
 sleep 5
 
 # Run the check again and record results

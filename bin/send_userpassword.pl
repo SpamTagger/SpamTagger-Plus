@@ -38,8 +38,8 @@ use Digest::MD5 qw(md5_hex);
 my $max_pending_age = 0; # in days
 
 my $conf = ReadConfig::get_instance();
-if ($conf->get_option('ISMASTER') !~ /^[y|Y]$/) {
-  print "NOTAMASTER";
+if ($conf->get_option('ISSOURCE') !~ /^[y|Y]$/) {
+  print "NOTASOURCE";
   exit 0;
 }
 

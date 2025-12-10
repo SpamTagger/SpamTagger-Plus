@@ -51,7 +51,7 @@ VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "VARDIR" = "" ]; then
   VARDIR=/var/spamtagger
 fi
-ISMASTER=$(grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3)
+ISSOURCE=$(grep 'ISSOURCE' /etc/spamtagger.conf | cut -d ' ' -f3)
 CLIENTID=$(grep 'CLIENTID' /etc/spamtagger.conf | cut -d ' ' -f3)
 HOSTID=$(grep 'HOSTID' /etc/spamtagger.conf | cut -d ' ' -f3)
 
@@ -71,7 +71,7 @@ if $randomize; then
   sleep $sleep_time
 fi
 
-if [ "$ISMASTER" = "Y" ] || [ "$ISMASTER" = "y" ]; then
+if [ "$ISSOURCE" = "Y" ] || [ "$ISSOURCE" = "y" ]; then
   CONFIGFILE=/var/tmp/config.sql
 
   $($SRCDIR/bin/backup_config.sh $CONFIGFILE) >/dev/null 2>&1

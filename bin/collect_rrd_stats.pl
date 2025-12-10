@@ -38,7 +38,7 @@ my $m = '';
 $m = 'daily' if (defined($mode) && $mode eq 'daily');
 
 my $conf = ReadConfig::get_instance();
-exit 0 unless ($conf->get_option('ISMASTER') =~ /^[Yy]$/);
+exit 0 unless ($conf->get_option('ISSOURCE') =~ /^[Yy]$/);
 
 unless (-d $conf->get_option('VARDIR')."/spool/rrdtools") {
   mkdir $conf->get_option('VARDIR')."/spool/rrdtools";

@@ -19,7 +19,7 @@ if [ $(replicaSynchronized) == "false" ]; then
 fi
 
 STHOSTNAME=$(grep -e "STHOSTNAME" /etc/spamtagger.conf | cut -d" " -f3)
-PRIVATE_KEY_FILE="/root/.ssh/id_rsa_internal"
+PRIVATE_KEY_FILE="/root/.ssh/id_internal"
 PUBLIC_KEY_FILE="${PRIVATE_KEY_FILE}.pub"
 AUTHORIZED_KEYS_FILE="/root/.ssh/authorized_keys"
 

@@ -253,10 +253,10 @@ echo Set default value in DB
 echo "update domain_pref set allow_newsletters=0,prevent_spoof=1 where id=(select prefs from domain where name='__global__')\G" | ${SRCDIR}/bin/st_mariadb -m st_config
 
 echo "Reset MySQL Binary logs"
-echo 'STOP SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
-echo 'RESET SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
-echo 'RESET MASTER' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_source/mariadbd.sock -uroot -p"$dbPassword"
-echo 'START SLAVE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
+echo 'STOP REPLICA' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
+echo 'RESET REPLICA' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
+echo 'RESET SOURCE' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_source/mariadbd.sock -uroot -p"$dbPassword"
+echo 'START REPLICA' | /usr/bin/mariadb --socket ${VARDIR}/run/mariadb_replica/mariadbd.sock -uroot -p"$dbPassword"
 
 ${SRCDIR}/etc/init.d/spamtagger stop
 

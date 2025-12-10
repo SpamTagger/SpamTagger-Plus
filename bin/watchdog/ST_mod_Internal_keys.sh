@@ -38,13 +38,13 @@ if (("$RET" <= "0")); then
   my_own_exit "2"
 fi
 
-if [ ! -f /root/.ssh/id_rsa_internal ]; then
-  echo "/root/.ssh/id_rsa_internal not found" >$OUT_FILE
+if [ ! -f /root/.ssh/id_internal ]; then
+  echo "/root/.ssh/id_internal not found" >$OUT_FILE
   my_own_exit "3"
 fi
 
-if [ ! -f /root/.ssh/id_rsa_internal.pub ]; then
-  echo "/root/.ssh/id_rsa_internal.pub not found" >$OUT_FILE
+if [ ! -f /root/.ssh/id_internal.pub ]; then
+  echo "/root/.ssh/id_internal.pub not found" >$OUT_FILE
   my_own_exit "4"
 fi
 

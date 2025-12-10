@@ -52,8 +52,8 @@ use MIME::QuotedPrint();
 use Digest::SHA qw(sha1_hex);
 
 my $conf = ReadConfig::get_instance();
-if ($conf->get_option('ISMASTER') !~ /^[y|Y]$/) {
-  print "NOTAMASTER";
+if ($conf->get_option('ISSOURCE') !~ /^[y|Y]$/) {
+  print "NOTASOURCE";
   exit 0;
 }
 

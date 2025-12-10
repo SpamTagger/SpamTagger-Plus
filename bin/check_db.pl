@@ -22,7 +22,7 @@
 #   the up-to-date database from SpamTagger Update Services
 #
 #   Usage:
-#           check_db.pl [-s|-r] [--dbs=database] [--update|--mycheck|--myrepair] [-r|-R]
+#           check_db.pl [-s|-r] [--dbs=database] [--update|--mycheck|--myrepair] [-c|-f]
 
 use v5.40;
 use warnings;
@@ -56,9 +56,9 @@ while (my $arg=shift) {
    $repairmode=1;
  } elsif ($arg =~ /\-\-dbs=(\S+)/) {
    $databases=$1;
- } elsif ($arg eq "-r") {
+ } elsif ($arg eq "-c") {
    $repcheck=1;
- } elsif ($arg eq "-R") {
+ } elsif ($arg eq "-f") {
    $repfix=1;
  } else {
    print "unknown argmuent: $arg\n";
@@ -75,18 +75,15 @@ if (($updatemode + $checkmode + $repairmode) > 1) {
 my $conf = ReadConfig::get_instance();
 
 ## check replication if wanted
-if ($repcheck > 0) {
+if ($repcheck || $repfix) {
   check_replication_status($repfix);
-  exit 0;
-}
-if ($repfix > 0) {
-  if (check_replication_status($repfix)) {
-    exit 0;
+  if ($repfix) {
+    sleep 5;
+    check_replication_status(0);
   }
-  sleep 5;
-  check_replication_status(0);
   exit 0;
 }
+
 ## process each database
 foreach my $database (split(',', $databases)) {
   output("Processing database: $database");

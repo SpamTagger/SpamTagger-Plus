@@ -550,13 +550,13 @@ sub dump_source_file($file, $m_h)
 {
     my %source = %$m_h;
 
-    my $MASTERFILE;
-    confess "Cannot open $file: $!" unless ($MASTERFILE = ${open_as($file, '>', 0664, 'spamtagger:spamtagger')});
+    my $SOURCEFILE;
+    confess "Cannot open $file: $!" unless ($SOURCEFILE = ${open_as($file, '>', 0664, 'spamtagger:spamtagger')});
 
-    print $MASTERFILE "HOST ".$source{'host'}."\n";
-    print $MASTERFILE "PORT ".$source{'port'}."\n";
-    print $MASTERFILE "PASS ".$source{'password'}."\n";
-    close $MASTERFILE;
+    print $SOURCEFILE "HOST ".$source{'host'}."\n";
+    print $SOURCEFILE "PORT ".$source{'port'}."\n";
+    print $SOURCEFILE "PASS ".$source{'password'}."\n";
+    close $SOURCEFILE;
     return 1;
 }
 
