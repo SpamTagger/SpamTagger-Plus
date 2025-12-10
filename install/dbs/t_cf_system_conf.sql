@@ -10,7 +10,7 @@ CREATE TABLE system_conf (
    contact_email       varchar(200),
    hostname            varchar(200) NOT NULL DEFAULT '',
    hostid              int(11) NOT NULL DEFAULT 1,
-   clientid            int(20) NOT NULL,
+   clientid            int(20),
    default_domain      varchar(200) NOT NULL DEFAULT '',
    default_language    varchar(50) NOT NULL DEFAULT 'en',
    sysadmin            varchar(200) NOT NULL DEFAULT '',
