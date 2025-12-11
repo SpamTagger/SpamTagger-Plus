@@ -28,4 +28,4 @@ RestrictRealtime=true
 RestrictSUIDSGID=true
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=spamtagger.target

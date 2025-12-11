@@ -1,12 +1,17 @@
 [Unit]
 Description=Uncomplicated firewall for SpamTagger
-After=network.service mariadb@replica.service first-boot-complete.target
+Documentation=man:ufw(8)
+DefaultDependencies=no
+After=mariadb@replica.service first-boot-complete.target
 # Don't start before network. UFW is bound to SpamTagger.
 Before=
 Wants=
-Wants=local-fs.target
 
 [Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/lib/ufw/ufw-init start quiet
+ExecStop=/usr/lib/ufw/ufw-init stop
 ExecStartPre=/usr/spamtagger/bin/dump_firewall.pl
 
 [Install]

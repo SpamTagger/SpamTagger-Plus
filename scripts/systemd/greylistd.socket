@@ -12,4 +12,4 @@ SocketGroup=greylist
 Service=greylistd.service
 
 [Install]
-WantedBy=sockets.target
+WantedBy=spamtagger.target
