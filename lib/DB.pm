@@ -126,8 +126,9 @@ sub get_list_of_hash ($this, $query, $nowarnings = 0) {
   my @results;
 
   my $sth = $this->{dbh}->prepare($query);
-  if ($this->get_error()) {
-    if (! $nowarnings) {
+  my $res = $sth->execute();
+  if ($this->{dbh}->errstr()) {
+    unless ($nowarnings) {
       print "WARNING, CANNOT QUERY ($query => ".$this->{dbh}->errstr.")\n";
     }
     return @results;
@@ -144,14 +145,15 @@ sub get_list ($this, $query, $nowarnings = 0) {
   my @results;
 
   my $sth = $this->{dbh}->prepare($query);
-  if ($this->get_error()) {
-    if (! $nowarnings) {
+  my $res = $sth->execute();
+  if ($this->{dbh}->errstr) {
+    unless ($nowarnings) {
       print "WARNING, CANNOT QUERY ($query => ".$this->{dbh}->errstr.")\n";
     }
     return @results;
   }
-  while (my $ref = $sth->fetchrow_arrayref()) {
-    push @results, $ref;
+  while (my $row = $sth->fetchrow_array()) {
+    push @results, $row;
   }
 
   $sth->finish();
@@ -170,7 +172,8 @@ sub get_hash_row ($this, $query, $nowarnings = 0) {
   my %results;
 
   my $sth = $this->{dbh}->prepare($query);
-  unless ($this->get_error()) {
+  my $res = $sth->execute();
+  if ($this->{dbh}->errstr()) {
     unless ($nowarnings) {
       print "WARNING, CANNOT QUERY ($query => ".$this->{dbh}->errstr.")\n";
     }
@@ -206,6 +209,11 @@ sub set_auto_commit ($this, $v) {
   }
   $this->{dbh}->{AutoCommit} = 0;
   return 0
+}
+
+sub do ($this, $query) {
+  my $sth = $this->{dbh}->prepare($query);
+  return $sth->execute();
 }
 
 1;

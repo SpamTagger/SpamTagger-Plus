@@ -20,15 +20,20 @@ if [ "$CLIENTORG" = "" ]; then
   DEFAULTDOMAIN=$(grep 'DEFAULTDOMAIN' /etc/spamtagger.conf | cut -d ' ' -f3)
   CLIENTTECHMAIL=$(grep 'CLIENTTECHMAIL' /etc/spamtagger.conf | cut -d ' ' -f3)
   MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
-  ISMASTER=$(grep 'ISMASTER' /etc/spamtagger.conf | cut -d ' ' -f3)
+  ISSOURCE=$(grep 'ISSOURCE' /etc/spamtagger.conf | cut -d ' ' -f3)
 fi
-VARDIR_SANE=$(echo $VARDIR | perl -pi -e 's/\//\\\//g')
 
 echo "-- removing previous mariadb databases and stopping mariadb"
-systemctl stop mariadb
-systemctl disable mariadb
-systemctl stop mariadb@replica
-systemctl stop mariadb@source
+if [ -e /etc/systemd/system/multi-user.target.wants/mariadb.service ]; then
+  systemctl stop mariadb --quiet
+  systemctl disable mariadb --quiet
+fi
+systemctl stop mariadb@replica.socket &
+systemctl stop mariadb@source.socket &
+systemctl stop mariadb@replica-nopass.socket &
+systemctl stop mariadb@source-nopass.socket &
+sleep 3
+pkill mariadb
 rm -rf $VARDIR/spool/mariadb_source/*
 rm -rf $VARDIR/spool/mariadb_replica/* 2>&1
 rm -rf $VARDIR/log/mariadb_source/*
@@ -36,14 +41,7 @@ rm -rf $VARDIR/log/mariadb_replica/* 2>&1
 rm -rf $VARDIR/run/mariadb_source/*
 rm -rf $VARDIR/run/mariadb_replica/* 2>&1
 
-##
-# first, ask for the mariadb admin password
-if [ "$MYROOTPWD" = "" ]; then
-  echo -n "enter mariadb root password: "
-  read -s MYROOTPWD
-  echo ""
-fi
-
+# first, ask for the mariadb admin password if not known
 if [ "$MYSPAMTAGGERPWD" = "" ]; then
   echo -n "enter mariadb spamtagger password: "
   read -s MYSPAMTAGGERPWD
@@ -52,118 +50,117 @@ fi
 
 $SRCDIR/bin/dump_mariadb_config.pl 2>&1
 
-echo "-- generating replica database"
-/usr/bin/mariadb-install-db --datadir=${VARDIR}/spool/mariadb_replica --defaults-file=$SRCDIR/etc/mariadb/my_replica.cnf 2>&1
-chown -R mysql:mysql ${VARDIR}/spool/mariadb_replica 2>&1
-
-#
-# source
-
+# Install DBs
 echo "-- generating source database"
-/usr/bin/mariadb-install-db --datadir=${VARDIR}/spool/mariadb_source --defaults-file=$SRCDIR/etc/mariadb/my_source.cnf 2>&1
+/usr/bin/mariadb-install-db --datadir=${VARDIR}/spool/mariadb_source --defaults-file=$SRCDIR/etc/mariadb/my_source.cnf 2>/dev/null >/dev/null
 chown -R mysql:mysql ${VARDIR}/spool/mariadb_source 2>&1
 
-##
-# start db
+echo "-- generating replica database"
+/usr/bin/mariadb-install-db --datadir=${VARDIR}/spool/mariadb_replica --defaults-file=$SRCDIR/etc/mariadb/my_replica.cnf 2>/dev/null >/dev/null
+chown -R mysql:mysql ${VARDIR}/spool/mariadb_replica 2>&1
 
-cp $SRCDIR/etc/mariadb/my_replica.cnf_template $SRCDIR/etc/mariadb/my_replica.cnf
-echo "-- starting mariadb"
-$SRCDIR/etc/init.d/mariadb_replica start 2>&1
-$SRCDIR/etc/init.d/mariadb_source start 2>&1
-sleep 30
+echo "-- starting databases in 'nopass' mode"
+systemctl start mariadb@source-nopass.service
+systemctl start mariadb@replica-nopass.service
+sleep 3
 
-##
-# delete default users and dbs and create spamtagger dbs and users
-
-echo "-- deleting default databases and users and creating spamtagger dbs and user"
+echo "-- configuring 'root' password"
 cat >/tmp/tmp_install.sql <<EOF
-USE mariadb;
-UPDATE user SET Password=PASSWORD('$MYROOTPWD') WHERE User='root';
+USE mysql;
+flush privileges;
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSPAMTAGGERPWD';
+EOF
+
+/usr/bin/mariadb -S ${VARDIR}/run/mariadb_source/mariadbd.sock </tmp/tmp_install.sql 2>&1
+/usr/bin/mariadb -S ${VARDIR}/run/mariadb_replica/mariadbd.sock </tmp/tmp_install.sql 2>&1
+
+echo "-- restarting databases in 'normal' mode"
+systemctl stop mariadb@replica-nopass.socket
+systemctl stop mariadb@replica-nopass.service
+systemctl stop mariadb@source-nopass.socket
+systemctl stop mariadb@source-nopass.service
+sleep 3
+pkill mariadb
+systemctl start mariadb@source.service
+systemctl start mariadb@replica.service
+sleep 3
+
+echo "-- deleting existing dbs and users" 
+cat >/tmp/tmp_install.sql <<EOF
+USE mysql;
 DELETE FROM user WHERE User='';
 DELETE FROM db WHERE User='';
+DELETE FROM user WHERE User='spamtagger';
+DELETE FROM db WHERE User='spamtagger';
 DROP DATABASE test;
 DELETE FROM user WHERE Password='';
+DROP DATABASE IF EXISTS dmarc_reporting;
 DROP DATABASE IF EXISTS st_config;
 DROP DATABASE IF EXISTS st_spool;
 DROP DATABASE IF EXISTS st_stats;
+CREATE DATABASE dmarc_reporting;
 CREATE DATABASE st_config;
 CREATE DATABASE st_spool;
 CREATE DATABASE st_stats;
-CREATE DATABASE dmarc_reporting;
-DELETE FROM user WHERE User='spamtagger';
-DELETE FROM db WHERE User='spamtagger';
-GRANT ALL PRIVILEGES ON st_config.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGERPWD' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON st_spool.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGERPWD' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON st_stats.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGERPWD' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON dmarc_reporting.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGERPWD' WITH GRANT OPTION;
-GRANT REPLICATION SLAVE , REPLICATION CLIENT ON * . * TO  spamtagger@"%";
-USE mariadb;
-UPDATE user SET Reload_priv='Y' WHERE User='spamtagger';
-UPDATE user SET Repl_replica_priv='Y', Repl_client_priv='Y' WHERE User='spamtagger';
+CREATE USER 'spamtagger' IDENTIFIED BY '$MYSPAMTAGGERPWD';
+GRANT ALL PRIVILEGES ON st_config.* TO spamtagger@"%";
+GRANT ALL PRIVILEGES ON st_spool.* TO spamtagger@"%";
+GRANT ALL PRIVILEGES ON st_stats.* TO spamtagger@"%";
+GRANT ALL PRIVILEGES ON dmarc_reporting.* TO spamtagger@"%";
+GRANT REPLICATION SLAVE ADMIN, SLAVE MONITOR, RELOAD, BINLOG MONITOR ON *.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGERPWD';
 FLUSH PRIVILEGES;
 EOF
 
-sleep 5
-
-/usr/bin/mariadb -S ${VARDIR}/run/mariadb_replica/mariadbd.sock </tmp/tmp_install.sql 2>&1
-/usr/bin/mariadb -S ${VARDIR}/run/mariadb_source/mariadbd.sock </tmp/tmp_install.sql 2>&1
+/usr/bin/mariadb -p$MYSPAMTAGGERPWD -S ${VARDIR}/run/mariadb_source/mariadbd.sock </tmp/tmp_install.sql 2>&1
+/usr/bin/mariadb -p$MYSPAMTAGGERPWD -S ${VARDIR}/run/mariadb_replica/mariadbd.sock </tmp/tmp_install.sql 2>&1
 
 rm /tmp/tmp_install.sql 2>&1
 
 echo "-- creating spamtagger configuration tables"
-$SRCDIR/bin/check_db.pl --update 2>&1
-echo "-- creating spamtagger spool tables"
+$SRCDIR/bin/check_db.pl --update -s
+$SRCDIR/bin/check_db.pl --update -r
+$SRCDIR/bin/check_db.pl --myrepair -s
+$SRCDIR/bin/check_db.pl --myrepair -r
 
-for SOCKDIR in mariadb_replica mariadb_source; do
-  for file in $(ls dbs/spam/*.sql); do
+echo "-- creating spamtagger spool tables"
+for SOCKDIR in mariadb_source mariadb_replica; do
+  for file in $(find $SRCDIR/install/dbs/spam -name '*.sql'); do
     /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_spool <$file
   done
-  /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_spool <dbs/t_sp_spam.sql
+  /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_spool <$SRCDIR/install/dbs/t_sp_spam.sql
 done
 
-/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_source/mariadbd.sock dmarc_reporting <dbs/dmarc_reporting.sql
+echo "-- creating dmarc_reporting table"
+/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_source/mariadbd.sock dmarc_reporting <$SRCDIR/install/dbs/dmarc_reporting.sql
 
-echo "-- inserting config and default values"
-
-## TO DO: check these values !! either coming from the superior installation script or from /etc/spamtagger.conf
+echo "-- inserting system configuration wih provided values"
 
 HOSTKEY=$(cat /etc/ssh/ssh_host_rsa_key.pub)
-if [ "$ISMASTER" = "Y" ]; then
-  MASTERHOST=127.0.0.1
-  MASTERKEY=$(cat $VARDIR/.ssh/id_rsa.pub)
-  MASTERPASSWD=$MYSPAMTAGGERPWD
-fi
+SOURCEHOST=127.0.0.1
+SOURCEKEY=$(cat $VARDIR/.ssh/id_internal.pub)
+SOURCEPASSWD=$MYSPAMTAGGERPWD
 
-for SOCKDIR in mariadb_source; do
-  echo "INSERT INTO system_conf (organisation, company_name, hostid, clientid, default_domain, contact_email, summary_from, analyse_to, falseneg_to, falsepos_to, src_dir, var_dir) VALUES ('$CLIENTORG', '$STHOSTNAME', '$HOSTID', '$CLIENTID', '$DEFAULTDOMAIN', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$SRCDIR', '$VARDIR');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
+for SOCKDIR in mariadb_source mariadb_replica; do
+  echo "Setting system_conf for $SOCKDIR..."
+  echo "INSERT INTO system_conf (organisation, company_name, hostid, clientid, default_domain, contact_email, summary_from, analyse_to, falseneg_to, falsepos_to, src_dir, var_dir) VALUES ('$CLIENTORG', '$STHOSTNAME', '$HOSTID', NULL, '$DEFAULTDOMAIN', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$SRCDIR', '$VARDIR');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
+  echo "Setting replica for $SOCKDIR..."
   echo "INSERT INTO replica (id, hostname, password, ssh_pub_key) VALUES ('$HOSTID', '127.0.0.1', '$MYSPAMTAGGERPWD', '$HOSTKEY');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
-  echo "INSERT INTO source (hostname, password, ssh_pub_key) VALUES ('$MASTERHOST', '$MASTERPASSWD', '$MASTERKEY');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
+  echo "Setting source for $SOCKDIR..."
+  echo "INSERT INTO source (hostname, password, ssh_pub_key) VALUES ('$SOURCEHOST', '$SOURCEPASSWD', '$SOURCEKEY');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
+  echo "Setting httpd_config for $SOCKDIR..."
   echo "INSERT INTO httpd_config (serveradmin, servername) VALUES('root', 'spamtagger');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
 done
 
-sleep 10
-$SRCDIR/etc/init.d/mariadb_replica restart nopass
-sleep 15
-## MySQL redundency
-echo "STOP SLAVE; CHANGE MASTER TO source_host='$MASTERHOST', source_user='spamtagger', source_password='$MASTERPASSWD'; START SLAVE;" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config
-sleep 5
-$SRCDIR/etc/init.d/mariadb_replica restart
-sleep 15
+echo "-- setting up replication"
+echo "CHANGE MASTER TO master_host='$SOURCEHOST', master_user='spamtagger', master_password='$SOURCEPASSWD'; START SLAVE;" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config
 
 ## creating stats tables
-/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config <dbs/t_st_maillog.sql
-
-## creating local update table
-/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config <dbs/t_cf_update_patch.sql
+/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config <$SRCDIR/install/dbs/t_st_maillog.sql
 
 ## creating temp soap authentication table
-/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_spool <dbs/t_sp_soap_auth.sql
+/usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_spool <$SRCDIR/install/dbs/t_sp_soap_auth.sql
 
 ## creating web admin user
 echo "INSERT INTO administrator (username, password, can_manage_users, can_manage_domains, can_configure, can_view_stats, can_manage_host, domains) VALUES('admin', ENCRYPT('$WEBADMINPWD'), 1, 1, 1, 1, 1, '*');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_source/mariadbd.sock st_config
 
-## inserting last version update
-echo "INSERT INTO update_patch VALUES('$ACTUALUPDATE', NOW(), NOW(), 'OK', 'CD release');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config
-
-#$SRCDIR/etc/init.d/mariadb_source stop
 echo "-- DONE -- spamtagger dbs are ready !"

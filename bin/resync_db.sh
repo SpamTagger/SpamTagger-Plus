@@ -29,7 +29,7 @@
 function check_status() {
   echo "Checking replica status..."
 
-  STATUS=$(echo 'show replica status\G' | /usr/spamtagger/bin/st_mariadb -r)
+  STATUS=$(echo 'show slave status\G' | /usr/spamtagger/bin/st_mariadb -r)
   if grep -vq "Slave_SQL_Running: Yes" <<<$(echo $STATUS); then
     echo "Slave_SQL_Running failed"
     RUN=1
@@ -103,9 +103,12 @@ if [ "SRCDIR" = "" ]; then
   SRCDIR=/var/spamtagger
 fi
 
-echo "starting replica db..."
-systemctl start mariadb@replica
-sleep 5
+systemctl is-active --quiet mariadb@replica
+if [[ $? ]]; then
+  echo "starting replica db..."
+  systemctl start mariadb@replica
+  sleep 3
+fi
 
 check_status
 if [[ $RUN != 1 ]]; then
@@ -145,9 +148,9 @@ rm $VARDIR/spool/mariadb_replica/source.info >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/mariadbd-relay* >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
 systemctl start mariadb@replica-nopass
-sleep 5
-echo "STOP REPLICA;" | $SRCDIR/bin/st_mariadb -r
-sleep 2
+sleep 3
+echo "STOP SLAVE;" | $SRCDIR/bin/st_mariadb -r
+sleep 3
 rm $VARDIR/spool/mariadb_replica/source.info >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/mariadbd-relay* >/dev/null 2>&1
 rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
@@ -155,16 +158,16 @@ rm $VARDIR/spool/mariadb_replica/relay-log.info >/dev/null 2>&1
 $SRCDIR/bin/st_mariadb -r st_config </var/tmp/source.sql
 
 sleep 2
-echo "CHANGE SOURCE TO source_host='$MHOST', source_user='spamtagger', source_password='$MPASS'; " | $SRCDIR/bin/st_mariadb -r
+echo "CHANGE MASTER TO master_host='$MHOST', master_user='spamtagger', master_password='$MPASS';" |  $SRCDIR/bin/st_mariadb -r
 # Return code should be 0 if there are no errors. Log code to RUN to catch errors that might not be presented with 'check_status'
 $SRCDIR/bin/st_mariadb -r st_config </var/tmp/source.sql
 RUN=$?
-echo "START REPLICA;" | $SRCDIR/bin/st_mariadb -r
-sleep 5
+echo "START SLAVE;" | $SRCDIR/bin/st_mariadb -r
+sleep 3
 
-systemctl stop mariadb@replica-nopass
+systemctl stop mariadb@replica-nopass.socket
 systemctl start mariadb@replica
-sleep 5
+sleep 3
 
 # Run the check again and record results
 check_status
