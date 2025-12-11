@@ -56,14 +56,14 @@ sub db_connect ($class, $type, $db, $critical_p = 0) {
   	my $host;
   	my $port;
   	my $password;
-    my $MASTERFILE;
-    if (open($MASTERFILE, '<', $sourcefile)) {
-      while (<$MASTERFILE>) {
+    my $SOURCEFILE;
+    if (open($SOURCEFILE, '<', $sourcefile)) {
+      while (<$SOURCEFILE>) {
         if (/HOST (\S+)/) { $host = $1; }
         if (/PORT (\S+)/) { $port = $1; }
         if (/PASS (\S+)/) { $password = $1; }
       }
-      close $MASTERFILE;
+      close $SOURCEFILE;
     }
     if ($type =~ /custom/) {
       $host = $db->{'host'};
@@ -94,7 +94,7 @@ sub db_connect ($class, $type, $db, $critical_p = 0) {
 }
 
 sub get_type ($this) {
-  return $this->{dbh};
+  return $this->{type};
 }
 
 sub ping ($this) {
@@ -103,8 +103,7 @@ sub ping ($this) {
 }
 
 sub db_disconnect ($this) {
-  my $dbh = $this->{dbh};
-  $dbh->disconnect() if ($dbh);
+  $this->{dbh}->disconnect() if ($this->{dbh});
   $this->{dbh} = "";
   return 1;
 }
@@ -115,35 +114,8 @@ sub fatal_error ($msg, $critical = 0) {
   exit(0);
 }
 
-sub prepare ($this, $query) {
-  my $dbh = $this->{dbh};
-
-  my $prepared = $dbh->prepare($query);
-  unless ($prepared) {
-    print "WARNING, CANNOT EXECUTE ($query => ".$dbh->errstr.")\n";
-    return 0;
-  }
-  return $prepared;
-}
-
-sub execute ($this, $query, $nolock = 0) {
-  my $dbh = $this->{dbh};
-
-  unless (defined($dbh)) {
-  	print "WARNING, DB HANDLE IS NULL\n";
-    return 0;
-  }
-  unless ($dbh->do($query)) {
-    print "WARNING, CANNOT EXECUTE ($query => ".$dbh->errstr.")\n";
-    return 0;
-  }
-  return 1;
-}
-
-sub commit ($this, $query) {
-  my $dbh = $this->{dbh};
-
-  unless ($dbh->commit()) {
+sub commit ($this) {
+  unless ($this->{dbh}->commit()) {
     print "WARNING, CANNOT commit\n";
     return 0;
   }
@@ -151,15 +123,13 @@ sub commit ($this, $query) {
 }
 
 sub get_list_of_hash ($this, $query, $nowarnings = 0) {
-  my $dbh = $this->{dbh};
   my @results;
 
-  my $sth = $dbh->prepare($query);
-  my $res = $sth->execute();
-  if (!defined($res)) {
-  	if (! $nowarnings) {
-      print "WARNING, CANNOT QUERY ($query => ".$dbh->errstr.")\n";
-  	}
+  my $sth = $this->{dbh}->prepare($query);
+  if ($this->get_error()) {
+    if (! $nowarnings) {
+      print "WARNING, CANNOT QUERY ($query => ".$this->{dbh}->errstr.")\n";
+    }
     return @results;
   }
   while (my $ref = $sth->fetchrow_hashref()) {
@@ -171,19 +141,17 @@ sub get_list_of_hash ($this, $query, $nowarnings = 0) {
 }
 
 sub get_list ($this, $query, $nowarnings = 0) {
-  my $dbh = $this->{dbh};
   my @results;
 
-  my $sth = $dbh->prepare($query);
-  my $res = $sth->execute();
-  if (!defined($res)) {
-  	if (! $nowarnings) {
-      print "WARNING, CANNOT QUERY ($query => ".$dbh->errstr.")\n";
-  	}
+  my $sth = $this->{dbh}->prepare($query);
+  if ($this->get_error()) {
+    if (! $nowarnings) {
+      print "WARNING, CANNOT QUERY ($query => ".$this->{dbh}->errstr.")\n";
+    }
     return @results;
   }
-  while (my @ref = $sth->fetchrow_array()) {
-    push @results, $ref[0];
+  while (my $ref = $sth->fetchrow_arrayref()) {
+    push @results, $ref;
   }
 
   $sth->finish();
@@ -191,9 +159,7 @@ sub get_list ($this, $query, $nowarnings = 0) {
 }
 
 sub get_count ($this, $query) {
-  my $dbh = $this->{dbh};
-  my $sth = $dbh->prepare($query);
-  my $res = $sth->execute();
+  my $sth = $this->{dbh}->prepare($query);
 
   my ($count) = $sth->fetchrow_array;
 
@@ -201,41 +167,35 @@ sub get_count ($this, $query) {
 }
 
 sub get_hash_row ($this, $query, $nowarnings = 0) {
-  my $dbh = $this->{dbh};
   my %results;
 
-  my $res = $dbh->execute($query);
-  unless (defined($res)) {
-  	unless ($nowarnings) {
-      print "WARNING, CANNOT QUERY ($query => ".$dbh->errstr.")\n";
-  	}
+  my $sth = $this->{dbh}->prepare($query);
+  unless ($this->get_error()) {
+    unless ($nowarnings) {
+      print "WARNING, CANNOT QUERY ($query => ".$this->{dbh}->errstr.")\n";
+    }
     return %results;
   }
 
-  my $ret = $dbh->fetchrow_hashref();
+  my $ret = $sth->fetchrow_hashref();
   $results{$_} = $ret->{$_} foreach (keys(%{$ret}));
   return %results;
 }
 
 sub get_last_id ($this) {
-  my $res = 0;
   my $query = "SELECT LAST_INSERT_ID() as lid;";
 
   my $sth = $this->{dbh}->prepare($query);
-  my $ret = $sth->execute();
-  return $res unless ($ret);
+  my $rv = $sth->execute();
   
-  $ret = $sth->fetchrow_hashref();
-  return $res unless (defined($ret));
+  my $ret = $sth->fetchrow_hashref();
 
   return $ret->{'lid'} if (defined($ret->{'lid'}));
-  return $res;
+  return 0;
 }
 
 sub get_error ($this) {
-  my $dbh = $this->{dbh};
-
-  return $dbh->errstr if (defined($dbh->errstr));
+  return $this->{dbh}->errstr if (defined($this->{dbh}->errstr));
   return "";
 }
 
