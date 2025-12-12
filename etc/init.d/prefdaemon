@@ -36,7 +36,7 @@ require PrefDaemon;
 
 my $command = shift;
 if (!defined($command)) {
-    printUsage();
+    usage();
 }
 
 if ($command eq "start") {
@@ -52,10 +52,10 @@ if ($command eq "start") {
     }
     exit();
 } else {
-    printUsage();
+    usage();
 }
 
-sub printUsage
+sub usage
 {
     print "Usage:\n";
     print "prefdaemon (stop|start)\n";

@@ -147,7 +147,7 @@ sub get_default_rules($rules)
         $rules->{"$host ssh TCP"} = [ $services{'ssh'}[0], $services{'ssh'}[1], $host];
         $rules->{"$host soap TCP"} = [ $services{'soap'}[0], $services{'soap'}[1], $host];
     }
-    my @subs = getSubnets();
+    my @subs = get_subnets();
     foreach my $sub (@subs) {
         $rules->{"$sub ssh TCP"} = [ $services{'ssh'}[0], $services{'ssh'}[1], $sub ];
     }
@@ -166,7 +166,7 @@ sub get_api_rules($rules)
             $ips{$ip} = 1;
         }
     }
-    $ips{$_} = 1 foreach (getSubnets());
+    $ips{$_} = 1 foreach (get_subnets());
     foreach my $ip (keys %ips) {
         $rules{$ip." soap TCP"} = [ $services{'soap'}[0], $services{'soap'}[1], $ip ];
     }
@@ -430,7 +430,8 @@ sub do_stop_script($rules)
     close $STOP;
 }
 
-sub getSubnets()
+# TODO: convert to `ip` command
+sub get_subnets()
 {
     my $ifconfig = `/sbin/ifconfig`;
     my @subs = ();

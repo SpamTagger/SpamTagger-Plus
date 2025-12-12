@@ -69,11 +69,11 @@ if ($what =~ /^\@([a-zA-Z0-9\.\_\-]+)$/) {
 
 my $replica_db = DB->db_connect('replica', 'st_config');
 
-dumpWWFiles($to, $filepath);
+dump_ww_files($to, $filepath);
 
 $replica_db->disconnect();
 
-sub dumpWWFiles($to,$filepath)
+sub dump_ww_files($to,$filepath)
 {
     my @types = ('warn', 'white');
 

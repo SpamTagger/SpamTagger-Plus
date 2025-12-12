@@ -57,13 +57,13 @@ my $gid = getgrnam( 'spamtagger' );
 
 my $replica_db = DB->db_connect('replica', 'st_config');
 
-dumpArchivedDomains();
-dumpCopyto();
-dumpBypassFiltering();
+dump_archived_domains();
+dump_copyto();
+dump_bypass_filtering();
 
 $replica_db->disconnect();
 
-sub dumpArchivedDomains()
+sub dump_archived_domains()
 {
     my @adomains = $replica_db->get_list_of_hash("SELECT d.name FROM domain d, domain_pref dp WHERE dp.archive_mail='1' AND d.name != '__global__' AND d.prefs=dp.id");
 
@@ -104,7 +104,7 @@ sub dumpArchivedDomains()
     }
 }
 
-sub dumpCopyto()
+sub dump_copyto()
 {
     my @cdomains = $replica_db->get_list_of_hash("SELECT d.name, dp.copyto_mail FROM domain d, domain_pref dp WHERE dp.copyto_mail != '' AND d.name != '__global__' AND d.prefs=dp.id");
 
@@ -145,7 +145,7 @@ sub dumpCopyto()
     }
 }
 
-sub dumpBypassFiltering()
+sub dump_bypass_filtering()
 {
     my $bypassfiltering_path = "${VARDIR}/spool/tmp/exim_stage1/bypass";
 

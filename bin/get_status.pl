@@ -274,8 +274,8 @@ sub usage
     exit(1);
 }
 
-sub getNumberOfGreylistDomains
-{
+# TODO: This is unused. Add an option to output this, I guess...
+sub get_number_of_greylist_domains {
     my $cmd = "wc -l ".$VARDIR."/spool/spamtagger/domains_to_greylist.list  | cut -d' ' -f1";
     my $res = `$cmd`;
     if ($res =~ m/(\d+)\s+/) {

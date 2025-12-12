@@ -229,16 +229,16 @@ sub dump_saplugins_conf()
         'share/spamd/sa_plugins.pre'
     );
     my %replace = (
-        '__IF_DCC__' => getModuleStatus('__USE_DCC__'),
-        '__IF_PYZOR__' => getModuleStatus('__USE_PYZOR__'),
-        '__IF_RAZOR__' => getModuleStatus('__USE_RAZOR__'),
-        '__IF_BAYES__' => getModuleStatus('__USE_BAYES__'),
-        '__IF_IMAGEINFO__' => getModuleStatus('__USE_IMAGEINFO__'),
-        '__IF_DKIM__' => getModuleStatus('__USE_DKIM__'),
-        '__IF_URIDNSBL__' => getModuleStatus('__USE_RBLS__'),
-        '__IF_SPF__' => getModuleStatus('__USE_SPF__'),
-        '__IF_PDFINFO__' => getModuleStatus('__USE_PDFINFO__'),
-        '__IF_BOTNET__' => getModuleStatus('__USE_BOTNET__'),
+        '__IF_DCC__' => get_module_status('__USE_DCC__'),
+        '__IF_PYZOR__' => get_module_status('__USE_PYZOR__'),
+        '__IF_RAZOR__' => get_module_status('__USE_RAZOR__'),
+        '__IF_BAYES__' => get_module_status('__USE_BAYES__'),
+        '__IF_IMAGEINFO__' => get_module_status('__USE_IMAGEINFO__'),
+        '__IF_DKIM__' => get_module_status('__USE_DKIM__'),
+        '__IF_URIDNSBL__' => get_module_status('__USE_RBLS__'),
+        '__IF_SPF__' => get_module_status('__USE_SPF__'),
+        '__IF_PDFINFO__' => get_module_status('__USE_PDFINFO__'),
+        '__IF_BOTNET__' => get_module_status('__USE_BOTNET__'),
     );
 
     $template->set_replacements(\%replace);
@@ -251,7 +251,7 @@ sub get_dnslists()
     return @list;
 }
 
-sub getModuleStatus($module)
+sub get_module_status($module)
 {
     return ( (defined($sa_conf{$module}) && $sa_conf{$module} < 1) ? "#" : "" );
 }

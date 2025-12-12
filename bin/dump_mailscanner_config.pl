@@ -347,7 +347,7 @@ sub dump_prefilter_files()
             $template->set_replacements(\%replace);
 
             my %spec_replace = ();
-            if (getPrefilterSpecConfig($prefilter->{'name'}, \%spec_replace)) {
+            if (get_prefilter_spec_config($prefilter->{'name'}, \%spec_replace)) {
                 $template->set_replacements(\%spec_replace);
             }
 
@@ -368,7 +368,7 @@ sub dump_prefilter_files()
     return 1;
 }
 
-sub getPrefilterSpecConfig($prefilter,$replace)
+sub get_prefilter_spec_config($prefilter,$replace)
 {
     return 0 if ! $prefilter;
     if (! -f $conf->get_option('SRCDIR')."/install/dbs/t_cf_$prefilter.sql") {
