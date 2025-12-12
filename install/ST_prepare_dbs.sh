@@ -103,11 +103,15 @@ CREATE DATABASE st_config;
 CREATE DATABASE st_spool;
 CREATE DATABASE st_stats;
 CREATE USER 'spamtagger' IDENTIFIED BY '$MYSPAMTAGGERPWD';
+CREATE USER 'spamtagger'@'127.0.0.1' IDENTIFIED BY '$MYSPAMTAGGERPWD';
+CREATE USER 'spamtagger'@'::1' IDENTIFIED BY '$MYSPAMTAGGERPWD';
 GRANT ALL PRIVILEGES ON st_config.* TO spamtagger@"%";
 GRANT ALL PRIVILEGES ON st_spool.* TO spamtagger@"%";
 GRANT ALL PRIVILEGES ON st_stats.* TO spamtagger@"%";
 GRANT ALL PRIVILEGES ON dmarc_reporting.* TO spamtagger@"%";
-GRANT REPLICATION SLAVE ADMIN, SLAVE MONITOR, RELOAD, BINLOG MONITOR ON *.* TO spamtagger@"%" IDENTIFIED BY '$MYSPAMTAGGERPWD';
+GRANT REPLICATION SLAVE ADMIN, REPLICATION SLAVE, SLAVE MONITOR, RELOAD, BINLOG MONITOR ON *.* TO 'spamtagger'@'127.0.0.1' IDENTIFIED BY '$MYSPAMTAGGERPWD';
+GRANT REPLICATION SLAVE ADMIN, REPLICATION SLAVE, SLAVE MONITOR, RELOAD, BINLOG MONITOR ON *.* TO 'spamtagger'@'::1' IDENTIFIED BY '$MYSPAMTAGGERPWD';
+GRANT REPLICATION SLAVE ADMIN, REPLICATION SLAVE, SLAVE MONITOR, RELOAD, BINLOG MONITOR ON *.* TO 'spamtagger'@'%' IDENTIFIED BY '$MYSPAMTAGGERPWD';
 FLUSH PRIVILEGES;
 EOF
 
@@ -119,8 +123,9 @@ rm /tmp/tmp_install.sql 2>&1
 echo "-- creating spamtagger configuration tables"
 $SRCDIR/bin/check_db.pl --update -s
 $SRCDIR/bin/check_db.pl --update -r
-$SRCDIR/bin/check_db.pl --myrepair -s
-$SRCDIR/bin/check_db.pl --myrepair -r
+# It should not be possible for the previous two steps to have succeeded with any DB tables requiring fixing
+#$SRCDIR/bin/check_db.pl --myrepair -s
+#$SRCDIR/bin/check_db.pl --myrepair -r
 
 echo "-- creating spamtagger spool tables"
 for SOCKDIR in mariadb_source mariadb_replica; do
@@ -137,6 +142,7 @@ echo "-- inserting system configuration wih provided values"
 
 HOSTKEY=$(cat /etc/ssh/ssh_host_rsa_key.pub)
 SOURCEHOST=127.0.0.1
+SOURCEPORT=3306
 SOURCEKEY=$(cat $VARDIR/.ssh/id_internal.pub)
 SOURCEPASSWD=$MYSPAMTAGGERPWD
 
@@ -152,7 +158,7 @@ for SOCKDIR in mariadb_source mariadb_replica; do
 done
 
 echo "-- setting up replication"
-echo "CHANGE MASTER TO master_host='$SOURCEHOST', master_user='spamtagger', master_password='$SOURCEPASSWD'; START SLAVE;" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config
+echo "CHANGE MASTER TO master_host='$SOURCEHOST', master_port=3306, master_user='spamtagger', master_password='$SOURCEPASSWD'; START SLAVE;" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config
 
 ## creating stats tables
 /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config <$SRCDIR/install/dbs/t_st_maillog.sql
