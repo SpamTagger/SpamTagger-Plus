@@ -34,15 +34,17 @@ use lib "/usr/spamtagger/lib/";
 use ReadConfig();
 use DBI();
 
-sub db_connect ($class, $type, $db, $critical_p = 0) {
+sub db_connect ($class, $type='replica', $db='st_config', $critical_p= 0) {
   my $critical = 1;
   $critical = 0 if ($critical_p < 1);
-  if (!$type || $type !~ /replica|source|realsource|custom/) {
-  	print "BADCONNECTIONTYPE\n";
+  if ($type !~ /^replica|source|realsource|custom$/) {
+    print "BADCONNECTIONTYPE\n";
     return "";
   }
-  my $dbase = 'st_config';
-  $dbase = $db if ($db);
+  if ($db !~ /^st_config|st_spool|st_stats|dmarc_reporting$/) {
+    print "BADDATABASE\n";
+    return "";
+  }
 
   # determine socket to use
   my $conf = ReadConfig::get_instance();
@@ -69,10 +71,10 @@ sub db_connect ($class, $type, $db, $critical_p = 0) {
       $host = $db->{'host'};
       $port = $db->{'port'};
       $password = $db->{'password'};
-      $dbase = $db->{'database'};
+      $db = $db->{'database'};
     }
     if (! ( $host eq "" || $port eq "" || $password eq "") ) {
-      $dbh = DBI->connect("DBI:MariaDB:database=$dbase;host=$host:$port;",
+      $dbh = DBI->connect("DBI:MariaDB:database=$db;host=$host:$port;",
 			  "spamtagger", $password, {RaiseError => 0, PrintError => 0, AutoCommit => 1}
       )	or fatal_error("CANNOTCONNECTDB", $critical);
       $realsource = 1;

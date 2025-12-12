@@ -37,7 +37,7 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-our ($SRCDIR, $VARDIR, $MYMAILCLEANERPWD, $MCHOSTNAME, $DEFAULTDOMAIN, $HELONAME, $SMTPPROXY);
+our ($SRCDIR, $VARDIR, $MYSPAMTAGGERPWD, $MCHOSTNAME, $DEFAULTDOMAIN, $HELONAME, $SMTPPROXY);
 BEGIN {
     if ($0 =~ m/(\S*)\/\S+.pl$/) {
         my $path = $1."/../lib";
@@ -47,7 +47,7 @@ BEGIN {
     my $conf = ReadConfig::get_instance();
     $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
     $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
-    confess "Could not get DB password" unless ($MYMAILCLEANERPWD = $conf->get_option('MYMAILCLEANERPWD'));
+    confess "Could not get DB password" unless ($MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD'));
     $MCHOSTNAME = $conf->get_option('MCHOSTNAME') || 'spamtagger';
     $DEFAULTDOMAIN = $conf->get_option('DEFAULTDOMAIN') || '';
     $HELONAME = $conf->get_option('HELONAME') || '';
@@ -58,7 +58,7 @@ BEGIN {
 use STUtils qw(open_as);
 
 require ConfigTemplate;
-require MCDnsLists;
+require STDnsLists;
 require GetDNS;
 require DB;
 use File::Path qw (make_path);
@@ -67,7 +67,7 @@ use File::Copy;
 
 our $DEBUG = 0;
 our $SPMC = "$VARDIR/spool/spamtagger";
-our $db = DB::connect('replica', 'mc_config');
+our $db = DB->db_connect('replica', 'st_config');
 our $include_debug = 0;
 
 our $uid = getpwnam( 'spamtagger' );
@@ -220,7 +220,7 @@ sub dump_exim_file($stage, $include_file=undef)
             $destination = "${SRCDIR}/etc/exim/exim_stage${stage}.conf";
         }
     }
-    $template = ConfigTemplate::create($source, $destination);
+    $template = ConfigTemplate->new($source, $destination);
 
     my $if_syslog = "#no syslog_facility";
     $exim_conf{'__IF_USE_SYSLOGENABLED__'} = "";
@@ -239,7 +239,7 @@ sub dump_exim_file($stage, $include_file=undef)
         $stockme = "";
     }
 
-    $sys_conf{'__DBPASSWD__'} = ${MYMAILCLEANERPWD};
+    $sys_conf{'__DBPASSWD__'} = ${MYSPAMTAGGERPWD};
     $exim_conf{'__IF_STOCK__'} = $stockme;
 
 
@@ -255,42 +255,42 @@ sub dump_exim_file($stage, $include_file=undef)
         }
     }
 
-    $template->setCondition('DEBUG', 0);
+    $template->set_condition('DEBUG', 0);
     if ($include_debug) {
-        $template->setCondition('DEBUG', 1);
+        $template->set_condition('DEBUG', 1);
     }
-    $template->setCondition('SENDERVERIFY', 0);
+    $template->set_condition('SENDERVERIFY', 0);
     if ($exim_conf{'__VERIFY_SENDER__'}) {
-        $template->setCondition('SENDERVERIFY', 1);
+        $template->set_condition('SENDERVERIFY', 1);
     }
-    $template->setCondition('RBL', 0);
+    $template->set_condition('RBL', 0);
     if ($exim_conf{'__RBLS__'} =~ /\S/) {
-        $template->setCondition('RBL', 1);
+        $template->set_condition('RBL', 1);
     }
-    $template->setCondition('RCPTRBL', 0);
+    $template->set_condition('RCPTRBL', 0);
     if ($exim_conf{'__RCPTRBLS__'} =~ /\S/) {
-        $template->setCondition('RCPTRBL', 1);
-        $template->setCondition('RBL', 0);
+        $template->set_condition('RCPTRBL', 1);
+        $template->set_condition('RBL', 0);
     }
-    $template->setCondition('BSRBL', 0);
+    $template->set_condition('BSRBL', 0);
     if ($exim_conf{'__BSRBLS__'} =~ /\S/) {
-        $template->setCondition('BSRBL', 1);
+        $template->set_condition('BSRBL', 1);
     }
-    $template->setCondition('RATELIMIT', 0);
+    $template->set_condition('RATELIMIT', 0);
     if ($exim_conf{'__RATELIMIT_ENABLE__'}) {
-        $template->setCondition('RATELIMIT', 1);
+        $template->set_condition('RATELIMIT', 1);
     }
-    $template->setCondition('TRUSTED_RATELIMIT', 0);
+    $template->set_condition('TRUSTED_RATELIMIT', 0);
     if ($exim_conf{'__TRUSTED_RATELIMIT_ENABLE__'}) {
-        $template->setCondition('TRUSTED_RATELIMIT', 1);
+        $template->set_condition('TRUSTED_RATELIMIT', 1);
     }
-    $template->setCondition('USESSMTPPORT', 0);
+    $template->set_condition('USESSMTPPORT', 0);
     if ($exim_conf{'tls_use_ssmtp_port'} && $exim_conf{'__USE_INCOMINGTLS__'}) {
-        $template->setCondition('USESSMTPPORT', 1);
+        $template->set_condition('USESSMTPPORT', 1);
     }
-    $template->setCondition('TAGMODEBYPASSWHITELISTS', 0);
+    $template->set_condition('TAGMODEBYPASSWHITELISTS', 0);
     if ($sys_conf{'__TAGMODEBYPASSWHITELISTS__'}) {
-        $template->setCondition('TAGMODEBYPASSWHITELISTS', 1);
+        $template->set_condition('TAGMODEBYPASSWHITELISTS', 1);
     }
     if ($sys_conf{'__WHITELISTBOTHFROM__'}) {
         if ( ! -e '${SPMC}/mc-wl-on-both-from' ) {
@@ -301,86 +301,86 @@ sub dump_exim_file($stage, $include_file=undef)
             confess "Cannot remove ${SPMC}/mc-wl-on-both-from" unless unlink("${SPMC}/mc-wl-on-both-from");
         }
     }
-    $template->setCondition('USETLS', $exim_conf{'__USE_INCOMINGTLS__'});
-    $template->setCondition('ALLOW_LONG', 1);
+    $template->set_condition('USETLS', $exim_conf{'__USE_INCOMINGTLS__'});
+    $template->set_condition('ALLOW_LONG', 1);
     if ($exim_conf{'__ALLOW_LONG__'}) {
-        $template->setCondition('ALLOW_LONG', $exim_conf{'__ALLOW_LONG__'});
+        $template->set_condition('ALLOW_LONG', $exim_conf{'__ALLOW_LONG__'});
     }
-    $template->setCondition('FOLDING', 0);
+    $template->set_condition('FOLDING', 0);
     if ($exim_conf{'__FOLDING__'}) {
-        $template->setCondition('FOLDING', 1);
+        $template->set_condition('FOLDING', 1);
     }
-    $template->setCondition('USEARCHIVER', 0);
+    $template->set_condition('USEARCHIVER', 0);
     if ($sys_conf{'use_archiver'}) {
-        $template->setCondition('USEARCHIVER', 1);
+        $template->set_condition('USEARCHIVER', 1);
     }
-    $template->setCondition('OUTGOINGVIRUSSCAN', 0);
+    $template->set_condition('OUTGOINGVIRUSSCAN', 0);
     if ($exim_conf{'outgoing_virus_scan'}) {
-        $template->setCondition('OUTGOINGVIRUSSCAN', 1);
+        $template->set_condition('OUTGOINGVIRUSSCAN', 1);
     }
-    $template->setCondition('MASKRELAY', 0);
+    $template->set_condition('MASKRELAY', 0);
     if ($exim_conf{'mask_relayed_ip'}) {
-        $template->setCondition('MASKRELAY', 1);
+        $template->set_condition('MASKRELAY', 1);
     }
-    $template->setCondition('BLOCK25AUTH', 0);
+    $template->set_condition('BLOCK25AUTH', 0);
     if ($exim_conf{'block_25_auth'}) {
-        $template->setCondition('BLOCK25AUTH', 1);
+        $template->set_condition('BLOCK25AUTH', 1);
     }
-    $template->setCondition('MASQUERADE_OUTGOING_HELO', 0);
+    $template->set_condition('MASQUERADE_OUTGOING_HELO', 0);
     if ($exim_conf{'masquerade_outgoing_helo'}) {
-        $template->setCondition('MASQUERADE_OUTGOING_HELO', 1);
+        $template->set_condition('MASQUERADE_OUTGOING_HELO', 1);
     }
-    $template->setCondition('LOG_SUBJECT', 0);
+    $template->set_condition('LOG_SUBJECT', 0);
     if ($exim_conf{'log_subject'}) {
-        $template->setCondition('LOG_SUBJECT', 1);
+        $template->set_condition('LOG_SUBJECT', 1);
     }
-    $template->setCondition('LOG_ATTACHMENTS', 0);
+    $template->set_condition('LOG_ATTACHMENTS', 0);
     if ($exim_conf{'log_attachments'}) {
-        $template->setCondition('LOG_ATTACHMENTS', 1);
+        $template->set_condition('LOG_ATTACHMENTS', 1);
     }
-    $template->setCondition('FORBIDCLEARAUTH', 0);
+    $template->set_condition('FORBIDCLEARAUTH', 0);
     if ($exim_conf{'forbid_clear_auth'} && $exim_conf{'__USE_INCOMINGTLS__'}) {
-        $template->setCondition('FORBIDCLEARAUTH', 1);
+        $template->set_condition('FORBIDCLEARAUTH', 1);
     }
-    $template->setCondition('PREVENTRELAYFROMUNKNOWNDOMAIN', 1);
+    $template->set_condition('PREVENTRELAYFROMUNKNOWNDOMAIN', 1);
     if ($exim_conf{'allow_relay_for_unknown_domains'}) {
-        $template->setCondition('PREVENTRELAYFROMUNKNOWNDOMAIN', 0);
+        $template->set_condition('PREVENTRELAYFROMUNKNOWNDOMAIN', 0);
     }
-    $template->setCondition('REJECTBADSPF', 0);
+    $template->set_condition('REJECTBADSPF', 0);
     if ($exim_conf{'reject_bad_spf'}) {
-        $template->setCondition('REJECTBADSPF', 1);
+        $template->set_condition('REJECTBADSPF', 1);
     }
-    $template->setCondition('REJECTBADRDNS', 0);
+    $template->set_condition('REJECTBADRDNS', 0);
     if ($exim_conf{'reject_bad_rdns'}) {
-        $template->setCondition('REJECTBADRDNS', 1);
+        $template->set_condition('REJECTBADRDNS', 1);
     }
-    $template->setCondition('REJECTDMARC', 0);
+    $template->set_condition('REJECTDMARC', 0);
     if ($exim_conf{'dmarc_follow_reject_policy'}) {
-        $template->setCondition('REJECTDMARC', 1);
+        $template->set_condition('REJECTDMARC', 1);
     }
-    $template->setCondition('DMARCREPORTING', 0);
+    $template->set_condition('DMARCREPORTING', 0);
     if ($exim_conf{'dmarc_enable_reports'}) {
-        $template->setCondition('DMARCREPORTING', 1);
+        $template->set_condition('DMARCREPORTING', 1);
     }
-    $template->setCondition('ERRORS_REPLY_TO', 0);
+    $template->set_condition('ERRORS_REPLY_TO', 0);
     if ($exim_conf{'__ERRORS_REPLY_TO__'} ne '') {
-        $template->setCondition('ERRORS_REPLY_TO', 1);
+        $template->set_condition('ERRORS_REPLY_TO', 1);
     }
 
-    $template->setCondition('__LISTS_PER_DOMAIN__', $exim_conf_lpd);
+    $template->set_condition('__LISTS_PER_DOMAIN__', $exim_conf_lpd);
 
     my @net_interfaces = get_interfaces6();
-    $template->setCondition('DISABLE_IPV6', 1);
+    $template->set_condition('DISABLE_IPV6', 1);
     foreach my $interface (@net_interfaces){
         if ($interface =~ /eth\d*/ && ! is_ipv6_disabled($interface)) {
-            $template->setCondition('DISABLE_IPV6', 0);
+            $template->set_condition('DISABLE_IPV6', 0);
         }
     }
 
-    $template->setReplacements(\%sys_conf);
-    $template->setReplacements(\%exim_conf);
+    $template->set_replacements(\%sys_conf);
+    $template->set_replacements(\%exim_conf);
 
-    my $ret = $template->dump() || die "Failed to dump $source to $destination: $!\n";
+    my $ret = $template->dump_file() || die "Failed to dump $source to $destination: $!\n";
 
     # Below is not needed when we are generating the files included in exim configuration
     return $ret if ( $include_file );
@@ -443,10 +443,10 @@ sub dump_proxy_file($file, $smtp_proxy)
 sub get_system_config()
 {
     my %sconfig = ();
-    my %row = $db->getHashRow("SELECT hostname, default_domain, sysadmin, clientid, ad_server,
+    my %row = $db->get_hash_row("SELECT hostname, default_domain, sysadmin, clientid, ad_server,
         ad_param, smtp_proxy, syslog_host, sc.use_syslog, do_stockme, use_ssl, servername,
         use_archiver, archiver_host, trusted_ips, html_wl_ips, tag_mode_bypass_whitelist,
-        whitelist_both_from FROM system_conf sc, antispam an, httpd_config hc");
+        whitelist_both_from FROM system_conf sc, antispam an, httpd_config hc;");
     return unless %row;
 
     $sconfig{'__PRIMARY_HOSTNAME__'} = $row{'hostname'};
@@ -535,7 +535,7 @@ sub get_source()
 {
     my %source = ();
 
-    my %row = $db->getHashRow("SELECT hostname, port, password FROM source");
+    my %row = $db->get_hash_row("SELECT hostname, port, password FROM source");
     return unless %row;
 
     $source{'host'} = $row{'hostname'};
@@ -564,16 +564,16 @@ sub dump_source_file($file, $m_h)
 sub dump_stockme_file()
 {
 
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         "etc/exim/stockme_template",
         "etc/exim/stockme"
     );
 
-    $template->setCondition('STOCK', 0);
+    $template->set_condition('STOCK', 0);
     if ($sys_conf{'__STOCKME__'}) {
-        $template->setCondition('STOCK', 1);
+        $template->set_condition('STOCK', 1);
     }
-    my $ret = $template->dump();
+    my $ret = $template->dump_file();
 
     my $target_file = ${SRCDIR}."/etc/exim/stockme";
     chown $uid, $gid, $target_file;
@@ -583,19 +583,19 @@ sub dump_stockme_file()
 #############################
 sub dump_spam_route()
 {
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         "scripts/exim/spam_route.template.pl",
         "scripts/exim/spam_route.opt.pl"
     );
 
-    my $template2 = ConfigTemplate::create(
+    my $template2 = ConfigTemplate->new(
         "etc/exim/spam_route.template.pl",
         "etc/exim/spam_route.opt.pl"
     );
 
     my %replace = ();
     my $rblstags = "";
-    my @rbls = $db->getListOfHash("SELECT name FROM dnslist;");
+    my @rbls = $db->get_list_of_hash("SELECT name FROM dnslist;");
     foreach my $rblh (@rbls) {
         my %rbl = %$rblh;
         $rblstags .= "'".$rbl{'name'}."',";
@@ -603,7 +603,7 @@ sub dump_spam_route()
     $rblstags =~ s/,$//;
     $rblstags =~ s/\+/\\+/g;
     my $pftags;
-    my @prefilters = $db->getListOfHash("SELECT name FROM prefilter;");
+    my @prefilters = $db->get_list_of_hash("SELECT name FROM prefilter;");
     foreach my $pfh (@prefilters) {
         my %pf = %$pfh;
         $pftags .= "'".$pf{'name'}."',";
@@ -612,11 +612,11 @@ sub dump_spam_route()
 
     $replace{'\'__RBLS_TAGS__\''} = $rblstags;
     $replace{'\'__PREFILTERS_TAGS__\''} = $pftags;
-    $template->setReplacements(\%replace);
-    $template2->setReplacements(\%replace);
+    $template->set_replacements(\%replace);
+    $template2->set_replacements(\%replace);
 
-    $template2->dump();
-    my $ret = $template->dump();
+    $template2->dump_file();
+    my $ret = $template->dump_file();
 
     my $target_file = ${SRCDIR}."/scripts/exim/spam_route.opt.pl";
 
@@ -632,23 +632,23 @@ sub dump_spam_route()
     chown $uid, $gid, $bytecompiledscript;
     chmod 0754, $bytecompiledscript;
 
-    my $template3 = ConfigTemplate::create(
+    my $template3 = ConfigTemplate->new(
         "etc/exim/out_scripts.pl_template",
         "etc/exim/out_scripts.pl"
     );
-    $template3->dump();
+    $template3->dump_file();
 
-    my $template4 = ConfigTemplate::create(
+    my $template4 = ConfigTemplate->new(
         "etc/exim/stage1_scripts.pl_template",
         "etc/exim/stage1_scripts.pl"
     );
-    $template4->dump();
+    $template4->dump_file();
 
-    my $template5 = ConfigTemplate::create(
+    my $template5 = ConfigTemplate->new(
         "etc/exim/address_list.pl_template",
         "etc/exim/address_list.pl"
     );
-    $template5->dump();
+    $template5->dump_file();
     chown $uid, $gid, ${SRCDIR}."/etc/exim/address_list.pl";
     chmod 0755, ${SRCDIR}."/etc/exim/address_list.pl";
     return $ret;
@@ -695,7 +695,7 @@ local0.err      ".${VARDIR}."/log/mailscanner/errorlog\n\" > $file";
 sub get_exim_config($stage)
 {
     my %config = ();
-    my %row = $db->getHashRow("SELECT * FROM mta_config WHERE stage=${stage}");
+    my %row = $db->get_hash_row("SELECT * FROM mta_config WHERE stage=${stage};");
     return unless %row;
 
     $config{'__SMTP_ACCEPT_MAX_PER_HOST__'} = $row{'smtp_accept_max_per_host'};
@@ -717,7 +717,7 @@ sub get_exim_config($stage)
         $config{'__RELAY_FROM_HOSTS__'} = join(' ; ',expand_host_string($config{'__RELAY_FROM_HOSTS__'},('dumper'=>'exim/relay_from_hosts')));
     }
     my $dns = GetDNS->new();
-    $config{'__NO_RATELIMIT_HOSTS__'} = $dns->getA($m_infos{'host'}) || '';
+    $config{'__NO_RATELIMIT_HOSTS__'} = $dns->get_a($m_infos{'host'}) || '';
     if (defined( $row{'no_ratelimit_hosts'}) && $row{'no_ratelimit_hosts'} ne '' ) {
         $config{'__NO_RATELIMIT_HOSTS__'} = join(' ; ',expand_host_string($config{'__NO_RATELIMIT_HOSTS__'} . ' ' . $row{'no_ratelimit_hosts'},('dumper'=>'exim/no_ratelimit_hosts')));
     }
@@ -786,12 +786,12 @@ sub get_exim_config($stage)
         $bsrblsstring = $row{'bs_rbls'};
     }
 
-    my $dnslists = MCDnsLists->new(\&log_dns, 1);
-    $dnslists->loadRBLs( ${SRCDIR}."/etc/rbls",
+    my $dnslists = STDnsLists->new(\&log_dns, 1);
+    $dnslists->load_rbls( ${SRCDIR}."/etc/rbls",
         $rblsstring, 'IPRBL', '', '', '' , 'dump_exim');
 
-    my $rbls = $dnslists->getAllRBLs();
-    my $useablrbls = $dnslists->getUseablRBLs();
+    my $rbls = $dnslists->get_all_rbls();
+    my $useablrbls = $dnslists->get_useable_rbls();
 
     my $rbl_exim_string = '';
     my %rbls = %{$rbls};
@@ -801,12 +801,12 @@ sub get_exim_config($stage)
     }
     $rbl_exim_string =~ s/^\s*:\s*//;
 
-    my $bsdnslists = MCDnsLists->new(\&log_dns, 1);
-    $bsdnslists->loadRBLs( ${SRCDIR}."/etc/rbls",
+    my $bsdnslists = STDnsLists->new(\&log_dns, 1);
+    $bsdnslists->load_rbls( ${SRCDIR}."/etc/rbls",
         $bsrblsstring, 'BSRBL', '', '', '' , 'dump_exim');
 
-    my $bsrbls = $bsdnslists->getAllRBLs();
-    my $useablbsrbls = $bsdnslists->getUseablRBLs();
+    my $bsrbls = $bsdnslists->get_all_rbls();
+    my $useablbsrbls = $bsdnslists->get_useable_rbls();
 
     my $bsrbl_exim_string = '';
     my %bsrbls = %{$bsrbls};
@@ -858,7 +858,7 @@ sub get_exim_config($stage)
         $cmd = "cat ".${SRCDIR}."/etc/edition.def";
         my $edition = `$cmd`;
         chomp($edition);
-        $config{'__SMTP_BANNER__'} = '$smtp_active_hostname ESMTP MailCleaner ('.$edition.$version.') $tod_full';
+        $config{'__SMTP_BANNER__'} = '$smtp_active_hostname ESMTP SpamTagger ('.$edition.$version.') $tod_full';
     }
 
     $config{'host_reject'} = $row{'host_reject'};
@@ -975,13 +975,11 @@ sub dump_lists_ip_domain()
         $request .= "'$type', ";
     }
     $request =~ s/, $/);/;
-    my $count = $db->getCount($request);
-    if ($count eq 0) {
-        return 0;
-    }
+    my $count = $db->get_count($request);
+    return 0 unless (defined($count));
 
     foreach my $type (@types) {
-        my @row = $db->getListOfHash("SELECT sender, recipient FROM wwlists where type = '$type' order by recipient");
+        my @row = $db->get_list_of_hash("SELECT sender, recipient FROM wwlists where type = '$type' order by recipient");
         my $array_i = scalar @row;
 
         next if ( ! $array_i );
@@ -1028,7 +1026,7 @@ sub print_ip_domain_rule($sender_list, $domain, $type)
         $smtp_rule = <<"END";
 warn    hosts         = <; $sender_list
         domains       = <; $domain
-    add_header    = X-MailCleaner-Black-IP-DOM: quarantine
+    add_header    = X-SpamTagger-Black-IP-DOM: quarantine
 
 END
     } elsif ($type eq 'black-ip-dom') {
@@ -1160,7 +1158,7 @@ sub is_ipv6_disabled($interface)
 sub expand_host_string($string,%args)
 {
     my $dns = GetDNS->new();
-    return $dns->dumper($string,%args);
+    return $dns->dumper($string,\%args);
 }
 
 sub log_dns($str)

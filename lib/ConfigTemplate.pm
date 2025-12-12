@@ -55,22 +55,18 @@ sub new ($class, $templatefile, $targetfile) {
     $targetfile = $conf->get_option('SRCDIR')."/".$targetfile;
   }
 
-  my %replacements = ();
-  my %subtemplates = ();
-  my %conditions = ();
-
   my $this = {
     templatefile => $templatefile,
     targetfile => $targetfile,
-    %replacements => (),
-    %subtemplates => (),
-    %conditions => ()
+    replacements => {},
+    subtemplates => {},
+    conditions => {}
   };
 
-  bless $this, "ConfigTemplate";
+  bless $this, $class;
 
-  $this->preParseTemplate();
-  return $this, $class;
+  $this->pre_parse_template();
+  return $this;
 }
 
 ###
@@ -117,7 +113,7 @@ sub get_sub_template ($this, $tmplname) {
 ###
 sub set_replacements ($this, $replace) {
   foreach my $tag (keys %{$replace}) {
-    $this->{replacements}{$tag} = $replace->{$tag};
+    $this->{replacements}->{$tag} = $replace->{$tag};
   }
   return 1;
 }
@@ -142,7 +138,7 @@ sub dump_file ($this) {
     $lc++;
 
     if ($line =~ /__IF__\s+(\S+)/) {
-      if ($this->getCondition($1)) {
+      if ($this->get_condition($1)) {
         push @if_hist, $1;
       } else {
         push @if_hist, "!".$1;
@@ -204,13 +200,16 @@ sub dump_file ($this) {
       } elsif ( -f "$SRCDIR/etc/exim/$inc_file" ) {
         $path_file = "$SRCDIR/etc/exim/$inc_file";
         #$ret .= ".include_if_exists __SRCDIR__/etc/exim/$inc_file\n";
+      } else {
+	next;
       }
 
       my $PATHFILE;
-      open($PATHFILE, '<', $path_file);
-      my @contains = <$PATHFILE>;
+      my @contains;
+      if (open($PATHFILE, '<', $path_file)) {
+        push(@contains,$_) while(<$PATHFILE>);
+      }
       close($PATHFILE);
-      chomp(@contains);
       $ret .= "$_\n" foreach (@contains);
       next;
     }
@@ -238,11 +237,11 @@ sub dump_file ($this) {
 
   ## replace given tags
   foreach my $tag (keys %{$this->{replacements}}) {
-    if (!defined($this->{replacements}{$tag})) {
-      $this->{replacements}{$tag} = "";
+    if (!defined($this->{replacements}->{$tag})) {
+      $this->{replacements}->{$tag} = "";
     }
     if ( defined ($ret) ) {
-      $ret =~ s/$tag/$this->{replacements}{$tag}/g;
+      $ret =~ s/$tag/$this->{replacements}->{$tag}/g;
     }
   }
 
@@ -263,13 +262,13 @@ sub dump_file ($this) {
 }
 
 sub set_condition ($this, $condition, $value) {
-  $this->{conditions}{$condition} = $value;
+  $this->{conditions}->{$condition} = $value;
   return 1;
 }
 
 sub get_condition ($this, $condition) {
-  if (defined($this->{conditions}{$condition})) {
-    return $this->{conditions}{$condition};
+  if (defined($this->{conditions}->{$condition})) {
+    return $this->{conditions}->{$condition};
   }
   return 0;
 }
