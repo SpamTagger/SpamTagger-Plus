@@ -108,7 +108,7 @@ sub get_greylist_config()
 {
     my $replica_db = DB->db_connect('replica', 'st_config');
 
-    my %configs = $replica_db->getHashRow(
+    my %configs = $replica_db->get_hash_row(
         "SELECT retry_min, retry_max, expire, avoid_domains FROM greylistd_config"
     );
     my %ret;
@@ -165,7 +165,7 @@ sub dump_trusted_ips($ips)
 
 sub dump_greylistd_file($greylistd_conf)
 {
-    my $template_file = "${SRCDIR}/${confdir}/config_template";
+    my $template_file = "${SRCDIR}/${confdir}/greylistd.conf_template";
     my $target_file = "${SRCDIR}/${confdir}/config";
 
     my ($TEMPLATE, $TARGET);
