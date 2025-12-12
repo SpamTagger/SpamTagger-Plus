@@ -52,7 +52,7 @@ our $DEBUG = 1;
 
 my $lasterror;
 
-my $dbh = DB::connect('replica', 'mc_config');
+my $dbh = DB->db_connect('replica', 'st_config');
 
 my %messagesniffer_conf;
 %messagesniffer_conf = get_messagesniffer_config() or fatal_error("NOMESSAGESNIFFERCONFIGURATIONFOUND", "no MessageSniffer configuration found");

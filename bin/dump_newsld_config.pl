@@ -47,10 +47,10 @@ use STUtils qw(open_as);
 
 require ConfigTemplate;
 require DB;
-require MCDnsLists;
+require STDnsLists;
 require GetDNS;
 
-my $db = DB::connect('replica', 'mc_config');
+my $db = DB->db_connect('replica', 'st_config');
 
 our $DEBUG = 1;
 our $uid = getpwnam('spamtagger');
@@ -96,7 +96,7 @@ sub get_sa_config()
 {
     my %config;
 
-    my %row = $db->getHashRow(
+    my %row = $db->get_hash_row(
         "SELECT use_bayes, bayes_autolearn, use_rbls, rbls_timeout,
         use_dcc, dcc_timeout, use_razor, razor_timeout, use_pyzor, pyzor_timeout, trusted_ips,
         sa_rbls, spf_timeout, use_spf, dkim_timeout, use_dkim, dmarc_follow_quarantine_policy,
@@ -159,72 +159,72 @@ sub get_sa_config()
 #############################
 sub dump_sa_file()
 {
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         'etc/mailscanner/spam.assassin.prefs.conf_template',
         'etc/mailscanner/spam.assassin.prefs.conf'
     );
-    $template->setReplacements(\%sa_conf);
-    $template->setCondition('QUARANTINE_DMARC', 0);
+    $template->set_replacements(\%sa_conf);
+    $template->set_condition('QUARANTINE_DMARC', 0);
     if ($sa_conf{'__QUARANTINE_DMARC__'}) {
-        $template->setCondition('QUARANTINE_DMARC', 1);
+        $template->set_condition('QUARANTINE_DMARC', 1);
     }
 
-    return 0 unless $template->dump();
+    return 0 unless $template->dump_file();
 
-    $template = ConfigTemplate::create(
+    $template = ConfigTemplate->new(
         'etc/mailscanner/spamd.conf_template',
         'etc/mailscanner/spamd.conf'
     );
-    $template->setReplacements(\%sa_conf);
-    return 0 unless $template->dump();
+    $template->set_replacements(\%sa_conf);
+    return 0 unless $template->dump_file();
 
-    $template = ConfigTemplate::create(
+    $template = ConfigTemplate->new(
         'etc/mailscanner/newsld.conf_template',
         'etc/mailscanner/newsld.conf'
     );
-    $template->setReplacements(\%sa_conf);
-    return 0 unless $template->dump();
+    $template->set_replacements(\%sa_conf);
+    return 0 unless $template->dump_file();
 
-    $template = ConfigTemplate::create(
-        'share/spamd/92_mc_dnsbl_disabled.cf_template',
-        'share/spamd/92_mc_dnsbl_disabled.cf'
+    $template = ConfigTemplate->new(
+        'share/spamd/92_st_dnsbl_disabled.cf_template',
+        'share/spamd/92_st_dnsbl_disabled.cf'
     );
     my @givenlist = split ' ', $sa_conf{'__SA_RBLS__'};
     if (!$sa_conf{'__SKIP_RBLS__'}) {
         foreach my $list (@givenlist) {
-            $template->setCondition($list, 1);
+            $template->set_condition($list, 1);
         }
     }
     foreach my $list (@dnslists) {
         my %l = %{$list};
         my $lname = $l{'name'};
         if ($sa_conf{'__SA_RBLS__'} =~ /\b$lname\b/ && !$sa_conf{'__SKIP_RBLS__'}) {
-            $template->setCondition($lname, 1);
+            $template->set_condition($lname, 1);
         }
     }
-    return 0 unless $template->dump();
+    return 0 unless $template->dump_file();
 
 
-    $template = ConfigTemplate::create(
-        'share/spamd/70_mc_spf_scores.cf_template',
-        'share/spamd/70_mc_spf_scores.cf'
+    $template = ConfigTemplate->new(
+        'share/spamd/70_st_spf_scores.cf_template',
+        'share/spamd/70_st_spf_scores.cf'
     );
-    $template->setCondition('__USE_SPF__', $sa_conf{'__USE_SPF__'});
-    return 0 unless $template->dump();
+    $template->set_condition('__USE_SPF__', $sa_conf{'__USE_SPF__'});
+    return 0 unless $template->dump_file();
 
-    $template = ConfigTemplate::create(
-        'share/spamd/70_mc_dkim_scores.cf_template',
-        'share/spamd/70_mc_dkim_scores.cf'
+    $template = ConfigTemplate->new(
+        'share/spamd/70_st_dkim_scores.cf_template',
+        'share/spamd/70_st_dkim_scores.cf'
     );
-    $template->setCondition('__USE_DKIM__', $sa_conf{'__USE_DKIM__'});
+    $template->set_condition('__USE_DKIM__', $sa_conf{'__USE_DKIM__'});
 
-    return $template->dump();
+    return $template->dump_file();
 }
 
 #############################
 sub dump_saplugins_conf()
 {
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         'etc/mailscanner/sa_plugins.pre',
         'share/spamd/sa_plugins.pre'
     );
@@ -241,13 +241,13 @@ sub dump_saplugins_conf()
         '__IF_BOTNET__' => getModuleStatus('__USE_BOTNET__'),
     );
 
-    $template->setReplacements(\%replace);
-    return $template->dump();
+    $template->set_replacements(\%replace);
+    return $template->dump_file();
 }
 
 sub get_dnslists()
 {
-    my @list = $db->getListOfHash("SELECT name FROM dnslist WHERE active=1");
+    my @list = $db->get_list_of_hash("SELECT name FROM dnslist WHERE active=1");
     return @list;
 }
 

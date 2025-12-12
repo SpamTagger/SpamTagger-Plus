@@ -106,7 +106,7 @@ unlink "${VARDIR}/run/greylistd/socket" if (-e "${VARDIR}/run/greylistd/socket")
 
 sub get_greylist_config()
 {
-    my $replica_db = DB::connect('replica', 'mc_config');
+    my $replica_db = DB->db_connect('replica', 'st_config');
 
     my %configs = $replica_db->getHashRow(
         "SELECT retry_min, retry_max, expire, avoid_domains FROM greylistd_config"
@@ -123,9 +123,9 @@ sub get_greylist_config()
 
 sub get_trusted_ips()
 {
-    my $replica_db = DB::connect('replica', 'mc_config');
+    my $replica_db = DB->db_connect('replica', 'st_config');
 
-    my %configs = $replica_db->getHashRow(
+    my %configs = $replica_db->get_hash_row(
         "SELECT trusted_ips FROM antispam;"
     );
 

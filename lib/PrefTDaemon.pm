@@ -384,7 +384,7 @@ sub fetch_global_pref ($this, $object, $pref) {
 sub fetch_backend_pref ($this, $query, $pref) {
   return '_NOBACKEND' if ( !$this->connect_backend() );
 
-  my %res = $this->{backend}->getHashRow($query);
+  my %res = $this->{backend}->get_hash_row($query);
   return $res{$pref} if ( defined( $res{$pref} ) );
 
   return 'NOTFOUND';
@@ -497,7 +497,7 @@ sub get_object_backend_ww ($this, $type, $object, $sender) {
   }
 
   #print STDERR $query."\n";
-  my @reslist = $this->{backend}->getListOfHash($query);
+  my @reslist = $this->{backend}->get_list_of_hash($query);
 
   $this->add_stat( 'backendwwcall', 1 );
 

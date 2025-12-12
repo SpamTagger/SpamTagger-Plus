@@ -204,7 +204,7 @@ $replace = array(
   "__DOC_USERAUTHENTICATION__" => $documentor->help_button('USERAUTHENTICATION'),
   "__DOC_DOMAINTEMPLATES__" => $documentor->help_button('DOMAINTEMPLATES'),
   "__DOC_WANTWARNLIST__" => $documentor->help_button('WANTWARNLIST'),
-  "__DOMAINLIST_DRAW__" => $domains_->getList($template, $selected_domain->getPref('name')),
+  "__DOMAINLIST_DRAW__" => $domains_->get_list($template, $selected_domain->getPref('name')),
   "__REMOVE_FULLLINK__" => $_SERVER['PHP_SELF']."?m=d&d=",
   "__FORM_BEGIN_DOMAINEDIT__" => $dform_->open().$dform_->hidden('d', $selected_domain->id_).$dform_->hidden('ba', $batchadd),
   "__FORM_CLOSE_DOMAINEDIT__" => $dform_->close(),

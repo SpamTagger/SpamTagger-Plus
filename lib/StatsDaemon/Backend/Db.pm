@@ -79,7 +79,7 @@ sub access_flat_element ($this, $element) {
         . $this->{daemon}->get_current_date()->{'day'};
       $this->{daemon}->add_stat( 'backend_read', 1 );
       return '_NOBACKEND' if ( !$this->connect_backend() );
-      my %res = $this->{db}->getHashRow($query);
+      my %res = $this->{db}->get_hash_row($query);
       $this->do_log( 'Query executed: '.$query, 'statsdaemon', 'debug');
       if ( $res{'id'} && $res{'value'} ) {
 
@@ -119,7 +119,7 @@ sub stabilize_flat_element ($this, $element) {
       "SELECT id FROM stats_subject WHERE subject='" . $element . "'";
     $this->{daemon}->add_stat( 'backend_read', 1 );
     return '_NOBACKEND' if ( !$this->connect_backend() );
-    my %res = $this->{db}->getHashRow($query);
+    my %res = $this->{db}->get_hash_row($query);
     if ( defined( $res{'id'} ) ) {
       $this->{daemon}->set_element_value_by_name( $element, 'stable_id',
         $res{'id'} );
@@ -127,7 +127,7 @@ sub stabilize_flat_element ($this, $element) {
       $query = "INSERT INTO stats_subject SET subject='" . $element . "'";
       return '_NOBACKEND' if ( !$this->connect_backend() );
       if ( $this->{db}->execute($query) ) {
-        my $id = $this->{db}->getLastID();
+        my $id = $this->{db}->get_last_id();
         $this->{daemon}->add_stat( 'backend_write', 1 );
         if ($id) {
           $this->{daemon}->set_element_value_by_name( $element, 'stable_id',
@@ -150,7 +150,7 @@ sub stabilize_flat_element ($this, $element) {
           . "'";
         $this->{daemon}->add_stat( 'backend_read', 1 );
         return '_NOBACKEND' if ( !$this->connect_backend() );
-        %res = $this->{db}->getHashRow($query);
+        %res = $this->{db}->get_hash_row($query);
         if ( defined( $res{'id'} ) ) {
           $this->{daemon}->set_element_value_by_name( $element, 'stable_id',
             $res{'id'} );
@@ -319,7 +319,7 @@ sub get_stats ($this, $start, $stop, $what, $data) {
         $query .= " group by d.subject";
         $this->do_log( 'Using query: "'.$query.'"', 'statsdaemon', 'debug' );
         $this->{daemon}->increase_long_read();
-        my @results = $this->{db}->getListOfHash( $query, 1 );
+        my @results = $this->{db}->get_list_of_hash( $query, 1 );
         $this->{daemon}->decrease_long_read();
         foreach my $res (@results) {
           if ( !$res->{'sm'} ) {

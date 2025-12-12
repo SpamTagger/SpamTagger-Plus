@@ -89,9 +89,9 @@ sub load_prefs ($this) {
 
 sub dump_prefs ($this) {
   my $replica_db = DB->db_connect('replica', 'st_config');
-  my %prefs = $replica_db->getHashRow("SELECT * FROM antispam");
-  my %conf = $replica_db->getHashRow("SELECT use_ssl, servername FROM httpd_config");
-  my %sysconf = $replica_db->getHashRow("SELECT summary_from, analyse_to FROM system_conf");
+  my %prefs = $replica_db->get_hash_row("SELECT * FROM antispam");
+  my %conf = $replica_db->get_hash_row("SELECT use_ssl, servername FROM httpd_config");
+  my %sysconf = $replica_db->get_hash_row("SELECT summary_from, analyse_to FROM system_conf");
 
   if (! -d $this->{prefdir} && ! mkdir($this->{prefdir})) {
     print "CANNOTCREATESYSTEMPREFDIR\n";

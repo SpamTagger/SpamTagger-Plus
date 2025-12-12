@@ -1,1 +1,1 @@
-#Include /usr/mailcleaner/etc/apparmor.d
+#Include /usr/spamtagger/etc/apparmor.d

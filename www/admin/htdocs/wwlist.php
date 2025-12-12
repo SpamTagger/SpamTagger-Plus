@@ -155,7 +155,7 @@ if (is_numeric($per_page) && $per_page > 0) {
 
 $active_inactive = array($lang_->print_txt('ACTIVE') => '1', $lang_->print_txt('INNACTIVE') => '0');
 $replace = array(
-  "__WWENTRYLISTDRAW__" => $wwlist->getList($template, null),
+  "__WWENTRYLISTDRAW__" => $wwlist->get_list($template, null),
   "__DELETE_STATUS__" => $deleted_msg,
   "__ADD_STATUS__" => $addstatus,
   "__SAVE_STATUS__" => $savestatus,

@@ -11,6 +11,7 @@ our @EXPORT_OK = qw( create_lockfile open_as remove_lockfile rmrf );
 our $VERSION   = 1.0;
 
 use File::Path qw/make_path/;
+use File::Touch qw/touch/;
 use Carp qw( confess );
 
 # Returns 0 if $file cannot be opened

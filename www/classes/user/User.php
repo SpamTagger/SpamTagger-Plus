@@ -131,7 +131,7 @@ class User extends PrefHandler {
     }
   	$query = "SELECT alias FROM pending_alias WHERE user=".$this->getID();
     $db_replicaconf = DM_SlaveConfig :: getInstance();
-    $res = $db_replicaconf->getList($query);
+    $res = $db_replicaconf->get_list($query);
     if (is_array($res)) {
       foreach($res as $add) {
         $list[$add] = 1;
@@ -243,7 +243,7 @@ private function addRegisteredAddresses() {
   $query = "SELECT e.address as id, e.address, e.is_main, e.pref FROM email e, user u WHERE u.username='".$db_replicaconf->sanitize($this->getPref('username'))."' ";
   $query .= "AND u.domain='".$db_replicaconf->sanitize($this->getPref('domain'))."' AND e.user=u.id";
 
-  $res = $db_replicaconf->getListOfHash($query);
+  $res = $db_replicaconf->get_list_of_hash($query);
   if (is_array($res)) {
     foreach($res as $add_record) {
       $this->addAddress($add_record['address']);

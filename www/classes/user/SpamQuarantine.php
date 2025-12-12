@@ -245,7 +245,7 @@ public function load() {
    $query .= $limit;
 
    // populate internal spam list
-   $spam_list = $db_sourcespool->getListOfHash($query);
+   $spam_list = $db_sourcespool->get_list_of_hash($query);
    foreach ($spam_list as $spam) {
      $this->elements_[$spam['exim_id']] = new Spam();
      $this->elements_[$spam['exim_id']]->loadFromArray($spam);

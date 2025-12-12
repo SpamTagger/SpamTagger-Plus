@@ -47,7 +47,7 @@ sub run($this) {
 
   my $current = `hostnamectl hostname`;
   chomp($current);
-  $current //= 'mailcleaner';
+  $current //= 'spamtagger';
   $dlg->build('Enter the new hostname', $current);
   my $name = $dlg->display();
 
@@ -59,9 +59,9 @@ sub run($this) {
       $name .= " $1";
     }
     `echo 127.0.0.1 localhost $name >> $this->{hostsfile}`;
-    `echo "UPDATE httpd_config SET servername = '$name';" | /usr/mailcleaner/bin/mc_mariadb -m mc_config`;
-    `sed -i -r 's/(MCHOSTNAME *= *).*/\\1$name/' /etc/mailcleaner.conf`;
-    `/usr/mailcleaner/etc/init.d/apache restart`;
+    `echo "UPDATE httpd_config SET servername = '$name';" | /usr/spamtagger/bin/st_mariadb -s st_config`;
+    `sed -i -r 's/(STHOSTNAME *= *).*/\\1$name/' /etc/spamtagger.conf`;
+    `/usr/spamtagger/etc/init.d/apache restart`;
   } else {
     print("Invalid hostname: $name\n");
   }

@@ -61,7 +61,7 @@ chown($uid, $gid, $authorized_file);
 
 sub do_known_hosts()
 {
-    my $dbh = DB::connect('replica', 'mc_config');
+    my $dbh = DB->db_connect('replica', 'st_config');
 
     my $sth = $dbh->prepare("SELECT hostname, ssh_pub_key FROM replica");
     $sth->execute() or return;
@@ -78,7 +78,7 @@ sub do_known_hosts()
 
 sub do_authorized_keys()
 {
-    my $dbh = DB::connect('replica', 'mc_config');
+    my $dbh = DB->db_connect('replica', 'st_config');
 
     my $sth = $dbh->prepare("SELECT ssh_pub_key FROM source");
     $sth->execute() or return;

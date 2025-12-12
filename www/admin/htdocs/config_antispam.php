@@ -122,7 +122,7 @@ $replace = array(
         "__FORM_BEGIN_MODULES__" => $mform->open(),
         "__FORM_CLOSE_MODULES__" => $mform->close(),
         "__MODULESSAVE_STATUS__" => $msave_msg,
-        "__MODULESLIST_DRAW__" => $moduleslist_->getList($template_, $mform),
+        "__MODULESLIST_DRAW__" => $moduleslist_->get_list($template_, $mform),
 );
 
 // output page

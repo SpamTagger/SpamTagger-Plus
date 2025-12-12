@@ -67,7 +67,7 @@ if ($what =~ /^\@([a-zA-Z0-9\.\_\-]+)$/) {
     $filepath .= "_global/";
 }
 
-my $replica_db = DB::connect('replica', 'mc_config');
+my $replica_db = DB->db_connect('replica', 'st_config');
 
 dumpWWFiles($to, $filepath);
 
@@ -78,7 +78,7 @@ sub dumpWWFiles($to,$filepath)
     my @types = ('warn', 'white');
 
     foreach my $type (@types) {
-        my @list = $replica_db->getList("SELECT sender FROM wwlists WHERE
+        my @list = $replica_db->get_list("SELECT sender FROM wwlists WHERE
             status=1 AND type='".$type."' AND recipient='".$to."'"
         );
 

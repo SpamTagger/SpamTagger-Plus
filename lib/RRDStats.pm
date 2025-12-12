@@ -43,7 +43,7 @@ sub new ($hostname) {
   my %stats = ();
 
   my $replica_db = DB->db_connect('replica', 'st_config');
-  my %row = $replica_db->getHashRow("SELECT community FROM snmpd_config WHERE set_id=1");
+  my %row = $replica_db->get_hash_row("SELECT community FROM snmpd_config WHERE set_id=1");
   $replica_db->db_disconnect();
   my $community = $row{'community'};
 

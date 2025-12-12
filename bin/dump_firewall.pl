@@ -87,7 +87,7 @@ our $ipset = "/usr/sbin/ipset";
 
 my $has_ipv6 = 0;
 
-my $dbh = DB::connect('replica', 'mc_config');
+my $dbh = DB->db_connect('replica', 'st_config');
 
 my %sources_replicas = get_sources_replicas();
 

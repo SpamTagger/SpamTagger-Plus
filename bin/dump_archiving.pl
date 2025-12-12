@@ -48,7 +48,6 @@ use STUtils qw( open_as );
 require DB;
 require Domain;
 require SystemPref;
-require ConfigTemplate;
 use File::Copy;
 
 my $domain = shift;
@@ -56,7 +55,7 @@ my $domain = shift;
 my $uid = getpwnam( 'spamtagger' );
 my $gid = getgrnam( 'spamtagger' );
 
-my $replica_db = DB::connect('replica', 'mc_config');
+my $replica_db = DB->db_connect('replica', 'st_config');
 
 dumpArchivedDomains();
 dumpCopyto();
@@ -66,7 +65,7 @@ $replica_db->disconnect();
 
 sub dumpArchivedDomains()
 {
-    my @adomains = $replica_db->getListOfHash("SELECT d.name FROM domain d, domain_pref dp WHERE dp.archive_mail='1' AND d.name != '__global__' AND d.prefs=dp.id");
+    my @adomains = $replica_db->get_list_of_hash("SELECT d.name FROM domain d, domain_pref dp WHERE dp.archive_mail='1' AND d.name != '__global__' AND d.prefs=dp.id");
 
     my $archive_path = "${VARDIR}/spool/tmp/exim_stage1/archiver";
     if (! -d $archive_path) {
@@ -86,7 +85,7 @@ sub dumpArchivedDomains()
         }
     }
 
-    my @aemail = $replica_db->getListOfHash("SELECT address from email e, user_pref p WHERE p.archive_mail=1 AND e.pref=p.id");
+    my @aemail = $replica_db->get_list_of_hash("SELECT address from email e, user_pref p WHERE p.archive_mail=1 AND e.pref=p.id");
     foreach my $e (@aemail) {
         if (defined($e->{'address'}) && $e->{'address'} =~ /(\S+)\@(\S+)/) {
             my $edom = $2;
@@ -107,7 +106,7 @@ sub dumpArchivedDomains()
 
 sub dumpCopyto()
 {
-    my @cdomains = $replica_db->getListOfHash("SELECT d.name, dp.copyto_mail FROM domain d, domain_pref dp WHERE dp.copyto_mail != '' AND d.name != '__global__' AND d.prefs=dp.id");
+    my @cdomains = $replica_db->get_list_of_hash("SELECT d.name, dp.copyto_mail FROM domain d, domain_pref dp WHERE dp.copyto_mail != '' AND d.name != '__global__' AND d.prefs=dp.id");
 
     my $copyto_path = "${VARDIR}/spool/tmp/exim_stage1/copyto";
     if (! -d $copyto_path) {
@@ -127,7 +126,7 @@ sub dumpCopyto()
         }
     }
 
-    my @cemail = $replica_db->getListOfHash("SELECT e.address, p.copyto_mail from email e, user_pref p WHERE p.copyto_mail != '' AND e.pref=p.id");
+    my @cemail = $replica_db->get_list_of_hash("SELECT e.address, p.copyto_mail from email e, user_pref p WHERE p.copyto_mail != '' AND e.pref=p.id");
     foreach my $e (@cemail) {
         if (defined($e->{'address'}) && $e->{'address'} =~ /(\S+)\@(\S+)/) {
             my $edom = $2;
@@ -150,7 +149,7 @@ sub dumpBypassFiltering()
 {
     my $bypassfiltering_path = "${VARDIR}/spool/tmp/exim_stage1/bypass";
 
-    my @cemail = $replica_db->getListOfHash("SELECT e.address, p.bypass_filtering from email e, user_pref p WHERE p.bypass_filtering != '' AND e.pref=p.id");
+    my @cemail = $replica_db->get_list_of_hash("SELECT e.address, p.bypass_filtering from email e, user_pref p WHERE p.bypass_filtering != '' AND e.pref=p.id");
 
     if (defined($bypassfiltering_path) && $bypassfiltering_path ne '') {
         if ( ! -d $bypassfiltering_path ) {

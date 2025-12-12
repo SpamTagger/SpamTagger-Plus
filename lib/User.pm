@@ -91,7 +91,7 @@ sub load ($this, $query) {
   if (!$this->{db}) {
     $this->{db} = DB->db_connect('replica', 'st_config', 0);
   }
-  my %userdata = $this->{db}->getHashRow($query);
+  my %userdata = $this->{db}->get_hash_row($query);
   if (keys %userdata) {
     $this->{username} = $userdata{'username'};
     $this->{domain} = $userdata{'domain'};
@@ -108,7 +108,7 @@ sub get_addresses ($this) {
     }
 
     my $query = "SELECT e.address, e.is_main FROM email e WHERE e.user=".$this->{'id'};
-    my @addresslist = $this->{db}->getListOfHash($query);
+    my @addresslist = $this->{db}->get_list_of_hash($query);
     foreach my $regadd (@addresslist) {
       $this->{addresses}->{$regadd->{'address'}} = 1;
       if ($regadd->{is_main}) {
@@ -195,7 +195,7 @@ sub load_prefs ($this) {
 
   if ($this->{db} && $this->{db}->ping()) {
     my $query = "SELECT p.* FROM user u, user_pref p WHERE u.pref=p.id AND u.id=".$this->{id};
-    my %res = $this->{db}->getHashRow($query);
+    my %res = $this->{db}->get_hash_row($query);
     return 0 if ( !%res || !$res{id} );
     $this->{prefs}->{$_} = $res{$_} foreach (keys(%res));
   }

@@ -4,6 +4,7 @@
 #   Copyright (C) 2004-2014 Olivier Diserens <olivier@diserens.ch>
 #   Copyright (C) 2015-2017 Mentor Reka <reka.mentor@gmail.com>
 #   Copyright (C) 2015-2017 Florian Billebault <florian.billebault@gmail.com>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -37,7 +38,8 @@ if [ $FREE_SPACE -lt 600000 ]; then
   exit
 fi
 
-DOWNLOADSERVER="mailcleanerdl.alinto.net"
+# TODO: No more server. We need to just compile this in to the Bootc Image
+DOWNLOADSERVER="spamtagger.org"
 curl --insecure https://$DOWNLOADSERVER/downloads/openssl-1.1.1g.tar.gz -o openssl-1.1.1g.tar.gz 2>&1 >/dev/null
 SHA=$(sha256sum openssl-1.1.1g.tar.gz | cut -d ' ' -f 1)
 if [[ "$SHA" != "ddb04774f1e32f0c49751e21b67216ac87852ceb056b75209af2443400636d46" ]]; then

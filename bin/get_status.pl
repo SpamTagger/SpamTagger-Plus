@@ -28,7 +28,7 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-my ($SRCDIR, $MYMAILCLEANERPWD);
+my ($SRCDIR, $MYSPAMTAGGERPWD);
 our ($VARDIR);
 BEGIN {
     if ($0 =~ m/(\S*)\/\S+.pl$/) {
@@ -36,10 +36,10 @@ BEGIN {
         unshift (@INC, $path);
     }
     require ReadConfig;
-    my $conf = ReadConfig::getInstance();
-    $SRCDIR = $conf->getOption('SRCDIR') || '/usr/spamtagger';
-    $VARDIR = $conf->getOption('VARDIR') || '/var/spamtagger';
-    confess "Could not get DB password" unless ($MYMAILCLEANERPWD = $conf->getOption('MYMAILCLEANERPWD'));
+    my $conf = ReadConfig::get_instance();
+    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+    $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
+    confess "Could not get DB password" unless ($MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD'));
     unshift(@INC, $SRCDIR."/lib");
 }
 
@@ -85,8 +85,8 @@ my @order = (
     { 'id' => 'exim_stage4', 'service' => 'exim4@4', 'human' => 'Outgoing' },
     { 'id' => 'apache', 'service' => 'apache2', 'human' => 'Web Server' },
     { 'id' => 'mailscanner', 'service' => 'mailscanner', 'human' => 'Filtering Engine' },
-    { 'id' => 'mysql_master', 'service' => 'mariadb@master', 'human' => 'Master Database' },
-    { 'id' => 'mysql_slave', 'service' => 'mariadb@slave', 'human' => 'Slave Database' },
+    { 'id' => 'mysql_master', 'service' => 'mariadb@source', 'human' => 'Master Database' },
+    { 'id' => 'mysql_slave', 'service' => 'mariadb@replica', 'human' => 'Slave Database' },
     { 'id' => 'snmpd', 'service' => 'snmpd', 'human' => 'SNMP Daemon' },
     { 'id' => 'greylistd', 'service' => 'greylistd', 'human' => 'Greylist Daemon' },
     { 'id' => 'cron', 'service' => 'cron', 'human' => 'Scheduler' },
@@ -225,7 +225,7 @@ if ($mode_given =~ /s/) {
         print($res."\n");
     }
 } elsif ($mode_given =~ /u/) {
-    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S ${VARDIR}/run/mysql_slave/mysqld.sock -uspamtagger -p${MYMAILCLEANERPWD}";
+    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S ${VARDIR}/run/mysql_slave/mysqld.sock -uspamtagger -p${MYSPAMTAGGERPWD}";
     $res = `$cmd`;
     my $patch = "";
     if ($res =~ /^(\d+)\s+(\S+)$/) {

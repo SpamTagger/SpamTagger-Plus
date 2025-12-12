@@ -193,7 +193,7 @@ public function load() {
    $query .= $limit;
 
    // populate internal spam list
-   $content_list = $db->getListOfHash($query);
+   $content_list = $db->get_list_of_hash($query);
    foreach ($content_list as $content) {
      $this->elements_[$content['id']] = new Content();
      $this->elements_[$content['id']]->setDatas($content);

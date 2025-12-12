@@ -78,7 +78,7 @@ class EmailList extends ListManager
     $query = "SELECT address FROM email WHERE ";
     $query .= "address LIKE '".$db_replicaconf->sanitize($this->s_local_part_)."%@".$db_replicaconf->sanitize($this->s_domain_part_)."'";
 
-    $res = $db_replicaconf->getList($query);
+    $res = $db_replicaconf->get_list($query);
     foreach ($res as $email) {
       $email = strtolower($email);
       $this->setElement($email, $email);

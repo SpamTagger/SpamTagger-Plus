@@ -371,7 +371,7 @@ sub fetch_database_ww ($this, $type, $recipient, $sender, $atype) {
   $sender =~ s/[\/\'\"\<\>\:\;\?\*\%\&\+]//g;
   $recipient =~ s/[\/\'\"\<\>\:\;\?\*\%\&\+]//g;
   my $query = "SELECT sender FROM wwlists WHERE type='$type' AND ( recipient='$recipient' OR recipient='' ) AND status=1";
-  my @entries = $this->{replica_db}->getListOfHash($query);
+  my @entries = $this->{replica_db}->get_list_of_hash($query);
   foreach my $entry (@entries) {
     my %entryv = %$entry;
     my $test = $entryv{sender};
@@ -392,7 +392,7 @@ sub fetch_address_pref ($this, $who, $what) {
   }
 
   my $query = "SELECT $what FROM user_pref p, email e WHERE p.id=e.pref AND e.address='$who'";
-  my %res = $this->{replica_db}->getHashRow($query);
+  my %res = $this->{replica_db}->get_hash_row($query);
   return $res{$what} if (defined($res{$what}));
   return "NOTFOUND";
 }
@@ -407,16 +407,16 @@ sub fetch_domain_pref ($this, $who, $what) {
   $what = 'enable_blocklists' if ($what eq 'has_blocklist');
   ## check this domain
   my $query = "SELECT $what FROM domain_pref p, domain d WHERE p.id=d.prefs AND d.name='$who'";
-  my %res = $this->{replica_db}->getHashRow($query);
+  my %res = $this->{replica_db}->get_hash_row($query);
   return $res{$what} if (defined($res{$what}));
   ## check for jocker domain
   $query = "SELECT $what FROM domain_pref p, domain d WHERE p.id=d.prefs AND d.name='*'";
-  %res = $this->{replica_db}->getHashRow($query);
+  %res = $this->{replica_db}->get_hash_row($query);
   return $res{$what} if (defined($res{$what}));
   ## check for default domain
   my $dd = $this->fetchGlobalPref('default_domain');
   $query = "SELECT $what FROM domain_pref p, domain d WHERE p.id=d.prefs AND d.name='$dd'";
-  %res = $this->{replica_db}->getHashRow($query);
+  %res = $this->{replica_db}->get_hash_row($query);
   return $res{$what} if (defined($res{$what}));
   return "NOTFOUND";
 }
@@ -426,7 +426,7 @@ sub fetch_global_pref ($this, $what) {
     return 'NOTFOUND' unless ($this->connect_db());
   }
   my $query = "SELECT $what FROM system_conf, antispam, antivirus, httpd_config";
-  my %res = $this->{replica_db}->getHashRow($query);
+  my %res = $this->{replica_db}->get_hash_row($query);
   return $res{$what} if (defined($res{$what}));
   return "NOTFOUND";
 }

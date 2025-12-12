@@ -28,7 +28,7 @@ public function Load() {
   global $admin_;
 
   $query = "SELECT name FROM domain WHERE name != '__global__'";
-  $row = $db_replicaconf->getList($query);
+  $row = $db_replicaconf->get_list($query);
   foreach( $row as $domain) {
     if ($admin_->canManageDomain($domain)) {
       $d = new Domain();

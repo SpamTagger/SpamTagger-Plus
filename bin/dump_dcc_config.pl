@@ -33,7 +33,7 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-our ($SRCDIR, $VARDIR, $HOSTID, $MYMAILCLEANERPWD);
+our ($SRCDIR, $VARDIR, $HOSTID, $MYSPAMTAGGERPWD);
 BEGIN {
     if ($0 =~ m/(\S*)\/\S+.pl$/) {
         my $path = $1."/../lib";
@@ -44,7 +44,7 @@ BEGIN {
     $SRCDIR = $conf->get_option('SRCDIR');
     $VARDIR = $conf->get_option('VARDIR');
     $HOSTID = $conf->get_option('HOSTID');
-    $MYMAILCLEANERPWD = $conf->get_option('MYMAILCLEANERPWD');
+    $MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD');
     unshift(@INC, $SRCDIR."/lib");
 }
 

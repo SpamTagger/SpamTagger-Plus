@@ -131,7 +131,7 @@ $replace = array(
         "__DOC_USERLISTTITLE__" => $documentor->help_button('USERLISTTITLE'),
         "__DOC_USERSETTINGS__" => $documentor->help_button('USERSETTINGS'),
         "__ENTEREDJS__" => "",
-        "__USERLIST_DRAW__" => $user_list->getList($template_->getTemplate('USERLIST'), $selected_username) ,
+        "__USERLIST_DRAW__" => $user_list->get_list($template_->getTemplate('USERLIST'), $selected_username) ,
         "__SETTINGSTARGETENTERED__" => "javascript:window.document.forms['search'].search_selected.value='$selected_username';window.document.forms['search'].submit();",
         "__FORM_BEGIN_USERSEARCH__" => $sform->open().$sform->hidden('selected', '').$sform->hidden('page', $user_list->getPage()),
         "__FORM_CLOSE_USERSEARCH__" => $sform->close(),

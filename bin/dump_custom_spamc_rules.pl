@@ -38,10 +38,10 @@ BEGIN {
 use STUtils qw( open_as );
 
 require DB;
-my $db = DB::connect('replica', 'mc_config');
+my $db = DB->db_connect('replica', 'st_config');
 our %domains;
 our %senders;
-my $rules_file = '/usr/spamtagger/share/spamassassin/98_mc_custom.cf';
+my $rules_file = '/usr/spamtagger/share/spamassassin/98_st_custom.cf';
 my $rcpt_id = 0;
 my $sender_id = 0;
 our $RULEFILE;
@@ -50,7 +50,7 @@ our $RULEFILE;
 unlink $rules_file if ( -f $rules_file );
 
 # get list of SpamC exceptions
-my @wwlists = $db->getListOfHash("SELECT * from wwlists where type = 'SpamC' order by comments ASC, sender DESC");
+my @wwlists = $db->get_list_of_hash("SELECT * from wwlists where type = 'SpamC' order by comments ASC, sender DESC");
 exit unless(scalar(@wwlists));
 confess "Cannot open full log file: $rules_file\n" unless ( $RULEFILE = ${open_as($rules_file)} );
 

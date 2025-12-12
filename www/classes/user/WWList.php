@@ -57,7 +57,7 @@ public function reload() {
 
   $query = $query." AND recipient='".$this->address_."' ORDER BY sender";
 
-  $row = $db_sourceconf->getList($query);
+  $row = $db_sourceconf->get_list($query);
   $this->clearList();
   foreach( $row as $id) {
     $entry = new WWEntry();

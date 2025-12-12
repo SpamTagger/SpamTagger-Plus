@@ -15,8 +15,8 @@
   @{PROC}/filesystems r,
   owner @{PROC}/[0-9]*/status r,
 
-  /usr/mailcleaner/etc/clamav/clamd.conf r,
-  /usr/mailcleaner/etc/clamav/freshclam.conf r,
+  /usr/spamtagger/etc/clamav/clamd.conf r,
+  /usr/spamtagger/etc/clamav/freshclam.conf r,
 
   /etc/clamav/clamd.conf r,
   /etc/clamav/freshclam.conf r,
@@ -36,8 +36,8 @@
   /var/lib/clamav/** krw,
   /var/log/clamav/* krw,
 
-  /var/mailcleaner/log/clamav/** krw,
-  /var/mailcleaner/spool/clamav/** krw,
+  /var/spamtagger/log/clamav/** krw,
+  /var/spamtagger/spool/clamav/** krw,
 
   /{,var/}run/clamav/freshclam.pid w,
   /{,var/}run/clamav/clamd.ctl rw,
@@ -73,9 +73,9 @@
   @{PROC}/filesystems r,
   @{PROC}/[0-9]*/status r,
 
-  /usr/mailcleaner/etc/clamav/clamd.conf r,
-  /usr/mailcleaner/etc/clamav/clamav.conf r,
-  /usr/mailcleaner/etc/clamav/clamspamd.conf r,
+  /usr/spamtagger/etc/clamav/clamd.conf r,
+  /usr/spamtagger/etc/clamav/clamav.conf r,
+  /usr/spamtagger/etc/clamav/clamspamd.conf r,
 
   /etc/clamav/clamd.conf r,
   /etc/clamav/onerrorexecute.d/* mr,
@@ -94,9 +94,9 @@
   /var/lib/clamav/** krw,
   /var/log/clamav/* krw,
 
-  /var/mailcleaner/log/clamav/** krw,
-  /var/mailcleaner/run/clamav/** krw,
-  /var/mailcleaner/spool/** r,
+  /var/spamtagger/log/clamav/** krw,
+  /var/spamtagger/run/clamav/** krw,
+  /var/spamtagger/spool/** r,
 
   /{,var/}run/clamav/clamd.ctl w,
   /{,var/}run/clamav/clamd.pid w,
@@ -112,8 +112,8 @@
 
   /var/spool/havp/** r,
 
-  /var/mailcleaner/spool/exim_stage2/** r,
-  /var/mailcleaner/spool/mailscanner/** r,
+  /var/spamtagger/spool/exim_stage2/** r,
+  /var/spamtagger/spool/mailscanner/** r,
 
   deny /{,var/}run/samba/{gencache,unexpected}.tdb mrwkl,
 }

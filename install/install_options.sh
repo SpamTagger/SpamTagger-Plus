@@ -2,6 +2,7 @@
 #
 #   SpamTagger Plus - Open Source Spam Filtering
 #   Copyright (C) 2004 Olivier Diserens <olivier@diserens.ch>
+#   Copyright (C) 2025 John Mertz <git@john.me.tz>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -39,7 +40,8 @@ if [ "SRCDIR" = "" ]; then
 fi
 STVERSION=$(cat /usr/spamtagger/etc/spamtagger/version.def | cut -c1-4)
 LOGFILE=/tmp/st_install_options.log
-DOWNLOADSERVER="mailcleanerdl.alinto.net"
+# TODO: No more server!
+DOWNLOADSERVER="spamtagger.org"
 
 # Font properties
 FONT_RESET=$(tput sgr0)

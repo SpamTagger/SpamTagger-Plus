@@ -48,10 +48,10 @@ use STUtils qw(open_as);
 
 require ConfigTemplate;
 require DB;
-require MCDnsLists;
+require STDnsLists;
 require GetDNS;
 
-my $db = DB::connect('replica', 'mc_config');
+my $db = DB->db_connect('replica', 'st_config');
 
 our $DEBUG = 1;
 our $uid = getpwnam('spamtagger');
@@ -135,7 +135,7 @@ symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/spamtagger') unless (-e '/etc/
 sub get_system_config()
 {
     my %config = ();
-    my %row = $db->getHashRow("SELECT hostname, organisation, sysadmin, clientid, default_language, summary_from FROM system_conf");
+    my %row = $db->get_hash_row("SELECT hostname, organisation, sysadmin, clientid, default_language, summary_from FROM system_conf");
     $config{'__HOSTNAME__'} = $row{'hostname'};
     $config{'__SYSADMIN__'} = $row{'summary_from'};
     if (defined($row{'sysadmin'}) && $row{'sysadmin'} ne '') {
@@ -152,14 +152,14 @@ sub get_prefilters()
 {
     my @pfs;
 
-    my @list = $db->getListOfHash("SELECT * FROM prefilter WHERE active=1 ORDER BY position");
+    my @list = $db->get_list_of_hash("SELECT * FROM prefilter WHERE active=1 ORDER BY position");
     return @list;
 }
 
 #############################
 sub get_ms_config()
 {
-    my %row = $db->getHashRow(
+    my %row = $db->get_hash_row(
         "SELECT scanners, scanner_timeout, silent, file_timeout, expand_tnef, deliver_bad_tnef,
         tnef_timeout, usetnefcontent, max_message_size, max_attach_size, max_archive_depth,
         send_notices, notices_to, trusted_ips, max_attachments_per_message, spamhits, highspamhits,
@@ -204,7 +204,7 @@ sub get_ms_config()
     }
     if ($row{'silent'} eq "yes") { $config{'__SILENT__'} = "All-Viruses"; }
 
-    %row = $db->getHashRow(
+    %row = $db->get_hash_row(
         "SELECT block_encrypt, block_unencrypt, allow_passwd_archives, allow_partial,
         allow_external_bodies, allow_iframe, silent_iframe, allow_form, silent_form, allow_script,
         silent_script, allow_webbugs, silent_webbugs, allow_codebase, silent_codebase,
@@ -280,7 +280,7 @@ sub get_ms_config()
 #############################
 sub get_active_scanners()
 {
-    my @list = $db->getListOfHash("SELECT name from scanner WHERE active=1");
+    my @list = $db->get_list_of_hash("SELECT name from scanner WHERE active=1");
     return "none" unless @list;
     return "none" if @list < 1;
 
@@ -295,20 +295,20 @@ sub get_active_scanners()
 #############################
 sub get_dnslists()
 {
-    my @list = $db->getListOfHash("SELECT name FROM dnslist WHERE active=1");
+    my @list = $db->get_list_of_hash("SELECT name FROM dnslist WHERE active=1");
     return @list;
 }
 
 #############################
 sub dump_ms_file()
 {
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         'etc/mailscanner/MailScanner.conf_template',
         'etc/mailscanner/MailScanner.conf'
     );
-    $template->setReplacements(\%sys_conf);
-    $template->setReplacements(\%ms_conf);
-    return $template->dump();
+    $template->set_replacements(\%sys_conf);
+    $template->set_replacements(\%ms_conf);
+    return $template->dump_file();
 }
 
 #############################
@@ -331,7 +331,7 @@ sub dump_prefilter_files()
                 }
             }
             #if (defined($prefilter->{'name'})) {
-            my $template = ConfigTemplate::create($templatefile, $destfile);
+            my $template = ConfigTemplate->new($templatefile, $destfile);
 
             my %replace = ();
             $replace{'__HEADER__'} = $prefilter->{'header'} || 'X-'.$pfname;
@@ -344,11 +344,11 @@ sub dump_prefilter_files()
             $replace{'__DECISIVE_FIELD__'} = $prefilter->{'decisive_field'} || 'none';
             $replace{'__POS_DECISIVE__'} = $prefilter->{'pos_decisive'} || '0';
             $replace{'__NEG_DECISIVE__'} = $prefilter->{'neg_decisive'} || '0';
-            $template->setReplacements(\%replace);
+            $template->set_replacements(\%replace);
 
             my %spec_replace = ();
             if (getPrefilterSpecConfig($prefilter->{'name'}, \%spec_replace)) {
-                $template->setReplacements(\%spec_replace);
+                $template->set_replacements(\%spec_replace);
             }
 
             my $specmodule = "dumpers::$pfname";
@@ -359,9 +359,9 @@ sub dump_prefilter_files()
                 if (defined($specreplaces{'__AVOIDHOSTS__'})) {
                     $specreplaces{'__AVOIDHOSTS__'} = join(" ",expand_host_string($specreplaces{'__AVOIDHOSTS__'},('dumper'=>'mailscanner/avoidhosts')));
                 }
-                $template->setReplacements(\%specreplaces);
+                $template->set_replacements(\%specreplaces);
             }
-            $template->dump();
+            $template->dump_file();
             #}
         }
     }
@@ -374,7 +374,7 @@ sub getPrefilterSpecConfig($prefilter,$replace)
     if (! -f $conf->get_option('SRCDIR')."/install/dbs/t_cf_$prefilter.sql") {
         return 0;
     }
-    my %row = $db->getHashRow("SELECT * FROM $prefilter");
+    my %row = $db->get_hash_row("SELECT * FROM $prefilter");
     return 0 if ! %row;
 
     foreach my $key (keys %row) {
@@ -387,24 +387,24 @@ sub getPrefilterSpecConfig($prefilter,$replace)
 #############################
 sub dump_virus_file()
 {
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         'etc/mailscanner/virus.scanners.conf_template',
         'etc/mailscanner/virus.scanners.conf'
     );
-    return $template->dump();
+    return $template->dump_file();
 }
 
 #############################
 sub dump_filename_config()
 {
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         'etc/mailscanner/filename.rules.conf_template',
         'etc/mailscanner/filename.rules.conf'
     );
 
-    my $subtmpl = $template->getSubTemplate('FILENAME');
+    my $subtmpl = $template->get_sub_template('FILENAME');
     my $res = "";
-    my @list = $db->getListOfHash('SELECT status, rule, name, description FROM filename where status="deny"');
+    my @list = $db->get_list_of_hash('SELECT status, rule, name, description FROM filename where status="deny"');
     foreach my $element (@list) {
         my %el = %{$element};
         my $sub = $subtmpl;
@@ -424,21 +424,21 @@ sub dump_filename_config()
     my %replace = (
         '__FILENAME_LIST__' => $res
     );
-    $template->setReplacements(\%replace);
-    return $template->dump();
+    $template->set_replacements(\%replace);
+    return $template->dump_file();
 }
 
 #############################
 sub dump_filetype_config()
 {
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         'etc/mailscanner/filetype.rules.conf_template',
         'etc/mailscanner/filetype.rules.conf'
     );
 
-    my $subtmpl = $template->getSubTemplate('FILETYPE');
+    my $subtmpl = $template->get_sub_template('FILETYPE');
     my $res = "";
-    my @list = $db->getListOfHash('SELECT status, type, name, description FROM filetype');
+    my @list = $db->get_list_of_hash('SELECT status, type, name, description FROM filetype');
     foreach my $element (@list) {
         my %el = %{$element};
         my $sub = $subtmpl;
@@ -452,22 +452,22 @@ sub dump_filetype_config()
     my %replace = (
         '__FILETYPE_LIST__' => $res
     );
-    $template->setReplacements(\%replace);
-    return $template->dump();
+    $template->set_replacements(\%replace);
+    return $template->dump_file();
 }
 
 #############################
 sub dump_dnsblacklists_conf()
 {
-    my $template = ConfigTemplate::create(
+    my $template = ConfigTemplate->new(
         'etc/mailscanner/dnsblacklists.conf_template',
         'etc/mailscanner/dnsblacklists.conf'
     );
-    my $subtmpl = $template->getSubTemplate('DNSLIST');
+    my $subtmpl = $template->get_sub_template('DNSLIST');
     my $res = "";
-    my $dnslists = MCDnsLists->new(\&log_dns, 1);
-    $dnslists->loadRBLs( $conf->get_option('SRCDIR')."/etc/rbls", '', 'IPRBL', '', '', '', 'dump_dnslists');
-    my $rbls = $dnslists->getAllRBLs();
+    my $dnslists = STDnsLists->new(\&log_dns, 1);
+    $dnslists->load_rbls( $conf->get_option('SRCDIR')."/etc/rbls", '', 'IPRBL', '', '', '', 'dump_dnslists');
+    my $rbls = $dnslists->get_all_rbls();
     foreach my $r (keys %{$rbls}) {
         my $sub = $subtmpl;
         $sub =~ s/__NAME__/$r/g;
@@ -478,8 +478,8 @@ sub dump_dnsblacklists_conf()
     my %replace = (
         '__DNSLIST_LIST__' => $res
     );
-    $template->setReplacements(\%replace);
-    return $template->dump();
+    $template->set_replacements(\%replace);
+    return $template->dump_file();
 }
 
 sub dump_reports_files($lang=0) {

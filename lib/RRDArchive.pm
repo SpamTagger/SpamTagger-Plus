@@ -52,10 +52,10 @@ sub new ($id, $name, $type, $hosts_status) {
   my %dynamic_vars;
 
   my $replica_db = DB->db_connect('replica', 'st_config');
-  my @hostsa = $replica_db->getListOfHash("SELECT id, hostname FROM replica");
+  my @hostsa = $replica_db->get_list_of_hash("SELECT id, hostname FROM replica");
   push @hosts, $_->{'hostname'} foreach (@hostsa);
 
-  my %community = $replica_db->getHashRow("SELECT community FROM snmpd_config");
+  my %community = $replica_db->get_hash_row("SELECT community FROM snmpd_config");
   my $community = $community{'community'};
 
   my $spooldir = $conf->get_option('VARDIR')."/spool/newrrds/".$name."_".$type;

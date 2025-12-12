@@ -47,7 +47,7 @@ require DB;
 my $file = "${VARDIR}/spool/tmp/mailscanner/whitelist_HTML";
 unlink($file);
 
-my $dbh =  DB::connect('replica', 'mc_config');
+my $dbh =  DB->db_connect('replica', 'st_config');
 
 my $sth = $dbh->prepare("SELECT sender FROM wwlists WHERE type='htmlcontrols'");
 $sth->execute() or return;

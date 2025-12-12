@@ -33,7 +33,7 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-our ($SRCDIR, $VARDIR, $HOSTID, $MYMAILCLEANERPWD);
+our ($SRCDIR, $VARDIR, $HOSTID, $MYSPAMTAGGERPWD);
 BEGIN {
     if ($0 =~ m/(\S*)\/\S+.pl$/) {
         my $path = $1."/../lib";
@@ -44,7 +44,7 @@ BEGIN {
     $SRCDIR = $conf->get_option('SRCDIR');
     $VARDIR = $conf->get_option('VARDIR');
     $HOSTID = $conf->get_option('HOSTID');
-    $MYMAILCLEANERPWD = $conf->get_option('MYMAILCLEANERPWD');
+    $MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD');
     unshift(@INC, $SRCDIR."/lib");
 }
 
@@ -130,7 +130,7 @@ APACHE      * = (ROOT) NOPASSWD: GETSTATUS
 
 # Dump configuration
 my $dbh;
-$dbh = DB::connect('replica', 'mc_config');
+$dbh = DB->db_connect('replica', 'st_config');
 
 my %sys_conf = get_system_config() or fatal_error("NOSYSTEMCONFIGURATIONFOUND", "no record found for system configuration");
 
@@ -166,7 +166,7 @@ sub dump_apache_file($template_file, $target_file)
 
         $line =~ s/__VARDIR__/${VARDIR}/g;
         $line =~ s/__SRCDIR__/${SRCDIR}/g;
-        $line =~ s/__DBPASSWD__/${MYMAILCLEANERPWD}/g;
+        $line =~ s/__DBPASSWD__/${MYSPAMTAGGERPWD}/g;
 
         foreach my $key (keys %sys_conf) {
             $line =~ s/$key/$sys_conf{$key}/g;

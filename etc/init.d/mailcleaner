@@ -5,9 +5,9 @@ usage () {
 	exit
 }
 
-SRCDIR=$(grep 'SRCDIR' /etc/mailcleaner.conf | cut -d ' ' -f3)
+SRCDIR=$(grep 'SRCDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
 if [ "$SRCDIR" = "" ]; then
-	SRCDIR="/usr/mailcleaner"
+	SRCDIR="/usr/spamtagger"
 fi
 
 if [ -z $1 ]; then
@@ -15,9 +15,9 @@ if [ -z $1 ]; then
 fi
 
 if [ $1 = 'start' ]; then
-	systemctl start mailcleaner.target
+	systemctl start spamtagger.target
 elif [ $1 = 'stop' ]; then
-	systemctl start mailcleaner-stopped.target
+	systemctl start spamtagger-stopped.target
 elif [ $1 = 'restart' ]; then
 	$0 stop
 	$0 start

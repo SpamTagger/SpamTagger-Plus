@@ -230,7 +230,7 @@ class SystemConfig extends PrefHandler {
 
         $query .= " ORDER BY name";
 
-        $domains = $db_replicaconf->getList($query);
+        $domains = $db_replicaconf->get_list($query);
         return $domains;
     }
 
@@ -244,7 +244,7 @@ class SystemConfig extends PrefHandler {
         $db_replicaconf = DM_SlaveConfig :: getInstance();
 
         $query = "SELECT id FROM replica ORDER BY id";
-        $replicas = $db_replicaconf->getList($query);
+        $replicas = $db_replicaconf->get_list($query);
 
         foreach ($replicas as $replica) {
             $this->replicas_[$replica] = new Slave();
@@ -344,7 +344,7 @@ class SystemConfig extends PrefHandler {
 
         $sources = array ();
         $query = "SELECT hostname FROM source";
-        $sources = $db_replicaconf->getList($query);
+        $sources = $db_replicaconf->get_list($query);
         foreach ($sources as $source) {
             $sources[$source] = $source;
         }

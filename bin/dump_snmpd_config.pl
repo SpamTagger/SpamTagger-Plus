@@ -52,15 +52,15 @@ our $DEBUG = 1;
 our $uid = getpwnam('spamtagger');
 our $gid = getpwnam('spamtagger');
 
-my $system_mibs_file = '/usr/share/snmp/mibs/MAILCLEANER-MIB.txt';
+my $system_mibs_file = '/usr/share/snmp/mibs/SPAMTAGGER-MIB.txt';
 if ( ! -d '/usr/share/snmp/mibs') {
     mkpath('/usr/share/snmp/mibs');
 }
-my $mc_mib_file = "${SRCDIR}/www/guis/admin/public/downloads/MAILCLEANER-MIB.txt";
+my $st_mib_file = "${SRCDIR}/www/guis/admin/public/downloads/SPAMTAGGER-MIB.txt";
 
 my $lasterror = "";
 
-our $dbh = DB::connect('replica', 'mc_config');
+our $dbh = DB->db_connect('replica', 'st_config');
 
 my %snmpd_conf;
 confess "Error fetching snmp config: $!" unless %snmpd_conf = get_snmpd_config();
@@ -77,7 +77,7 @@ if ( !-d "/var/spamtagger/log/snmpd/") {
 if (-f $system_mibs_file) {
     unlink($system_mibs_file);
 }
-symlink($mc_mib_file,$system_mibs_file);
+symlink($st_mib_file,$system_mibs_file);
 chown($uid, $gid, $system_mibs_file);
 
 symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/spamtagger') unless (-e '/etc/apparmor.d/spamtagger');

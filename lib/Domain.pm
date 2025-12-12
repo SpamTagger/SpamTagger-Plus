@@ -115,7 +115,7 @@ sub dump_prefs ($this, $replica_db) {
     p.enable_wantlists, p.enable_warnlists, p.enable_blocklists, p.notice_wwlists_hit, p.warnhit_template
     FROM domain d, domain_pref p WHERE d.prefs=p.id AND d.name='".$this->{name}."'";
 
-  my %res = $replica_db->getHashRow($query);
+  my %res = $replica_db->get_hash_row($query);
 
   $this->dumpPrefsFromRow(\%res);
   return;
@@ -192,7 +192,7 @@ sub dump_prefs_from_row ($this, $row) {
       $rep{'__AD_SERVERS__'} = $specserver;
       $rep{'__AD_BASEDN__'} = $1;
     }
-    $template->setReplacements(\%rep);
+    $template->set_replacements(\%rep);
     my $ret = $template->dumpFile();
   }
   return;
@@ -212,7 +212,7 @@ sub dump_local_addresses ($this, $replica_db) {
     unlink($file) if (-e $file); ## in case we cannot write to file, try to remove it
     return 0;
   }
-  my @res = $replica_db->getListOfHash($query);
+  my @res = $replica_db->get_list_of_hash($query);
   foreach my $addrow (@res) {
     if (defined($addrow->{'address'}) && $addrow->{'address'} =~ m/(\S+)\@/) {
       print $OUTFILE $1."\n";

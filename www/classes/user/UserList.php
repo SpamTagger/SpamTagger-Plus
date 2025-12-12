@@ -78,7 +78,7 @@ private function doRegisteredUsers() {
   $query = "SELECT username FROM user WHERE ";
   $query .= "username LIKE '%".$db_replicaconf->sanitize($this->s_username_)."%' AND domain='".$db_replicaconf->sanitize($this->s_domain_)."'";
 
-  $res = $db_replicaconf->getList($query);
+  $res = $db_replicaconf->get_list($query);
   foreach ($res as $user) {
     $username = $user;
     if ($username != $this->s_username_) {
