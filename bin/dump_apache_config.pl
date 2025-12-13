@@ -94,6 +94,7 @@ chown($uid, $gid,
 my %links = (
     '/etc/apparmor.d/spamtagger' => ${SRCDIR}.'/etc/apparmor',
     '/etc/apache2' => ${SRCDIR}.'/etc/apache',
+    ${SRCDIR}.'/etc/apache2/modules' => '/usr/lib/apache2/modules',
 );
 foreach my $link (keys(%links)) {
     if (-e $link) {
@@ -129,7 +130,7 @@ APACHE      * = (ROOT) NOPASSWD: GETSTATUS
 `sed -iP '/^session.*pam_systemd.so/d' /etc/pam.d/common-session`;
 
 # Dump configuration
-my $dbh;
+our $dbh;
 $dbh = DB->db_connect('replica', 'st_config');
 
 my %sys_conf = get_system_config() or fatal_error("NOSYSTEMCONFIGURATIONFOUND", "no record found for system configuration");
@@ -139,14 +140,12 @@ my %apache_conf;
 
 dump_apache_file("${SRCDIR}/etc/apache/apache2.conf_template", "${SRCDIR}/etc/apache/apache2.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 
-dump_apache_file("${SRCDIR}/etc/apache/sites-available/spamtagger.conf_template", "${SRCDIR}/etc/apache/sites-available/spamtagger.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
-dump_apache_file("${SRCDIR}/etc/apache/sites-available/soap.conf_template", "${SRCDIR}/etc/apache/sites-available/soap.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
+dump_apache_file("${SRCDIR}/etc/apache/sites-available/spamtagger.conf_template", "${SRCDIR}/etc/apache/sites-enabled/spamtagger.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
+dump_apache_file("${SRCDIR}/etc/apache/sites-available/soap.conf_template", "${SRCDIR}/etc/apache/sites-enabled/soap.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 
 dump_soap_wsdl($sys_conf{'HOST'}, $apache_conf{'__USESSL__'}) or fatal_error("CANNOTDUMPWSDLFILE", $lasterror);
 
 dump_certificate(${SRCDIR},$apache_conf{'tls_certificate_data'}, $apache_conf{'tls_certificate_key'}, $apache_conf{'tls_certificate_chain'});
-
-$dbh->disconnect();
 
 #############################
 sub dump_apache_file($template_file, $target_file)
@@ -245,29 +244,19 @@ sub get_system_config()
 {
     my %config;
 
-    my $sth = $dbh->prepare("SELECT hostname, default_domain, sysadmin, clientid FROM system_conf");
-    $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
+    my @sys_conf = $dbh->get_list_of_hash("SELECT hostname, default_domain, sysadmin, clientid FROM system_conf");
 
-    if ($sth->rows < 1) {
-        return;
-    }
-    my $ref = $sth->fetchrow_hashref() or return;
+    return unless (@sys_conf);
 
-    $config{'__PRIMARY_HOSTNAME__'} = $ref->{'hostname'};
-    $config{'__QUALIFY_DOMAIN__'} = $ref->{'default_domain'};
-    $config{'__QUALIFY_RECIPIENT__'} = $ref->{'sysadmin'};
-    $config{'__CLIENTID__'} = $ref->{'clientid'};
+    $config{'__PRIMARY_HOSTNAME__'} = $sys_conf[0]->{'hostname'};
+    $config{'__QUALIFY_DOMAIN__'} = $sys_conf[0]->{'default_domain'};
+    $config{'__QUALIFY_RECIPIENT__'} = $sys_conf[0]->{'sysadmin'};
+    $config{'__CLIENTID__'} = $sys_conf[0]->{'clientid'};
 
-    $sth->finish();
+    my @replica = $dbh->get_list_of_hash("SELECT hostname FROM replica WHERE id=".$HOSTID);
+    return unless (@replica);
 
-    $sth = $dbh->prepare("SELECT hostname FROM replica WHERE id=".$HOSTID);
-    $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
-    if ($sth->rows < 1) {
-        return;
-    }
-    $ref = $sth->fetchrow_hashref() or return;
-    $config{'HOST'} = $ref->{'hostname'};
-    $sth->finish();
+    $config{'HOST'} = $replica[0]->{'hostname'};
 
     return %config;
 }
@@ -277,32 +266,27 @@ sub get_apache_config()
 {
     my %config;
 
-    my $sth = $dbh->prepare("SELECT serveradmin, servername, use_ssl, timeout, keepalivetimeout,
+    my @http = $dbh->get_list_of_hash("SELECT serveradmin, servername, use_ssl, timeout, keepalivetimeout,
         min_servers, max_servers, start_servers, http_port, https_port, certificate_file, tls_certificate_data, tls_certificate_key, tls_certificate_chain FROM httpd_config");
-    $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
+    return unless (@http);
 
-    if ($sth->rows < 1) {
-        return;
-    }
-    my $ref = $sth->fetchrow_hashref() or return;
-
-    $config{'__TIMEOUT__'} = $ref->{'timeout'};
-    $config{'__MINSERVERS__'} = $ref->{'min_servers'};
-    $config{'__MAXSERVERS__'} = $ref->{'max_servers'};
-    $config{'__STARTSERVERS__'} = $ref->{'start_servers'};
-    $config{'__KEEPALIVETIMEOUT__'} = $ref->{'keepalivetimeout'};
+    $config{'__TIMEOUT__'} = $http[0]->{'timeout'};
+    $config{'__MINSERVERS__'} = $http[0]->{'min_servers'};
+    $config{'__MAXSERVERS__'} = $http[0]->{'max_servers'};
+    $config{'__STARTSERVERS__'} = $http[0]->{'start_servers'};
+    $config{'__KEEPALIVETIMEOUT__'} = $http[0]->{'keepalivetimeout'};
     $config{'__HTTPPORT__'} = 8080;
     $config{'__HTTPSPORT__'} = 4443;
-    $config{'__USESSL__'} = $ref->{'use_ssl'};
-    $config{'__SERVERNAME__'} = $ref->{'servername'};
-    $config{'__SERVERADMIN__'} = $ref->{'serveradmin'};
-    $config{'__CERTFILE__'} = $ref->{'certificate_file'};
-    $config{'tls_certificate_data'} = $ref->{'tls_certificate_data'};
-    $config{'tls_certificate_key'} = $ref->{'tls_certificate_key'};
-    $config{'tls_certificate_chain'} = $ref->{'tls_certificate_chain'};
-    $config{'__PHP_VERSION__'} = 8.2;
+    $config{'__USESSL__'} = $http[0]->{'use_ssl'};
+    $config{'__SERVERNAME__'} = $http[0]->{'servername'};
+    $config{'__SERVERADMIN__'} = $http[0]->{'serveradmin'};
+    $config{'__CERTFILE__'} = $http[0]->{'certificate_file'};
+    $config{'tls_certificate_data'} = $http[0]->{'tls_certificate_data'};
+    $config{'tls_certificate_key'} = $http[0]->{'tls_certificate_key'};
+    $config{'tls_certificate_chain'} = $http[0]->{'tls_certificate_chain'};
+    $config{'__PHP_VERSION__'} = `php --version | head -n 1 | sed -r 's/PHP ([0-9]*\.[0-9]*).*/\1/'`;
+    $config{'__PHP_VERSION__'} = '8.4' unless $config{'__PHP_VERSION__'} =~ m/^([0-9]*\.[0-9]*).*$/;
 
-    $sth->finish();
     return %config;
 }
 
