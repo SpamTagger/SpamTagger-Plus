@@ -55,13 +55,13 @@ my $DEBUG = 0;
 my %greylist_conf = get_greylist_config();
 my $trusted_ips = get_trusted_ips();
 
-our $uid = getpwnam( 'spamtagger' );
-our $gid = getgrnam( 'spamtagger' );
+our $uid = getpwnam( 'greylist' );
+our $gid = getgrnam( 'greylist' );
 our $confdir = "/etc/greylistd";
 
 foreach my $dir (
     "${VARDIR}/spool/greylistd",
-    "${VARDIR}/run/greylistd"
+    "/var/run/greylistd"
 ) {
     chmod(0755, $dir) if ( -d $dir );
     make_path($dir, {'mode'=>0755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
@@ -86,8 +86,6 @@ foreach my $dir (
     "/etc/greylistd",
     glob("/etc/greylistd/*"),
     "${VARDIR}/spool/greylistd",
-    "${VARDIR}/run/greylistd",
-    glob("${VARDIR}/run/greylistd*"),
 ) {
     mkdir($dir) unless (-d $dir);
     chown($uid, $gid, $dir);
@@ -102,7 +100,7 @@ foreach my $file (
     touch($file) unless(-f $file);
     chown($uid, $gid, $file);
 }
-unlink "${VARDIR}/run/greylistd/socket" if (-e "${VARDIR}/run/greylistd/socket");
+unlink "/var/run/greylistd/socket" if (-e "/var/run/greylistd/socket");
 
 sub get_greylist_config()
 {

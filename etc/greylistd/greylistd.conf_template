@@ -4,7 +4,7 @@ retryMax     = __RETRYMAX__
 expire       = __EXPIRE__
 
 [socket]
-path         = __VARDIR__/run/greylistd/socket
+path         = /var/run/greylistd/socket
 mode         = 0660
 
 [data]
