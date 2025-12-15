@@ -83,9 +83,9 @@ sub dumper ($this, $raw = '', $args = {}) {
         $cache{$item} = $item;
       } elsif ($item =~ m#/\d+$#) {
         $cache{$item} = $item;
-      } elsif ($this->validIP4($item)) {
+      } elsif ($this->valid_ip4($item)) {
         $cache{$item} = $item.'/32';
-      } elsif ($this->validIP6($item)) {
+      } elsif ($this->valid_ip6($item)) {
         $cache{$item} = $item.'/128';
       } elsif ($item =~ m#/a$#i) {
         unless(defined($cache{$item})) {
