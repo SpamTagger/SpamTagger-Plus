@@ -1,3 +1,4 @@
+rocommunity MyROGroup
 group MyROGroup v1         local
 group MyROGroup v2c        local
 group MyROGroup usm        local

@@ -49,7 +49,7 @@ require DB;
 require GetDNS;
 
 our $DEBUG = 1;
-our $uid = getpwnam('spamtagger');
+our $uid = getpwnam('Debian-snmp');
 our $gid = getpwnam('spamtagger');
 
 my $system_mibs_file = '/usr/share/snmp/mibs/SPAMTAGGER-MIB.txt';
@@ -65,14 +65,17 @@ our $dbh = DB->db_connect('replica', 'st_config');
 my %snmpd_conf;
 confess "Error fetching snmp config: $!" unless %snmpd_conf = get_snmpd_config();
 
-my %source_hosts;
-%source_hosts = get_source_config();
+my @source_hosts = get_source_config();
 
 confess "Error dumping snmp config: $!" unless dump_snmpd_file();
 
 if ( !-d "/var/spamtagger/log/snmpd/") {
     mkdir("/var/spamtagger/log/snmpd/") || confess("Failed to create '/var/spamtagger/log/snmpd/'\n");
     chown($uid, $gid, "/var/spamtagger/log/snmpd/");
+}
+if ( !-d "/var/spamtagger/run/snmpd/") {
+    mkdir("/var/spamtagger/run/snmpd/") || confess("Failed to create '/var/spamtagger/run/snmpd/'\n");
+    chown($uid, $gid, "/var/spamtagger/run/snmpd/");
 }
 if (-f $system_mibs_file) {
     unlink($system_mibs_file);
@@ -84,31 +87,32 @@ symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/spamtagger') unless (-e '/etc/
 
 sub setup_snmpd_dir() {
     my $include = 0;
-    if ( -e "/etc/snmp/snmpd.conf") {
-        if (open(my $fh, '<', "/etc/snmp/snmpd.conf")) {
+    my $main = '/etc/snmp/snmpd.conf';
+    chown($uid, $gid, "/etc/snmp", $main);
+    if ( -e $main) {
+        if (open(my $fh, '<', $main)) {
             while (<$fh>) {
-                if ($_ =~ m#includeDir\s+/etc/snmp/snmpd.conf.d#) {
+                if ($_ =~ m#includeDir ${main}.d#) {
                     $include = 1;
                 }
                 last;
             }
             close($fh);
-        } else {
-            confess("Failed to read '/etc/snmp/snmpd.conf'\n");
         }
     }
     unless ($include) {
-        if (open(my $fh, '>', "/etc/snmp/snmpd.conf")) {
-            print $fh 'includeDir /etc/snmp/snmpd.conf.d';
+        if (open(my $fh, '>>', $main)) {
+            print $fh "includeDir ${main}.d";
             close($fh);
             $include = 1;
         } else {
             confess("Failed to open '/etc/snmp/snmpd.conf' for writing");
         }
     }
-    if ( !-d "/etc/snmp/snmpd.conf.d") {
-        mkdir("/etc/snmp/snmpd.conf.d") || confess("Failed to create '/etc/snmp/snmpd.conf.d'\n");
+    if ( !-d "${main}.d") {
+        mkdir("${main}.d") || confess("Failed to create '${main}.d'\n");
     }
+    chown($uid, $gid, $main, "${main}.d");
     return 1;
 }
 
@@ -118,6 +122,7 @@ sub dump_snmpd_file()
 
     my $template_file = "${SRCDIR}/etc/snmp/snmpd.conf_template";
     my $target_file = "/etc/snmp/snmpd.conf.d/spamtagger.conf";
+    unlink($target_file);
 
     my $ipv6 = 0;
     if (open(my $interfaces, '<', '/etc/network/interfaces')) {
@@ -134,8 +139,9 @@ sub dump_snmpd_file()
     confess "Cannot open $template_file: $!" unless ($TEMPLATE = ${open_as($template_file, '<')} );
     confess "Cannot open $target_file: $!" unless ($TARGET = ${open_as($target_file)} );
 
-    my @ips = expand_host_string($snmpd_conf{'__ALLOWEDIP__'}.' 127.0.0.1',('dumper'=>'snmp/allowedip'));
-    foreach my $ip ( keys(%source_hosts) ) {
+    print $TARGET "agentAddress /var/spamtagger/run/snmpd/snmpd.sock\n";
+    my @ips = expand_host_string($snmpd_conf{'__ALLOWEDIP__'}.' 127.0.0.1',{'dumper'=>'snmp/allowedip'});
+    foreach my $ip (@source_hosts) {
         print $TARGET "com2sec local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
         print $TARGET "com2sec6 local     $ip     $snmpd_conf{'__COMMUNITY__'}\n";
     }
@@ -163,7 +169,7 @@ sub dump_snmpd_file()
     close $TEMPLATE;
     close $TARGET;
 
-    chown($uid, $gid, "/etc/snmp/snmpd.conf.d", "/log/snmpd.log", $TARGET);
+    chown($uid, $gid, $target_file);
     return 1;
 }
 
@@ -172,18 +178,12 @@ sub get_snmpd_config
 {
     my %config;
 
-    my $sth = $dbh->prepare("SELECT allowed_ip, community, disks FROM snmpd_config");
-    confess "CANNOTEXECUTEQUERY $dbh->errstr" unless $sth->execute();
+    my @snmp = $dbh->get_list_of_hash("SELECT allowed_ip, community, disks FROM snmpd_config");
 
-    return unless ($sth->rows);
-    my $ref;
-    confess "CANNOTFETCHROWS $dbh->errstr" unless $ref = $sth->fetchrow_hashref();
+    $config{'__ALLOWEDIP__'} = join(' ',expand_host_string($snmp[0]->{'allowed_ip'},{'dumper'=>'snmp/allowedip'}));
+    $config{'__COMMUNITY__'} = $snmp[0]->{'community'};
+    $config{'__DISKS__'} = $snmp[0]->{'disks'};
 
-    $config{'__ALLOWEDIP__'} = join(' ',expand_host_string($ref->{'allowed_ip'},('dumper'=>'snmp/allowedip')));
-    $config{'__COMMUNITY__'} = $ref->{'community'};
-    $config{'__DISKS__'} = $ref->{'disks'};
-
-    $sth->finish();
     return %config;
 }
 
@@ -191,22 +191,16 @@ sub get_snmpd_config
 sub get_source_config
 {
     my %sources;
+    my @hostnames = $dbh->get_list("SELECT hostname FROM source");
 
-    my $sth = $dbh->prepare("SELECT hostname FROM source");
-    confess "CANNOTEXECUTEQUERY $dbh->errstr" unless $sth->execute();
+    return @hostnames;
+    $sources{$_->{'hostname'}} = 1 foreach (@hostnames);
 
-    return unless ($sth->rows);
-    my $ref;
-    while ($ref = $sth->fetchrow_hashref()) {
-        $sources{$ref->{'hostname'}} = 1;
-    }
-
-    $sth->finish();
-    return %sources;
+    return keys(%sources);
 }
 
-sub expand_host_string($string, %args)
+sub expand_host_string($string, $args)
 {
     my $dns = GetDNS->new();
-    return $dns->dumper($string,%args);
+    return $dns->dumper($string,$args);
 }
