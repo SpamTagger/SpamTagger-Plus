@@ -52,6 +52,7 @@ sub new($class) {
       'HELONAME' => undef,
       'SOURCEIP' => undef,
       'SOURCEPWD' => undef,
+      'HOSTNAME' => undef,
     },
     install_variables => {
       'WEBADMINPWD' => undef,
@@ -98,7 +99,6 @@ sub new($class) {
 sub run($this) {
   my @basemenu = (
     'Host ID', 
-    'Hostname', 
     'Web admin password', 
     'Database password', 
     'Admin details',
@@ -133,34 +133,23 @@ sub do_menu($this, $basemenu, $currentstep, $error) {
     return 1;
   }
 
-  if ($res eq 'Hostname') {
-    my $hostname;
-    do {
-      print("Hostname must be a valid FQDN. Try again.\n") if (defined($hostname));
-      $hostname = $this->hostname();
-    } until (validate('fqdn', $hostname));
-    $this->{'install_variables'}->{'HOSTNAME'} = $hostname;
-    $$currentstep = 3;
-    return 1;
-  }
-
   if ($res eq 'Web admin password') {
     $this->{'install_variables'}->{'WEBADMINPWD'} = $this->web_admin_pwd();
-    $$currentstep = 4;
+    $$currentstep = 3;
     return 1;
   }
 
   if ($res eq 'Database password') {
     $this->{'config_variables'}->{'MYSPAMTAGGERPWD'} = $this->database_pwd();
     $this->{'config_variables'}->{'SOURCEPWD'} = $this->{'config_variables'}->{'MYSPAMTAGGERPWD'};
-    $$currentstep = 5;
+    $$currentstep = 4;
     return 1;
   }
 
   if ($res eq 'Admin details') {
     $this->{'install_variables'}->{'ORGANIZATION'} = $this->organization();
     $this->{'install_variables'}->{'CLIENTTECHMAIL'} = $this->support_email();
-    $$currentstep = 6;
+    $$currentstep = 5;
     return 1;
   }
 
@@ -189,14 +178,6 @@ sub host_id($this) {
   my $suggest = $this->{'config_variables'}->{'HOSTID'} //= $this->{'default_configs'}->{'HOSTID'};
   $suggest = 1 if ($suggest eq '');
   $dlg->build('Enter the unique ID of this SpamTagger Plus in your infrastucture', $suggest);
-  return $dlg->display();
-}
-
-sub hostname($this) {
-  my $dlg = $this->{'dfact'}->simple();
-  my $suggest = $this->{'config_variables'}->{'HOSTNAME'} //= `hostname`;
-  $suggest = '' if ($suggest !~ m/[\w\-]+\.\w+/);
-  $dlg->build('Enter the public hostname of this SpamTagger Plus appliance', $suggest);
   return $dlg->display();
 }
 

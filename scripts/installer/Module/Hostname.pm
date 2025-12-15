@@ -28,8 +28,10 @@ use Exporter 'import';
 our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
+use lib "/usr/spamtagger/lib";
 use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
+use InputValidator qw( validate );
 
 sub new($class) {
   my $this = {
@@ -49,21 +51,27 @@ sub run($this) {
   chomp($current);
   $current //= 'spamtagger';
   $dlg->build('Enter the new hostname', $current);
-  my $name = $dlg->display();
+  my $fqdn = $dlg->display();
 
-  if ($name =~ m/^[-a-zA-Z0-9_.]+$/) {
-    `hostnamectl hostname $name`;
-    `echo $name > ".$this->{hostnamefile}`;
+  if (validate('fqdn', $fqdn)) {
+    my $ret = system("hostnamectl set-hostname $fqdn 2>/dev/null");
+    if ( $ret ) {
+      `echo $fqdn > $this->{hostnamefile}`
+    }
     `sed -i '/127\.0\.0\.1/d' $this->{hostsfile}`;
-    if ($name =~ m/^(\w+)\..*/) {
+    my $name = '';
+    if ($fqdn =~ m/^(\w+)\..*/) {
       $name .= " $1";
     }
-    `echo 127.0.0.1 localhost $name >> $this->{hostsfile}`;
-    `echo "UPDATE httpd_config SET servername = '$name';" | /usr/spamtagger/bin/st_mariadb -s st_config`;
-    `sed -i -r 's/(STHOSTNAME *= *).*/\\1$name/' /etc/spamtagger.conf`;
-    `/usr/spamtagger/etc/init.d/apache restart`;
+    `echo 127.0.0.1 localhost $fqdn $name >> $this->{hostsfile}`;
+    `sed -i '/HOSTNAME/d' /etc/spamtagger.conf`;
+    `echo "HOSTNAME = $fqdn" >> /etc/spamtagger.conf`;
+    if (-d "/var/spamtagger/spool/mariadb_source") {
+      `echo "UPDATE httpd_config SET servername = '$fqdn';" | /usr/spamtagger/bin/st_mariadb -s st_config`;
+      `systemctl restart apache2`;
+    }
   } else {
-    print("Invalid hostname: $name\n");
+    print("Invalid hostname: $fqdn\n");
   }
   return;
 }
