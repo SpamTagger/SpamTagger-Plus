@@ -12,16 +12,59 @@ if [ "$VARDIR" = "" ]; then
     VARDIR=/var/spamtagger
   fi
 fi
-if [ "$CLIENTORG" = "" ]; then
+if [ -z $ORGANIZATION ]; then
   CLIENTORG=$(grep 'CLIENTORG' /etc/spamtagger.conf | cut -d ' ' -f3)
-  STHOSTNAME=$(grep 'STHOSTNAME' /etc/spamtagger.conf | cut -d ' ' -f3)
+  HOSTNAME=$(grep 'HOSTNAME' /etc/spamtagger.conf | cut -d ' ' -f3)
   HOSTID=$(grep 'HOSTID' /etc/spamtagger.conf | cut -d ' ' -f3)
   CLIENTID=$(grep 'CLIENTID' /etc/spamtagger.conf | cut -d ' ' -f3)
   DEFAULTDOMAIN=$(grep 'DEFAULTDOMAIN' /etc/spamtagger.conf | cut -d ' ' -f3)
   CLIENTTECHMAIL=$(grep 'CLIENTTECHMAIL' /etc/spamtagger.conf | cut -d ' ' -f3)
   MYSPAMTAGGERPWD=$(grep 'MYSPAMTAGGERPWD' /etc/spamtagger.conf | cut -d ' ' -f3)
   ISSOURCE=$(grep 'ISSOURCE' /etc/spamtagger.conf | cut -d ' ' -f3)
+  ORGANIZATION="SpamTagger"
 fi
+
+echo "Getting approximate location..."
+GEOLOCATE=$(curl ipinfo.io 2>/dev/null)
+COUNTRY=$(echo $GEOLOCATE | sed -e 's/.*country": "\([^"]*\)".*/\1/')
+REGION=$(echo $GEOLOCATE | sed -e 's/.*region": "\([^"]*\)".*/\1/')
+CITY=$(echo $GEOLOCATE | sed -e 's/.*city": "\([^"]*\)".*/\1/')
+if [[ "$COUNTRY" == "" ]] || [[ "$REGION" == "" ]] || [[ "$CITY" == "" ]]; then
+  COUNTRY="CA"
+  REGION="Alberta"
+  CITY="Edmonton"
+fi
+echo "Generating temporary TLS key/certificate..."
+cat >/tmp/tmp.cnf <<EOF
+[req]
+default_bit = 2048
+distinguished_name = $HOSTNAME
+prompt = no
+[$HOSTNAME]
+countryName = $COUNTRY
+stateOrProvinceName = $REGION
+localityName = $CITY
+organizationName = $ORGANIZATION
+commonName = $HOSTNAME
+EOF
+openssl genrsa -out /tmp/tmp.key 2048 2>/dev/null
+if [[ $? -ne 0 ]]; then
+  echo "Failed to generate key"
+  exit 1
+fi
+TLS_KEY="$(cat /tmp/tmp.key)"
+openssl req -new -key /tmp/tmp.key -out /tmp/tmp.csr -config /tmp/tmp.cnf 2>/dev/null
+if [[ $? -ne 0 ]]; then
+  echo "Failed to generate signing request"
+  exit 1
+fi
+openssl x509 -req -days 30 -in /tmp/tmp.csr -signkey /tmp/tmp.key -out /tmp/tmp.crt 2>/dev/null
+if [[ $? -ne 0 ]]; then
+  echo "Failed to generate certificate"
+  exit 1
+fi
+TLS_CERT="$(cat /tmp/tmp.crt)"
+rm /tmp/tmp.{cnf,crt,csr,key}
 
 echo "-- removing previous mariadb databases and stopping mariadb"
 if [ -e /etc/systemd/system/multi-user.target.wants/mariadb.service ]; then
@@ -85,7 +128,7 @@ systemctl start mariadb@source.service
 systemctl start mariadb@replica.service
 sleep 3
 
-echo "-- deleting existing dbs and users" 
+echo "-- deleting existing dbs and users"
 cat >/tmp/tmp_install.sql <<EOF
 USE mysql;
 DELETE FROM user WHERE User='';
@@ -148,14 +191,20 @@ SOURCEPASSWD=$MYSPAMTAGGERPWD
 
 for SOCKDIR in mariadb_source mariadb_replica; do
   echo "Setting system_conf for $SOCKDIR..."
-  echo "INSERT INTO system_conf (organisation, company_name, hostid, clientid, default_domain, contact_email, summary_from, analyse_to, falseneg_to, falsepos_to, src_dir, var_dir) VALUES ('$CLIENTORG', '$STHOSTNAME', '$HOSTID', NULL, '$DEFAULTDOMAIN', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$SRCDIR', '$VARDIR');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
+  echo "INSERT INTO system_conf (organisation, company_name, hostid, clientid, default_domain, contact_email, summary_from, analyse_to, falseneg_to, falsepos_to, src_dir, var_dir) VALUES ('$CLIENTORG', '$HOSTNAME', '$HOSTID', NULL, '$DEFAULTDOMAIN', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$CLIENTTECHMAIL', '$SRCDIR', '$VARDIR');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
   echo "Setting replica for $SOCKDIR..."
   echo "INSERT INTO replica (id, hostname, password, ssh_pub_key) VALUES ('$HOSTID', '127.0.0.1', '$MYSPAMTAGGERPWD', '$HOSTKEY');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
   echo "Setting source for $SOCKDIR..."
   echo "INSERT INTO source (hostname, password, ssh_pub_key) VALUES ('$SOURCEHOST', '$SOURCEPASSWD', '$SOURCEKEY');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
-  echo "Setting httpd_config for $SOCKDIR..."
-  echo "INSERT INTO httpd_config (serveradmin, servername) VALUES('root', 'spamtagger');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/$SOCKDIR/mariadbd.sock st_config
 done
+
+echo "Setting mta_config for mariadb_source..."
+for stage in 1 2 4; do
+  echo "UPDATE mta_config SET tls_certificate = 'default', tls_certificate_data = '$TLS_CERT', tls_certificate_key = '$TLS_KEY' where stage = '$stage';" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_source/mariadbd.sock st_config
+done
+
+echo "Setting httpd_config for mariadb_source..."
+echo "INSERT INTO httpd_config (serveradmin, servername, tls_certificate_chain, tls_certificate_data, tls_certificate_key) VALUES('$CLIENTTECHMAIL', '$HOSTNAME', '', '$TLS_CERT', '$TLS_KEY');" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_source/mariadbd.sock st_config
 
 echo "-- setting up replication"
 echo "CHANGE MASTER TO master_host='$SOURCEHOST', master_port=3306, master_user='spamtagger', master_password='$SOURCEPASSWD'; START SLAVE;" | /usr/bin/mariadb -uspamtagger -p$MYSPAMTAGGERPWD -S$VARDIR/run/mariadb_replica/mariadbd.sock st_config
