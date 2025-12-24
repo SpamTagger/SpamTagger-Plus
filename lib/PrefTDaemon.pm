@@ -34,7 +34,7 @@ use ReadConfig();
 use DB();
 use Digest::MD5 qw(md5_hex);
 use threads();
-use threads::shared();
+use threads::shared qw(share);
 use PrefClient();
 
 use parent qw(SockTDaemon);
@@ -77,10 +77,9 @@ sub new ($class, $params) {
   };
   $spec_this->{$_} = $params->{$_} foreach (keys(%{$params}));
 
-  my $this = $class->SUPER::new( $spec_this->{'name'}, undef, $spec_this );
+  my $this = SockTDaemon->new( $spec_this->{'name'}, undef, $spec_this );
 
-  bless $this, $class;
-  return $this;
+  return bless $this, $class;
 }
 
 sub init_thread_hook ($this) {

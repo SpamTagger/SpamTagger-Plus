@@ -36,16 +36,10 @@ sub show_usage ($reason) {
   exit 1;
 }
 
-my @params;
-while (1) {
-  my $param = shift;
-  if ( !defined $param ) {
-    last;
-  }
-  push @params, $param;
-}
-if ( @params < 2 ) {
-  show_usage('not enough parameters');
+my @params = @ARGV;
+
+if ( scalar(@params) < 2 ) {
+  show_usage('not enough parameters: found '.scalar(@params).', expected >= 2');
 }
 my $daemon_name = shift @params;
 my $action = pop @params;
@@ -62,10 +56,15 @@ while (@params) {
     next;
   }
   my $key = $1;
-  my $v   = shift @params;
-  if ( $v =~ /^-/ ) {
-    print
-"Warning: parameter key ($v) comes before a value. It will be discarded.\n";
+  my $v;
+  if ($v = shift @params) {
+    if ($v !~ /^-/) {
+      unshift(@params, $v);
+      $options{$key} = 1;
+      next;
+    }
+  } else {
+    $options{$key} = 1;
     next;
   }
   $options{$key} = $v;

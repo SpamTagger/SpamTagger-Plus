@@ -31,8 +31,12 @@ if [ -e $VARDIR/run/clamd.disabled ] && [ -e $VARDIR/run/clamspamd.disabled ]; t
   exit 0
 fi
 
-if [ -z "$(find $VARDIR/spool/clamspam -type f)" ]; then
-  $SRCDIR/install/install_clamspam.sh
+#if [ -z "$(find $VARDIR/spool/clamspam -type f)" ]; then
+  #$SRCDIR/install/install_clamspam.sh
+#fi
+
+if [ ! -f $SRCDIR/etc/clamav/freshclam.conf ]; then
+  $SRCDIR/bin/dump_clamav_config.pl
 fi
 
 echo "["$(date "+%Y-%m-%d %H:%M:%S")"] Starting ClamAV update..." >>$VARDIR/log/clamav/freshclam.log

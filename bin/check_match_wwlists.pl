@@ -64,13 +64,12 @@ sub get_wlist_matches ($sender, $recipient, $column_names) {
   my @str_recipients = map { "recipient='$_'" } @recipients;
   my $query_recipients = join(" OR ", @str_recipients);
 
-  my $query = $db->prepare(qq{SELECT $query_cols FROM wwlists WHERE $query_recipients;});
-  my $result = $query->execute();
+  my @res = $db->get_list_of_hash("SELECT $query_cols FROM wwlists WHERE $query_recipients;");
 
   my @matches;
-  while(my $res = $query->fetchrow_hashref()){
-    if (Email::list_match($res->{"sender"}, $sender) && Email::list_match($res->{"recipient"}, $recipient)){
-      my $entry_with_level = get_wlist_level($res);
+  foreach my $row (@res) {
+    if (Email::list_match($row->{"sender"}, $sender) && Email::list_match($row->{"recipient"}, $recipient)){
+      my $entry_with_level = get_wlist_level($row);
       push(@matches, $entry_with_level);
     }
   }

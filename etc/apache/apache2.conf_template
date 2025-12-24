@@ -117,8 +117,12 @@ AccessFileName .htaccess
 
 UseCanonicalName On
 
+<IfModule mod_mime.c>
+    TypesConfig /etc/mime.types
+</IfModule>
+
 <IfModule mod_mime_magic.c>
-    MIMEMagicFile /etc/apache2/magic
+    MIMEMagicFile /etc/magic
 </IfModule>
 
 ErrorLog __VARDIR__/log/apache/error.log

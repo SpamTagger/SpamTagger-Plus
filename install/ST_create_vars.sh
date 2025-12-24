@@ -133,6 +133,7 @@ check_dir $VARDIR/spool/learningcenter/stockrandom/spam
 check_dir $VARDIR/spool/learningcenter/stockrandom/spam/cur
 check_dir $VARDIR/spool/learningcenter/stockrandom/ham
 check_dir $VARDIR/spool/learningcenter/stockrandom/ham/cur
+check_dir $VARDIR/spool/watchdog
 check_dir $VARDIR/run/spamtagger
 check_dir $VARDIR/run/spamtagger/log_search
 check_dir $VARDIR/run/spamtagger/stats_search

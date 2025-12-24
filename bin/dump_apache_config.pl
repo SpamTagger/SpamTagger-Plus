@@ -53,7 +53,7 @@ use STUtils qw( open_as rmrf );
 use File::Touch qw( touch );
 
 our $DEBUG = 1;
-our $uid = getpwnam('spamtagger');
+our $uid = getpwnam('www-data');
 our $gid = getgrnam('spamtagger');
 
 my $lasterror = "";
@@ -70,6 +70,7 @@ mkdir('/var/spamtagger/log/apache') unless (-d '/var/spamtagger/log/apache');
 mkdir('/var/spamtagger/www') unless (-d '/var/spamtagger/www');
 mkdir('/var/spamtagger/www/mrtg') unless (-d '/var/spamtagger/www/mrtg');
 mkdir('/var/spamtagger/www/stats') unless (-d '/var/spamtagger/www/stats');
+mkdir('/var/spamtagger/run/apache2') unless (-d '/var/spamtagger/run/apache2');
 
 # Set proper permissions
 chown($uid, $gid,
@@ -143,6 +144,7 @@ dump_apache_file("${SRCDIR}/etc/apache/apache2.conf_template", "${SRCDIR}/etc/ap
 dump_apache_file("${SRCDIR}/etc/apache/sites-available/spamtagger.conf_template", "${SRCDIR}/etc/apache/sites-enabled/spamtagger.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 dump_apache_file("${SRCDIR}/etc/apache/sites-available/soap.conf_template", "${SRCDIR}/etc/apache/sites-enabled/soap.conf") or fatal_error("CANNOTDUMPAPACHEFILE", $lasterror);
 
+# TODO: This needs to be dumped to a writable directory instead. This may be tricky since the document root is in the non-writable area. We may need to change the SOAP document root or symlink.
 dump_soap_wsdl($sys_conf{'HOST'}, $apache_conf{'__USESSL__'}) or fatal_error("CANNOTDUMPWSDLFILE", $lasterror);
 
 dump_certificate(${SRCDIR},$apache_conf{'tls_certificate_data'}, $apache_conf{'tls_certificate_key'}, $apache_conf{'tls_certificate_chain'});
@@ -279,7 +281,7 @@ sub get_apache_config()
     $config{'__HTTPSPORT__'} = 4443;
     $config{'__USESSL__'} = $http[0]->{'use_ssl'};
     $config{'__SERVERNAME__'} = $http[0]->{'servername'};
-    $config{'__SERVERADMIN__'} = $http[0]->{'serveradmin'};
+    $config{'__SERVERADMIN__'} = $http[0]->{'serveradmin'} || "root\@$http[0]->{'servername'}";
     $config{'__CERTFILE__'} = $http[0]->{'certificate_file'};
     $config{'tls_certificate_data'} = $http[0]->{'tls_certificate_data'};
     $config{'tls_certificate_key'} = $http[0]->{'tls_certificate_key'};

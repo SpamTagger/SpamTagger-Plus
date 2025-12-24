@@ -29,7 +29,7 @@ our @EXPORT_OK = ();
 our $VERSION   = 1.0;
 
 use threads();
-use threads::shared();
+use threads::shared qw(share);
 use Time::HiRes qw(gettimeofday tv_interval);
 use Digest::MD5 qw(md5_hex);
 use Date::Calc qw(Add_Delta_Days Today);

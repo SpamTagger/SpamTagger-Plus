@@ -57,13 +57,12 @@ foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
   if ($debug) {
     print "doing letter: $letter... fetching spams: ";
   }
-  my $sth = $replica_dbh->prepare("SELECT * FROM spam_$letter WHERE in_source='0'");
-  $sth->execute() or next;
+  my @spams = $replica_dbh->get_list_of_hash("SELECT * FROM spam_$letter WHERE in_source='0';");
   if ($debug) {
-    print $sth->rows." found\n";
+    print scalar(@spams)." found\n";
   }
 
-  while (my $row = $sth->fetchrow_hashref()) {
+  foreach my $row (@spams) {
     # build query
     my $query = "INSERT IGNORE INTO spam_$letter SET ";
     foreach my $col (keys %{$row}) {

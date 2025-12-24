@@ -9,7 +9,7 @@ User=spamtagger
 Group=spamtagger
 PrivateTmp=false
 Type=forking
-ExecStartPre=+/usr/spamtagger/bin/dump_stats_daemon.pl %I
+#ExecStartPre=+/usr/spamtagger/bin/dump_stats_daemon.pl %I
 ExecStart=/usr/spamtagger/bin/daemon_starter.pl StatsDaemon -d start
 
 [Install]

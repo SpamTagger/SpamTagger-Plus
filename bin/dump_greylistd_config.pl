@@ -61,7 +61,7 @@ our $confdir = "/etc/greylistd";
 
 foreach my $dir (
     "${VARDIR}/spool/greylistd",
-    "/var/run/greylistd"
+    "${VARDIR}/run/greylistd"
 ) {
     chmod(0755, $dir) if ( -d $dir );
     make_path($dir, {'mode'=>0755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
@@ -100,7 +100,6 @@ foreach my $file (
     touch($file) unless(-f $file);
     chown($uid, $gid, $file);
 }
-unlink "/var/run/greylistd/socket" if (-e "/var/run/greylistd/socket");
 
 sub get_greylist_config()
 {

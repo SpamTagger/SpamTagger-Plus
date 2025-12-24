@@ -36,6 +36,7 @@ use NetSNMP::agent;
 use NetSNMP::OID (':all');
 use NetSNMP::agent (':all');
 use NetSNMP::ASN (':all');
+use Sys::Syslog qw(openlog syslog);
 use lib '/usr/spamtagger/lib';
 use DB();
 use ReadConfig();
@@ -50,6 +51,7 @@ my %log_prio_levels = ( 'error' => 0, 'info' => 1, 'debug' => 2 );
 my $log_sets = 'all';
 my $log_priority = 'info';
 my @logged_sets;
+my $prog_name = "SpamTagger SNMP";
 my $syslog_progname = '';
 my $syslog_facility = '';
 my $initialized = 0;
@@ -59,11 +61,19 @@ my %mib = ();
 sub init ($class) {
   return if ($initialized);
   $initialized = 1;
-  do_log('SpamTagger SNMP Agent Initializing...', 'daemon', 'debug');
-  my $self = bless {}, $class;
+
+  my $this = bless {}, $class;
+
+  ## set our process name
+  $0 = $syslog_progname; ## no critic
+  if ( $syslog_progname eq '' ) {
+    $syslog_progname = $class;
+  }
+
+  do_log("$syslog_progname Initializing...", 'daemon', 'debug');
 
   unless (%mib) {
-    foreach my $plugin ($self->plugins()) {
+    foreach my $plugin ($this->plugins()) {
       print STDERR "Found plugin: $plugin\n";
       my ($short) = $plugin =~ /::([^:]+)$/;
 
@@ -78,12 +88,17 @@ sub init ($class) {
   );
 
   my $regoid = NetSNMP::OID->new($rootoid);
-  $agent->register("SpamTagger SNMP", $regoid, \&snmp_handler);
+  $agent->register($syslog_progname, $regoid, \&snmp_handler);
   if ($@) {
-	  print STDERR "Registration Error: $@\n";
+    print STDERR "Registration Error: $@\n";
   }
 
-  do_log('SpamTagger SNMP Agent Initialized.', 'daemon', 'debug');
+  ## init syslog if required
+  if ( $syslog_facility ne '' ) {
+    openlog( $syslog_progname , 'ndelay,pid,nofatal', $syslog_facility );
+  }
+
+  do_log("$syslog_progname Initialized.", 'daemon', 'debug');
   return;
 }
 

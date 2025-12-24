@@ -70,14 +70,14 @@ sub new ($class, $daemonname = 'defautSocketThreadedDaemon', $conffilepath = und
     $sockspec_this->{$sk} = $spec_this->{$sk};
   }
 
-  my $this = $class->SUPER->new($daemonname, $conffilepath, $sockspec_this );
+  my $this = PreForkTDaemon->new($daemonname, $conffilepath, $sockspec_this );
 
   $daemoncounts_{'realstarttime'} = time;
 
   $this->{socks_status} = ();
   $this->{sock_timer} = ();
 
-  return bless $this, 'SockTDaemon';
+  return $this;
 }
 
 sub pre_fork_hook ($this) {

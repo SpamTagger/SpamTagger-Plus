@@ -118,23 +118,16 @@ sub get_sources_replicas()
 {
     my %hosts;
 
-    my $sth = $dbh->prepare("SELECT hostname from source");
-    confess("CANNOTEXECUTEQUERY $dbh->errstr") unless $sth->execute();
+    my @source = $dbh->get_list("SELECT hostname from source;");
 
-    while (my $ref = $sth->fetchrow_hashref() ) {
-         $hosts{$ref->{'hostname'}} = 1;
+    $hosts{$source[0]} = 1;
+
+    my @replicas = $dbh->get_list("SELECT hostname from replica;");
+
+    foreach my $replica (@replicas) {
+      $hosts{$replica} = 1;
     }
-    $sth->finish();
-
-    $sth = $dbh->prepare("SELECT hostname from replica");
-    confess("CANNOTEXECUTEQUERY $dbh->errstr") unless $sth->execute();
-
-    while (my $ref = $sth->fetchrow_hashref() ) {
-        $hosts{$ref->{'hostname'}} = 1;
-    }
-    $sth->finish();
     return %hosts;
-
 }
 
 sub get_default_rules($rules)
@@ -155,13 +148,12 @@ sub get_default_rules($rules)
 
 sub get_api_rules($rules)
 {
-    my $sth = $dbh->prepare("SELECT api_admin_ips, api_fulladmin_ips FROM system_conf");
-    $sth->execute() or fatal_error("CANNOTEXECUTEQUERY", $dbh->errstr);
+    my @apis = $dbh->get_list_of_hash("SELECT api_admin_ips, api_fulladmin_ips FROM system_conf;");
     my %ips;
-    while (my $ref = $sth->fetchrow_hashref() ) {
+    foreach my $api (@apis) {
         my @notempty;
-        push (@notempty, $ref->{'api_admin_ips'}) if (defined($ref->{'api_admin_ips'}) && $ref->{'api_admin_ips'} != '');
-        push (@notempty, $ref->{'api_fulladmin_ips'}) if (defined($ref->{'api_fulladmin_ips'}) && $ref->{'api_fulladmin_ips'} != '');
+        push (@notempty, $api->{'api_admin_ips'}) if (defined($api->{'api_admin_ips'}) && $api->{'api_admin_ips'} != '');
+        push (@notempty, $api->{'api_fulladmin_ips'}) if (defined($api->{'api_fulladmin_ips'}) && $api->{'api_fulladmin_ips'} != '');
         foreach my $ip (expand_host_string(my $string = join("\n", @notempty),('dumper'=>'system_conf/api_admin_ips'))) {
             $ips{$ip} = 1;
         }
@@ -174,46 +166,41 @@ sub get_api_rules($rules)
 
 sub get_external_rules($rules)
 {
-    my $sth = $dbh->prepare("SELECT service, port, protocol, allowed_ip FROM external_access");
-    confess("CANNOTEXECUTEQUERY $dbh->errstr") unless $sth->execute();
-
-    while (my $ref = $sth->fetchrow_hashref() ) {
-         #next if ($ref->{'allowed_ip'} !~ /^(\d+.){3}\d+\/?\d*$/);
-         next if ($ref->{'port'} !~ /^\d+[\:\|]?\d*$/);
-         next if ($ref->{'protocol'} !~ /^(TCP|UDP|ICMP)$/i);
-         foreach my $ip (expand_host_string($ref->{'allowed_ip'},('dumper'=>'snmp/allowedip'))) {
-             # IPs already validated and converted to CIDR in expand_host_string, just remove non-CIDR entries
-             if ($ip =~ m#/\d+$#) {
-                 $rules->{$ip." ".$ref->{'service'}." ".$ref->{'protocol'}} = [ $ref->{'port'}, $ref->{'protocol'}, $ip];
-             }
-         }
+  my @access = $dbh->get_list_of_hash("SELECT service, port, protocol, allowed_ip FROM external_access");
+  foreach my $rule (@access) {
+    #next if ($rule->{'allowed_ip'} !~ /^(\d+\.){3}\d+\/?\d*$/);
+    next if ($rule->{'port'} !~ /^\d+[\:\|]?\d*$/);
+    next if ($rule->{'protocol'} !~ /^(TCP|UDP|ICMP)$/i);
+    foreach my $ip (expand_host_string($rule->{'allowed_ip'},('dumper'=>'snmp/allowedip'))) {
+      # IPs already validated and converted to CIDR in expand_host_string, just remove non-CIDR entries
+      if ($ip =~ m#/\d+$#) {
+        $rules->{$ip." ".$rule->{'service'}." ".$rule->{'protocol'}} = [ $rule->{'port'}, $rule->{'protocol'}, $ip];
+      }
     }
+  }
 
-    ## check snmp UDP
+  ## check snmp UDP
+  foreach my $rulename (keys(%{$rules})) {
+    if ($rulename =~ m/([^,]+) snmp/) {
+      $rules->{$1." snmp UDP"} = [ 161, 'UDP', $rules->{$rulename}[2]];
+    }
+  }
+
+  ## enable submission port
+  foreach my $rulename (keys %rules) {
+    if ($rulename =~ m/([^,]+) mail/) {
+      $rules->{$1." submission TCP"} = [ 587, 'TCP', $rules->{$rulename}[2]];
+    }
+  }
+  ## do we need obsolete SMTP SSL port ?
+  my %ssmtp = $dbh->get_hash_row("SELECT tls_use_ssmtp_port FROM mta_config where stage=1");
+  if ($ssmtp{'tls_use_ssmtp_port'} > 0) {
     foreach my $rulename (keys %rules) {
-        if ($rulename =~ m/([^,]+) snmp/) {
-            $rules->{$1." snmp UDP"} = [ 161, 'UDP', $rules->{$rulename}[2]];
-        }
+      if ($rulename =~ m/([^,]+) mail/) {
+        $rules->{$1." smtps TCP"} = [ 465, 'TCP', $rules->{$rulename}[2] ];
+      }
     }
-
-    ## enable submission port
-    foreach my $rulename (keys %rules) {
-        if ($rulename =~ m/([^,]+) mail/) {
-            $rules->{$1." submission TCP"} = [ 587, 'TCP', $rules->{$rulename}[2]];
-        }
-    }
-    ## do we need obsolete SMTP SSL port ?
-    $sth = $dbh->prepare("SELECT tls_use_ssmtp_port FROM mta_config where stage=1");
-    confess("CANNOTEXECUTEQUERY $dbh->errstr") unless $sth->execute();
-    while (my $ref = $sth->fetchrow_hashref() ) {
-        if ($ref->{'tls_use_ssmtp_port'} > 0) {
-            foreach my $rulename (keys %rules) {
-                if ($rulename =~ m/([^,]+) mail/) {
-                    $rules->{$1." smtps TCP"} = [ 465, 'TCP', $rules->{$rulename}[2] ];
-                }
-            }
-        }
-    }
+  }
 }
 
 sub do_start_script($rules)
@@ -454,5 +441,5 @@ sub get_subnets()
 
 sub expand_host_string($string, %args)
 {
-    return $dns->dumper($string,%args);
+    return $dns->dumper($string,\%args);
 }

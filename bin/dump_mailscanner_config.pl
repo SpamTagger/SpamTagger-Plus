@@ -94,8 +94,6 @@ foreach (
     $VARDIR.'/spool/tmp/mailscanner/incoming/Locks',
     $VARDIR.'/log/mailscanner',
     $VARDIR.'/run/mailscanner',
-    $VARDIR.'/run/mailscanner',
-    $VARDIR.'/log/mailscanner',
     '/var/lock/subsys/MailScanner',
 ) {
     mkdir $_ unless (-d $_);

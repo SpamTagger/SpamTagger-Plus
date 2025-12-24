@@ -1,5 +1,5 @@
 <?xml version ='1.0' encoding ='UTF-8' ?>
-<definitions name='SpamTagger Plus'
+<definitions name='SpamTagger'
   targetNamespace='urn:SpamTagger'
   xmlns:tns='urn:SpamTagger'
   xmlns:typens='urn:SpamTagger'
@@ -296,7 +296,7 @@
 
 
 
-<portType name='stPortType'>
+<portType name='mcPortType'>
   <operation name='forceContent'>
     <input message='tns:forceContentRequest'/>
     <output message='tns:forceContentResponse'/>
@@ -411,7 +411,7 @@
   </operation>
 </portType>
 
-<binding name='stBinding' type='tns:stPortType'>
+<binding name='mcBinding' type='tns:mcPortType'>
   <soap:binding style='rpc'
     transport='http://schemas.xmlsoap.org/soap/http'/>
   <operation name='forceContent'>
@@ -725,7 +725,7 @@
 </binding>
 
 <service name='SpamTaggerService'>
-  <port name='stPort' binding='stBinding'>
+  <port name='mcPort' binding='mcBinding'>
     <soap:address location='http://127.0.0.1:5132/spamtagger.php'/>
   </port>
 </service>

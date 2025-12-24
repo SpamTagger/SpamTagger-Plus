@@ -49,7 +49,7 @@ use STUtils qw( open_as rmrf );
 
 my $lasterror;
 
-my $uid = getpwnam( 'spamtagger' );
+my $uid = getpwnam( 'clamav' );
 my $gid = getgrnam( 'spamtagger' );
 my $conf = '/etc/clamav';
 
@@ -81,7 +81,7 @@ foreach my $file (
     glob($VARDIR."/run/clamav/*"),
     glob($VARDIR."/spool/clamav/*"),
 ) {
-	print("Taking ownership of $file\n");
+    print("Taking ownership of $file\n");
     chown($uid, $gid, $file);
 }
 
@@ -89,14 +89,14 @@ foreach my $file (
 mkdir '/etc/sudoers.d' unless (-d '/etc/sudoers.d');
 if (open(my $fh, '>', '/etc/sudoers.d/clamav')) {
     print $fh "
-User_Alias  CLAMAV = spamtagger
+User_Alias  CLAMAV = clamav
 Cmnd_Alias  CLAMBIN = /usr/sbin/clamd
 
 CLAMAV      * = (ROOT) NOPASSWD: CLAMBIN
 ";
 }
 
-symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/spamtagger') unless (-e '/etc/apparmor.d/spamtagger');
+symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/clamav') unless (-e '/etc/apparmor.d/clamav');
 
 # Reload AppArmor rules
 `apparmor_parser -r ${SRCDIR}/etc/apparmor.d/clamav` if ( -d '/sys/kernel/security/apparmor' );

@@ -25,6 +25,13 @@ if [ "$(grep 'spamtagger' /etc/passwd)" = "" ]; then
 fi
 
 ###############################################
+### add other users to spamtagger group
+usermod -aG spamtagger Debian-exim 2>&1 >>$LOGFILE
+usermod -aG spamtagger Debian-snmp 2>&1 >>$LOGFILE
+usermod -aG spamtagger mailscanner 2>&1 >>$LOGFILE
+usermod -aG spamtagger clamav 2>&1 >>$LOGFILE
+
+###############################################
 ### check or create spool dirs
 echo -n " - Checking/creating spool directories...              "
 $RELPATH/ST_create_vars.sh 2>&1 >>$LOGFILE

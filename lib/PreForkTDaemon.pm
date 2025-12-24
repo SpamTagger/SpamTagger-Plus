@@ -41,7 +41,8 @@ our $VERSION   = 1.0;
 
 use threads();
 use threads::shared qw( share );
-use POSIX();
+use Sys::Syslog qw(openlog syslog);
+use POSIX qw(setuid setgid);
 use Sys::Syslog();
 use Proc::ProcessTable();
 use Time::HiRes qw(gettimeofday tv_interval);
@@ -51,7 +52,8 @@ use ConfigTemplate();
 
 my $PROFILE = 1;
 my ( %prof_start, %prof_res ) = ();
-my $daemoncounts_ = share( () );
+my $daemoncounts = {};
+my $daemoncounts_ = share( $daemoncounts );
 my %log_prio_levels = ( 'error' => 0, 'info' => 1, 'debug' => 2 );
 our $LOGGERLOG;
 
@@ -156,8 +158,8 @@ sub new ($class, $daemonname, $conffilepath, $spec_this = {}) {
   ## init syslog if required
   if ( $this->{'syslog_facility'} ne '' ) {
     openlog( $this->{'syslog_progname'},
-      'ndelay,pid,nofatal', $this->{'syslog_facility'} );
-      $this->{'do_syslog'} = 1;
+    'ndelay,pid,nofatal', $this->{'syslog_facility'} );
+    $this->{'do_syslog'} = 1;
   }
   return $this;
 }
@@ -171,7 +173,7 @@ sub init_daemon ($this) {
   }
   $this->do_log("Set UID to $this->{'runasgroup'} ($<)", 'daemon');
   if ( $this->{'gid'} ) {
-    die "Can't set GID $this->{'gid'}: $?\n" unless (setgrp($this->{'gid'}));
+    die "Can't set GID $this->{'gid'}: $?\n" unless (setgid($this->{'gid'}));
   }
   $this->do_log("Set GID to $this->{'runasgroup'} ($()", 'daemon');
 
@@ -538,7 +540,7 @@ sub write_log_to_file ($this, $message) {
   my $LOCK_UN = 8;
   $| = 1; ## no critic
 
-  if ( !defined( fileno($LOGGERLOG) ) || !-f $this->{logfile} ) {
+  if ( !defined($LOGGERLOG) || !-f $this->{logfile} ) {
     open($LOGGERLOG, ">>", $this->{logfile});
     if ( !defined( fileno($LOGGERLOG) ) ) {
       open $LOGGERLOG, ">>", "/tmp/".$this->{logfile};
