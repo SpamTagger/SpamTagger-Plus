@@ -51,7 +51,7 @@ use File::Touch qw( touch );
 
 my $lasterror;
 
-my $uid = getpwnam( 'spamtagger' );
+my $uid = getpwnam( 'clamav' );
 my $gid = getgrnam( 'spamtagger' );
 my $conf = '/etc/clamav';
 

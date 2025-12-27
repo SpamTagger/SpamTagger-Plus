@@ -1,5 +1,5 @@
-DatabaseDirectory __VARDIR__/spool/clamav
-UpdateLogFile __VARDIR__/log/clamav/freshclam.log
+DatabaseDirectory /var/spamtagger/spool/clamav
+UpdateLogFile /var/spamtagger/log/clamav/freshclam.log
 
 #LogVerbose
 #LogSyslog

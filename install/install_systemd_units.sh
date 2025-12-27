@@ -16,3 +16,5 @@ for i in $(find /usr/spamtagger/scripts/systemd/* -maxdepth 0); do
 done
 
 systemctl daemon-reload
+
+systemctl enable clamav-freshclam.timer
