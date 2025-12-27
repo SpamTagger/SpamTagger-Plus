@@ -51,7 +51,7 @@ my $lasterror;
 # Dump configuration
 dump_file("clamspamd.conf");
 
-my $uid = getpwnam( 'spamtagger' );
+my $uid = getpwnam( 'clamav' );
 my $gid = getgrnam( 'spamtagger' );
 my $conf = '/etc/clamav';
 
@@ -62,11 +62,8 @@ symlink($SRCDIR."/".$conf, $conf) unless (-l $conf);
 
 # Create necessary dirs/files if they don't exist
 foreach my $dir (
-    "/etc/clamav",
-    $SRCDIR."/etc/clamav",
-    $VARDIR."/log/clamav",
-    $VARDIR."/run/clamav",
-    $VARDIR."/spool/clamav",
+    $VARDIR."/log/clamspamd",
+    $VARDIR."/run/clamspamd",
     $VARDIR."/spool/clamspam",
 ) {
     mkdir($dir) unless (-d $dir);
@@ -74,10 +71,9 @@ foreach my $dir (
 }
 
 foreach my $file (
-    glob($SRCDIR."/etc/clamav/*"),
     $SRCDIR."/etc/clamav/clamspamd.conf",
-    glob($VARDIR."/log/clamav/*"),
-    glob($VARDIR."/run/clamav/*"),
+    glob($VARDIR."/log/clamspamd/*"),
+    glob($VARDIR."/run/clamspamd/*"),
     glob($VARDIR."/spool/clamspam/*"),
 ) {
     chown($uid, $gid, $file);

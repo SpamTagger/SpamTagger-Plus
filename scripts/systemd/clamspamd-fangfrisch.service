@@ -1,0 +1,13 @@
+[Unit]
+Description=Fangfrisch virus signature updater for SpamTagger
+After=network.target
+PartOf=spamtagger.target
+
+[Service]
+User=clamav
+Group=spamtagger
+ExecStart=
+ExecStart=/usr/bin/fangfrisch -c /usr/spamtagger/etc/clamav/fangfrisch.conf refresh
+
+[Install]
+WantedBy=spamtagger.target

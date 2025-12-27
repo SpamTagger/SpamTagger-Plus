@@ -64,6 +64,11 @@ for service in exim; do
 done
 
 ###############################################
+## initialize/enable custom services
+
+fangfrisch -c /usr/spamtagger/etc/fangfrisch.conf initdb
+
+###############################################
 ### building libraries
 
 # TODO: disabling this because it is trying to compile from sources which no longer exist. However,

@@ -8,11 +8,12 @@ PartOf=mailscanner.service spamtagger.target
 
 [Service]
 Type=forking
-User=spamtagger
+User=clamav
 Group=spamtagger
 ExecStartPre=+/usr/spamtagger/bin/dump_clamspamd_config.pl
 ExecStart=/usr/sbin/clamd --config-file=/usr/spamtagger/etc/clamav/clamspamd.conf
 ExecReload=/bin/kill -USR2 $MAINPID
+PIDFile=/var/spamtagger/run/clamav/clamspamd.pid
 TimeoutStartSec=420
 
 [Install]

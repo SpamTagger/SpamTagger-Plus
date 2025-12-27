@@ -25,7 +25,6 @@ SelfCheck 1800
 User clamav
 
 ScanPE yes
-DetectBrokenExecutables yes
 ScanOLE2 yes
 ScanMail yes
 ScanHTML yes

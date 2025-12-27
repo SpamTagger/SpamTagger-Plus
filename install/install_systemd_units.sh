@@ -18,3 +18,4 @@ done
 systemctl daemon-reload
 
 systemctl enable clamav-freshclam.timer
+systemctl enable clamspamd-fangfrisch.timer
