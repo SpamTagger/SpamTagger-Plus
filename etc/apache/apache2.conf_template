@@ -1,6 +1,6 @@
 ServerRoot "/usr/spamtagger/etc/apache"
-DefaultRuntimeDir __VARDIR__/run/
-PidFile __VARDIR__/run/httpd.pid
+DefaultRuntimeDir __VARDIR__/run/apache2/
+PidFile __VARDIR__/run/apache2/httpd.pid
 
 ScoreBoardFile __VARDIR__/log/apache/httpd.scoreboard
 
@@ -73,7 +73,7 @@ LoadModule mime_module             modules/mod_mime.so
 LoadModule mime_magic_module       modules/mod_mime_magic.so
 LoadModule rewrite_module          modules/mod_rewrite.so
 LoadModule setenvif_module         modules/mod_setenvif.so
-LoadModule socache_dbm_module      modules/mod_socache_dbm.so
+LoadModule socache_shmcb_module    modules/mod_socache_shmcb.so
 LoadModule ssl_module              modules/mod_ssl.so
 LoadModule unique_id_module        modules/mod_unique_id.so
 

@@ -20,7 +20,7 @@ Listen __HTTPSPORT__
     RewriteRule .* - [F]
 </VirtualHost>
 
-SSLSessionCache dbm:__VARDIR__/run/ssl.cache
+SSLSessionCache shmcb:__VARDIR/run/apache2/ssl.cache(512000)
 SSLSessionCacheTimeout 300
 SSLCompression off
 <VirtualHost *:__HTTPSPORT__>

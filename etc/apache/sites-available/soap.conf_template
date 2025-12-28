@@ -1,7 +1,7 @@
 Listen 5132
 
 __IFSSL__
-SSLSessionCache dbm:__VARDIR__/run/ssl.cache
+SSLSessionCache shmcb:__VARDIR/run/apache2/ssl.cache(512000)
 SSLSessionCacheTimeout 300
 SSLCompression off
 __ENDIFSSL__
