@@ -1,0 +1,19 @@
+#include <tunables/global>
+
+/usr/sbin/snmpd flags=(attach_disconnected) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/user-tmp>
+  #include <abstractions/openssl>
+
+  capability dac_override,
+
+  capability chown,
+  capability setgid,
+  capability setuid,
+
+  @{PROC}/filesystems r,
+  owner @{PROC}/[0-9]*/status r,
+
+  /var/spamtagger/log/snmpd rw,
+  /var/spamtagger/run/snmpd rw,
