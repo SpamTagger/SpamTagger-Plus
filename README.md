@@ -4,7 +4,7 @@ SpamTagger Plus is a continuation of the MailCleaner® anti spam gateway.
 
 ## 🚧 Under Construction 🚧
 
-Development of a new release of SpamTagger Plus is ongoing and the SpamTagger Plus repository is no longer compatible with existing MailCleaner® systems which are based on Debian Jessie.
+Development of a first release of SpamTagger Plus is ongoing and the SpamTagger Plus repository is no longer compatible with existing MailCleaner® systems which are based on Debian Jessie.
 
 There are currently no pre-built VMs to download for SpamTagger Plus. [Containers](https://github.com/SpamTagger/SpamTagger-Bootc/pkgs/container/spamtagger-bootc) and VM images can be built using the [SpamTagger-Bootc repository](https://github.com/SpamTagger/SpamTagger-Bootc). However, these images do not currently produce a working mail gateway.
 

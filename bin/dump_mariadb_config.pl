@@ -31,22 +31,16 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-our ($conf, $SRCDIR, $VARDIR, $HOSTID);
-BEGIN {
-    if ($0 =~ m/(\S*)\/\S+.pl$/) {
-        my $path = $1."/../lib";
-        unshift (@INC, $path);
-    }
-    require ReadConfig;
-    $conf = ReadConfig::get_instance();
-    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
-    $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
-    confess "Failed to get HOSTID from '/etc/spamtagger.conf'" unless ($HOSTID = $conf->get_option('HOSTID'));
-}
-
+use lib "/usr/spamtagger/lib";
 use STUtils qw(open_as);
 use File::Path qw(make_path);
-require DB;
+use DB;
+
+use ReadConfig;
+my $conf = ReadConfig::get_instance();
+my $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+my $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
+my $HOSTID = $conf->get_option('HOSTID') || die("Cannot find required HOSTID variable from config file.\s");;
 
 our $DEBUG = 1;
 our $uid = getpwnam( 'spamtagger' );
@@ -70,10 +64,10 @@ my $lasterror = "";
 
 my @stages = ('source', 'replica');
 if (scalar(@ARGV)) {
-    use List::Util qw (uniq);
-    @stages = uniq( map { $_ =~ s/\/nopass//; $_ } @ARGV );
-    foreach (@stages) {
-        confess "Invalid database $_" unless ($_ =~ /^(replica|source)$/);
+    @stages = ();
+    foreach my $arg (@ARGV) {
+        confess "Invalid database $arg" unless ($arg =~ /^(replica|source)(\-nopass)?$/);
+	push(@stages, $arg);
     }
 }
 foreach my $stage (@stages) {
@@ -88,8 +82,8 @@ sub dump_mariadb_file($stage,%config)
     my $target_file = "${SRCDIR}/etc/mariadb/my_${stage}.cnf";
 
     my ($TEMPLATE, $TARGET);
-    confess "Cannot open $template_file: $!" unless ($TEMPLATE = ${open_as($template_file, '<', 0664, 'spamtagger:spamtagger')});
-    confess "Cannot open ${target_file}: $!" unless ($TARGET = ${open_as("${target_file}", '>', 0664, 'spamtagger:spamtagger')});
+    confess "Cannot open $template_file: $!" unless ($TEMPLATE = ${open_as($template_file, '<', 0o664, 'spamtagger:spamtagger')});
+    confess "Cannot open ${target_file}: $!" unless ($TARGET = ${open_as("${target_file}", '>', 0o664, 'spamtagger:spamtagger')});
 
     while(<$TEMPLATE>) {
         my $line = $_;
@@ -169,6 +163,7 @@ M%SQL       * = (ROOT) NOPASSWD: UPGRADE
     foreach my $file (@files) {
 	touch($file) unless (-e $file);
         chown($uid, $gid, $file);
-        chmod 0744, $file;
+        chmod 0o744, $file;
     }
+    return;
 }

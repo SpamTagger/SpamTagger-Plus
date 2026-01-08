@@ -75,6 +75,7 @@ libmath-int128-perl
 libmldbm-perl
 libmldbm-sync-perl
 libmodule-build-perl
+libmodule-pluggable-perl
 libncurses-dev
 libnet-cidr-lite-perl
 libnet-cidr-perl

@@ -63,8 +63,7 @@ foreach my $dir (
     "${VARDIR}/spool/greylistd",
     "${VARDIR}/run/greylistd"
 ) {
-    chmod(0755, $dir) if ( -d $dir );
-    make_path($dir, {'mode'=>0755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
+    make_path($dir, {'mode'=>0o755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
 }
 
 if ( -e $confdir && !-l $confdir ) {
@@ -87,8 +86,7 @@ foreach my $dir (
     glob("/etc/greylistd/*"),
     "${VARDIR}/spool/greylistd",
 ) {
-    mkdir($dir) unless (-d $dir);
-    chown($uid, $gid, $dir);
+    make_path($dir, {'mode'=>0o755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
 }
 
 foreach my $file (
@@ -137,7 +135,7 @@ sub dump_domain_to_avoid($domains)
     }
 
     my $dir = "${VARDIR}/spool/tmp/spamtagger/";
-    make_path($dir, {'mode'=>0755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
+    make_path($dir, {'mode'=>0o755,'user'=>$uid,'group'=>$gid}) unless ( -d $dir );
     my $file = "${dir}/domains_to_avoid_greylist.list";
     my $DOMAINTOAVOID;
     confess "Cannot open $file: $!" unless ($DOMAINTOAVOID = ${open_as($file)} );
@@ -146,6 +144,7 @@ sub dump_domain_to_avoid($domains)
         print $DOMAINTOAVOID $adomain."\n";
     }
     close $DOMAINTOAVOID;
+    return;
 }
 
 sub dump_trusted_ips($ips)
@@ -158,6 +157,7 @@ sub dump_trusted_ips($ips)
     confess "Cannot open $file: $!" unless ($TRUSTED_IPS = ${open_as($file)} );
     print $TRUSTED_IPS $ips;
     close $TRUSTED_IPS;
+    return;
 }
 
 sub dump_greylistd_file($greylistd_conf)
@@ -184,4 +184,5 @@ sub dump_greylistd_file($greylistd_conf)
 
     close $TEMPLATE;
     close $TARGET;
+    return;
 }

@@ -99,7 +99,7 @@ foreach (
     mkdir $_ unless (-d $_);
     chown($uid, $gid, $_);
     chown($uid, $gid, glob($_.'/*'));
-    chmod(0750, $_);
+    chmod(0o750, $_);
 }
 
 # Set file permissions
@@ -121,7 +121,7 @@ foreach (
     $VARDIR.'/spool/tmp/mailscanner/incoming/Locks',
 ) {
     chown($uid, $gid, $_);
-    make_path($_, {'mode'=>0755,'user'=>$uid,'group'=>$gid}) unless ( -e $_ );
+    make_path($_, {'mode'=>0o755,'user'=>$uid,'group'=>$gid}) unless ( -e $_ );
 }
 
 symlink($SRCDIR.'/etc/apparmor', '/etc/apparmor.d/spamtagger') unless (-e '/etc/apparmor.d/spamtagger');
@@ -315,8 +315,9 @@ sub dump_prefilter_files()
     my $basedir=$conf->get_option('SRCDIR')."/etc/mailscanner/prefilters";
 
     return 1 if ( ! -d $basedir) ;
-    opendir(QDIR, $basedir) or confess "Couldn't read directory $basedir";
-    while(my $entry = readdir(QDIR)) {
+    my $qdir;
+    opendir($qdir, $basedir) or confess "Couldn't read directory $basedir";
+    while(my $entry = readdir($qdir)) {
         if ($entry =~ /(\S+)(\.cf)_template$/) {
             my $templatefile = $basedir."/".$entry;
             my $destfile = $basedir."/".$1.$2;
@@ -499,6 +500,7 @@ sub dump_reports_files($lang=0) {
             symlink($src, "${dst}/${file}") unless (-e "${dst}/${file}");
         }
     }
+    return;
 }
 
 #############################

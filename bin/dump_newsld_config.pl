@@ -259,6 +259,7 @@ sub get_module_status($module)
 sub fatal_error($msg, $full)
 {
     print $msg . ( $DEBUG ? "\n Full information: $full \n" : "\n" );
+    exit(1);
 }
 
 sub expand_host_string($string, %args)

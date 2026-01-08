@@ -102,6 +102,7 @@ sub dump_archived_domains()
             }
         }
     }
+    return;
 }
 
 sub dump_copyto()
@@ -143,6 +144,7 @@ sub dump_copyto()
             }
         }
     }
+    return;
 }
 
 sub dump_bypass_filtering()
@@ -169,4 +171,5 @@ sub dump_bypass_filtering()
             }
         }
     }
+    return;
 }

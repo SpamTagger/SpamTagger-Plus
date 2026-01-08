@@ -42,7 +42,7 @@ sub create_lockfile ($filename, $path = '/var/spamtagger/spool/tmp/', $timeout =
   $path = '/var/spamtagger/spool/tmp/'.$path unless ( $path =~ /^\// );
   $path .= '/' unless ($path  =~ /\/$/);
 
-  make_path($path, {mode => 0777}); ## no critic (leading zero for octal notation)
+  make_path($path, {mode => 0o777}); ## no critic (leading zero for octal notation)
 
   my $fullpathname = $path . $filename;
 
@@ -66,7 +66,7 @@ sub create_lockfile ($filename, $path = '/var/spamtagger/spool/tmp/', $timeout =
   return 0;
 }
 
-sub open_as($file, $method=">", $chmod=0664, $chown='spamtagger:spamtagger') {
+sub open_as($file, $method=">", $chmod=0o664, $chown='spamtagger:spamtagger') {
     my ($uid, $gid) = split(/:/,$chown);
     $uid = getpwnam( $uid );
     $gid = getgrnam( $gid );
@@ -79,7 +79,7 @@ sub open_as($file, $method=">", $chmod=0664, $chown='spamtagger:spamtagger') {
 
     confess ("$file does not exist\n") if ($method eq "<" && ! -e "$file");
 
-    if ( ! -e $path.'/'.$filename ) {
+    if ( ! -e "$path/$filename" ) {
         confess("Failed to create $path/$filename\n") unless touch("$path/$filename");
     }
 
@@ -104,6 +104,7 @@ sub rmrf($path) {
     } else {
         unlink($path);
     }
+    return;
 }
 
 sub remove_lockfile ($filename, $path = '/var/spamtagger/spool/tmp/') {

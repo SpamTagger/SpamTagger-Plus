@@ -213,7 +213,7 @@ sub set_auto_commit ($this, $v) {
   return 0
 }
 
-sub do ($this, $query) {
+sub execute ($this, $query) {
   my $sth = $this->{dbh}->prepare($query);
   return $sth->execute();
 }

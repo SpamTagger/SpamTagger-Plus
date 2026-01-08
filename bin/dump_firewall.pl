@@ -72,13 +72,13 @@ my %ufw = (
     }
 );
 foreach my $key (keys(%ufw)) {
-    if (-e '/etc/ufw/applications.d/'.$key) {
-        if (-l '/etc/ufw/applications.d/'.$key) {
-            next if (readlink('/etc/ufw/applications.d/'.$key) eq $SRCDIR.'/etc/ufw/'.$key);
+    if (-e "/etc/ufw/applications.d/$key") {
+        if (-l "/etc/ufw/applications.d/$key") {
+            next if (readlink("/etc/ufw/applications.d/$key") eq "$SRCDIR/etc/ufw/$key");
         }
-        rmrf('/etc/ufw/applications.d/'.$key);
+        rmrf("/etc/ufw/applications.d/$key");
     }
-    symlink($SRCDIR.'/etc/ufw/'.$key, '/etc/ufw/applications.d/'.$key)
+    symlink("$SRCDIR/etc/ufw/$key", "/etc/ufw/applications.d/$key")
 }
 our %fail2ban_sets = ('mc-exim' => 'mail', 'mc-ssh' => 'ssh', 'mc-webauth' => 'web');
 our $iptables = "/usr/sbin/iptables";
@@ -144,6 +144,7 @@ sub get_default_rules($rules)
     foreach my $sub (@subs) {
         $rules->{"$sub ssh TCP"} = [ $services{'ssh'}[0], $services{'ssh'}[1], $sub ];
     }
+    return;
 }
 
 sub get_api_rules($rules)
@@ -152,8 +153,8 @@ sub get_api_rules($rules)
     my %ips;
     foreach my $api (@apis) {
         my @notempty;
-        push (@notempty, $api->{'api_admin_ips'}) if (defined($api->{'api_admin_ips'}) && $api->{'api_admin_ips'} != '');
-        push (@notempty, $api->{'api_fulladmin_ips'}) if (defined($api->{'api_fulladmin_ips'}) && $api->{'api_fulladmin_ips'} != '');
+        push (@notempty, $api->{'api_admin_ips'}) if (defined($api->{'api_admin_ips'}) && $api->{'api_admin_ips'} ne '');
+        push (@notempty, $api->{'api_fulladmin_ips'}) if (defined($api->{'api_fulladmin_ips'}) && $api->{'api_fulladmin_ips'} ne '');
         foreach my $ip (expand_host_string(my $string = join("\n", @notempty),('dumper'=>'system_conf/api_admin_ips'))) {
             $ips{$ip} = 1;
         }
@@ -162,6 +163,7 @@ sub get_api_rules($rules)
     foreach my $ip (keys %ips) {
         $rules{$ip." soap TCP"} = [ $services{'soap'}[0], $services{'soap'}[1], $ip ];
     }
+    return;
 }
 
 sub get_external_rules($rules)
@@ -201,11 +203,11 @@ sub get_external_rules($rules)
       }
     }
   }
+  return;
 }
 
 sub do_start_script($rules)
 {
-    my %rules = %{$rules};
     my $start_script = "${SRCDIR}/etc/firewall/start";
     unlink($start_script);
 
@@ -254,12 +256,12 @@ sub do_start_script($rules)
         '4' => {},
         '6' => {}
     };
-    foreach my $description (sort keys %rules) {
-        my @ports = split '\|', $rules{$description}[0];
-        my @protocols = split '\|', $rules{$description}[1];
+    foreach my $description (sort keys %{$rules}) {
+        my @ports = split '\|', $rules->{$description}[0];
+        my @protocols = split '\|', $rules->{$description}[1];
         foreach my $port (@ports) {
             foreach my $protocol (@protocols) {
-                my $host = $rules{$description}[2];
+                my $host = $rules->{$description}[2];
                 # globals
                 if ($host eq '0.0.0.0/0' || $host eq '::/0') {
                     next if ($globals->{'4'}->{$port}->{$protocol});
@@ -322,7 +324,7 @@ sub do_start_script($rules)
     my $blacklist_script = '/usr/spamtagger/etc/firewall/blacklist';
     unlink $blacklist_script;
     my $BLACKLIST;
-    confess ("Failed to open $blacklist_script: $!\n") unless ($BLACKLIST = ${open_as($blacklist_script, ">>", 0755)});
+    confess ("Failed to open $blacklist_script: $!\n") unless ($BLACKLIST = ${open_as($blacklist_script, ">>", 0o755)});
     my $blacklist;
     foreach my $blacklist_file (@blacklist_files) {
         my $BLACK_IP;
@@ -339,7 +341,7 @@ sub do_start_script($rules)
                 $blacklist = 1;
             }
             confess ("Failed to open $blacklist_file: $!\n") unless ($BLACK_IP = ${open_as($blacklist_file, "<")});
-            foreach my $IP (<$BLACK_IP>) {
+            while (my $IP = <$BLACK_IP>) {
                 chomp($IP);
                 if ($IP =~ m#/\d+$#) {
                     if ($existing->{'BLACKISTNET'}->{$IP}) {
@@ -385,16 +387,16 @@ sub do_start_script($rules)
 
     close $BLACKLIST;
     close $START;
+    return;
 }
 
 sub do_stop_script($rules)
 {
-    my %rules = %{$rules};
     my $stop_script = "${SRCDIR}/etc/firewall/stop";
     unlink($stop_script);
 
     my $STOP;
-    confess "Cannot open $stop_script" unless ( $STOP = ${open_as($stop_script, '>', 0755)} );
+    confess "Cannot open $stop_script" unless ( $STOP = ${open_as($stop_script, '>', 0o755)} );
 
     print $STOP "#!/bin/sh\n";
 
@@ -415,6 +417,7 @@ sub do_stop_script($rules)
     }
 
     close $STOP;
+    return;
 }
 
 # TODO: convert to `ip` command

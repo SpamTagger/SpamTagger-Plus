@@ -87,7 +87,7 @@ foreach my $s_h (@replicasarray) {
       }
 
       my $updatequery = "UPDATE spam_$l SET in_source='1' WHERE in_source='0' AND ( date_in < '$date' OR ( date_in = '$date' AND time_in < '$time') )";
-      my $nbres = $replicadb->{dbh}->do($updatequery);
+      my $nbres = $replicadb->{dbh}->execute($updatequery);
       if (!$nbres || $nbres < 0 || $nbres !~ /^\d+$/ ) {
         $nbres = 0;
       }

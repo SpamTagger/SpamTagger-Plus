@@ -116,8 +116,8 @@ sub dump_file($file)
     my $target_file = $SRCDIR."/etc/clamav/".$file;
 
     my ($TEMPLATE, $TARGET);
-    confess "Cannot open $template_file" unless ( $TEMPLATE = ${open_as($template_file,'<',0664,'clamav:clamav')} );
-    confess "Cannot open $template_file" unless ( $TARGET = ${open_as($target_file,'>',0664,'clamav:clamav')} );
+    confess "Cannot open $template_file" unless ( $TEMPLATE = ${open_as($template_file,'<',0o664,'clamav:clamav')} );
+    confess "Cannot open $template_file" unless ( $TARGET = ${open_as($target_file,'>',0o664,'clamav:clamav')} );
 
     my $proxy_server = "";
     my $proxy_port = "";

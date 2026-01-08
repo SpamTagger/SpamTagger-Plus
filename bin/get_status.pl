@@ -28,20 +28,12 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-my ($SRCDIR, $MYSPAMTAGGERPWD);
-our ($VARDIR);
-BEGIN {
-    if ($0 =~ m/(\S*)\/\S+.pl$/) {
-        my $path = $1."/../lib";
-        unshift (@INC, $path);
-    }
-    require ReadConfig;
-    my $conf = ReadConfig::get_instance();
-    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
-    $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
-    confess "Could not get DB password" unless ($MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD'));
-    unshift(@INC, $SRCDIR."/lib");
-}
+use lib "/usr/spamtagger/lib";
+use ReadConfig;
+my $conf = ReadConfig::get_instance();
+my $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+my $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
+my $MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD') || confess "Could not get DB password";
 
 # Process codes:
 my %codes = (
@@ -77,7 +69,6 @@ while (scalar(@ARGV)) {
     }
 }
 my $mode = "";
-my $cmd;
 
 my @order = (
     { 'id' => 'exim_stage1', 'service' => 'exim4@1', 'human' => 'Incoming' },
@@ -99,7 +90,6 @@ my @order = (
     { 'id' => 'firewall', 'service' => 'ufw', 'human' => 'Firewall (ufw)' }
 );
 
-my $res;
 if (! $mode_given) {
     usage();
 }
@@ -122,19 +112,19 @@ if ($mode_given =~ /s/) {
             $order[$i++]{'status'} = 255;
             next;
         }
-        if ($st == 0 && -f $restartdir."/".$key.".stopped") {
+        if (!$st && -f "$restartdir/$key.stopped") {
             $st = 2;
         }
-        if ( -f $restartdir.$key.".rn") {
+        if ( -f "$restartdir$key.rn") {
             $st = 3;
         }
-        if ( -f $restartdir.$key.".start.rs") {
+        if ( -f "$restartdir$key.start.rs") {
             $st = 4;
         }
-        if ( -f $restartdir.$key.".stop.rs") {
+        if ( -f "$restartdir$key.stop.rs") {
             $st = 5;
         }
-        if ( -f $restartdir.$key.".restart.rs") {
+        if ( -f "$restartdir$key.restart.rs") {
             $st = 6;
         }
         $order[$i++]{'status'} = $st;
@@ -153,7 +143,9 @@ if ($mode_given =~ /s/) {
     }
 } elsif  ($mode_given =~ /p/) {
     foreach ( 0 .. 2 ) {
-    my $key = $order[$_]->{'id'};
+        my $key = $order[$_]->{'id'};
+	my $cmd;
+	my $res;
         if ($key eq 'exim_stage2') {
             my $subcmd = "grep -e '^MTA\\s*=\\s*eximms' ".${SRCDIR}."/etc/mailscanner/MailScanner.conf";
             my $type = `$subcmd`;
@@ -178,8 +170,8 @@ if ($mode_given =~ /s/) {
         print "\n";
     }
 } elsif  ($mode_given =~ /l/) {
-    $cmd = "cat /proc/loadavg | cut -d' ' -f-3";
-    $res = `$cmd`;
+    my $cmd = "cat /proc/loadavg | cut -d' ' -f-3";
+    my $res = `$cmd`;
     chomp($res);
     my @loads = split(/ /, $res);
     if ($verbose) {
@@ -188,8 +180,8 @@ if ($mode_given =~ /s/) {
         print "|$loads[0]|$loads[1]|$loads[2]\n";
     }
 } elsif ($mode_given =~ /d/) {
-    $cmd = "df";
-    $res = `$cmd`;
+    my $cmd = "df";
+    my $res = `$cmd`;
     my @lines = split(/\n/, $res);
     foreach my $line (@lines) {
         if ($line =~ /\S+\s+\d+\s+\d+\s+\d+\s+(\d+\%)\s+(\S+)/) {
@@ -202,8 +194,8 @@ if ($mode_given =~ /s/) {
     }
     print "\n" unless ($verbose);
 } elsif ($mode_given =~ /m/) {
-    $cmd = "cat /proc/meminfo";
-    $res = `$cmd`;
+    my $cmd = "cat /proc/meminfo";
+    my $res = `$cmd`;
     my @fields = ('MemTotal', 'MemFree', 'SwapTotal', 'SwapFree');
     foreach my $field (@fields) {
         if ($res =~ /$field:\s+(\d+)/) {
@@ -216,8 +208,8 @@ if ($mode_given =~ /s/) {
     }
     print "\n" unless ($verbose);
 } elsif ($mode_given =~ /t/) {
-    $cmd = "/opt/exim4/bin/exim -C ${VARDIR}/spool/tmp/exim/exim/exim_stage2.conf -bp | head -1 | cut -d' ' -f2";
-    $res = `$cmd`;
+    my $cmd = "/opt/exim4/bin/exim -C ${VARDIR}/spool/tmp/exim/exim/exim_stage2.conf -bp | head -1 | cut -d' ' -f2";
+    my $res = `$cmd`;
     chomp($res);
     if ($verbose) {
         print("Longest time in filtering queue: ".( $res ? $res : 'immediate')."\n");
@@ -225,8 +217,8 @@ if ($mode_given =~ /s/) {
         print($res."\n");
     }
 } elsif ($mode_given =~ /u/) {
-    $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S ${VARDIR}/run/mysql_slave/mysqld.sock -uspamtagger -p${MYSPAMTAGGERPWD}";
-    $res = `$cmd`;
+    my $cmd = "echo \"use st_config; select id, date from update_patch order by id desc limit 1;\" | /opt/mysql5/bin/mysql --skip-column-names -S ${VARDIR}/run/mysql_slave/mysqld.sock -uspamtagger -p${MYSPAMTAGGERPWD}";
+    my $res = `$cmd`;
     my $patch = "";
     if ($res =~ /^(\d+)\s+(\S+)$/) {
         $patch = $1;
@@ -276,7 +268,7 @@ sub usage
 
 # TODO: This is unused. Add an option to output this, I guess...
 sub get_number_of_greylist_domains {
-    my $cmd = "wc -l ".$VARDIR."/spool/spamtagger/domains_to_greylist.list  | cut -d' ' -f1";
+    my $cmd = "wc -l $VARDIR/spool/spamtagger/domains_to_greylist.list  | cut -d' ' -f1";
     my $res = `$cmd`;
     if ($res =~ m/(\d+)\s+/) {
         return $1;

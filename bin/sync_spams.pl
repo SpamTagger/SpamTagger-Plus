@@ -73,7 +73,7 @@ foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
     $query =~ s/,\s*$//;
 
     # save in source
-    my $res = $source_dbh->{dbh}->do($query);
+    my $res = $source_dbh->{dbh}->execute($query);
     if (!$res) {
       if ($debug) {
         print "failed for: ".$row->{exim_id}."\n   with message: ".$source_dbh->errstr."\n   query was: $query\n";
@@ -84,7 +84,7 @@ foreach my $letter ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
 
     # update replica record
     $query = "UPDATE spam_$letter SET in_source='1' WHERE exim_id='".$row->{exim_id}."'";
-    $replica_dbh->{dbh}->do($query);
+    $replica_dbh->{dbh}->execute($query);
   }
   $replica_dbh->db_disconnect();
   $source_dbh->db_disconnect();

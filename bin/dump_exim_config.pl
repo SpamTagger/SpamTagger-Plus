@@ -37,23 +37,16 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-our ($SRCDIR, $VARDIR, $MYSPAMTAGGERPWD, $MCHOSTNAME, $DEFAULTDOMAIN, $HELONAME, $SMTPPROXY);
-BEGIN {
-    if ($0 =~ m/(\S*)\/\S+.pl$/) {
-        my $path = $1."/../lib";
-        unshift (@INC, $path);
-    }
-    require ReadConfig;
-    my $conf = ReadConfig::get_instance();
-    $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
-    $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
-    confess "Could not get DB password" unless ($MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD'));
-    $MCHOSTNAME = $conf->get_option('MCHOSTNAME') || 'spamtagger';
-    $DEFAULTDOMAIN = $conf->get_option('DEFAULTDOMAIN') || '';
-    $HELONAME = $conf->get_option('HELONAME') || '';
-    $SMTPPROXY = $conf->get_option('SMTPPROXY') || '';
-    unshift(@INC, $SRCDIR."/lib");
-}
+use lib "/usr/spamtagger/lib";
+use ReadConfig;
+my $conf = ReadConfig::get_instance();
+my $SRCDIR = $conf->get_option('SRCDIR') || '/usr/spamtagger';
+my $VARDIR = $conf->get_option('VARDIR') || '/var/spamtagger';
+my $MYSPAMTAGGERPWD = $conf->get_option('MYSPAMTAGGERPWD') || confess "Could not get DB password";
+my $MCHOSTNAME = $conf->get_option('MCHOSTNAME') || 'spamtagger';
+my $DEFAULTDOMAIN = $conf->get_option('DEFAULTDOMAIN') || '';
+my $HELONAME = $conf->get_option('HELONAME') || '';
+my $SMTPPROXY = $conf->get_option('SMTPPROXY') || '';
 
 use STUtils qw(open_as);
 
@@ -92,7 +85,7 @@ if (! $eximid ) {
 ## check for tmp dir
 my $tmpdir = ${VARDIR}."/spool/tmp/exim";
 if ( ! -d "$tmpdir") {
-    make_path("$tmpdir", {'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create temporary directory");
+    make_path("$tmpdir", {'mode'=>0o755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create temporary directory");
 }
 
 my %sys_conf = get_system_config() or fatal_error("NOSYSTEMCONFIGURATIONFOUND", "no record found for system configuration");
@@ -112,19 +105,19 @@ my $syslog_restart = 0;
 foreach my $stage (@eximids) {
     if ($stage == 1) {
         if ( ! -d "${VARDIR}/spool/tmp/exim" ) {
-            make_path("${VARDIR}/spool/tmp/exim_stage1", {'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+            make_path("${VARDIR}/spool/tmp/exim_stage1", {'mode'=>0o755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
         }
         if ( ! -d "${VARDIR}/spool/tmp/exim_stage1" ) {
-            make_path("${VARDIR}/spool/tmp/exim_stage1", {'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+            make_path("${VARDIR}/spool/tmp/exim_stage1", {'mode'=>0o755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
         }
         if ( ! -d "${VARDIR}/spool/tmp/exim_stage1/blacklists" ) {
-            make_path("${VARDIR}/spool/tmp/exim_stage1/blacklists", {'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+            make_path("${VARDIR}/spool/tmp/exim_stage1/blacklists", {'mode'=>0o755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
         }
         if ( ! -d "${VARDIR}/spool/tmp/exim_stage1/rblwhitelists" ) {
-            make_path("${VARDIR}/spool/tmp/exim_stage1/rblwhitelists", {'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+            make_path("${VARDIR}/spool/tmp/exim_stage1/rblwhitelists", {'mode'=>0o755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
         }
         if ( ! -d "${VARDIR}/spool/tmp/exim_stage1/spamcwhitelists" ) {
-            make_path("${VARDIR}/spool/tmp/exim_stage1/spamcwhitelists", {'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
+            make_path("${VARDIR}/spool/tmp/exim_stage1/spamcwhitelists", {'mode'=>0o755,'user'=>'spamtagger','group'=>'spamtagger'}) or fatal_error("COULDNOTCREATETMPDIR", "could not create directory");
         }
         ## dump the blacklists files
         dump_blacklists();
@@ -154,9 +147,9 @@ foreach my $stage (@eximids) {
     dump_exim_file($stage) or fatal_error("CANNOTDUMPEXIMFILE2", $lasterror);
     ownership($stage);
 }
-my $stage = grep(/^1$/, @eximids);
-exit unless ($stage);
-my %stage1_conf = get_exim_config($stage) or fatal_error("NOEXIMCONFIGURATIONFOUND", "no exim configuration found for stage ${stage}");
+
+exit unless grep {/^1$/} @eximids;
+my %stage1_conf = get_exim_config(1) or fatal_error("NOEXIMCONFIGURATIONFOUND", "no exim configuration found for stage 1");
 
 ## dump the rbl ignore hosts file
 if (!$stage1_conf{'rbls_ignore_hosts'}) {
@@ -183,7 +176,7 @@ if (-f $proxyfile) {
 dump_proxy_file( $proxyfile, $SMTPPROXY) if ($SMTPPROXY ne '');
 
 ## dump DKIM
-dump_default_dkim(\%stage1_conf) if ($stage == 1);
+dump_default_dkim(\%stage1_conf);
 
 ## dump TLS access files
 dump_tls_force_files();
@@ -434,9 +427,10 @@ sub dump_proxy_file($file, $smtp_proxy)
     $str =~ s/\s*\:\s*$//;
 
     my $TARGET;
-    confess "Cannot open $file: $!" unless ($TARGET = ${open_as($file, '>', 0664, 'spamtagger:spamtagger')});
+    confess "Cannot open $file: $!" unless ($TARGET = ${open_as($file, '>', 0o664, 'spamtagger:spamtagger')});
     print $TARGET $str;
     close $TARGET;
+    return;
 }
 
 #############################
@@ -551,7 +545,7 @@ sub dump_source_file($file, $m_h)
     my %source = %$m_h;
 
     my $SOURCEFILE;
-    confess "Cannot open $file: $!" unless ($SOURCEFILE = ${open_as($file, '>', 0664, 'spamtagger:spamtagger')});
+    confess "Cannot open $file: $!" unless ($SOURCEFILE = ${open_as($file, '>', 0o664, 'spamtagger:spamtagger')});
 
     print $SOURCEFILE "HOST ".$source{'host'}."\n";
     print $SOURCEFILE "PORT ".$source{'port'}."\n";
@@ -628,9 +622,9 @@ sub dump_spam_route()
     `$compile`;
 
     chown $uid, $gid, $target_file;
-    chmod 0754, $target_file;
+    chmod 0o754, $target_file;
     chown $uid, $gid, $bytecompiledscript;
-    chmod 0754, $bytecompiledscript;
+    chmod 0o754, $bytecompiledscript;
 
     my $template3 = ConfigTemplate->new(
         "etc/exim/out_scripts.pl_template",
@@ -650,7 +644,7 @@ sub dump_spam_route()
     );
     $template5->dump_file();
     chown $uid, $gid, ${SRCDIR}."/etc/exim/address_list.pl";
-    chmod 0755, ${SRCDIR}."/etc/exim/address_list.pl";
+    chmod 0o755, ${SRCDIR}."/etc/exim/address_list.pl";
     return $ret;
 
 }
@@ -689,6 +683,7 @@ local0.err      ".${VARDIR}."/log/mailscanner/errorlog\n\" > $file";
     $cmd .= "local1.*   @".$sys_conf{'__SYSLOG_HOST__'}."\n";
     $cmd .= "local2.*   @".$sys_conf{'__SYSLOG_HOST__'}."\" >> $file";
    `$cmd`;
+   return;
 }
 
 #############################
@@ -889,6 +884,7 @@ sub get_exim_config($stage)
             $config{'__FULL_WHITELIST_HOSTS__'} .= $_ . ' ';
         }
         chomp($config{'__FULL_WHITELIST_HOSTS__'});
+	close($fh);
     } else {
         touch "${VARDIR}/spool/spamtagger/full_whitelisted_hosts.list";
     }
@@ -902,7 +898,7 @@ sub get_exim_config($stage)
     $config{'__FOLDING__'} = $row{'folding'};
     my $max_length;
     if ( -e '${SPMC}/exim_max_line_length' ) {
-        open(my $fh, '<', "${SPMC}/exim_max_line_length") ||
+        open($fh, '<', "${SPMC}/exim_max_line_length") ||
             confess "Cannot open ${SPMC}/exim_max_line_length: $!";
         $max_length = <$fh>;
         chomp($max_length);
@@ -920,11 +916,12 @@ sub dump_ignore_list($ignorehosts,$filename)
 
     my @list = expand_host_string($ignorehosts,('dumper'=>'exim/dump_ignore_list/'.$filename));
     my $RBLFILE;
-    confess "Cannot open $file: $!" unless ($RBLFILE = ${open_as($file, '>', 0664, 'spamtagger:spamtagger')});
+    confess "Cannot open $file: $!" unless ($RBLFILE = ${open_as($file, '>', 0o664, 'spamtagger:spamtagger')});
     foreach my $host (@list) {
         print $RBLFILE $host."\n";
     }
     close $RBLFILE;
+    return;
 }
 
 ###############################
@@ -937,15 +934,15 @@ sub dump_blacklists()
         recipient_reject => 'blacklists/recipients',
         relay_refused_to_domain => 'blacklists/relaytodomains'
     );
-    unless ( -d $tmpdir."/blacklists" ) {
-        confess "Cannot mkdir $tmpdir/blacklists: $!" unless make_path($tmpdir."/blacklists",{'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'});
+    unless ( -d "$tmpdir/blacklists" ) {
+        confess "Cannot mkdir $tmpdir/blacklists: $!" unless make_path("$tmpdir/blacklists",{'mode'=>0o755,'user'=>'spamtagger','group'=>'spamtagger'});
     }
     my %incoming_config = get_exim_config(1);
     foreach my $file (keys %files) {
         my $filepath = $tmpdir."/".$files{$file};
 
         my $FILE;
-        confess "Cannot open $file: $!" unless ($FILE = ${open_as($filepath, '>', 0664, 'spamtagger:spamtagger')});
+        confess "Cannot open $file: $!" unless ($FILE = ${open_as($filepath, '>', 0o664, 'spamtagger:spamtagger')});
         if ($incoming_config{$file}) {
             if ($file =~ /host_reject/) {
                 foreach my $host (expand_host_string($incoming_config{$file},('dumper'=>'exim/dump_blacklists/'.$file))) {
@@ -959,6 +956,7 @@ sub dump_blacklists()
         }
         close $FILE;
     }
+    return;
 }
 
 
@@ -1014,11 +1012,11 @@ sub print_ip_domain_rule($sender_list, $domain, $type)
     my $path = "${VARDIR}/spool/tmp/exim_stage1";
     my $FH_IP_DOM;
     if ( ($type eq 'black-ip-dom') || ($type eq 'spam-ip-dom') )  {
-        confess "Cannot open $path/blacklists/ip-domain: $!" unless ($FH_IP_DOM = ${open_as("$path/blacklists/ip-domain",'>>',0664,'spamtagger:spamtagger')});
+        confess "Cannot open $path/blacklists/ip-domain: $!" unless ($FH_IP_DOM = ${open_as("$path/blacklists/ip-domain",'>>',0o664,'spamtagger:spamtagger')});
     } elsif ($type eq 'white-ip-dom') {
-        confess "Cannot open $path/rblwhitelists/$domain: $!" unless ($FH_IP_DOM = ${open_as("$path/rblwhitelists/$domain",'>>',0664,'spamtagger:spamtagger')});
+        confess "Cannot open $path/rblwhitelists/$domain: $!" unless ($FH_IP_DOM = ${open_as("$path/rblwhitelists/$domain",'>>',0o664,'spamtagger:spamtagger')});
     } elsif ($type eq 'wh-spamc-ip-dom') {
-        confess "Cannot open $path/spamcwhitelists/$domain: $!" unless ($FH_IP_DOM = ${open_as("$path/spamcwhitelists/$domain",'>>',0664,'spamtagger:spamtagger')});
+        confess "Cannot open $path/spamcwhitelists/$domain: $!" unless ($FH_IP_DOM = ${open_as("$path/spamcwhitelists/$domain",'>>',0o664,'spamtagger:spamtagger')});
     }
 
     $sender_list = join(' ; ', expand_host_string($sender_list,('dumper'=>'exim/sender_list')));
@@ -1049,6 +1047,7 @@ END
 
     print $FH_IP_DOM $smtp_rule;
     close $FH_IP_DOM;
+    return;
 }
 
 sub dump_certificate($cert,$key)
@@ -1063,7 +1062,7 @@ sub dump_certificate($cert,$key)
     } else {
         $cert =~ s/\r\n/\n/g;
         my $FILE;
-        confess "Cannot open $certfile: $!" unless ($FILE = ${open_as($certfile,'>',0664,'spamtagger:spamtagger')});
+        confess "Cannot open $certfile: $!" unless ($FILE = ${open_as($certfile,'>',0o664,'spamtagger:spamtagger')});
         print $FILE $cert."\n";
         close $FILE;
     }
@@ -1075,10 +1074,11 @@ sub dump_certificate($cert,$key)
     } else {
         $key =~ s/\r\n/\n/g;
         my $FILE;
-        confess "Cannot open $keyfile: $!" unless ($FILE = ${open_as($keyfile,'>',0664,'spamtagger:spamtagger')});
+        confess "Cannot open $keyfile: $!" unless ($FILE = ${open_as($keyfile,'>',0o664,'spamtagger:spamtagger')});
         print $FILE $key."\n";
         close $FILE;
     }
+    return;
 }
 
 sub dump_default_dkim($stage1_conf)
@@ -1087,12 +1087,12 @@ sub dump_default_dkim($stage1_conf)
     if (! -d $keypath) {
         make_path($keypath);
     }
-    my $keyfile = $keypath."/default.pkey";
+    my $keyfile = "$keypath/default.pkey";
     my ($FILE, $DEFAULT);
-    confess "Cannot open $keyfile: $!" unless ($FILE = ${open_as($keyfile, '>', 0664, 'spamtagger:spamtagger')});
+    confess "Cannot open $keyfile: $!" unless ($FILE = ${open_as($keyfile, '>', 0o664, 'spamtagger:spamtagger')});
     if (defined($stage1_conf{'dkim_default_pkey'})) {
-        if ( -e $keypath."/".$stage1_conf{'dkim_default_domain'}.".pkey" ) {
-            open($DEFAULT, '<', $keypath."/".$stage1_conf{'dkim_default_domain'}.".pkey");
+        if ( -e "$keypath/$stage1_conf{'dkim_default_domain'}.pkey" ) {
+            open($DEFAULT, '<', "$keypath/$stage1_conf{'dkim_default_domain'}.pkey");
             while (<$DEFAULT>) {
                 print $FILE $_;
             }
@@ -1102,6 +1102,7 @@ sub dump_default_dkim($stage1_conf)
         }
     }
     close $FILE;
+    return;
 }
 
 #############################
@@ -1111,10 +1112,11 @@ sub dump_tls_force_files()
         my $o = '__'.uc($f).'__';
         my $file = ${VARDIR}."/spool/tmp/spamtagger/".$f.".list";
         my $FILE;
-        confess "Cannot open $file: $!" unless ($FILE = ${open_as($file,'>',0664,'spamtagger:spamtagger')});
+        confess "Cannot open $file: $!" unless ($FILE = ${open_as($file,'>',0o664,'spamtagger:spamtagger')});
         print $FILE $exim_conf{$o};
         close $FILE;
     }
+    return;
 }
 
 #############################
@@ -1231,9 +1233,9 @@ EXIMUSER    * = (ROOT) NOPASSWD: EXIMBIN
         touch($file) unless (-e $file);
         chown($uid, $gid, $file);
         if ($file =~ m/\.pl$/) {
-            chmod 0774, $file;
+            chmod 0o774, $file;
         } else {
-            chmod 0664, $file;
+            chmod 0o664, $file;
         }
     }
 
@@ -1259,9 +1261,11 @@ EXIMUSER    * = (ROOT) NOPASSWD: EXIMBIN
         chown($uid, $gid, $dir);
         chown($uid, $gid, $_) foreach (glob("$dir/*"));
     }
+    return;
 }
 
 sub fatal_error($msg,$full)
 {
     print $msg . ($DEBUG ? "\nFull information: $full \n" : "\n");
+    exit(1);
 }

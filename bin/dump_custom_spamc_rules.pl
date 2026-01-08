@@ -114,7 +114,7 @@ close $RULEFILE;
 
 sub set_current_rule($current_rule)
 {
-    my $current_rule_w = $current_rule;
+    $current_rule_w = $current_rule;
     $current_rule_w =~ s/\s+/_/;
     $current_rule_w =~ s/-/_/;
     $current_rule_w =~ s/\./_/;
@@ -144,6 +144,7 @@ sub print_custom_rule($current_rule, $current_rule_w, $current_sender, @current_
     }
     print $RULEFILE "$rcpt_string)\n";
     print $RULEFILE "score RCPT_CUSTOM_$current_rule_w $score\n\n";
+    return;
 }
 
 # Rules to identify domains
@@ -163,6 +164,7 @@ sub print_recipient_rules($recipient)
     print $RULEFILE "meta   __RCPT_$rcpt_id     ( __RCPT_TO_$rcpt_id || __RCPT_CC_$rcpt_id || __RCPT_BCC_$rcpt_id )\n\n";
 
     $rcpt_id++;
+    return;
 }
 
 # Rules to identify senders
@@ -178,4 +180,5 @@ sub print_sender_rules($sender)
     print $RULEFILE "header __SENDER_$sender_id  From =~ /$sender/i\n";
 
     $sender_id++;
+    return;
 }

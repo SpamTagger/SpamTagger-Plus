@@ -403,7 +403,7 @@ sub compare_update_table ($db_ref, $tablename, $tablefile, $update) {
           $after = " AFTER ".$reffields{$reff}{previous};
         }
         my $sql = "ALTER TABLE $tablename ADD COLUMN ".$f." ".$reffields{$reff}{deffull}.$after.";";
-        if (! $db->do($sql)) {
+        if (! $db->execute($sql)) {
           print " ERROR, cannot create column: ".$db->get_error()."\nABORTED\n";
           exit 1;
         } else {

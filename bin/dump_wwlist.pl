@@ -43,7 +43,7 @@ BEGIN {
     unshift(@INC, $SRCDIR."/lib");
 }
 
-use STUtils qw( create_and_open );
+use STUtils qw( open_as );
 use File::Path qw( make_path );
 
 require DB;
@@ -89,14 +89,12 @@ sub dump_ww_files($to,$filepath)
 
         next unless (scalar(@list));
 
-        make_path($filepath, {'mode'=>0755,'user'=>'spamtagger','group'=>'spamtagger'});
+        make_path($filepath, {'mode'=>0o755,'user'=>'spamtagger','group'=>'spamtagger'});
 
         my $WWFILE;
-        confess "Failed to open $file\n" unless ($WWFILE = ${create_and_open($file)});
+        confess "Failed to open $file\n" unless ($WWFILE = ${open_as($file, '>>')});
 
-        foreach my $entry (@list) {
-            print $WWFILE "$entry\n";
-        }
+        print $WWFILE "$_\n" foreach (@list);
 
         close $WWFILE;
     }

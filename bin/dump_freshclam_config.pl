@@ -141,7 +141,7 @@ sub update_unofficial($unofficial) {
         }
     } else {
         return remove_unofficial() unless (-e "${VARDIR}/spool/spamtagger/clamav-unofficial-sigs");
-        use Digest::SHA;
+        require Digest::SHA;
         my $sha = Digest::SHA->new();
         $sha->addfile("${VARDIR}/spool/spamtagger/clamav-unofficial-sigs");
         return remove_unofficial unless ($sha->hexdigest() eq "69c58585c04b136a3694b9546b77bcc414b52b12");
@@ -169,8 +169,8 @@ sub dump_file($file)
     my $target_file = $SRCDIR."/etc/clamav/".$file;
 
     my ($TEMPLATE, $TARGET);
-    confess "Cannot open $template_file" unless ( $TEMPLATE = ${open_as($template_file,'<',0664,'clamav:clamav')} );
-    confess "Cannot open $template_file" unless ( $TARGET = ${open_as($target_file,'>',0664,'clamav:clamav')} );
+    confess "Cannot open $template_file" unless ( $TEMPLATE = ${open_as($template_file,'<',0o664,'clamav:clamav')} );
+    confess "Cannot open $template_file" unless ( $TARGET = ${open_as($target_file,'>',0o664,'clamav:clamav')} );
 
     while(<$TEMPLATE>) {
         my $line = $_;

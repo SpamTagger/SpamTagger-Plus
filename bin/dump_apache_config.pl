@@ -296,6 +296,7 @@ sub get_apache_config()
 sub fatal_error($msg,$full)
 {
     print $msg . ($DEBUG ? "\nFull information: $full \n" : "\n");
+    exit(1);
 }
 
 #############################
@@ -331,4 +332,5 @@ sub dump_certificate($srcdir,$cert,$key,$chain)
         }
     }
     chown($uid, $gid, $path, $backup, $chainpath);
+    return;
 }

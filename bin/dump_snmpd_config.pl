@@ -193,7 +193,6 @@ sub get_source_config
     my %sources;
     my @hostnames = $dbh->get_list("SELECT hostname FROM source");
 
-    return @hostnames;
     $sources{$_->{'hostname'}} = 1 foreach (@hostnames);
 
     return keys(%sources);

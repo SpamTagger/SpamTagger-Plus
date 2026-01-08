@@ -39,7 +39,6 @@ use NetSNMP::ASN (':all');
 use Sys::Syslog qw(openlog syslog);
 use lib '/usr/spamtagger/lib';
 use DB();
-use ReadConfig();
 use Module::Pluggable search_path => ['SNMPAgent'], require => 1;
 
 my $rootoid = ".1.3.6.1.4.1.36661";

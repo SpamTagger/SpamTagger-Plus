@@ -30,7 +30,7 @@ use warnings;
 use utf8;
 use Carp qw( confess );
 
-our ($SRCDIR, $VARDIR;
+our ($SRCDIR, $VARDIR);
 BEGIN {
     if ($0 =~ m/(\S*)\/\S+.pl$/) {
         my $path = $1."/../lib";
