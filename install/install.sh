@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: set ts=2 sw=2 expandtab :
 
 if [ "$LOGFILE" = "" ]; then
   LOGFILE=/tmp/spamtagger.log
@@ -253,3 +254,10 @@ systemctl restart cron 2>&1 >>$LOGFILE
 #$SRCDIR/bin/collect_rrd_stats.pl 2>&1 >>$LOGFILE
 #echo "[done]"
 openssl genrsa -out /etc/spamtagger/apache/privkey.pem
+
+
+###############################################
+### Apply bashrc
+mkdir /var/spamtagger/state
+chown spamtagger:spamtagger /var/spamtagger/state
+echo 'source /usr/spamtagger/.bashrc' >> /root/.bashrc
