@@ -56,6 +56,8 @@ sub run($this) {
   # Load temporary keymap
   `loadkeys $file 2>&1 > /dev/null`;
   # Load persistent keymap
+  mkdir('/etc/console') unless ( -d '/etc/console');
+  unlink('/etc/console/boottime.kmap.gz') if ( -e '/etc/console/boottime.kmap.gz');
   `ln -s $this->{mapdir}/$layout/$file.kmap.gz /etc/console/boottime.kmap.gz 2>&1 > /dev/null`;
   return;
 }

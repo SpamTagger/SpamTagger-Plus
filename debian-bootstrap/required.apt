@@ -8,6 +8,7 @@ ca-certificates
 chrony
 clamav-daemon
 console-data
+console-setup
 cpanminus
 cron
 curl
