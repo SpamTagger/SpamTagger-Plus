@@ -33,6 +33,7 @@ use lib "/usr/spamtagger/scripts/installer/";
 use DialogFactory();
 use ReadConfig();
 use InputValidator qw( validate );
+use File::Touch qw( touch );
 
 my $conf = {};
 $conf = ReadConfig::get_instance() if (-e '/etc/spamtagger.conf');
@@ -323,12 +324,8 @@ sub apply_configuration($this) {
   my $dlg = $this->{'dfact'}->simple();
   $dlg->clear();
 
-  if (! -e '/var/spamtagger/run/first-time-configuration') {
-    my $fh;
-    if (open($fh, '>>', '/var/spamtagger/run/first-time-configuration')) {
-      print $fh '';
-      close $fh;
-    }
+  if (! -e '/var/spamtagger/state/first-run-wizard') {
+    touch('/var/spamtagger/first-run-wizard');
   }
   return 0;
 }
