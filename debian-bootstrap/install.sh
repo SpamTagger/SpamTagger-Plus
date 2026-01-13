@@ -25,7 +25,7 @@ setterm --foreground default
 # Monolithic sources.list
 export DEBIAN_FRONTEND=noninteractive 
 if [[ "$(find /etc/apt -name '*.list')" != "" ]]; then
-  apt modernize-sources
+  apt modernize-sources -y &>/dev/null
   if [ $? ]; then
     echo -e "\b\b\b x "
   else
