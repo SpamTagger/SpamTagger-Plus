@@ -26,7 +26,7 @@ setterm --foreground default
 export DEBIAN_FRONTEND=noninteractive
 if [[ "$(find /etc/apt -name '*.list')" != "" ]]; then
   apt modernize-sources -y &>/dev/null
-  if [ $? ]; then
+  if [[ $? -ne 0 ]]; then
     echo -e "\b\b\b x "
     exit
   fi
