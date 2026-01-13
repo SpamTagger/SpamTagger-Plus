@@ -28,17 +28,17 @@ if [[ "$(find /etc/apt -name '*.list')" != "" ]]; then
   apt modernize-sources -y &>/dev/null
   if [ $? ]; then
     echo -e "\b\b\b x "
-  else
-    echo -e "\b\b\b * "
+    exit
   fi
 fi
+echo -e "\b\b\b * "
 
 setterm --foreground blue
 echo -n "# Enabling Non-Free Repository..."
 setterm --foreground default
 
 if grep -q 'Components.* non-free non-free-firmware' <<<$(cat /etc/apt/sources.list.d/debian.sources 2>/dev/null); then
-  echo -e "\b\b\b * "
+  :
 elif [[ "$(find /etc/apt/sources.list.d/ -name '*.sources')" != "" ]]; then
   if [[ -z $CI ]]; then
     echo -ne "\rSpamTagger requires the Debian 'non-free' repository to function. Do you consent to enabling this repo? [y/N]: "
@@ -55,11 +55,11 @@ elif [[ "$(find /etc/apt/sources.list.d/ -name '*.sources')" != "" ]]; then
     done
   fi
   sed -i 's/Components: main.*/Components: main non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
-  echo -e "\b\b\b *"
 else
   echo -e "\bx \nNo known APT sources files were found"
   exit 1
 fi
+echo -e "\b\b\b * "
 
 setterm --foreground blue
 echo -n "# Enabling Additional Repositories..."
@@ -90,11 +90,11 @@ fi
 if [ ! -e /etc/apt/keyrings/docker.gpg ]; then
   curl https://download.docker.com/linux/debian/gpg 2>/dev/null >/etc/apt/trusted.gpg.d/docker.asc
   cat /etc/apt/trusted.gpg.d/docker.asc | gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
-  cat >/etc/apt/sources.list.d/docker.list <<EOF
+  cat >/etc/apt/sources.list.d/docker.sources <<EOF
 Types: deb
 URIs: https://download.docker.com/linux/debian
-Suites: trixie stable
-Components: main
+Suites: trixie
+Components: stable
 Signed-By: /etc/apt/keyrings/docker.gpg
 EOF
 fi
@@ -103,11 +103,11 @@ fi
 if [ ! -e /etc/apt/keyrings/obs-home-voegelas.gpg ]; then
   curl https://download.opensuse.org/repositories/home:/voegelas/Debian_13/Release.key 2>/dev/null >/etc/apt/trusted.gpg.d/obs-home-voegelas.asc
   cat /etc/apt/trusted.gpg.d/obs-home-voegelas.asc | gpg --yes --dearmor -o /etc/apt/keyrings/obs-home-voegelas.gpg
-  cat >/etc/apt/sources.list.d/obs-voegelas.list <<EOF
+  cat >/etc/apt/sources.list.d/obs-voegelas.sources <<EOF
 Types: deb
 URIs: https://download.opensuse.org/repositories/home:/voegelas/Debian_13/
-Suites:
-Components: ./
+Suites: ./
+Components:
 Signed-By: /etc/apt/keyrings/obs-home-voegelas.gpg
 EOF
 fi
@@ -127,7 +127,7 @@ else
 fi
 
 setterm --foreground blue
-echo -n "# Checking/Installing APT dependencies..."
+echo "# Checking/Installing APT dependencies..."
 setterm --foreground default
 
 if [[ -e /usr/spamtagger/debian-bootstrap/required.apt ]]; then
