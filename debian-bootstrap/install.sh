@@ -23,7 +23,7 @@ echo -n "# Modernizing APT Sources..."
 setterm --foreground default
 
 # Monolithic sources.list
-export DEBIAN_FRONTEND=noninteractive 
+export DEBIAN_FRONTEND=noninteractive
 if [[ "$(find /etc/apt -name '*.list')" != "" ]]; then
   apt modernize-sources -y &>/dev/null
   if [ $? ]; then
@@ -55,6 +55,7 @@ elif [[ "$(find /etc/apt/sources.list.d/ -name '*.sources')" != "" ]]; then
     done
   fi
   sed -i 's/Components: main.*/Components: main non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+  echo -e "\b\b\b *"
 else
   echo -e "\bx \nNo known APT sources files were found"
   exit 1
@@ -75,7 +76,7 @@ fi
 #if [ ! -e /etc/apt/keyrings/spamtagger.gpg ]; then
   #cp /usr/spamtagger/etc/spamtagger/spamtagger.asc /etc/apt/trusted.gpg.d/spamtagger.asc
   #cat /etc/apt/trusted.gpg.d/spamtagger.asc | gpg --yes --dearmor -o /etc/apt/keyrings/spamtagger.gpg
-  #wget -q -O /etc/apt/keyrings/spamtagger.gpg https://spamtaggerdl.alinto.net/downloads/spamtagger.gpg 
+  #curl https://spamtaggerdl.alinto.net/downloads/spamtagger.gpg 2>/dev/null >/etc/apt/keyrings/spamtagger.gpg
   #cat > /etc/apt/source.list.d/spamtagger.sources <<EOF
 #Types: deb
 #URIs: http://cdnmcpool.spamtagger.net/
@@ -87,11 +88,11 @@ fi
 
 # Docker repository
 if [ ! -e /etc/apt/keyrings/docker.gpg ]; then
-  wget -q -O /etc/apt/trusted.gpg.d/docker.asc https://download.docker.com/linux/debian/gpg
+  curl https://download.docker.com/linux/debian/gpg 2>/dev/null >/etc/apt/trusted.gpg.d/docker.asc
   cat /etc/apt/trusted.gpg.d/docker.asc | gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
   cat >/etc/apt/sources.list.d/docker.list <<EOF
 Types: deb
-URIs: https://download.docker.com/linux/debian 
+URIs: https://download.docker.com/linux/debian
 Suites: trixie stable
 Components: main
 Signed-By: /etc/apt/keyrings/docker.gpg
@@ -100,13 +101,12 @@ fi
 
 # DCC repository
 if [ ! -e /etc/apt/keyrings/obs-home-voegelas.gpg ]; then
-  wget -q -O /etc/apt/trusted.gpg.d/obs-home-voegelas.asc https://download.opensuse.org/repositories/home:/voegelas/Debian_13/Release.key
+  curl https://download.opensuse.org/repositories/home:/voegelas/Debian_13/Release.key 2>/dev/null >/etc/apt/trusted.gpg.d/obs-home-voegelas.asc
   cat /etc/apt/trusted.gpg.d/obs-home-voegelas.asc | gpg --yes --dearmor -o /etc/apt/keyrings/obs-home-voegelas.gpg
-  
   cat >/etc/apt/sources.list.d/obs-voegelas.list <<EOF
 Types: deb
 URIs: https://download.opensuse.org/repositories/home:/voegelas/Debian_13/
-Suites: 
+Suites:
 Components: ./
 Signed-By: /etc/apt/keyrings/obs-home-voegelas.gpg
 EOF
@@ -130,8 +130,14 @@ setterm --foreground blue
 echo -n "# Checking/Installing APT dependencies..."
 setterm --foreground default
 
+if [[ -e /usr/spamtagger/debian-bootstrap/required.apt ]]; then
+  cp /usr/spamtagger/debian-bootstrap/required.apt /tmp/required.apt
+else
+  curl https://raw.githubusercontent.com/SpamTagger/SpamTagger-Plus/refs/heads/main/debian-bootstrap/install.sh 2>/dev/null >/tmp/required.apt
+fi
+
 FAILED=""
-for i in $(cat debian-bootstrap/required.apt); do
+for i in $(cat /tmp/required.apt); do
   if grep -qP "^ii  $i" <<<$DPKG; then
     echo -e "  Checking $i *  "
   else
