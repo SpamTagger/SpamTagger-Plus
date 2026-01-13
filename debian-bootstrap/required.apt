@@ -2,6 +2,7 @@ apache2
 apt-transport-https
 apt-utils
 bind9
+bind9-dnsutils
 bogofilter
 bzip2
 ca-certificates
@@ -13,7 +14,6 @@ cpanminus
 cron
 curl
 dcc
-dnsutils
 docker.io
 fail2ban
 fangfrisch
@@ -57,7 +57,6 @@ libdevel-size-perl
 libdigest-hmac-perl
 libencode-detect-perl
 libevent-2.1-7
-libextutils-cbuilder-perl
 libffi-dev
 libfile-touch-perl
 libfilesys-df-perl
@@ -116,7 +115,7 @@ libopendmarc-dev
 libopendmarc2
 libpam0g-dev
 libparse-recdescent-perl
-libpcre2-32
+libpcre2-32-0
 libpcre2-dev
 libperl-dev
 libperl-version-perl
