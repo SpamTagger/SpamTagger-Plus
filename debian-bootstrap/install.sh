@@ -133,7 +133,7 @@ setterm --foreground default
 if [[ -e /usr/spamtagger/debian-bootstrap/required.apt ]]; then
   cp /usr/spamtagger/debian-bootstrap/required.apt /tmp/required.apt
 else
-  curl https://raw.githubusercontent.com/SpamTagger/SpamTagger-Plus/refs/heads/main/debian-bootstrap/install.sh 2>/dev/null >/tmp/required.apt
+  curl https://raw.githubusercontent.com/SpamTagger/SpamTagger-Plus/refs/heads/main/debian-bootstrap/required.apt 2>/dev/null >/tmp/required.apt
 fi
 
 FAILED=""
