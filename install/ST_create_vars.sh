@@ -77,16 +77,16 @@ check_dir $VARDIR/spool/exim_stage4/spamstore
 ####
 # create mariadb dirs
 
-check_dir $VARDIR/log/mariadb_source mariadb spamtagger
-check_dir $VARDIR/log/mariadb_replica mariadb spamtagger
+check_dir $VARDIR/log/mariadb_source mysql spamtagger
+check_dir $VARDIR/log/mariadb_replica mysql spamtagger
 chmod -R g+ws $VARDIR/log/mariadb_source
 chmod -R g+ws $VARDIR/log/mariadb_replica
 
-check_dir $VARDIR/spool/mariadb_source mariadb spamtagger
-check_dir $VARDIR/spool/mariadb_replica mariadb spamtagger
+check_dir $VARDIR/spool/mariadb_source mysql spamtagger
+check_dir $VARDIR/spool/mariadb_replica mysql spamtagger
 
-check_dir $VARDIR/run/mariadb_source mariadb spamtagger
-check_dir $VARDIR/run/mariadb_replica mariadb spamtagger
+check_dir $VARDIR/run/mariadb_source mysql spamtagger
+check_dir $VARDIR/run/mariadb_replica mysql spamtagger
 
 ####
 # create spamtagger dirs

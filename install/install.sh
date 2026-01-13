@@ -7,12 +7,6 @@ fi
 if [ "$CONFFILE" = "" ]; then
   CONFFILE=/etc/spamtagger.conf
 fi
-if [ "$VARDIR" = "" ]; then
-  VARDIR=$(grep 'VARDIR' /etc/spamtagger.conf | cut -d ' ' -f3)
-  if [ "VARDIR" = "" ]; then
-    VARDIR=/var/spamtagger
-  fi
-fi
 
 RELPATH=$(dirname $0)
 
@@ -20,16 +14,17 @@ export STVERSION="$(grep VARIANT_ID /etc/os-release | cut -d '=' -f 2)"
 
 ###############################################
 ### creating spamtagger group and user
-if [ "$(grep 'spamtagger' /etc/passwd)" = "" ]; then
+if [ "$(grep 'spamtagger' /etc/passwd)" == "" ]; then
   groupadd spamtagger 2>&1 >>$LOGFILE
-  useradd -d $VARDIR -s /bin/bash -g spamtagger spamtagger 2>&1 >>$LOGFILE
+  useradd -d /var/spamtagger -s /bin/bash -g spamtagger spamtagger 2>&1 >>$LOGFILE
 fi
 
 ###############################################
 ### add other users to spamtagger group
 usermod -aG spamtagger Debian-exim 2>&1 >>$LOGFILE
 usermod -aG spamtagger Debian-snmp 2>&1 >>$LOGFILE
-usermod -aG spamtagger mailscanner 2>&1 >>$LOGFILE
+# TODO: Enable the following line when mailscanner is ready
+#usermod -aG spamtagger mailscanner 2>&1 >>$LOGFILE
 usermod -aG spamtagger clamav 2>&1 >>$LOGFILE
 
 ###############################################
@@ -40,18 +35,18 @@ echo "[done]"
 
 ###############################################
 ## generate ssh keys
-if [ ! -d $VARDIR/.ssh ]; then
-  mkdir $VARDIR/.ssh
+if [ ! -d /var/spamtagger/.ssh ]; then
+  mkdir /var/spamtagger/.ssh
 fi
 
-if [ ! -f $VARDIR/.ssh/id_internal ]; then
-  ssh-keygen -t ed25519 -f $VARDIR/.ssh/id_internal -P ''
-  chown -R spamtagger:spamtagger $VARDIR/.ssh
+if [ ! -f /var/spamtagger/.ssh/id_internal ]; then
+  ssh-keygen -t ed25519 -f /var/spamtagger/.ssh/id_internal -P ''
+  chown -R spamtagger:spamtagger /var/spamtagger/.ssh
 fi
 
 if [ "$ISSOURCE" = "Y" ]; then
   SOURCEHOST=127.0.0.1
-  SOURCEKEY=$(cat $VARDIR/.ssh/id_internal.pub)
+  SOURCEKEY=$(cat /var/spamtagger/.ssh/id_internal.pub)
 fi
 
 ###############################################
@@ -100,8 +95,8 @@ echo -n " - Creating databases...                               "
 $RELPATH/ST_prepare_dbs.sh 2>&1 >>$LOGFILE
 
 ## recreate my_replica.cnf
-#$SRCDIR/bin/dump_mariadb_config.pl 2>&1 >> $LOGFILE
-#$SRCDIR/etc/init.d/mariadb_replica restart 2>&1 >>$LOGFILE
+#/usr/spamtagger/bin/dump_mariadb_config.pl 2>&1 >> $LOGFILE
+#/usr/spamtagger/etc/init.d/mariadb_replica restart 2>&1 >>$LOGFILE
 echo "[done]"
 sleep 5
 
@@ -129,7 +124,7 @@ echo -n " - Building Antispam tools...                          "
 #./install_pyzor.sh 2>&1 >>$LOGFILE
 # SpamAssassin has a CentOS package
 # ./install_sa.sh 2>&1 >>$LOGFILE
-#cd $SRCDIR/install 2>&1 >>$LOGFILE
+#cd /usr/spamtagger/install 2>&1 >>$LOGFILE
 echo "[done]"
 
 ###############################################
@@ -141,15 +136,15 @@ echo "[done]"
 #cd $RELPATH
 echo -n " - Installing MailScanner engine...                                "
 #./install_mailscanner.sh 2>&1 >>$LOGFILE
-#ln -s $SRCDIR/etc/mailscanner/spam.assassin.prefs.conf $SRCDIR/share/spamassassin/mailscanner.cf 2>&1 >/dev/null
+#ln -s /usr/spamtagger/etc/mailscanner/spam.assassin.prefs.conf /usr/spamtagger/share/spamassassin/mailscanner.cf 2>&1 >/dev/null
 
 # creating syslog entries
 # with rsyslog, created in dump_exim_conf
 LOGLINE=$(grep 'mailscanner/infolog' /etc/syslog.conf)
 if [ "$LOGLINE" == "" ]; then
-  echo "local0.info     -$VARDIR/log/mailscanner/infolog" >>/etc/syslog.conf
-  echo "local0.warn     -$VARDIR/log/mailscanner/warnlog" >>/etc/syslog.conf
-  echo "local0.err      $VARDIR/log/mailscanner/errorlog" >>/etc/syslog.conf
+  echo "local0.info     -/var/spamtagger/log/mailscanner/infolog" >>/etc/syslog.conf
+  echo "local0.warn     -/var/spamtagger/log/mailscanner/warnlog" >>/etc/syslog.conf
+  echo "local0.err      /var/spamtagger/log/mailscanner/errorlog" >>/etc/syslog.conf
 fi
 RET="$(systemctl is-active rsyslog >/dev/null)"
 if [[ $RET == 0 ]]; then
@@ -173,39 +168,39 @@ fi
 #cd $MYPWD
 #fi
 #if [ -d $STPACKDIR ]; then
-#cp $STPACKDIR/wordlist.db $VARDIR/spool/bogofilter/database/ 2>&1 >>$LOGFILE
-#chown -R spamtagger:spamtagger $VARDIR/spool/bogofilter/ 2>&1 >>$LOGFILE
-#cp $STPACKDIR/bayes_toks $VARDIR/spool/spamassassin/ 2>&1 >>$LOGFILE
-#chown -R spamtagger:spamtagger $VARDIR/spool/spamassassin/ 2>&1 >>$LOGFILE
-#cp -a $STPACKDIR/clamspam/* $VARDIR/spool/clamspam/ 2>&1 >>$LOGFILE
-#chown -R clamav:clamav $VARDIR/spool/clamspam 2>&1 >>$LOGFILE
-#cp -a $STPACKDIR/clamd/* $VARDIR/spool/clamav/ 2>&1 >>$LOGFILE
-#chown -R clamav:clamav $VARDIR/spool/clamav 2>&1 >>$LOGFILE
+#cp $STPACKDIR/wordlist.db /var/spamtagger/spool/bogofilter/database/ 2>&1 >>$LOGFILE
+#chown -R spamtagger:spamtagger /var/spamtagger/spool/bogofilter/ 2>&1 >>$LOGFILE
+#cp $STPACKDIR/bayes_toks /var/spamtagger/spool/spamassassin/ 2>&1 >>$LOGFILE
+#chown -R spamtagger:spamtagger /var/spamtagger/spool/spamassassin/ 2>&1 >>$LOGFILE
+#cp -a $STPACKDIR/clamspam/* /var/spamtagger/spool/clamspam/ 2>&1 >>$LOGFILE
+#chown -R clamav:clamav /var/spamtagger/spool/clamspam 2>&1 >>$LOGFILE
+#cp -a $STPACKDIR/clamd/* /var/spamtagger/spool/clamav/ 2>&1 >>$LOGFILE
+#chown -R clamav:clamav /var/spamtagger/spool/clamav 2>&1 >>$LOGFILE
 #fi
 #echo "[done]"
 
 # TODO: Move initial service dumps to `installer.pl` after the database is created
-#$SRCDIR/bin/dump_clamav_config.pl 2>&1 >>$LOGFILE
-#$SRCDIR/bin/dump_snmpd_config.pl 2>&1 >>$LOGFILE
-#$SRCDIR/bin/dump_mailscanner_config.pl 2>&1 >>$LOGFILE
-#$SRCDIR/bin/dump_apache_config.pl 2>&1 >>$LOGFILE
-#$SRCDIR/bin/dump_ssh_keys.pl 2>&1 >> $LOGFILE
+#/usr/spamtagger/bin/dump_clamav_config.pl 2>&1 >>$LOGFILE
+#/usr/spamtagger/bin/dump_snmpd_config.pl 2>&1 >>$LOGFILE
+#/usr/spamtagger/bin/dump_mailscanner_config.pl 2>&1 >>$LOGFILE
+#/usr/spamtagger/bin/dump_apache_config.pl 2>&1 >>$LOGFILE
+#/usr/spamtagger/bin/dump_ssh_keys.pl 2>&1 >> $LOGFILE
 
 ###############################################
 ### correcting some rights
 
-chown -R spamtagger:spamtagger $SRCDIR/etc 2>&1 >/dev/null
+chown -R spamtagger:spamtagger /usr/spamtagger/etc 2>&1 >/dev/null
 
 # Move this to installer.pl also. Contents of /var/spamtagger should be empty after build
 ## create starter status file
-cat >$VARDIR/run/spamtagger.status <<EOF
+cat >/var/spamtagger/run/spamtagger.status <<EOF
 Disk : OK
 Swap: 0
 Raid: OK
 Spools: 0
 Load: 0.00
 EOF
-cp $VARDIR/run/spamtagger.status $VARDIR/run/spamtagger.127.0.0.1.status
+cp /var/spamtagger/run/spamtagger.status /var/spamtagger/run/spamtagger.127.0.0.1.status
 
 # TODO: Apply default certificates directly to Apache configuration so that the temporary web server
 # works in order to direct the user to the installer
@@ -224,16 +219,16 @@ else
 # TODO: Generate unique self signed certs upon setting a hostname in installer.pl. Insert after
 # database is created
 #QUERY="USE st_config; UPDATE httpd_config SET tls_certificate_data='${CERT}', tls_certificate_key='${KEY}';"
-#echo "$QUERY" | $SRCDIR/bin/st_mariadb -m 2>&1 >>$LOGFILE
-#echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP SpamTagger Plus ($STVERSION) \$tod_full';" | $SRCDIR/bin/st_mariadb -m st_config 2>&1 >>$LOGFILE
+#echo "$QUERY" | /usr/spamtagger/bin/st_mariadb -m 2>&1 >>$LOGFILE
+#echo "update mta_config set smtp_banner='\$smtp_active_hostname ESMTP SpamTagger Plus ($STVERSION) \$tod_full';" | /usr/spamtagger/bin/st_mariadb -m st_config 2>&1 >>$LOGFILE
 
 ###############################################
 ### installing spamtagger cron job
 
 # TODO: Load user-configurable cronjobs from '/etc/spamtagger' since these should be immutable
 echo -n " - Installing scheduled jobs...                        "
-echo "0,15,30,45 * * * *  $SRCDIR/scripts/cron/spamtagger_cron.pl > /dev/null" >>/var/spool/cron/crontabs/root
-echo "0-59/5 * * * * $SRCDIR/bin/collect_rrd_stats.pl > /dev/null" >>/var/spool/cron/crontabs/root
+echo "0,15,30,45 * * * *  /usr/spamtagger/scripts/cron/spamtagger_cron.pl > /dev/null" >>/var/spool/cron/crontabs/root
+echo "0-59/5 * * * * /usr/spamtagger/bin/collect_rrd_stats.pl > /dev/null" >>/var/spool/cron/crontabs/root
 crontab /var/spool/cron/crontabs/root 2>&1 >>$LOGFILE
 systemctl restart cron 2>&1 >>$LOGFILE
 
@@ -241,17 +236,17 @@ systemctl restart cron 2>&1 >>$LOGFILE
 ### starting and installing spamtagger service
 # TODO: All of this will happen at the end of the install wizard
 #echo -n " - Starting services...                                "
-#if [ ! -d $SRCDIR/etc/firewall ]; then
-#mkdir $SRCDIR/etc/firewall 2>&1 >>$LOGFILE
+#if [ ! -d /usr/spamtagger/etc/firewall ]; then
+#mkdir /usr/spamtagger/etc/firewall 2>&1 >>$LOGFILE
 #fi
-#$SRCDIR/bin/dump_firewall.pl 2>&1 >>$LOGFILE
-#ln -s $SRCDIR/etc/init.d/spamtagger /etc/init.d/ 2>&1 >/dev/null
+#/usr/spamtagger/bin/dump_firewall.pl 2>&1 >>$LOGFILE
+#ln -s /usr/spamtagger/etc/init.d/spamtagger /etc/init.d/ 2>&1 >/dev/null
 #/etc/init.d/spamtagger stop 2>&1 >>$LOGFILE
 #update-rc.d spamtagger defaults 2>&1 >>$LOGFILE
 #/etc/init.d/spamtagger start 2>&1 >>$LOGFILE
 #sleep 5
-#$SRCDIR/etc/init.d/apache restart 2>&1 >>$LOGFILE
-#$SRCDIR/bin/collect_rrd_stats.pl 2>&1 >>$LOGFILE
+#/usr/spamtagger/etc/init.d/apache restart 2>&1 >>$LOGFILE
+#/usr/spamtagger/bin/collect_rrd_stats.pl 2>&1 >>$LOGFILE
 #echo "[done]"
 openssl genrsa -out /etc/spamtagger/apache/privkey.pem
 
