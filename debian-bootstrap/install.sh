@@ -1,40 +1,30 @@
 #!/usr/bin/env bash
 # vim: set ts=2 sw=2 expandtab :
 
-GHUSER="SpamTagger"
+## Define the SpamTagger repository: ${GITHOST}/${GITUSER}/${GITREPO}
+# Git repo with HTTP(S) or Git protocol
+#GITHOST="git@github.com:"
+GITHOST="https://github.com"
+# Git User
+GITUSER="SpamTagger"
+# Repo Name
+GITREPO="SpamTagger-Plus"
 
-# Repo name, to be changed upon Stable release
-GHREPO="SpamTagger-Plus"
-#GHREPO="SpamTagger"
-
-# Git/HTTP protocol, to be changed upon repo going public
-#GHHOST="git@github.com:"
-GHHOST="https://github.com"
-
-# Current checksum of this script, to compare after `git pull`
-CURRENT=$(md5sum $0)
+# Current checksum of this script if it was called from existing repo to compare after `git pull`
+if [[ "$0" == "/usr/spamtagger/debian-bootstrap/install.sh" ]]; then
+  CURRENT=$(md5sum $0)
+fi
 
 # Errors which must be resolved before success, but don't justify killing the script in action
 ERRORS=''
 
-echo "Bootstrapping SpamTagger installation"
-
-DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install console-data console-setup 2>/dev/null >/dev/null
-if [[ -e "/etc/default/console-setup" ]]; then
-  echo -n "Configuring console..."
-  sed -i 's/FONTFACE=".*/FONTFACE="Terminus"/' /etc/default/console-setup
-  sed -i 's/FONTSIZE=".*/FONTSIZE="24x12"/' /etc/default/console-setup
-  systemctl restart console-setup
-  if [ $! ]; then
-    echo -e "\b\b\b x "
-  else
-    echo -e "\b\b\b * "
-  fi
-fi
+setterm --foreground blue
+echo -n "# Modernizing APT Sources..."
+setterm --foreground default
 
 # Monolithic sources.list
+export DEBIAN_FRONTEND=noninteractive 
 if [[ "$(find /etc/apt -name '*.list')" != "" ]]; then
-  echo "Modernizing APT Sources..."
   apt modernize-sources
   if [ $? ]; then
     echo -e "\b\b\b x "
@@ -43,40 +33,41 @@ if [[ "$(find /etc/apt -name '*.list')" != "" ]]; then
   fi
 fi
 
-# Check for non-free
-echo -n "Checking non-free repo..."
+setterm --foreground blue
+echo -n "# Enabling Non-Free Repository..."
+setterm --foreground default
 
-# Newer .sources files
-if grep -q 'Components.* non-free non-free-firmware' <<<$(cat /etc/apt/sources.list.d/*.sources 2>/dev/null); then
+if grep -q 'Components.* non-free non-free-firmware' <<<$(cat /etc/apt/sources.list.d/debian.sources 2>/dev/null); then
   echo -e "\b\b\b * "
 elif [[ "$(find /etc/apt/sources.list.d/ -name '*.sources')" != "" ]]; then
-  echo -ne "\rSpamTagger requires the Debian 'non-free' repository to function. Do you consent to enabling this repo? [y/N]: "
-  read YN
-  for i in $(find /etc/apt/sources.list.d/ -name *.sources -print); do
-    if [ -z $YN ]; then
-      echo -ne "\rSpamTagger requires the Debian 'non-free' repository to function. Do you consent to enabling this repo? [y/N]: "
-      read YN
-    fi
-    if [[ "$YN" == "y" ]] || [[ "$YN" == "Y" ]]; then
-      sed -i 's/main.*/main contrib non-free non-free-firmware/' $i
-      echo -e "\r Checking non-free repo * \n"
-      break
-    else
-      echo "Aborting..."
-      exit
-    fi
-  done
+  if [[ -z $CI ]]; then
+    echo -ne "\rSpamTagger requires the Debian 'non-free' repository to function. Do you consent to enabling this repo? [y/N]: "
+    read YN
+    for i in $(find /etc/apt/sources.list.d/ -name *.sources -print); do
+      if [ -z $YN ]; then
+        echo -ne "\rSpamTagger requires the Debian 'non-free' repository to function. Do you consent to enabling this repo? [y/N]: "
+        read YN
+      fi
+      if [[ "$YN" != "y" ]] && [[ "$YN" != "Y" ]]; then
+        echo "Aborting..."
+        exit 1
+      fi
+    done
+  fi
+  sed -i 's/Components: main.*/Components: main non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
 else
   echo -e "\bx \nNo known APT sources files were found"
-  exit
+  exit 1
 fi
 
-echo -n "Checking/adding extra repositories..."
+setterm --foreground blue
+echo -n "# Enabling Additional Repositories..."
+setterm --foreground default
 
 # Verify GPG dependency
 DPKG=$(dpkg -l)
 if ! grep -qP "^ii gpg" <<<$DPKG; then
-  apt-get update 2>&1 >/dev/null
+  apt-get update &>/dev/null
   DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install gpg 2>/dev/null >/dev/null
 fi
 
@@ -85,48 +76,61 @@ fi
   #cp /usr/spamtagger/etc/spamtagger/spamtagger.asc /etc/apt/trusted.gpg.d/spamtagger.asc
   #cat /etc/apt/trusted.gpg.d/spamtagger.asc | gpg --yes --dearmor -o /etc/apt/keyrings/spamtagger.gpg
   #wget -q -O /etc/apt/keyrings/spamtagger.gpg https://spamtaggerdl.alinto.net/downloads/spamtagger.gpg 
-  #echo 'deb [signed-by=/etc/apt/keyrings/spamtagger.gpg] http://cdnmcpool.spamtagger.net trixie main' >/etc/apt/sources.list.d/spamtagger.list
+  #cat > /etc/apt/source.list.d/spamtagger.sources <<EOF
+#Types: deb
+#URIs: http://cdnmcpool.spamtagger.net/
+#Suites: trixie
+#Components: main
+#Signed-By: /etc/apt/keyrings/spamtagger.gpg
+#EOF
 #fi
 
 # Docker repository
 if [ ! -e /etc/apt/keyrings/docker.gpg ]; then
   wget -q -O /etc/apt/trusted.gpg.d/docker.asc https://download.docker.com/linux/debian/gpg
   cat /etc/apt/trusted.gpg.d/docker.asc | gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
-  echo 'deb [signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian trixie stable' >/etc/apt/sources.list.d/docker.list
+  cat >/etc/apt/sources.list.d/docker.list <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/debian 
+Suites: trixie stable
+Components: main
+Signed-By: /etc/apt/keyrings/docker.gpg
+EOF
 fi
 
 # DCC repository
 if [ ! -e /etc/apt/keyrings/obs-home-voegelas.gpg ]; then
   wget -q -O /etc/apt/trusted.gpg.d/obs-home-voegelas.asc https://download.opensuse.org/repositories/home:/voegelas/Debian_13/Release.key
   cat /etc/apt/trusted.gpg.d/obs-home-voegelas.asc | gpg --yes --dearmor -o /etc/apt/keyrings/obs-home-voegelas.gpg
-fi
-if [ ! -e /etc/apt/sources.list.d/obs-voegelas.list ] && [ ! -e /etc/apt/sources.list.d/obs-voegelas.sources ]; then
-  echo 'deb [signed-by=/etc/apt/keyrings/obs-home-voegelas.gpg] https://download.opensuse.org/repositories/home:/voegelas/Debian_13/ ./' | tee /etc/apt/sources.list.d/obs-voegelas.list
+  
+  cat >/etc/apt/sources.list.d/obs-voegelas.list <<EOF
+Types: deb
+URIs: https://download.opensuse.org/repositories/home:/voegelas/Debian_13/
+Suites: 
+Components: ./
+Signed-By: /etc/apt/keyrings/obs-home-voegelas.gpg
+EOF
 fi
 
 echo -e "\b\b\b * "
 
-# Clear cache
-echo -n "Clearing APT cache..."
-rm -rf /var/lib/apt/lists/*
-if [[ $? -ne 0 ]]; then
-  echo -e "\b\b\b x"
-  exit
-else
-  echo -e "\b\b\b * "
-fi
+setterm --foreground blue
+echo -n "# Refreshing APT repos..."
+setterm --foreground default
 
-# Update repositories
-echo -n "Updating APT repos..."
-apt-get update 2>&1 >/dev/null
+rm -rf /var/lib/apt/lists/*
+apt-get update &>/dev/null
 if [[ $? -ne 0 ]]; then
   echo -e "\b\b\b x "
 else
   echo -e "\b\b\b * "
 fi
 
+setterm --foreground blue
+echo -n "# Checking/Installing APT dependencies..."
+setterm --foreground default
+
 FAILED=""
-echo "Checking/Installing APT repos..."
 for i in $(cat debian-bootstrap/required.apt); do
   if grep -qP "^ii  $i" <<<$DPKG; then
     echo -e "  Checking $i *  "
@@ -146,51 +150,58 @@ for i in $(cat debian-bootstrap/required.apt); do
 done
 
 if [[ $FAILED != "" ]]; then
-  echo "Installing APT dependencies..."
-  ERRORS="${ERRORS}
-x These packages failed to install:
-  $FAILED
-  You can try to fix by running \`apt-get install -f\` then running this script again"
+  echo "Failed to install the following packages...
+$FAILED
+You can try to fix by running \`apt-get install -f\` then running this script again"
+exit 1
 fi
 
+setterm --foreground blue
+echo -n "# Checking SpamTagger repository..."
+setterm --foreground default
+
 # Check for existing repo
-echo -n "Checking SpamTagger repository..."
 if [ -d /usr/spamtagger ]; then
   if [ ! -e /usr/spamtagger/.git/config ]; then
     echo -e "\b\b\b x \nFound '/usr/spamtagger' which is not a git repo. Please (re)move it and run the script again"
-    exit
+    exit 1
   fi
-  if ! grep -q "${GHREPO}" <<<$(cat /usr/spamtagger/.git/config); then
-    echo -e "\b\b\b x \nFound '/usr/spamtagger' which is not a ${GHREPO} repository. Please change target and run the script again"
-    exit
+  if ! grep -q "${GITREPO}" <<<$(cat /usr/spamtagger/.git/config); then
+    echo -e "\b\b\b x \nFound '/usr/spamtagger' which is not a ${GITREPO} repository. Please change target and run the script again"
+    exit 1
   fi
 # Clone instead
 else
-  git clone --depth 1 ${GHHOST}/${GHUSER}/${GHREPO}.git /usr/spamtagger 2>&1 >/dev/null
+  git clone --depth 1 ${GITHOST}/${GITUSER}/${GITREPO}.git /usr/spamtagger 2>&1 >/dev/null
   if [ ! -d /usr/spamtagger ]; then
-    echo -e "\b\b\b x \nFailed to clone '/usr/spamtagger' or to clone from https://github.com/SpamTagger/SpamTagger-Plus.git"
-    exit
+    echo -e "\b\b\b x \nFailed to clone '/usr/spamtagger' or to clone from ${GITHOST}/${GITUSER}/${GITREPO}.git"
+    exit 1
   fi
 fi
+
+setterm --foreground blue
+echo -n "# Updating SpamTagger repository..."
+setterm --foreground default
 
 # Update repo
 cd /usr/spamtagger
 git pull --rebase origin main 2>/dev/null >/dev/null
 if [[ $? -ne 0 ]]; then
   echo -e "\b\b\b x Error pulling latest commits"
-  #exit
+  exit 1
 else
   echo -e "\b\b\b * "
-  if [[ $CURRENT != $(md5sum $0) ]]; then
+  if [[ ! -z $CURRENT ]] && [[ $CURRENT != $(md5sum $0) ]]; then
     echo "$0 has changed. Please run the command again to ensure that you have the latest installation procedures"
-    exit
+    exit 1
   fi
 fi
 
-echo "Cleaning up..."
+setterm --foreground blue
+echo -n "# Removing unnecessary APT packages..."
+setterm --foreground default
 
-echo -n "Removing unnecessary APT packages..."
-apt-get autoremove --assume-yes 2>/dev/null >/dev/null
+apt-get autoremove --assume-yes &>/dev/null
 if [[ $? -ne 0 ]]; then
   echo -e "\b\b\b x "
   ERRORS="${ERRORS}
@@ -199,7 +210,10 @@ else
   echo -e "\b\b\b * "
 fi
 
-echo -n "Cleaning APT archive..."
+setterm --foreground blue
+echo -n "# Cleaning APT archive..."
+setterm --foreground default
+
 apt-get clean --assume-yes 2>/dev/null >/dev/null
 if [[ $? -ne 0 ]]; then
   echo -e "\b\b\b x "
@@ -209,7 +223,9 @@ else
   echo -e "\b\b\b * "
 fi
 
-clear
+setterm --foreground blue
+echo -n "# Configuring SpamTagger..."
+setterm --foreground default
 
 /usr/spamtagger/install/install.sh
 if [ $! ]; then
@@ -218,12 +234,12 @@ if [ $! ]; then
 x Failed running /usr/spamtagger/install/install.sh"
 fi
 
-clear
 if [[ $ERRORS != "" ]]; then
   echo "Finished with errors:"
   echo $ERRORS
   echo "Please try to remedy these errors, report them as needed, then run this script again to verify that there are no remaining errors with the installation."
 fi
+
 echo "Creating bare spamtagger configuration file..."
 touch /etc/spamtagger.conf
 if [ -z $SKIP_CONFIGURATION ]; then

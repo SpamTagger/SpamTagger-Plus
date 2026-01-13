@@ -9,3 +9,10 @@ fi
 if [ ! -e /var/spamtagger/state/first-run-wizard ]; then
   /usr/spamtagger/state/first-run-wizard
 fi
+
+# Print system stats upon login
+if [ -e /etc/spamtagger/etc/fastfetch.json ]; then
+  fastfetch -c /etc/spamtagger/etc/fastfetch.json
+else
+  fastfetch -c /usr/spamtagger/etc/fastfetch.json
+fi 
